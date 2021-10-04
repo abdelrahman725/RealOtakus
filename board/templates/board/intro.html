@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  {% comment %} <meta http-equiv="X-UA-Compatible" content="IE=edge"> {% endcomment %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'board/intro.css' %}" rel="stylesheet">
+  <script src="{% static 'board/intro.js' %}"></script> 
+  <title>Anime</title>
+</head>
+<body id="particles-js">
+ {% if messages %}
+      <div style="display:none" class= "messages">
+        {% for message in messages %}
+        <div class= "message">
+          {{ message }}
+         </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+
+    <div class="LoginPage">
+        <div class="container">
+          <form action="{% url 'login' %}" method="post" class="box" >
+            {% csrf_token %}
+            <h4>Anime<span>Game</span></h4>
+            <h5>Sign in</h5>
+              <input type="text" name="loginusername" placeholder="username" autocomplete="off" required autofocus>
+              <input type="password" name="loginpassword" placeholder="Passsword" autocomplete="off" required>
+      
+              <input type="submit" value="Sign in" class="btn1">
+            </form>
+              <a onclick="ShowRegister()"
+               href="javascript:void(0);" class="dnthave">Don’t have an account? Sign up</a>
+         </div> 
+    </div>
+
+
+
+    <div  class="RegisterPage">
+        <div class="container">
+    {% comment %} <div class = "messages">
+               warning
+            </div> {% endcomment %}
+          <form  action="{% url 'register' %}" method="post" class="box" >
+            {% csrf_token %}
+            <h4>Anime<span>Game</span></h4>
+            <h5>Sign Up</h5>
+              <input type="text" name="registerusername" placeholder="username" autocomplete="off" required >
+              <input type="password" name="registerpassword" placeholder="passsword"  autocomplete="off" required class="pass">
+              <input type="password" name="registerconfirmpassword" placeholder="confirm passsword"  autocomplete="off" required class="pass">
+      
+              <input type="submit" value="Sign Up" class="btn1"
+              id= "registerbtn">
+            </form>
+            {% comment %} {% if messages %}
+              <div class= "messages">
+                {% for message in messages %}
+                  {{ message }}
+                {% endfor %}
+              </div>
+            {% endif %} {% endcomment %}
+            
+
+              <a onclick="ShowLogin()"
+              href="javascript:void(0);" class="dnthave">already a member? Sign in</a>
+      
+         </div> 
+
+    </div>
+
+</body>
+            
+</html>
