@@ -5,6 +5,7 @@ import Test from './Components/Test';
 import  LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
 import  AnimesChoices from './Components/Animes'
+import SelectedAnimes from './Components/SelectedAnimes'
 
   let  Username,Points,Level,Highest_score =""
   if (document.getElementById("username")!= null)
@@ -91,12 +92,24 @@ const GetQuestions = async()=>
 
 const ToggleAddRemoveAnime = (id) =>
 {
+  let animediv = document.getElementById(`${id}`)
   
-  SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1?
-  setSelectedAnimes(SelectedAnimes.filter((anime)=>
-  anime.id!==id
-  )):
-  SelectedAnimes.length<ChoicesLimit&& setSelectedAnimes([...SelectedAnimes,...AllAnimes.filter((anime) =>anime.id===id)])
+ if( SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1)
+ {
+   
+    animediv.style.backgroundColor = "cadetblue"
+    setSelectedAnimes(SelectedAnimes.filter((anime)=>anime.id!==id))
+ }
+ else
+ {
+   if(SelectedAnimes.length < ChoicesLimit)
+   {
+      setSelectedAnimes([...SelectedAnimes,...AllAnimes.filter((anime) =>anime.id===id)])
+      animediv.style.backgroundColor = "green" 
+    }
+ 
+}
+
 
 }
   return (

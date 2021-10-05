@@ -26,7 +26,8 @@ code {
   text-align: center;
   padding: 12px;
   width:30%;
+  color: white;
 }
 .EachAnime:hover{
-  background-color: rgb(52, 108, 110);
+  background-color: green;
 }
