@@ -33,6 +33,12 @@ class GetUsers(generics.ListAPIView):
   serializer_class = UserSerializer
 
 
+# def UserData(request):
+#   #user's top 3 animes based on his score in each of them
+
+#   AnimeScore.objects.filter(user=request.user).order_by('-score')[:3]
+  
+
 class GetAllAnimes(generics.ListAPIView):
   queryset = Anime.objects.all()
   serializer_class = AnimeSerializer
@@ -43,6 +49,7 @@ def GetTest(request,anime_ids):
   selected_questions= Question.objects.filter(anime__id__in=SelectedAnimes)
   serialized_data = QuestionSerializer(selected_questions,many=True)
   return Response(serialized_data.data)
+
 
 
 

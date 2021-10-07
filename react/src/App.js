@@ -2,9 +2,9 @@ import React from 'react'
 import {useState} from 'react'
 import './App.css';
 import Test from './Components/Test';
-import  LeaderBoard from './Components/LeaderBoard'
+import LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
-import  AnimesChoices from './Components/Animes'
+import AnimesChoices from './Components/Animes'
 import SelectedAnimes from './Components/SelectedAnimes'
 
   let  Username,Points,Level,Highest_score =""
@@ -94,12 +94,16 @@ const ToggleAddRemoveAnime = (id) =>
 {
   let animediv = document.getElementById(`${id}`)
   
+
+  // removing anime 
  if( SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1)
  {
    
     animediv.style.backgroundColor = "cadetblue"
     setSelectedAnimes(SelectedAnimes.filter((anime)=>anime.id!==id))
  }
+
+ // adding anime
  else
  {
    if(SelectedAnimes.length < ChoicesLimit)
@@ -117,22 +121,12 @@ const ToggleAddRemoveAnime = (id) =>
 
        
         <h1>welcome {Username} </h1>
-        <h2> real otakus only !</h2>
-        <Profile name={Username} level ={Level} points = {Points} highest_score ={Highest_score}/>
+        {/* <h2> real otakus only !</h2>
+        <Profile name={Username} level ={Level} points = {Points} highest_score ={Highest_score}/> */}
 
          {/* <button onClick={Getusers}>show current otaku competitors</button> */}
         <button onClick={GetAllAnimes}>check available animes</button>
         <button onClick={SelectedAnimes.length===ChoicesLimit?GetQuestions:undefined}>get my customized questions !</button>
-        
-        
-       {SelectedAnimes.map((anime)=>(
-         
-         <p>
-
-           {anime.anime_name}
-         </p>
-       ))}
-      
       
          {TestView?  <Test test_questions = {UserQuestions}/>:""}
 

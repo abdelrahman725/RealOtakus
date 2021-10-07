@@ -18,3 +18,10 @@ class QuestionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Question
     fields = '__all__'
+
+
+
+class AnimeScore(serializers.ModelSerializer):
+  class Meta:
+    model = AnimeScore
+    fields = '__all__'
