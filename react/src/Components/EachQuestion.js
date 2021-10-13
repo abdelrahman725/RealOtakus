@@ -1,78 +1,78 @@
+import { useState } from "react"
+import Choice from "./Choice"
 
-function EachQuestion({id,R,question_content,advanced,choice1,choice2,choice3,right_answer,counter})
+function EachQuestion({question,n,onChoose})
 {
 
-  const handleChange =(e)=>
+  const [Selected,setSelected] = useState("")
+
+  const handleChange = (e)=>
   {
-    console.log(e.target.value)
+      setSelected(e.target.value)
+
+ 
+      
+      onChoose(Selected===question.right_answer?true:false
+        ,question.id)
   }
-  
   return(
     
 
    <div className="EachQuestion" >
      
      <div className="question" >
-        <strong>
-        {counter}:   {question_content} ?
+        <strong className="question_title">
+         {n+1}. {question.question} ?
         </strong> 
-      <div className="choices">
-      <input type="radio" id="choice1" name={`choice${id+2}`} value={choice1}/>
-      <label htmlFor="choice1">{choice1}</label><br/>
+        <hr />
 
-      <input type="radio" id="html" name={`choice${id+2}`} value={choice2}/>
-      <label htmlFor="choice2">{choice2}</label><br/>
 
-      <input type="radio" id="html" name={`choice${id+2}`} value={choice3}/>
-      <label htmlFor="choice3">{choice3}</label><br/>
+        <label>
+          <input type="radio" 
+          onChange={handleChange}
+          name={`choice/${question.id}`}
+          checked={Selected===question.right_answer}
+          value={question.right_answer}
+          className="choice"/>
+          {question.right_answer}
+        </label>
+        <br/>
 
-      <input type="radio" id="right_answer" name={`choice${id+2}`} value={right_answer} onChange={handleChange}/>
-       <label htmlFor="right_answer">{right_answer}</label><br/>
-       
 
-        {/* {
-          R===1&&
-        <ul>
-          <li>1. {right_answer}</li>
-          <li>2. {choice2}</li>
-          <li>3. {choice3}</li>
-          <li>4. {choice1}</li>
-        </ul>
-        }
+        <label>
+          <input type="radio" 
+          onChange={handleChange}
+          name={`choice/${question.id}`}
+          checked={Selected===question.choice1}
+          value={question.choice1}
+          className="choice"/>
+          {question.choice1}
+        </label>
+        <br/>
 
-        {
-          R===2&&
-        <ul>
-          <li>1. {choice1}</li>
-          <li>2. {right_answer}</li>
-          <li>3. {choice3}</li>
-          <li>4. {choice2}</li>
-        </ul>
-        }
+        <label>
+          <input type="radio" 
+          onChange={handleChange}
+          name={`choice/${question.id}`}
+          checked={Selected===question.choice2}
+          value={question.choice2}
+          className="choice"/>
+          {question.choice2}
+        </label>
+        <br/>
 
-        {
-          R===3&&
-        <ul>
-          <li>1. {choice1}</li>
-          <li>2. {choice2}</li>
-          <li>3. {right_answer}</li>
-          <li>4. {choice3}</li>
-        </ul>
-        }
+        <label>
+          <input type="radio" 
+          onChange={handleChange}
+          name={`choice/${question.id}`}
+          checked={Selected===question.choice3}
+          value={question.choice3}
+          className="choice"/>
+          {question.choice3}
+        </label>
+        <br/>
 
-        {
-          R===4&&
-        <ul>
-          <li>1. {choice1}</li>
-          <li>2. {choice2}</li>
-          <li>3. {choice3}</li>
-          <li>4. {right_answer}</li>
-        </ul>
-        } */}
-          
-      </div>
      </div>
-     <hr />
      <br />
    </div>
   )

@@ -1,6 +1,8 @@
 *{
   box-sizing: border-box;
+  user-select:none;
 }
+
 
 body {
   cursor: default;
@@ -20,7 +22,7 @@ code {
 
 .EachAnime
 {
-  background-color: cadetblue;
+  /* background-color: cadetblue; */
   margin-bottom: 30px;
   margin-left:50px ;
   text-align: center;
@@ -28,6 +30,27 @@ code {
   width:30%;
   color: white;
 }
-.EachAnime:hover{
-  background-color: green;
+
+
+.EachQuestion
+{
+  margin: 20px;
+}
+.Choice
+{
+
+  color: white;
+  
+ background-color: black;
+  border-radius: 5px;
+
+   
+  padding: 2px;
+  text-align: center;
+  margin: 3px;
+  width:30%;
+}
+.choice{
+
+  margin: 10px;
 }

@@ -1,11 +1,12 @@
 import React from 'react'
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import './App.css';
-import Test from './Components/Test';
+import EachQuestion from './Components/EachQuestion';
 import LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
 import AnimesChoices from './Components/Animes'
 import SelectedAnimes from './Components/SelectedAnimes'
+import NextBtn from './Components/NextBtn'
 
   let  Username,Points,Level,Highest_score =""
   if (document.getElementById("username")!= null)
@@ -24,25 +25,39 @@ function App() {
   const AnimesPathUrl = "http://127.0.0.1:8000/allanimes"
   const QuestionsPathUrl = "http://127.0.0.1:8000/test"
 
-  //const QuestionsCount = 20
+  const NumberOfQuestions = 20
   const ChoicesLimit = 5 
-  //const [TestStarted,setTestStarted] = useState(false) 
+  const [animecounter,setanimecounter] = useState(0) 
+
+  const [points,setPoints] = useState(0) 
 
 
-  const [TestView,setshowTest] = useState(false)
+  const [TestView,setTestView] = useState(false)
+  const [Testended,setTestended] = useState(false)
+  const [TheNext,setTheNext]= useState(true)
+
+  const [nextbtn,setnextbtn] = useState(false)
+  const [submitbtn,setsubmitbtn]= useState(false)
+
   const [LeaderBoardView,setLeaderBoard] = useState(false)
   const [AnimesView,setAnimesView] = useState(false)
+  const [CurrentAnswer,setCurrentAnswer] = useState()
+  const [CurrentQuestionId,setQuestionId] = useState()
 
 
   const [TopOtakus,setUsers] = useState([])
   // const [loading,setLoading] = useState(false)
-  // const [RightAnswers,setAnswers] = useState(0)
+  const [RightAnswers,setRightAnswers] = useState(0)
+  const [QuestionNumber,setNumber] = useState(0)
   // const [Decided,setDecided] = useState(false)
   const [UserQuestions,setQuestions] = useState([])
 
   const [AllAnimes,setAllAnimes] = useState([])
 
   const [SelectedAnimes,setSelectedAnimes]=  useState([])
+
+  const [AnimeScore,setAnimeScore] = useState([{}])
+
 
 
 //get the leaderboard data
@@ -54,7 +69,7 @@ const Getusers  =  async()=>
   setUsers(Users)
   
   setLeaderBoard(true)
-  setshowTest(false)
+  setTestView(false)
   setAnimesView(false)
 
   //console.log(Users)
@@ -70,22 +85,29 @@ const GetAllAnimes = async()=>
 
   setAnimesView(true)
   setLeaderBoard(false)
-  setshowTest(false)
+  setTestView(false)
 
 //  console.log(animes)
 
 }
 const GetQuestions = async()=>
 {
+  SelectedAnimes.map((selected_anime)=>(
+    selected_anime.score=0
+  ))
+ 
+
   let anime_ids = SelectedAnimes.map((anime)=>anime.id)
   const response = await fetch((`${QuestionsPathUrl}/${anime_ids}`))
   const questions  = await response.json()
   setQuestions(questions)
   
-  setshowTest(true)
+  setTestView(true)
+  setnextbtn( true)
   setLeaderBoard(false)
   setAnimesView(false)
-  //console.log(questions)
+
+  console.log(questions)
 }
 
 
@@ -99,9 +121,10 @@ const ToggleAddRemoveAnime = (id) =>
  if( SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1)
  {
    
-    animediv.style.backgroundColor = "cadetblue"
+    //animediv.style.backgroundColor = "cadetblue"
     setSelectedAnimes(SelectedAnimes.filter((anime)=>anime.id!==id))
- }
+    setanimecounter(animecounter-1)
+  }
 
  // adding anime
  else
@@ -109,29 +132,104 @@ const ToggleAddRemoveAnime = (id) =>
    if(SelectedAnimes.length < ChoicesLimit)
    {
       setSelectedAnimes([...SelectedAnimes,...AllAnimes.filter((anime) =>anime.id===id)])
-      animediv.style.backgroundColor = "green" 
+      setanimecounter(animecounter+1)
+     // animediv.style.backgroundColor = "green" 
+      //console.log(SelectedAnimes)
     }
- 
+  
 }
+
+}
+const preChoose = (answer,id)=>
+{
+  setCurrentAnswer(answer)
+  setQuestionId(id)
+  
+} 
+
+const onChoose = (answer,anime_id)=>
+{
+  if(answer===true && TheNext)
+  {
+     
+      setPoints(points+1) 
+      setTheNext(false)
+    
+    for (let i =0;i<ChoicesLimit;i++)
+    {
+      if (SelectedAnimes[i].id===anime_id)
+      {
+        let items = [...SelectedAnimes]
+        let item =  {...items[i]}
+        item.score +=1
+        items[i] = item
+        setSelectedAnimes(items)
+
+      }
+
+    } 
+      
+  }
 
 
 }
+
+const nextquestion =()=>
+{
+  
+  // last question
+  if (QuestionNumber+1 ===UserQuestions.length-1)
+  {
+    setnextbtn(false)
+    setsubmitbtn(true)
+    onChoose(CurrentAnswer,CurrentQuestionId)
+  }
+
+  if(QuestionNumber < UserQuestions.length-1)
+  {
+    setNumber(QuestionNumber+1)
+    onChoose(CurrentAnswer,CurrentQuestionId)
+
+    setTheNext(true)
+  }
+    
+
+}
+
+//end quiz
+const Submit =()=>
+{
+  setTestended(true)
+}
+
   return (
     <div className="App">
 
        
         <h1>welcome {Username} </h1>
+        <h2>points : {points}</h2>
+
+
         {/* <h2> real otakus only !</h2>
         <Profile name={Username} level ={Level} points = {Points} highest_score ={Highest_score}/> */}
 
          {/* <button onClick={Getusers}>show current otaku competitors</button> */}
         <button onClick={GetAllAnimes}>check available animes</button>
+
         <button onClick={SelectedAnimes.length===ChoicesLimit?GetQuestions:undefined}>get my customized questions !</button>
       
-         {TestView?  <Test test_questions = {UserQuestions}/>:""}
+         {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber]} n={QuestionNumber} onChoose={preChoose}/>}
+
+         {nextbtn&& <NextBtn onClick={nextquestion}/>}
+
+         {submitbtn&&<button onClick={Submit}>
+           submit
+         </button>}
 
 
-        {AnimesView? <AnimesChoices all_animes = {AllAnimes} onSelect= {ToggleAddRemoveAnime}/>:""}
+        {AnimesView? <AnimesChoices all_animes = {AllAnimes} onSelect= {ToggleAddRemoveAnime}
+        choicesnumber={animecounter}/>:""}
+ 
          
         {/* {LeaderBoardView? <LeaderBoard otakus= {TopOtakus}/>:""}   */}
         <br/>
