@@ -41,8 +41,8 @@ function App() {
 
   const [LeaderBoardView,setLeaderBoard] = useState(false)
   const [AnimesView,setAnimesView] = useState(false)
-  const [CurrentAnswer,setCurrentAnswer] = useState()
-  const [CurrentQuestionId,setQuestionId] = useState()
+  const [CurrentAnswer,setCurrentAnswer] = useState(false)
+
 
 
   const [TopOtakus,setUsers] = useState([])
@@ -100,6 +100,7 @@ const GetQuestions = async()=>
   let anime_ids = SelectedAnimes.map((anime)=>anime.id)
   const response = await fetch((`${QuestionsPathUrl}/${anime_ids}`))
   const questions  = await response.json()
+
   setQuestions(questions)
   
   setTestView(true)
@@ -107,7 +108,8 @@ const GetQuestions = async()=>
   setLeaderBoard(false)
   setAnimesView(false)
 
-  console.log(questions)
+
+  
 }
 
 
@@ -140,15 +142,14 @@ const ToggleAddRemoveAnime = (id) =>
 }
 
 }
-const preChoose = (answer,id)=>
+const preChoose = (answer)=>
 {
-  setCurrentAnswer(answer)
-  setQuestionId(id)
-  
+  setCurrentAnswer(answer)  
 } 
 
-const onChoose = (answer,anime_id)=>
+const ActualChoose = (answer,anime_id)=>
 {
+
   if(answer===true && TheNext)
   {
      
@@ -170,26 +171,26 @@ const onChoose = (answer,anime_id)=>
     } 
       
   }
-
+  
 
 }
 
 const nextquestion =()=>
 {
   
-  // last question
+  // last question 
   if (QuestionNumber+1 ===UserQuestions.length-1)
   {
     setnextbtn(false)
     setsubmitbtn(true)
-    onChoose(CurrentAnswer,CurrentQuestionId)
+  
   }
 
   if(QuestionNumber < UserQuestions.length-1)
   {
+    ActualChoose(CurrentAnswer,UserQuestions[QuestionNumber].anime)
+   
     setNumber(QuestionNumber+1)
-    onChoose(CurrentAnswer,CurrentQuestionId)
-
     setTheNext(true)
   }
     
@@ -199,6 +200,9 @@ const nextquestion =()=>
 //end quiz
 const Submit =()=>
 {
+  // last question 
+  ActualChoose(CurrentAnswer,UserQuestions[QuestionNumber].anime)
+  
   setTestended(true)
 }
 
@@ -207,7 +211,8 @@ const Submit =()=>
 
        
         <h1>welcome {Username} </h1>
-        <h2>points : {points}</h2>
+        <h2>{points}</h2>
+    
 
 
         {/* <h2> real otakus only !</h2>
@@ -225,6 +230,16 @@ const Submit =()=>
          {submitbtn&&<button onClick={Submit}>
            submit
          </button>}
+
+         <br/>
+         <hr />
+          {SelectedAnimes.map((a)=>(
+            <p>
+              {a.anime_name} : {a.score}
+            </p>
+          ))}
+         <hr />
+         <br />
 
 
         {AnimesView? <AnimesChoices all_animes = {AllAnimes} onSelect= {ToggleAddRemoveAnime}

@@ -6,14 +6,11 @@ function EachQuestion({question,n,onChoose})
 
   const [Selected,setSelected] = useState("")
 
+
   const handleChange = (e)=>
   {
       setSelected(e.target.value)
-
- 
-      
-      onChoose(Selected===question.right_answer?true:false
-        ,question.id)
+     onChoose(e.target.value===question.right_answer?true:false)
   }
   return(
     
@@ -26,7 +23,7 @@ function EachQuestion({question,n,onChoose})
         </strong> 
         <hr />
 
-
+      
         <label>
           <input type="radio" 
           onChange={handleChange}

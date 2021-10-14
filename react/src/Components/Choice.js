@@ -1,23 +1,23 @@
-import { useState } from "react";
+// import { useState } from "react";
 
-const Choice = ({choice,right,onChoose,anime_id})=>
-{ 
+// const Choice = ({choice,right,onChoose,anime_id})=>
+// { 
     
-  const [color,setcolor]= useState("black")
+//   const [color,setcolor]= useState("black")
  
-  return(
+//   return(
   
-   <div className="Choice" onClick={()=>onChoose(right,anime_id)}>
-     <p>
-       {choice}
-     </p>
+//    <div className="Choice" onClick={()=>onChoose(right,anime_id)}>
+//      <p>
+//        {choice}
+//      </p>
 
-   </div>
+//    </div>
 
 
 
-  )
+//   )
 
-}
+// }
 
-export default Choice
+// export default Choice
