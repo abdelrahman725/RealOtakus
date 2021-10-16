@@ -24,4 +24,5 @@ class AnimeInfo(admin.ModelAdmin):
 @admin.register(AnimeScore)
 class AnimeScoreInfo(admin.ModelAdmin):
   list_display = ("user","anime","score")
-  list_filter = ("user",)
+  list_filter = ("user","anime")
+  search_fields = ("user__username","anime__anime_name")

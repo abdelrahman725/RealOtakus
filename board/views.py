@@ -4,13 +4,16 @@ from django.contrib import messages
 from django.urls import reverse
 import re
 import json
-from django.views.decorators.csrf import csrf_exempt
+
+# from django.views.decorators.csrf import requires_csrf_token, csrf_exempt
+
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics
 from .models import *
+from .models import AnimeScore
 from .serializers import *
 from .helpers import login_required
 
@@ -18,6 +21,7 @@ from .helpers import login_required
 def LoginRegister(request):
   if request.user.is_authenticated:
     return redirect("mainreact")
+    
   return render(request,"board/intro.html")
 
 #rendering react page
@@ -33,22 +37,83 @@ class GetUsers(generics.ListAPIView):
   serializer_class = UserSerializer
 
 
-# def UserData(request):
-#   #user's top 3 animes based on his score in each of them
+@login_required
+@api_view(["GET"])
+def TopAnimes(request):
+  #user's top 3 animes based on his score in each of them
+  query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
+  UserTopAnimesNames = Anime.objects.filter(id__in=query)
+  print(UserTopAnimesNames)
 
-#   AnimeScore.objects.filter(user=request.user).order_by('-score')[:3]
+
+  # serialized_data = AnimeScoreSerializer(UserTopAnimes,many=True)
+  serialized_data = AnimeSerializer(UserTopAnimesNames,many=True)
+
+  return Response(serialized_data.data)
+
+
+
+
+
+@login_required
+@api_view(["GET"])
+def GetAllAnimes(request):
+  print("from get all animes: ",request.user)
+  AllAnimes=  Anime.objects.all()
+  serialized_data = AnimeSerializer(AllAnimes,many=True)
+  return Response(serialized_data.data)
   
-
-class GetAllAnimes(generics.ListAPIView):
-  queryset = Anime.objects.all()
-  serializer_class = AnimeSerializer
-
+@login_required
 @api_view(["GET"])
 def GetTest(request,anime_ids):
+
   SelectedAnimes = map(int,re.split(",", anime_ids))
   selected_questions= Question.objects.filter(anime__id__in=SelectedAnimes)
   serialized_data = QuestionSerializer(selected_questions,many=True)
   return Response(serialized_data.data)
+
+
+@login_required
+@api_view(["PUT"])
+def UpdatePoints(request):
+  current_user= request.user
+  if current_user:
+    new_points = int(request.data["points"])
+
+    current_user.TestsCount+=1
+    current_user.points = new_points
+    if new_points > 100:
+      current_user.level = "intermediate"
+
+    current_user.save()
+
+    return JsonResponse({"message": "points updated successfully"}, status=201)
+    print()
+    print(f"{request.user.username} has submitted the test")
+    print()
+
+  return JsonResponse({"message": "error"}, status=201)
+
+
+@login_required
+@api_view(["POST"])
+def UpdateAnimesScores(request):
+  current_user = request.user
+  animes = request.data["AnimesResults"]
+
+  for anime in animes:
+    try:
+      potential_anime = AnimeScore.objects.get(user=current_user.id,anime=anime["id"])
+      potential_anime.score+= int(anime["score"])
+      potential_anime.save()
+    except:
+
+      new_anime_score = AnimeScore(user = current_user,anime=Anime.objects.get(pk=
+      anime["id"]),score=int(anime["score"]))
+
+      new_anime_score.save()
+
+  return JsonResponse({"message": "animes scores are updated"}, status=201)
 
 
 
@@ -90,8 +155,8 @@ def Login(request):
         else:
             # messages.info(request, 'wrong password or username')
             return redirect("LoginRegister")
-
-  
+       
+      
 @login_required
 def Logout(request):
     logout(request)

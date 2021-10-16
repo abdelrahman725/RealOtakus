@@ -8,28 +8,49 @@ import AnimesChoices from './Components/Animes'
 import SelectedAnimes from './Components/SelectedAnimes'
 import NextBtn from './Components/NextBtn'
 
-  let  Username,Points,Level,Highest_score =""
+  let  Username,Points,Level,Highest_score,CurrentUser=""
+  let ID = 0
   if (document.getElementById("username")!= null)
   {
     Username = document.getElementById("username").innerText;
     Points = document.getElementById("points").innerText;
     Highest_score = document.getElementById("highest_score").innerText;
     Level = document.getElementById("level").innerText;
+    CurrentUser = document.getElementById("LogedUser").innerText;
+    ID = document.getElementById("Id").innerText;
   }
 
 
 
 function App() {
 
-  const UsersPathUrl = "http://127.0.0.1:8000/leaderboard"
-  const AnimesPathUrl = "http://127.0.0.1:8000/allanimes"
-  const QuestionsPathUrl = "http://127.0.0.1:8000/test"
+  const getCookie =(name)=> {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+  
+  const CsrfToken = getCookie('csrftoken');
+  const UsersPathUrl = "http://localhost:8000/leaderboard"
+  const AnimesPathUrl = "http://localhost:8000/allanimes"
+  const QuestionsPathUrl = "http://localhost:8000/test"
 
   const NumberOfQuestions = 20
   const ChoicesLimit = 5 
   const [animecounter,setanimecounter] = useState(0) 
 
-  const [points,setPoints] = useState(0) 
+ const [userpoints,setPoints] = useState(parseInt(Points,10)) 
 
 
   const [TestView,setTestView] = useState(false)
@@ -73,14 +94,23 @@ const Getusers  =  async()=>
   setAnimesView(false)
 
   //console.log(Users)
-  
 }
+
+const topanimes = async()=>
+{
+  const response = await fetch("http://localhost:8000/topanimes")
+   const animes  = await response.json()
+   console.log(animes)
+
+}
+
 
 // fetch all the available animes for user to choose from and decide which anime to be in the test 
 const GetAllAnimes = async()=>
 {
   const response = await fetch(AnimesPathUrl)
-  const animes  = await response.json()
+   const animes  = await response.json()
+
   setAllAnimes(animes)
 
   setAnimesView(true)
@@ -115,9 +145,7 @@ const GetQuestions = async()=>
 
 
 const ToggleAddRemoveAnime = (id) =>
-{
-  let animediv = document.getElementById(`${id}`)
-  
+{  
 
   // removing anime 
  if( SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1)
@@ -138,6 +166,7 @@ const ToggleAddRemoveAnime = (id) =>
      // animediv.style.backgroundColor = "green" 
       //console.log(SelectedAnimes)
     }
+
   
 }
 
@@ -150,10 +179,10 @@ const preChoose = (answer)=>
 const ActualChoose = (answer,anime_id)=>
 {
 
-  if(answer===true && TheNext)
+  if(answer===true && TheNext && !Testended)
   {
      
-      setPoints(points+1) 
+      setPoints(userpoints+1) 
       setTheNext(false)
     
     for (let i =0;i<ChoicesLimit;i++)
@@ -193,17 +222,55 @@ const nextquestion =()=>
     setNumber(QuestionNumber+1)
     setTheNext(true)
   }
-    
 
 }
+
+
+const UpdateUserPoints = async()=>
+{
+ 
+  const res = await fetch(`http://localhost:8000/points`,{
+    method : 'PUT',
+    headers : {
+      'Content-type': 'application/json',
+      'X-CSRFToken': CsrfToken
+    },
+    body: JSON.stringify({
+      points:userpoints
+    })
+  })
+  const data = await res.json()
+  console.log(data)
+}
+
+
+const SendAnimesScores = async()=>
+{
+ 
+  const res = await fetch(`http://localhost:8000/animescore`,{
+    method : 'POST',
+    headers : {
+      'Content-type': 'application/json',
+      'X-CSRFToken': CsrfToken
+    },
+    body: JSON.stringify({
+      AnimesResults:SelectedAnimes
+    })
+  })
+  const data = await res.json()
+  console.log(data)
+}
+
+
 
 //end quiz
 const Submit =()=>
 {
   // last question 
   ActualChoose(CurrentAnswer,UserQuestions[QuestionNumber].anime)
-  
   setTestended(true)
+  UpdateUserPoints()
+  SendAnimesScores()
 }
 
   return (
@@ -211,18 +278,17 @@ const Submit =()=>
 
        
         <h1>welcome {Username} </h1>
-        <h2>{points}</h2>
-    
+        {/* <h2> {userpoints}</h2> */}
+      
 
-
-        {/* <h2> real otakus only !</h2>
-        <Profile name={Username} level ={Level} points = {Points} highest_score ={Highest_score}/> */}
+        {/* <Profile name={Username} level ={Level} points = {Points} highest_score ={Highest_score}/> */}
 
          {/* <button onClick={Getusers}>show current otaku competitors</button> */}
-        <button onClick={GetAllAnimes}>check available animes</button>
-
+        {/* <button onClick={GetAllAnimes}>check available animes</button> */}
+        <button onClick={topanimes}>check my top 3 animes based on score</button>
+{/* 
         <button onClick={SelectedAnimes.length===ChoicesLimit?GetQuestions:undefined}>get my customized questions !</button>
-      
+       */}
          {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber]} n={QuestionNumber} onChoose={preChoose}/>}
 
          {nextbtn&& <NextBtn onClick={nextquestion}/>}
@@ -231,17 +297,7 @@ const Submit =()=>
            submit
          </button>}
 
-         <br/>
-         <hr />
-          {SelectedAnimes.map((a)=>(
-            <p>
-              {a.anime_name} : {a.score}
-            </p>
-          ))}
-         <hr />
-         <br />
-
-
+  
         {AnimesView? <AnimesChoices all_animes = {AllAnimes} onSelect= {ToggleAddRemoveAnime}
         choicesnumber={animecounter}/>:""}
  

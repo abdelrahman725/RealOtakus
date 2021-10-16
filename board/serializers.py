@@ -21,7 +21,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 
-class AnimeScore(serializers.ModelSerializer):
+class AnimeScoreSerializer(serializers.ModelSerializer):
   class Meta:
     model = AnimeScore
     fields = '__all__'
