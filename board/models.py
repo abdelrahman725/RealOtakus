@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class User(AbstractUser):
   points = models.IntegerField(default=0)
-  highest_score =  models.IntegerField(default=0)
   level = models.CharField(max_length=30,null=False,default="beginner")
   TestsCount= models.IntegerField(default=0)  
   def __str__(self):
@@ -35,6 +34,8 @@ class AnimeScore(models.Model):
   user  = models.ForeignKey(User,on_delete=models.CASCADE) 
   anime = models.ForeignKey(Anime,on_delete=models.CASCADE)
   score = models.IntegerField(default=0)
+  TestsCount = models.IntegerField(default=0)
+  
   def __str__(self):
       return f"{self.user} total score on {self.anime} : {self.score}"
   

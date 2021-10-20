@@ -4,7 +4,7 @@ from .models import *
 
 @admin.register(User)
 class User_info(admin.ModelAdmin):
-  list_display=("id","username","points","highest_score","TestsCount")
+  list_display=("id","username","points","TestsCount")
   list_filter = ("level",)
   search_fields = ("username",)
 
@@ -23,6 +23,6 @@ class AnimeInfo(admin.ModelAdmin):
 
 @admin.register(AnimeScore)
 class AnimeScoreInfo(admin.ModelAdmin):
-  list_display = ("user","anime","score")
+  list_display = ("user","anime","score","TestsCount")
   list_filter = ("user","anime")
   search_fields = ("user__username","anime__anime_name")

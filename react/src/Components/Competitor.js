@@ -2,7 +2,9 @@
 const Competitor = ({name,points})=>{
   return (
     <div className="Competitor">
-       <p>otaku competitor:  ({name}) and has : {points} points</p>
+       <p> <strong> {name} </strong>
+           with <strong> {points} </strong>points
+      </p>
     </div>
   )
 }

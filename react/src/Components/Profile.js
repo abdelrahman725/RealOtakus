@@ -1,13 +1,17 @@
 
-const Profile = ({name,level,points,highest_score})=>
+const Profile = ({level,top_animes,tests_count,loading})=>
 {
   return(
     <div className="Profile">
-     <p>{name} profile</p>
      <p>level : {level} </p>
-     <p>points: {points} </p>
-     <p>highest_score:  {highest_score} </p>
+ 
+     <p>number of tests : {tests_count}</p>
+     {loading===false&&top_animes.map((topanime)=>(
+       <p>
+         {topanime.anime_name}
+       </p>
 
+     ))}
     </div>
   )
 

@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import React,LoginRegister,Register,Login,Logout,GetUsers,GetTest,UpdatePoints,GetAllAnimes,UpdateAnimesScores,TopAnimes
+from .views import React,LoginRegister,Register,Login,Logout,GetUsers,GetTest,UpdatePoints,GetAllAnimes,UpdateAnimesScores,TopAnimes,UserData
 
 urlpatterns = [
     
@@ -13,6 +13,7 @@ urlpatterns = [
     path('points', UpdatePoints,name="update_points"),
     path('animescore', UpdateAnimesScores,name="anime_score"),
     path('topanimes',TopAnimes,name="topanimes"),
+    path('userdata',UserData,name = "userdata"),
     path('test/<str:anime_ids>',GetTest),
     path('react',React ,name="mainreact")
 ]
