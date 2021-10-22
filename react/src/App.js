@@ -321,8 +321,8 @@ const showprofile = ()=>
 
   return (
 
-    // main branch
-    
+// main branch
+
     <div className="App">
       {/* sticky navbar for main user data */}
     <Navbar username={UserName} level={Level} points={userpoints}/>
