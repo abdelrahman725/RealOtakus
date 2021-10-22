@@ -334,7 +334,7 @@ const showprofile = ()=>
          <button onClick={Getusers}>LeaderBoard</button>
         <button onClick={GetAllAnimes}>
           {TestsCount>=1?
-          "take Qui":
+          "take Quiz":
           "take your first Test !"
           }
         </button>
