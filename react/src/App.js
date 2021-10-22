@@ -334,11 +334,11 @@ const showprofile = ()=>
          <button onClick={Getusers}>LeaderBoard</button>
         <button onClick={GetAllAnimes}>
           {TestsCount>=1?
-          "take Qui":
+          "take Quiz":
           "take your first Test !"
           }
         </button>
-  
+        
        
       {InterfaceView&& <Interface />}  
         
@@ -354,6 +354,7 @@ const showprofile = ()=>
          {submitbtn&&<button onClick={Submit}>
            submit
          </button>}
+         <button>new button</button>
 
   
          { ProfileView && 
