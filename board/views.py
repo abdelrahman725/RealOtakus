@@ -120,7 +120,7 @@ def UpdatePoints(request):
 
     current_user.save()
 
-    return JsonResponse({"message": "points updated successfully"}, status=201)
+    return JsonResponse({"message": "user points updated successfully"}, status=201)
     print()
     print(f"{request.user.username} has submitted the test")
     print()

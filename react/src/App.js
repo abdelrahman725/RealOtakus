@@ -335,9 +335,7 @@ const showprofile = ()=>
           "take your first Test !"
           }
         </button>
-        <button>
-          from dev branch
-        </button>
+  
        
       {InterfaceView&& <Interface />}  
         
