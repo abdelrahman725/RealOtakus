@@ -24,6 +24,7 @@ def LoginRegister(request):
   return render(request,"board/intro.html")
 
 #rendering react page
+
 @login_required
 def React(request):
   return render(request,"index.html")
