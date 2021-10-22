@@ -1,12 +1,14 @@
 import React from 'react'
 import {useState,useEffect} from 'react'
 import './App.css';
-import EachQuestion from './Components/EachQuestion';
+import EachQuestion from './Components/EachQuestion'
 import LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
 import AnimesChoices from './Components/Animes'
 import SelectedAnimes from './Components/SelectedAnimes'
 import NextBtn from './Components/NextBtn'
+import Interface from './Components/Interface'
+import Navbar from './Components/Navbar';
 
 
 
@@ -46,6 +48,7 @@ function App() {
   const [TestView,setTestView] = useState(false)
   const [AnimesView,setAnimesView] = useState(false)
   const [ProfileView,setProfileView]  = useState(false)
+  const [InterfaceView,setInterfaceView]  = useState(true)
 
   
   const [Testended,setTestended] = useState(false)
@@ -124,7 +127,7 @@ const Getusers  =  async()=>
   setTestView(false)
   setAnimesView(false)
   setProfileView(false)
-
+  setInterfaceView(false)
   //console.log(Users)
 }
 
@@ -135,7 +138,6 @@ const topanimes = async()=>
   setTopAnimes(animes)
   setTopAnimesLoading(false)
 }
-
 
 // fetch all the available animes for user to choose from and decide which anime to be in the test 
 const GetAllAnimes = async()=>
@@ -148,6 +150,7 @@ const GetAllAnimes = async()=>
   setAnimesView(true)
   setLeaderBoard(false)
   setProfileView(false)
+  setInterfaceView(false)
   setTestView(false)
 
 //  console.log(animes)
@@ -172,8 +175,6 @@ const GetQuestions = async()=>
   setAnimesView(false)
   setProfileView(false)
 
-
-  
 }
 
 
@@ -299,7 +300,6 @@ const nextquestion =()=>
   // console.log(SelectedAnimes)
 }
 
-
 //end quiz
 const Submit = async ()=>
 {
@@ -314,26 +314,36 @@ const showprofile = ()=>
   setTestView(false)
   setLeaderBoard(false)
   setAnimesView(false)
+  setInterfaceView(false)
   setTopAnimesLoading(true)
   topanimes()
 }
 
   return (
     <div className="App">
-
-          <h1>{UserName}</h1>
-          <h2>points: {userpoints}</h2>
+      {/* sticky navbar for main user data */}
+    <Navbar username={UserName} level={Level} points={userpoints}/>
           
           <button onClick={showprofile}>
             profile
           </button> 
       
-         <button onClick={Getusers}>show current otaku competitors</button>
-        <button onClick={GetAllAnimes}>check available animes</button>
+         <button onClick={Getusers}>LeaderBoard</button>
+        <button onClick={GetAllAnimes}>
+          {TestsCount>=1?
+          "take Qui":
+          "take your first Test !"
+          }
+        </button>
+        <button>
+          from dev branch
+        </button>
        
+      {InterfaceView&& <Interface />}  
         
-        <button onClick={SelectedAnimes.length===ChoicesLimit?GetQuestions:undefined}>get my customized questions !</button>
-      
+        {SelectedAnimes.length===ChoicesLimit &&
+        <button onClick={SelectedAnimes.length===ChoicesLimit?GetQuestions:undefined}>start</button>
+        }
          {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber]} n={QuestionNumber} onChoose={preChoose}/>}
           {TestView &&
           <h3>{UserQuestions.length}</h3>
@@ -357,7 +367,7 @@ const showprofile = ()=>
         choicesnumber={animecounter}/>:""}
  
          
-        {LeaderBoardView? <LeaderBoard otakus= {TopOtakus}/>:""}  
+        {LeaderBoardView&& <LeaderBoard otakus= {TopOtakus}/>}  
         <br/>
 
    
