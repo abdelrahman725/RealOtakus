@@ -331,6 +331,7 @@ const showprofile = ()=>
   topanimes()
 }
 
+
   return (
 
     // Dev Branch
@@ -364,7 +365,22 @@ const showprofile = ()=>
         {AnimesView&& <AnimesChoices all_animes = {AllAnimes} onSelect= {ToggleAddRemoveAnime}
         choicesnumber={animecounter}/>}
 
-         {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber]} n={QuestionNumber} onChoose={preChoose}/>}
+
+
+        {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber].question}
+         id =  {UserQuestions[QuestionNumber].id}
+         right_answer = {UserQuestions[QuestionNumber].right_answer}
+          choices = {[UserQuestions[QuestionNumber].right_answer,
+          UserQuestions[QuestionNumber].choice1,
+          UserQuestions[QuestionNumber].choice2,
+          UserQuestions[QuestionNumber].choice3,
+           ]}
+        
+         n={QuestionNumber} onChoose={preChoose}/>}
+
+
+
+
           {TestView &&
           <h3>{UserQuestions.length}</h3>
           }
