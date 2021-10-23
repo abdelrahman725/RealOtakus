@@ -16,6 +16,8 @@ from .models import AnimeScore
 from .serializers import *
 from .helpers import login_required
 
+#main branch
+
 #rendering django template
 def LoginRegister(request):
   if request.user.is_authenticated:
