@@ -105,8 +105,8 @@ useEffect(()=>{
 
   if (Testended===true)
   {    
-    // UpdateUserPoints()
-    // SendAnimesScores() 
+    UpdateUserPoints(TestScore)
+    SendAnimesScores() 
    setPoints(userpoints+TestScore)
       
   }
@@ -251,7 +251,7 @@ const ActualChoose = (answer,anime_id,fromsubmit)=>
 
 }
 
-const UpdateUserPoints = async()=>
+const UpdateUserPoints = async(test_points)=>
 {
  
   const res = await fetch(`http://localhost:8000/points`,{
@@ -261,7 +261,7 @@ const UpdateUserPoints = async()=>
       'X-CSRFToken': CsrfToken
     },
     body: JSON.stringify({
-      points:userpoints
+      points:test_points
     })
   })
   const data = await res.json()

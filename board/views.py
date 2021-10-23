@@ -109,14 +109,14 @@ def GetTest(request,anime_ids):
 def UpdatePoints(request):
   current_user= request.user
   if current_user:
-    new_points = int(request.data["points"])
+    coming_test_points = int(request.data["points"])
 
     current_user.TestsCount+=1
-    current_user.points = new_points
+    current_user.points += coming_test_points
     
-    if new_points > 1000:
+    if current_user.points > 1000:
       current_user.level = "advanced"
-    elif new_points > 200:
+    elif current_user.points > 200:
       current_user.level = "intermediate" 
 
     current_user.save()
@@ -139,12 +139,12 @@ def UpdateAnimesScores(request):
     try:
       potential_anime = AnimeScore.objects.get(user=current_user.id,anime=anime["id"])
       potential_anime.score+= int(anime["score"])
-      #potential_anime.TestsCount+=1
+      potential_anime.TestsCount+=1
       potential_anime.save()
     except:
       new_anime_score = AnimeScore(user = current_user,anime=Anime.objects.get(pk=
       anime["id"]),score=int(anime["score"]))
-      #new_anime_score.TestsCount=1
+      new_anime_score.TestsCount=1
 
       new_anime_score.save()
 
