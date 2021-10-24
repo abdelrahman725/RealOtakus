@@ -23,26 +23,39 @@ code {
 .EachAnime
 {
   /* background-color: cadetblue; */
+  display: flex;
   margin-bottom: 20px;
   border-radius: 5px;
   margin-left:20px ;
   text-align: center;
   padding: 12px;
-  width:17%;
+  padding-right: 0px;
+  
+ width: 20%;
   color: white;
+  
+  align-items: center;
+  justify-content: space-between;
+
 }
 
-
+.AnimeName
+{
+  
+}
 .EachQuestion
 {
   margin: 20px;
 }
-.Choice
-{
 
-
-}
 .choice{
 
   margin: 10px;
+}
+#AnimeImage
+{
+  
+  
+
+  
 }
