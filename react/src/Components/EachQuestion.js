@@ -1,6 +1,4 @@
 import { useState,useEffect } from "react"
-import Choice from "./Choice"
-
 function EachQuestion({question,n,onChoose,right_answer,id,choices})
 {
 
@@ -26,7 +24,7 @@ const [RandomChioces,setRandomChoices] = useState()
 
   useEffect(()=>{
    setRandomChoices(Randomise_Choices(choices)) 
-
+  
   },[n])
   
   const handleChange = (e)=>

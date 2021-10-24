@@ -1,10 +1,11 @@
-
-const SelectedAnimes = ({})=>
-{
-  return(
-    <div className="SelectedAnimes">
-        selected anime
-    </div>
-  )
-}
-export default SelectedAnimes;
+// const SelectedAnimes = ()=>
+// {
+//   return(
+//     <div className="SelectedAnimes">
+//         <p>
+//           {"whatever"}
+//         </p>
+//     </div>
+//   )
+// }
+// export default SelectedAnimes
