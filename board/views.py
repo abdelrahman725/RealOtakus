@@ -16,7 +16,8 @@ from .models import AnimeScore
 from .serializers import *
 from .helpers import login_required
 
-#main branch
+def TestUser():
+  return User.objects.get(username="bedo")
 
 #rendering django template
 def LoginRegister(request):
@@ -27,7 +28,6 @@ def LoginRegister(request):
 
 #rendering react page
 
-@login_required
 def React(request):
   return render(request,"index.html")
 
@@ -35,21 +35,21 @@ class GetUsers(generics.ListAPIView):
   queryset = User.objects.exclude(pk=1).order_by('-points')[:10]
   serializer_class = UserSerializer
 
-@login_required
+
 @api_view(["GET"])
 def UserData(request):
-  userdata = User.objects.get(pk=request.user.id)
+  userdata = TestUser()
   serialized_data = UserSerializer(userdata,many=False)
 
   return Response(serialized_data.data)
 
 
-@login_required
+
 @api_view(["GET"])
 def TopAnimes(request):
   #user's top 3 animes based on his score in each of them
 
-  query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
+  query =  list(AnimeScore.objects.filter(user=TestUser()).order_by('-score')[:3].values_list('anime',flat=True))
 
   UserTopAnimesNames = Anime.objects.filter(id__in=query)
 
@@ -59,11 +59,8 @@ def TopAnimes(request):
   return Response(serialized_data.data)
 
 
-
-@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
-  print("from get all animes: ",request.user)
   AllAnimes=  Anime.objects.all()
   serialized_data = AnimeSerializer(AllAnimes,many=True)
   return Response(serialized_data.data)
@@ -92,7 +89,7 @@ def GetAllAnimes(request):
 #   return Response(serialized_data.data)
 
 
-@login_required
+
 @api_view(["GET"])
 def GetTest(request,anime_ids):
   SelectedAnimes = map(int,re.split(",", anime_ids))
@@ -111,14 +108,14 @@ def GetTest(request,anime_ids):
 def UpdatePoints(request):
   current_user= request.user
   if current_user:
-    coming_test_points = int(request.data["points"])
+    new_points = int(request.data["points"])
 
     current_user.TestsCount+=1
-    current_user.points += coming_test_points
+    current_user.points = new_points
     
-    if current_user.points > 1000:
+    if new_points > 1000:
       current_user.level = "advanced"
-    elif current_user.points > 200:
+    elif new_points > 200:
       current_user.level = "intermediate" 
 
     current_user.save()
@@ -141,12 +138,12 @@ def UpdateAnimesScores(request):
     try:
       potential_anime = AnimeScore.objects.get(user=current_user.id,anime=anime["id"])
       potential_anime.score+= int(anime["score"])
-      potential_anime.TestsCount+=1
+      #potential_anime.TestsCount+=1
       potential_anime.save()
     except:
       new_anime_score = AnimeScore(user = current_user,anime=Anime.objects.get(pk=
       anime["id"]),score=int(anime["score"]))
-      new_anime_score.TestsCount=1
+      #new_anime_score.TestsCount=1
 
       new_anime_score.save()
 
