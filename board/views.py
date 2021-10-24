@@ -16,7 +16,7 @@ from .models import AnimeScore
 from .serializers import *
 from .helpers import login_required
 
-
+# main branch wlahy
 
 #rendering django template
 def LoginRegister(request):
