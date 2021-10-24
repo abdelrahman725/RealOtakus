@@ -16,8 +16,7 @@ from .models import AnimeScore
 from .serializers import *
 from .helpers import login_required
 
-def TestUser():
-  return User.objects.get(username="bedo")
+
 
 #rendering django template
 def LoginRegister(request):
@@ -27,7 +26,7 @@ def LoginRegister(request):
   return render(request,"board/intro.html")
 
 #rendering react page
-
+@login_required
 def React(request):
   return render(request,"index.html")
 
@@ -35,21 +34,21 @@ class GetUsers(generics.ListAPIView):
   queryset = User.objects.exclude(pk=1).order_by('-points')[:10]
   serializer_class = UserSerializer
 
-
+@login_required
 @api_view(["GET"])
 def UserData(request):
-  userdata = TestUser()
+  userdata = request.user
   serialized_data = UserSerializer(userdata,many=False)
 
   return Response(serialized_data.data)
 
 
-
+@login_required
 @api_view(["GET"])
 def TopAnimes(request):
   #user's top 3 animes based on his score in each of them
 
-  query =  list(AnimeScore.objects.filter(user=TestUser()).order_by('-score')[:3].values_list('anime',flat=True))
+  query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
 
   UserTopAnimesNames = Anime.objects.filter(id__in=query)
 
@@ -58,7 +57,7 @@ def TopAnimes(request):
 
   return Response(serialized_data.data)
 
-
+@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
   AllAnimes=  Anime.objects.all()
@@ -89,7 +88,7 @@ def GetAllAnimes(request):
 #   return Response(serialized_data.data)
 
 
-
+@login_required
 @api_view(["GET"])
 def GetTest(request,anime_ids):
   SelectedAnimes = map(int,re.split(",", anime_ids))
