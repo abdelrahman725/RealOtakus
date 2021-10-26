@@ -14,7 +14,7 @@ const EachAnime = ({eachanime,onSelect,choicesnumber})=>
 
     <div id ={eachanime.id}className="EachAnime" onClick={onChoose} 
     style={{backgroundColor:color}}>
-      <img id="AnimeImage" src="https://i.pinimg.com/originals/e0/e4/eb/e0e4eb382a88933992fd58273293c5f0.png" alt="logo" 
+      <img id="AnimeImage" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_Death_Note.jpg" alt="logo" 
        width="40" height="50"
        />
       <div className="AnimeName">
