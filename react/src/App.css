@@ -1,0 +1,63 @@
+.EachAnime {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  border-radius: 10px;
+  text-align: center;
+  padding: 12px;
+  padding-right: 0px;
+  width: 30%;
+  color: white;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.Navbar {
+  background-color: royalblue;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.Navbar div {
+  background-color: royalblue;
+  padding: 9px;
+  margin: 8px;
+  color: white;
+  border-radius: 10px;
+  margin-right: 100px;
+}
+
+.Navbar .UserName {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.Navbar .UserName .PersonIcon {
+  margin-right: 10px;
+}
+
+.Navbar .UserName:hover {
+  background-color: #1644ce;
+  cursor: pointer;
+}
+
+.LeaderBoard {
+  max-width: 85%;
+}
+/*# sourceMappingURL=App.css.map */

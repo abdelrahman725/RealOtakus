@@ -4,7 +4,7 @@ const AnimesChoices = ({all_animes,onSelect,color,choicesnumber,number})=>
 {
   return(
     <div className="AnimesChoices">
-      <hr/>
+      
       choose 5 animes you are confident about{" "}
         <strong>
         {choicesnumber}/5:
@@ -19,7 +19,7 @@ const AnimesChoices = ({all_animes,onSelect,color,choicesnumber,number})=>
         />
 
       ))}
-      <hr/>
+
     </div>
   )
 }

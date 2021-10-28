@@ -1,11 +1,11 @@
 
-const Competitor = ({name,points})=>{
+const Competitor = ({name,points,level})=>{
   return (
-    <div className="Competitor">
-       <p> <strong> {name} </strong>
-           with <strong> {points} </strong>points
-      </p>
-    </div>
+    <tr className="Competitor">
+       <td>{name} </td>
+       <td>{points}</td>
+       <td>{level}</td>
+    </tr>
   )
 }
 

@@ -1,11 +1,20 @@
-
-const Navbar = ({username,level,points})=>
+import PersonIcon   from '@material-ui/icons/Person'
+const Navbar = ({username,level,points,showprofile})=>
 {
   return(
     <div className="Navbar">
-        {username} , 
-        {level} , 
-        {points}
+        <div className="UserName" onClick={showprofile} >
+          <PersonIcon  className="PersonIcon"/>
+          {username} 
+        </div>
+
+        <div className="points">
+          points :<strong> {points} </strong>
+        </div>
+        <div className="level">
+          {level} 
+        </div>
+
     </div>
   )
 }

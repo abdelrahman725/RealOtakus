@@ -1,0 +1,64 @@
+%default{
+  color:white;
+}
+
+%buttons{
+  color:blue;
+}
+
+$defaul_round:  10px;
+
+.EachAnime
+{
+  display: flex;
+  margin-bottom: 20px;
+  margin-left:20px ;
+  border-radius: $defaul_round;
+  text-align: center;
+  padding: 12px;
+  padding-right: 0px;
+  width: 30%;
+  color: white;
+  align-items: center;
+  justify-content: center;
+}
+
+.EachQuestion
+{
+.choice{
+    
+  }
+  
+}
+
+.Navbar
+{
+  background-color: royalblue;
+  border-radius: $defaul_round;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+  div{
+    background-color: royalblue;
+ 
+    padding: 9px;
+    margin:8px;
+    color:white;
+    border-radius: $defaul_round;
+    margin-right: 100px;
+  }
+  .UserName{
+    display: flex;
+    align-items: center;
+   .PersonIcon
+   {
+     margin-right: 10px;
+   }
+  }
+  .UserName:hover{
+    background-color: rgb(22, 68, 206);
+    cursor: pointer;
+  }
+}
+
+.LeaderBoard {max-width: 85%;}

@@ -9,7 +9,8 @@ const NextBtn = ({onClick})=>
      </button>
    
    </div>
-  )
+
+)
 
 }
 

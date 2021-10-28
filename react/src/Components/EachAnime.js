@@ -10,19 +10,15 @@ const EachAnime = ({eachanime,onSelect,choicesnumber})=>
       setcolor("cadetblue")
   }
   return(
-    
+ 
 
-    <div id ={eachanime.id}className="EachAnime" onClick={onChoose} 
-    style={{backgroundColor:color}}>
-      <img id="AnimeImage" src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_Death_Note.jpg" alt="logo" 
-       width="40" height="50"
-       />
+      <div id ={eachanime.id}
+      className="EachAnime" onClick={onChoose} 
+       style={{backgroundColor:color}}>
       <div className="AnimeName">
       {eachanime.anime_name}
       </div>
-      <div>
-      </div>
-      
+ 
     </div>
   )
 }

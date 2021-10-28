@@ -26,7 +26,7 @@ SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.1.5"]
 
 
 # Application definition
