@@ -1,52 +1,44 @@
-%default{
-  color:white;
-}
-
-%buttons{
-  color:blue;
-}
 
 $defaul_round:  10px;
 
-.EachAnime
+.App
 {
   display: flex;
+  flex-direction: column;
+  div{
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.EachAnime
+{
   margin-bottom: 20px;
-  margin-left:20px ;
   border-radius: $defaul_round;
   text-align: center;
-  padding: 12px;
-  padding-right: 0px;
-  width: 30%;
+  padding: 12px;  
   color: white;
-  align-items: center;
-  justify-content: center;
-}
-
-.EachQuestion
-{
-.choice{
-    
-  }
-  
 }
 
 .Navbar
 {
-  background-color: royalblue;
-  border-radius: $defaul_round;
-  margin-bottom: 10px;
+  
+ 
   display: flex;
-  justify-content: flex-start;
+  z-index:2;
+  position: sticky;  
+  background-color: royalblue;
+  width:60%;
+  border-radius: $defaul_round;
+  justify-content: space-between;
+  padding: 8px;
+  margin-bottom: 40px;
+ 
   div{
     background-color: royalblue;
- 
-    padding: 9px;
-    margin:8px;
     color:white;
+    padding: 10px;
     border-radius: $defaul_round;
-    margin-right: 100px;
-  }
+    }
   .UserName{
     display: flex;
     align-items: center;
@@ -61,4 +53,27 @@ $defaul_round:  10px;
   }
 }
 
-.LeaderBoard {max-width: 85%;}
+.ButtonsGroup
+{
+  width: 20%;
+  .ButtonChild
+  {
+    margin-bottom: 20px;
+  }
+}
+@media (max-width:700px) {
+  .Navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+  .ButtonsGroup
+  {
+    min-width:150px;
+  }
+}
+
+.LeaderBoard
+{
+  margin-top: 30px;
+  width: 85%;
+}

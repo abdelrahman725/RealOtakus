@@ -5,7 +5,7 @@ import EachQuestion from './Components/EachQuestion'
 import LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
 import AnimesChoices from './Components/Animes'
-import NextBtn from './Components/NextBtn'
+
 import Interface from './Components/Interface'
 import Navbar from './Components/Navbar'
 import Result from './Components/Result'
@@ -15,14 +15,14 @@ import Result from './Components/Result'
 import {Button, ButtonGroup} from '@material-ui/core'
 // //Material Icons :
 
-import SaveIcon from '@material-ui/icons/Save'
-import DeleteIcon from '@material-ui/icons/Delete'
+ 
 import ExitToAppRounded from '@material-ui/icons/ExitToAppRounded'
+
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded'
 import PeopleRounded  from '@material-ui/icons/PeopleRounded'
 import PlayArrowRounded  from '@material-ui/icons/PlayArrowRounded'
 import ArrowUpwardIcon   from '@material-ui/icons/ArrowUpward'
-import PersonIcon   from '@material-ui/icons/Person'
+
 
 
 function App() {
@@ -42,12 +42,12 @@ function App() {
     }
     return cookieValue;
 }
-  const IP= "192.168.1.5"
+
   const CsrfToken = getCookie('csrftoken')
-  const UsersPathUrl = `http://${IP}:8000/leaderboard`
-  const AnimesPathUrl = `http://${IP}:8000/allanimes`
-  const QuestionsPathUrl = `http://${IP}:8000/test`
-  const UserDataPathUrl = `http://${IP}:8000/userdata`
+  const UsersPathUrl = "http://localhost:8000/leaderboard"
+  const AnimesPathUrl = "http://localhost:8000/allanimes"
+  const QuestionsPathUrl = "http://localhost:8000/test"
+  const UserDataPathUrl = "http://localhost:8000/userdata"
 
   const NumberOfQuestions = 20
   const ChoicesLimit = 5 
@@ -156,7 +156,7 @@ const Getusers  =  async()=>
 
 const topanimes = async()=>
 {
-  const response = await fetch(`http://${IP}:8000/topanimes`)
+  const response = await fetch("http://localhost:8000/topanimes")
   const animes  = await response.json()  
   setTopAnimes(animes)
   setTopAnimesLoading(false)
@@ -278,7 +278,7 @@ const ActualChoose = (answer,anime_id,fromsubmit)=>
 const UpdateUserPoints = async()=>
 {
  
-  const res = await fetch(`http://${IP}:8000/points`,{
+  const res = await fetch(`http://localhost:8000/points`,{
     method : 'PUT',
     headers : {
       'Content-type': 'application/json',
@@ -296,7 +296,7 @@ const UpdateUserPoints = async()=>
 const SendAnimesScores = async()=>
 {
  
-  const res = await fetch(`http://${IP}:8000/animescore`,{
+  const res = await fetch(`http://localhost:8000/animescore`,{
     method : 'POST',
     headers : {
       'Content-type': 'application/json',
@@ -363,57 +363,62 @@ const showprofile = ()=>
     <div className="App">
 
       {/* sticky navbar for main user data */}
+
       <Navbar username={UserName} level={Level} points={userpoints} 
       showprofile={!TestView&&showprofile}/>
     
-
-     {!TestView&&
-      <Button onClick={Getusers} 
-      size="small"
-      variant="contained"  
-      startIcon={<PeopleRounded/>}>
-        LeaderBoard
-      </Button>
-     }
-
-
-    
-      
-      {!TestView && !AnimesView&&
-        <Button onClick={ShowAllAnimes} 
-        size="small"
-        variant="contained"  
-        startIcon={""}>
-              {TestsCount>=1?
-            "take Quiz":
-            "take your first Test !"  }
-        </Button>
-        } 
-
-  
-
-        {TestView&&
-         <Button onClick={ExitTestMode} 
-         variant="outlined"  disableElevation
-         startIcon={<ExitToAppRounded/>}>
-           exit test mode
-         </Button>
+    <ButtonGroup orientation="vertical" className="ButtonsGroup" >  
+        {!TestView&&
+            <Button 
+            className="ButtonChild"
+            onClick={Getusers} 
+            size="small"
+            variant="contained"  
+            startIcon={<PeopleRounded/>}>
+              LeaderBoard
+            </Button>
         }
+          
+          {!TestView && !AnimesView&&
+              <Button 
+              className="ButtonChild"
+              onClick={ShowAllAnimes} 
+                size="small"
+                variant="contained" >
+                {TestsCount>=1?
+                "take Quiz":
+                "take your first Test !"  }
+              </Button>
+            } 
+             {AnimesView && animecounter===ChoicesLimit &&
+             <Button 
+             className="ButtonChild" onClick={GetQuestions} 
+              variant="contained"
+              color="primary"  disableElevation
+              startIcon={<PlayArrowRounded/>}>
+                start
+              </Button>
+        }
+  
+          {TestView&&
+          <Button 
+          className="ButtonChild"
+          onClick={ExitTestMode} 
+          variant="outlined"  disableElevation
+          startIcon={<ExitToAppRounded/>}>
+            exit test mode
+          </Button>
+          }
       
         
-       
-      {InterfaceView&& <Interface />} 
-      {ResultView&&<Result score={TestScore} NumberOfQuestions={NumberOfQuestions}/>} 
+        </ButtonGroup>
         
         
-      {AnimesView && animecounter===ChoicesLimit &&
-        <Button onClick={GetQuestions} 
-        variant="contained"
-        color="primary"  disableElevation
-        startIcon={<PlayArrowRounded/>}>
-          start
-        </Button>
-      }
+     
+        {InterfaceView&& <Interface />} 
+        {ResultView&&<Result score={TestScore} NumberOfQuestions={NumberOfQuestions}/>} 
+
+
         {AnimesView&& <AnimesChoices all_animes = {AllAnimes} onSelect= {ToggleAddRemoveAnime}
         choicesnumber={animecounter}/>}
 
@@ -433,27 +438,25 @@ const showprofile = ()=>
 
 
 
-          {TestView &&
-          <h3>{UserQuestions.length}</h3>
-          }
  
+<ButtonGroup orientation="vertical" className="ButtonsGroup">  
 
-         {TestView&& nextbtn&&
-         <Button onClick={nextquestion} 
-         size="small"
-         style={{color:"revert"}}
-         variant="contained"  disableElevation
-         endIcon={< NavigateNextRoundedIcon/>}>
-           next
-         </Button>
-        }
+          {TestView&& nextbtn&&
+          <Button onClick={nextquestion} 
+          className="ButtonChild"
+          size="small"
+          variant="contained"  disableElevation
+          endIcon={< NavigateNextRoundedIcon/>}>
+            next
+          </Button>
+          }
 
+          {TestView&&submitbtn&&
+          <Button className="ButtonChild" onClick={Submit} variant="contained" endIcon={<ArrowUpwardIcon/>}>
+            submit
+          </Button>}
+  </ButtonGroup>
 
-         {TestView&&submitbtn&&
-         <Button onClick={Submit} variant="contained" endIcon={<ArrowUpwardIcon/>}>
-           submit
-         </Button>}
-       
          { ProfileView && 
         <Profile  level={Level}
         tests_count={TestsCount}

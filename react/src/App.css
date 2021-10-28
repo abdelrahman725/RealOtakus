@@ -1,42 +1,48 @@
-.EachAnime {
+.App {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.App div {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.EachAnime {
   margin-bottom: 20px;
-  margin-left: 20px;
   border-radius: 10px;
   text-align: center;
   padding: 12px;
-  padding-right: 0px;
-  width: 30%;
   color: white;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
 }
 
 .Navbar {
-  background-color: royalblue;
-  border-radius: 10px;
-  margin-bottom: 10px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  z-index: 2;
+  position: -webkit-sticky;
+  position: sticky;
+  background-color: royalblue;
+  width: 60%;
+  border-radius: 10px;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 8px;
+  margin-bottom: 40px;
 }
 
 .Navbar div {
   background-color: royalblue;
-  padding: 9px;
-  margin: 8px;
   color: white;
+  padding: 10px;
   border-radius: 10px;
-  margin-right: 100px;
 }
 
 .Navbar .UserName {
@@ -57,7 +63,31 @@
   cursor: pointer;
 }
 
+.ButtonsGroup {
+  width: 20%;
+}
+
+.ButtonsGroup .ButtonChild {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 700px) {
+  .Navbar {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .ButtonsGroup {
+    min-width: 150px;
+  }
+}
+
 .LeaderBoard {
-  max-width: 85%;
+  margin-top: 30px;
+  width: 85%;
 }
 /*# sourceMappingURL=App.css.map */

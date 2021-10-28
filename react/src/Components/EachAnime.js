@@ -1,13 +1,13 @@
 import { useState } from "react";
 const EachAnime = ({eachanime,onSelect,choicesnumber})=>
 {
-  const [color,setcolor] = useState("cadetblue")
+  const [color,setcolor] = useState("black")
   const onChoose =()=>
   {
       onSelect(eachanime.id)
-      color==="cadetblue"?
+      color==="black"?
       choicesnumber<5 && setcolor("green"):
-      setcolor("cadetblue")
+      setcolor("black")
   }
   return(
  
