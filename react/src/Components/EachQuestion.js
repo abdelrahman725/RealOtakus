@@ -65,15 +65,3 @@ const handleChange = (e)=>
 }
 
 export default EachQuestion
-
-// <div className="Choice" key={index}>
-//     <label>
-  //       <input type="radio" 
-  //       onChange={handleChange}
-  //       name={`choice/${id}`}
-  //       checked={Selected===each_choice}
-  //       value={each_choice}
-  //       className="choice"/>
-  //       {each_choice}
-  //     </label>
-  // </div>

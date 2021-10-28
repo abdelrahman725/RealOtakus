@@ -42,12 +42,12 @@ function App() {
     }
     return cookieValue;
 }
-
+  const IP = "localhost"
   const CsrfToken = getCookie('csrftoken')
-  const UsersPathUrl = "http://localhost:8000/leaderboard"
-  const AnimesPathUrl = "http://localhost:8000/allanimes"
-  const QuestionsPathUrl = "http://localhost:8000/test"
-  const UserDataPathUrl = "http://localhost:8000/userdata"
+  const UsersPathUrl = `http://${IP}:8000/leaderboard`
+  const AnimesPathUrl = `http://${IP}:8000/allanimes`
+  const QuestionsPathUrl = `http://${IP}:8000/test`
+  const UserDataPathUrl = `http://${IP}:8000/userdata`
 
   const NumberOfQuestions = 20
   const ChoicesLimit = 5 
@@ -156,7 +156,7 @@ const Getusers  =  async()=>
 
 const topanimes = async()=>
 {
-  const response = await fetch("http://localhost:8000/topanimes")
+  const response = await fetch("http://${IP}:8000/topanimes")
   const animes  = await response.json()  
   setTopAnimes(animes)
   setTopAnimesLoading(false)
@@ -278,7 +278,7 @@ const ActualChoose = (answer,anime_id,fromsubmit)=>
 const UpdateUserPoints = async()=>
 {
  
-  const res = await fetch(`http://localhost:8000/points`,{
+  const res = await fetch(`http://${IP}:8000/points`,{
     method : 'PUT',
     headers : {
       'Content-type': 'application/json',
@@ -296,7 +296,7 @@ const UpdateUserPoints = async()=>
 const SendAnimesScores = async()=>
 {
  
-  const res = await fetch(`http://localhost:8000/animescore`,{
+  const res = await fetch(`http://${IP}:8000/animescore`,{
     method : 'POST',
     headers : {
       'Content-type': 'application/json',
