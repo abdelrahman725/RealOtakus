@@ -5,29 +5,24 @@ import EachQuestion from './Components/EachQuestion'
 import LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
 import AnimesChoices from './Components/Animes'
-
 import Interface from './Components/Interface'
 import Navbar from './Components/Navbar'
 import Result from './Components/Result'
 
 //Material UI Components :
-
 import {Button, ButtonGroup} from '@material-ui/core'
+
 // //Material Icons :
-
- 
 import ExitToAppRounded from '@material-ui/icons/ExitToAppRounded'
-
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded'
 import PeopleRounded  from '@material-ui/icons/PeopleRounded'
 import PlayArrowRounded  from '@material-ui/icons/PlayArrowRounded'
 import ArrowUpwardIcon   from '@material-ui/icons/ArrowUpward'
 
 
-
 function App() {
 
-  const getCookie =(name)=> {
+const getCookie =(name)=> {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -69,16 +64,10 @@ function App() {
   
   const [LeaderBoardView,setLeaderBoard] = useState(false)
   const [CurrentAnswer,setCurrentAnswer] = useState(false)
-  
-
   const [TopOtakus,setUsers] = useState([])
-
   const [QuestionNumber,setNumber] = useState(0)
-
   const [UserQuestions,setQuestions] = useState([])
-  
   const [AllAnimes,setAllAnimes] = useState([])
-  
   const [SelectedAnimes,setSelectedAnimes]=  useState([])
   const [TopAnimes,setTopAnimes] = useState()
   const [TestScore,setTestScore] = useState(0) 
