@@ -11,15 +11,16 @@ const Navbar = ({username,level,points,showprofile})=>
           <PersonIcon  className="PersonIcon"/>
           {username} 
         </div>
+
         <div className="points">
           score &nbsp;<strong> {points} </strong>
         </div>
         <div className="level">
           {level} 
         </div>
-
+        
         <div>
-          <a href="/logout">logout</a>
+         <a href="/logout">logout</a>
         </div>
 
     </div>

@@ -1,3 +1,4 @@
+
 $defaul_round:  10px;
 
 .App
@@ -20,31 +21,41 @@ $defaul_round:  10px;
 
 .Navbar
 {
+  
+ 
   display: flex;
   z-index:2;
   position: sticky;  
   background-color: royalblue;
-  width:60%;
+  width:70%;
   border-radius: $defaul_round;
   justify-content: space-between;
   padding: 8px;
   margin-bottom: 40px;
  
-  div{
+  div, a{
     background-color: royalblue;
     color:white;
     padding: 10px;
     border-radius: $defaul_round;
+    a {text-decoration: none;}
     }
+    .Logo
+    {
+      color: orangered;
+      font-size: medium;
+    }
+
   .UserName{
     display: flex;
     align-items: center;
+
    .PersonIcon
    {
      margin-right: 10px;
    }
   }
-  .UserName:hover{
+  .UserName:hover,a:hover{
     background-color: rgb(22, 68, 206);
     cursor: pointer;
   }
@@ -59,16 +70,22 @@ $defaul_round:  10px;
   }
 }
 @media (max-width:700px) {
-  .Navbar{
-    flex-direction: column;
-    align-items: center;
-  }
   .ButtonsGroup
   {
     min-width:150px;
   }
 }
 
+@media (max-width:800px)
+{
+
+  .Navbar{
+    flex-direction: column;
+    align-items: center;
+    width:40%;
+    text-align: center;
+  }
+} 
 .LeaderBoard
 {
   margin-top: 30px;

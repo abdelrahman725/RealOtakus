@@ -29,7 +29,7 @@
   position: -webkit-sticky;
   position: sticky;
   background-color: royalblue;
-  width: 60%;
+  width: 70%;
   border-radius: 10px;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
@@ -38,11 +38,20 @@
   margin-bottom: 40px;
 }
 
-.Navbar div {
+.Navbar div, .Navbar a {
   background-color: royalblue;
   color: white;
   padding: 10px;
   border-radius: 10px;
+}
+
+.Navbar div a, .Navbar a a {
+  text-decoration: none;
+}
+
+.Navbar .Logo {
+  color: orangered;
+  font-size: medium;
 }
 
 .Navbar .UserName {
@@ -58,7 +67,7 @@
   margin-right: 10px;
 }
 
-.Navbar .UserName:hover {
+.Navbar .UserName:hover, .Navbar a:hover {
   background-color: #1644ce;
   cursor: pointer;
 }
@@ -72,6 +81,12 @@
 }
 
 @media (max-width: 700px) {
+  .ButtonsGroup {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 800px) {
   .Navbar {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -80,9 +95,8 @@
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-  }
-  .ButtonsGroup {
-    min-width: 150px;
+    width: 40%;
+    text-align: center;
   }
 }
 
