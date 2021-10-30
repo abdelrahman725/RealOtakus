@@ -7,6 +7,7 @@ class User(AbstractUser):
   points = models.IntegerField(default=0)
   level = models.CharField(max_length=30,null=False,default="beginner")
   TestsCount= models.IntegerField(default=0)  
+  country = models.CharField(null=True,max_length=60)
   def __str__(self):
     return self.username
 
