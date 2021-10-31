@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper'
 
 import Countries from '../countries.json'
 
-const LeaderBoard = ({otakus,username})=>
+const LeaderBoard = ({otakus,username,animes})=>
 {
   
 
@@ -61,16 +61,23 @@ component={Paper} className="Table">
       <Table >
         <TableHead className="TableHead">
             <TableRow>
+                <TableCell style={{color:"white"}}></TableCell>
                 <TableCell style={{color:"white"}}>Anime</TableCell>
                 <TableCell style={{color:"white"}}>answered correctly</TableCell>
             </TableRow>
         </TableHead>
 
         <TableBody>
-            <TableRow>
-              <TableCell component="th" scope="row"> {"death note"} </TableCell>
-              <TableCell >{30}</TableCell>     
-            </TableRow>
+        {animes.map((anime,index) => (
+ 
+              <TableRow>
+                  <TableCell component="th" scope="row"> 
+                  <img src={anime.url} width="120px" alt={anime.anime_name} style={{borderRadius:"10px"}}/>
+                  </TableCell>
+                  <TableCell>{anime.anime_name}</TableCell>    
+                  <TableCell>25%</TableCell>     
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </TableContainer>

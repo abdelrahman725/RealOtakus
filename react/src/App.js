@@ -84,6 +84,10 @@ function App() {
 }
 
 
+
+  
+
+
 useEffect(()=>{
 
   const GetUserData  =  async()=>
@@ -449,7 +453,7 @@ const Home =()=>
         /> } 
 
          
-        {LeaderBoardView&& <LeaderBoard otakus= {TopOtakus} username={UserName}/>  }  
+        {LeaderBoardView&& <LeaderBoard otakus= {TopOtakus} username={UserName} animes={AllAnimes}/>  }  
         <br/>
         
 
