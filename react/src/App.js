@@ -11,7 +11,6 @@ import Result from './Components/Result'
 
 //Material UI Components :
 import {Button, ButtonGroup} from '@material-ui/core'
-
 // //Material Icons :
 import ExitToAppRounded from '@material-ui/icons/ExitToAppRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded'
@@ -19,10 +18,9 @@ import PeopleRounded  from '@material-ui/icons/PeopleRounded'
 import PlayArrowRounded  from '@material-ui/icons/PlayArrowRounded'
 import ArrowUpwardIcon   from '@material-ui/icons/ArrowUpward'
 
-
 function App() {
 
-const getCookie =(name)=> {
+  const getCookie =(name)=> {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -37,31 +35,26 @@ const getCookie =(name)=> {
     }
     return cookieValue;
 }
+
   const IP = "localhost"
   const CsrfToken = getCookie('csrftoken')
   const UsersPathUrl = `http://${IP}:8000/leaderboard`
   const AnimesPathUrl = `http://${IP}:8000/allanimes`
   const QuestionsPathUrl = `http://${IP}:8000/test`
   const UserDataPathUrl = `http://${IP}:8000/userdata`
-
   const NumberOfQuestions = 20
   const ChoicesLimit = 5 
-
  // const [Loading,setUserDataLoading] = useState(true)
   const [animecounter,setanimecounter] = useState(0) 
-  
-  
   const [TestView,setTestView] = useState(false)
   const [AnimesView,setAnimesView] = useState(false)
   const [ProfileView,setProfileView]  = useState(false)
   const [InterfaceView,setInterfaceView]  = useState(true)
   const [ResultView,setResultView]  = useState(false)
-  
   const [Testended,setTestended] = useState(false)
   const [TheNext,setTheNext]= useState(true)
   const [nextbtn,setnextbtn] = useState(false)
   const [submitbtn,setsubmitbtn]= useState(false)
-  
   const [LeaderBoardView,setLeaderBoard] = useState(false)
   const [CurrentAnswer,setCurrentAnswer] = useState(false)
   const [TopOtakus,setUsers] = useState([])
@@ -88,7 +81,6 @@ const getCookie =(name)=> {
   setTestView(false)
   setAnimesView(true)
   setanimecounter(0)
-
 }
 
 
@@ -126,26 +118,19 @@ useEffect(()=>{
   }
 },[Testended])
 
-
 //get the leaderboard data
 const Getusers  =  async()=>
-{
-  
+{  
   const response = await fetch(UsersPathUrl)
   const Users  = await response.json()
   setUsers(Users)
-  
   setLeaderBoard(true)
-  setTestView(false)
-  setAnimesView(false)
-  setProfileView(false)
   setInterfaceView(false)
-  //console.log(Users)
 }
 
 const topanimes = async()=>
 {
-  const response = await fetch("http://${IP}:8000/topanimes")
+  const response = await fetch(`http://${IP}:8000/topanimes`)
   const animes  = await response.json()  
   setTopAnimes(animes)
   setTopAnimesLoading(false)
@@ -171,12 +156,8 @@ const ShowAllAnimes = async()=>
   setSelectedAnimes([])
   setAnimesView(true)
   setanimecounter(0)
-  setLeaderBoard(false)
-  setProfileView(false)
   setInterfaceView(false)
   setTestView(false)
-
-//  console.log(animes)
 
 }
 
@@ -191,13 +172,10 @@ const GetQuestions = async()=>
   const response = await fetch((`${QuestionsPathUrl}/${anime_ids}`))
   const questions  = await response.json()
 
-  setQuestions(questions)
-  
-  setTestView(true)
+  setQuestions(questions)  
   setnextbtn( true)
-  setLeaderBoard(false)
+  setTestView(true)
   setAnimesView(false)
-  setProfileView(false)
 
 }
 
@@ -209,7 +187,6 @@ const ToggleAddRemoveAnime = (id) =>
  if( SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1)
  {
    
-    //animediv.style.backgroundColor = "cadetblue"
     setSelectedAnimes(SelectedAnimes.filter((anime)=>anime.id!==id))
     setanimecounter(animecounter-1)
   }
@@ -220,12 +197,9 @@ const ToggleAddRemoveAnime = (id) =>
    if(SelectedAnimes.length < ChoicesLimit)
    {
       setSelectedAnimes([...SelectedAnimes,...AllAnimes.filter((anime) =>anime.id===id)])
-      setanimecounter(animecounter+1)
-     // animediv.style.backgroundColor = "green" 
-      //console.log(SelectedAnimes)
+      setanimecounter(animecounter+1)  
     }
 
-  
 }
 
 }
@@ -329,46 +303,66 @@ const Submit = async ()=>
 {
     ActualChoose(CurrentAnswer,UserQuestions[UserQuestions.length-1].anime,true)  
     setTestView(false)
-    setResultView(true)
     setsubmitbtn(false)
+    setResultView(true)
        
 }
 const showprofile = ()=>
 {
   setProfileView(true)
-   
   setTestView(false)
   setLeaderBoard(false)
   setAnimesView(false)
   setInterfaceView(false)
+  setResultView(false)
   setTopAnimesLoading(true)
   topanimes()
 }
 
+const Home =()=>
+{
+  setInterfaceView(true)
+  setResultView(false)
+  setLeaderBoard(false)
+  setProfileView(false)
+  setAnimesView(false)
+}
   return (
 
+
     // Dev Branch
-
-    <div className="App">
-
-      {/* sticky navbar for main user data */}
+    <div className="App"> 
 
       <Navbar username={UserName} level={Level} points={userpoints} 
       showprofile={!TestView&&showprofile}/>
     
-    <ButtonGroup orientation="vertical" className="ButtonsGroup" >  
-        {!TestView&&
+   
+<ButtonGroup orientation="vertical" className="ButtonsGroup" > 
+
+{!InterfaceView&& !TestView&&
+            <Button 
+            className="ButtonChild"
+            onClick={Home} 
+            size="small"
+            variant="contained" >
+              Home
+            </Button>
+        }
+
+ 
+        {InterfaceView&&
             <Button 
             className="ButtonChild"
             onClick={Getusers} 
             size="small"
             variant="contained"  
             startIcon={<PeopleRounded/>}>
-              LeaderBoard
+              DashBoard
             </Button>
         }
+
           
-          {!TestView && !AnimesView&&
+          {InterfaceView&&
               <Button 
               className="ButtonChild"
               onClick={ShowAllAnimes} 
@@ -380,8 +374,9 @@ const showprofile = ()=>
               </Button>
             } 
              {AnimesView && animecounter===ChoicesLimit &&
-             <Button 
-             className="ButtonChild" onClick={GetQuestions} 
+             <Button
+              className="ButtonChild"
+              onClick={GetQuestions} 
               variant="contained"
               color="primary"  disableElevation
               startIcon={<PlayArrowRounded/>}>
@@ -454,8 +449,9 @@ const showprofile = ()=>
         /> } 
 
          
-        {LeaderBoardView&& <LeaderBoard otakus= {TopOtakus}/>}  
+        {LeaderBoardView&& <LeaderBoard otakus= {TopOtakus} username={UserName}/>  }  
         <br/>
+        
 
    
     </div>

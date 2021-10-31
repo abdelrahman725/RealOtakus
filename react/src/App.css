@@ -72,6 +72,18 @@
   cursor: pointer;
 }
 
+.TablesContainer {
+  width: 60%;
+}
+
+.TablesContainer .Table {
+  margin-top: 40px;
+}
+
+.TablesContainer .TableHead {
+  background-color: royalblue;
+}
+
 .ButtonsGroup {
   width: 20%;
 }
@@ -83,6 +95,9 @@
 @media (max-width: 700px) {
   .ButtonsGroup {
     min-width: 150px;
+  }
+  .TablesContainer {
+    min-width: 415px;
   }
 }
 
@@ -98,10 +113,5 @@
     width: 40%;
     text-align: center;
   }
-}
-
-.LeaderBoard {
-  margin-top: 30px;
-  width: 85%;
 }
 /*# sourceMappingURL=App.css.map */

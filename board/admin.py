@@ -4,7 +4,7 @@ from .models import *
 
 @admin.register(User)
 class User_info(admin.ModelAdmin):
-  list_display=("id","username","points","TestsCount")
+  list_display=("id","username","points","TestsCount","country")
   list_filter = ("level",)
   search_fields = ("username",)
 

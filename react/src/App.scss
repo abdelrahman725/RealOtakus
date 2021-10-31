@@ -61,6 +61,18 @@ $defaul_round:  10px;
   }
 }
 
+.TablesContainer
+
+{
+  width: 60%;
+  .Table{
+    margin-top: 40px;
+  }
+  .TableHead{
+    background-color: royalblue;
+  }
+}
+
 .ButtonsGroup
 {
   width: 20%;
@@ -69,10 +81,15 @@ $defaul_round:  10px;
     margin-bottom: 20px;
   }
 }
+
 @media (max-width:700px) {
   .ButtonsGroup
   {
     min-width:150px;
+  }
+  .TablesContainer{
+
+    min-width: 415px;
   }
 }
 
@@ -86,8 +103,3 @@ $defaul_round:  10px;
     text-align: center;
   }
 } 
-.LeaderBoard
-{
-  margin-top: 30px;
-  width: 85%;
-}
