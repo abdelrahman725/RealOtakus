@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 class AnimeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
-    fields = ('id','anime_name')
+    fields = '__all__'
 
 
 class QuestionSerializer(serializers.ModelSerializer):

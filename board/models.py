@@ -14,6 +14,7 @@ class User(AbstractUser):
   
 class Anime(models.Model):
   anime_name = models.CharField(max_length=100,null=False,unique=True)
+  api_id= models.IntegerField(null=True)
   def __str__(self):
         return f"{self.anime_name}"
 
