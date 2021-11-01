@@ -63,7 +63,7 @@ component={Paper} className="Table">
             <TableRow>
                 <TableCell style={{color:"white"}}></TableCell>
                 <TableCell style={{color:"white"}}>Anime</TableCell>
-                <TableCell style={{color:"white"}}>answered correctly</TableCell>
+                <TableCell style={{color:"white"}}>anime score</TableCell>
             </TableRow>
         </TableHead>
 
@@ -72,10 +72,10 @@ component={Paper} className="Table">
  
               <TableRow>
                   <TableCell component="th" scope="row"> 
-                  <img src={anime.url} width="120px" alt={anime.anime_name} style={{borderRadius:"10px"}}/>
+                  <img src={anime.url} width="90px" alt={anime.anime_name} style={{borderRadius:"10px"}}/>
                   </TableCell>
                   <TableCell>{anime.anime_name}</TableCell>    
-                  <TableCell>25%</TableCell>     
+                  <TableCell>{anime.total_score}</TableCell>     
               </TableRow>
             ))}
         </TableBody>

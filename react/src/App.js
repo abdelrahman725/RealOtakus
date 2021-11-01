@@ -115,8 +115,8 @@ useEffect(()=>{
 
   if (Testended===true)
   {    
-    // UpdateUserPoints()
-    // SendAnimesScores() 
+    UpdateUserPoints()
+    SendAnimesScores() 
    setPoints(userpoints+TestScore)
       
   }
