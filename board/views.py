@@ -47,11 +47,8 @@ def UserData(request):
 @api_view(["GET"])
 def TopAnimes(request):
   #user's top 3 animes based on his score in each of them
-
   query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
-
   UserTopAnimesNames = Anime.objects.filter(id__in=query)
-
   # serialized_data = AnimeScoreSerializer(UserTopAnimes,many=True)
   serialized_data = AnimeSerializer(UserTopAnimesNames,many=True)
 
@@ -93,7 +90,6 @@ def GetAllAnimes(request):
 def GetTest(request,anime_ids):
   SelectedAnimes = map(int,re.split(",", anime_ids))
   AllQuestions = list()
-  
   for Id in SelectedAnimes:
     EachAnime_4_Questions = Question.objects.filter(anime=Id)[:4]
     AllQuestions.append(EachAnime_4_Questions)
@@ -134,17 +130,19 @@ def UpdateAnimesScores(request):
   animes = request.data["AnimesResults"]
 
   for anime in animes:
+    current_anime = Anime.objects.get(pk=anime["id"])
     try:
       potential_anime = AnimeScore.objects.get(user=current_user.id,anime=anime["id"])
       potential_anime.score+= int(anime["score"])
-      #potential_anime.TestsCount+=1
+      potential_anime.TestsCount+=1
       potential_anime.save()
     except:
-      new_anime_score = AnimeScore(user = current_user,anime=Anime.objects.get(pk=
-      anime["id"]),score=int(anime["score"]))
-      #new_anime_score.TestsCount=1
-
+      new_anime_score = AnimeScore(user = current_user,anime=current_anime,score=int(anime["score"]))
+      new_anime_score.TestsCount=1
       new_anime_score.save()
+
+    current_anime.total_score+=int(anime["score"])
+    current_anime.save()
 
   return JsonResponse({"message": "animes scores are updated"}, status=201)
 

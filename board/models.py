@@ -15,6 +15,7 @@ class User(AbstractUser):
 class Anime(models.Model):
   anime_name = models.CharField(max_length=100,null=False,unique=True)
   url= models.CharField(max_length=300,default="/")
+  total_score = models.IntegerField(default=0)
   def __str__(self):
         return f"{self.anime_name}"
 
