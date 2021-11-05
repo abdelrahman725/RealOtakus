@@ -10,8 +10,6 @@ import Countries from '../countries.json'
 
 const LeaderBoard = ({otakus,username,animes})=>
 {
-  
-
 
   return(
   <div className="TablesContainer">

@@ -7,7 +7,9 @@ import Profile from './Components/Profile'
 import AnimesChoices from './Components/Animes'
 import Interface from './Components/Interface'
 import Navbar from './Components/Navbar'
+import LoginRegisterView from './Components/NotAuth'
 import Result from './Components/Result'
+import getCookie from './GetCookie'
 
 //Material UI Components :
 import {Button, ButtonGroup} from '@material-ui/core'
@@ -20,28 +22,13 @@ import ArrowUpwardIcon   from '@material-ui/icons/ArrowUpward'
 
 function App() {
 
-  const getCookie =(name)=> {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-  const IP = "localhost"
   const CsrfToken = getCookie('csrftoken')
+  const IP = "127.0.0.1"
   const UsersPathUrl = `http://${IP}:8000/leaderboard`
   const AnimesPathUrl = `http://${IP}:8000/allanimes`
   const QuestionsPathUrl = `http://${IP}:8000/test`
   const UserDataPathUrl = `http://${IP}:8000/userdata`
+  const LogoutPathUrl = `http://${IP}:8000/logout`
   const NumberOfQuestions = 20
   const ChoicesLimit = 5 
  // const [Loading,setUserDataLoading] = useState(true)
@@ -68,69 +55,119 @@ function App() {
   const [UserName,setusername] = useState()
   const [Level,setLevel] = useState("")
   const [TestsCount,setTestsCount] = useState()
-  const [TopAnimesLoading,setTopAnimesLoading] = useState()
-  
-  const ExitTestMode = ()=>
+  const [TopAnimesLoading,setTopAnimesLoading] = useState({})
+  const [Authenticated,setAuthenticated] = useState()
+
+    
+// authenticate user and load base data
+const AuthenticateUser = ()=>
 {
-  setTestScore(0)
-  setNumber(0)
-  setSelectedAnimes([])
-  setQuestions([])
-  setCurrentAnswer(false)
-  setanimecounter(false)
-  setTestView(false)
-  setAnimesView(true)
-  setanimecounter(0)
+  // save session in local storage
+  localStorage.setItem("Logged",true) 
+  GetUserData()
+  setAuthenticated(true)
 }
+ 
 
 
+  useEffect(() => {
 
-  
-
-
-useEffect(()=>{
-
-  const GetUserData  =  async()=>
-  {
-  const res = await fetch(UserDataPathUrl)
-  const userdata = await res.json()
-  
-  setTestsCount(userdata.TestsCount)
-  setPoints(parseInt(userdata.points,10))
-  setusername(userdata.username)
-  setLevel(userdata.level)
-  
-  
-}
-
-GetUserData()
-// setUserDataLoading(false)
-
-
-},[])
-
-
-
-useEffect(()=>{
-
-  if (Testended===true)
-  {    
-    UpdateUserPoints()
-    SendAnimesScores() 
-   setPoints(userpoints+TestScore)
+    const Logged = localStorage.getItem("Logged");
+    if (Logged)
+    {
+      setAuthenticated(true)
+      GetUserData();
+    }
+    else
+    {
+      setAuthenticated(false)
       
-  }
-},[Testended])
+    }
 
-//get the leaderboard data
-const Getusers  =  async()=>
+    
+  }, []);
+
+
+
+
+const Logout =  async()=>{
+
+    const logout = await fetch(LogoutPathUrl)
+    const response = await logout.json()
+    console.log(response.msg)
+
+    // clear local storage
+    localStorage.removeItem("Logged");
+    
+    setusername()
+    setLevel()
+    setTestsCount()
+    setPoints()
+
+    setAuthenticated(false)
+  }
+
+
+
+  
+
+
+
+ const GetUserData = async()=>
+{
+  const res = await fetch(UserDataPathUrl,{
+    method:'GET'
+  })
+  const data = await res.json()
+  console.log(data)
+  setusername(data.username)
+  setLevel(data.level)
+  setTestsCount(data.TestsCount)
+  setPoints(data.points)
+
+}
+
+
+
+//get the DashBoard data (topusers, animes)
+const FetchDashBoard  =  async()=>
 {  
   const response = await fetch(UsersPathUrl)
   const Users  = await response.json()
+  FetchAnimes()
   setUsers(Users)
   setLeaderBoard(true)
   setInterfaceView(false)
 }
+
+
+
+const FetchAnimes  =  async()=>
+{ 
+  const res = await fetch(AnimesPathUrl)
+  const animes = await res.json()
+  setAllAnimes(animes)
+}
+
+
+
+
+// show available animes for the user to choose from
+const ShowAvailableAnimes = async()=>
+{
+  const res = await fetch(AnimesPathUrl)
+  const animes = await res.json()
+  setAllAnimes(animes)
+
+  setSelectedAnimes([])
+  setAnimesView(true)
+  setanimecounter(0)
+  setInterfaceView(false)
+  setTestView(false)
+
+}
+
+
 
 const topanimes = async()=>
 {
@@ -141,29 +178,34 @@ const topanimes = async()=>
 }
 
 
-// fetch all the available animes initially once for the user to choose from 
-useEffect(()=>{
-  const FetchAllAnimes= async()=>
-  {
-    const response = await fetch(AnimesPathUrl)
-    const animes  = await response.json()
-    setAllAnimes(animes)
-  }
-
-  FetchAllAnimes()
-  
-},[])
-
-const ShowAllAnimes = async()=>
+const showprofile = ()=>
 {
- 
-  setSelectedAnimes([])
-  setAnimesView(true)
-  setanimecounter(0)
-  setInterfaceView(false)
+  
   setTestView(false)
+  setLeaderBoard(false)
+  setAnimesView(false)
+  setInterfaceView(false)
+  setResultView(false)
+  setTopAnimesLoading(true)
+  topanimes()
 
+  setProfileView(true)
 }
+
+const Home =()=>
+{
+  setInterfaceView(true)
+  setResultView(false)
+  setLeaderBoard(false)
+  setProfileView(false)
+  setAnimesView(false)
+}
+
+
+
+
+///////////////////////////////////////////  Quiz Handling Functions   ////////////////////////////////////////////////
+
 
 const GetQuestions = async()=>
 {
@@ -171,7 +213,6 @@ const GetQuestions = async()=>
     selected_anime.score=0
   ))
  
-
   let anime_ids = SelectedAnimes.map((anime)=>anime.id)
   const response = await fetch((`${QuestionsPathUrl}/${anime_ids}`))
   const questions  = await response.json()
@@ -182,7 +223,6 @@ const GetQuestions = async()=>
   setAnimesView(false)
 
 }
-
 
 const ToggleAddRemoveAnime = (id) =>
 {  
@@ -203,7 +243,6 @@ const ToggleAddRemoveAnime = (id) =>
       setSelectedAnimes([...SelectedAnimes,...AllAnimes.filter((anime) =>anime.id===id)])
       setanimecounter(animecounter+1)  
     }
-
 }
 
 }
@@ -212,14 +251,11 @@ const preChoose = (answer)=>
   setCurrentAnswer(answer)  
 } 
 
-
 const ActualChoose = (answer,anime_id,fromsubmit)=>
 {
 
   if(answer===true && TheNext && !Testended)
-  {
-     
-      
+  { 
       setTestScore(TestScore+1) 
       setTheNext(false)
     
@@ -242,6 +278,49 @@ const ActualChoose = (answer,anime_id,fromsubmit)=>
 
 }
 
+const nextquestion =()=>
+{
+  // last question 
+  if (QuestionNumber+1 ===UserQuestions.length-1)
+  {
+    setnextbtn(false)
+    setsubmitbtn(true)  
+  }
+
+  if(QuestionNumber < UserQuestions.length-1)
+  {
+    ActualChoose(CurrentAnswer,UserQuestions[QuestionNumber].anime,false)
+   
+    setNumber(QuestionNumber+1)
+    setTheNext(true)
+  }
+
+}
+
+//end quiz
+const Submit = async ()=>
+{
+    ActualChoose(CurrentAnswer,UserQuestions[UserQuestions.length-1].anime,true)  
+    setTestView(false)
+    setsubmitbtn(false)
+    setResultView(true)
+       
+}
+
+const ExitTestMode = ()=>
+{
+  setTestScore(0)
+  setNumber(0)
+  setSelectedAnimes([])
+  setQuestions([])
+  setCurrentAnswer(false)
+  setanimecounter(false)
+  setTestView(false)
+  setAnimesView(true)
+  setanimecounter(0)
+}
+
+
 const UpdateUserPoints = async()=>
 {
  
@@ -249,16 +328,15 @@ const UpdateUserPoints = async()=>
     method : 'PUT',
     headers : {
       'Content-type': 'application/json',
-      'X-CSRFToken': CsrfToken
+      'X-CSRFToken': CsrfToken,
     },
     body: JSON.stringify({
-      points:userpoints
+      points:userpoints+TestScore
     })
   })
   const data = await res.json()
   console.log(data)
 }
-
 
 const SendAnimesScores = async()=>
 {
@@ -275,107 +353,84 @@ const SendAnimesScores = async()=>
   })
   const data = await res.json()
   console.log(data)
+
+
 }
 
-
-const nextquestion =()=>
-{
+// sending test data after it ends
+useEffect(()=>{
   
-  
-  // last question 
-  if (QuestionNumber+1 ===UserQuestions.length-1)
-  {
-    setnextbtn(false)
-    setsubmitbtn(true)
-    
+  if (Testended===true)
+  {    
+    UpdateUserPoints()
+    SendAnimesScores() 
+    setPoints(userpoints+TestScore)   
   }
+},[Testended])
 
 
-  if(QuestionNumber < UserQuestions.length-1)
-  {
-    ActualChoose(CurrentAnswer,UserQuestions[QuestionNumber].anime,false)
-   
-    setNumber(QuestionNumber+1)
-    setTheNext(true)
-  }
-
-  // console.log(SelectedAnimes)
-}
-
-//end quiz
-const Submit = async ()=>
-{
-    ActualChoose(CurrentAnswer,UserQuestions[UserQuestions.length-1].anime,true)  
-    setTestView(false)
-    setsubmitbtn(false)
-    setResultView(true)
-       
-}
-const showprofile = ()=>
-{
-  setProfileView(true)
-  setTestView(false)
-  setLeaderBoard(false)
-  setAnimesView(false)
-  setInterfaceView(false)
-  setResultView(false)
-  setTopAnimesLoading(true)
-  topanimes()
-}
-
-const Home =()=>
-{
-  setInterfaceView(true)
-  setResultView(false)
-  setLeaderBoard(false)
-  setProfileView(false)
-  setAnimesView(false)
-}
-  return (
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    // Dev Branch
+
+
+
+
+
+ if(Authenticated)
+ {
+
+   return (
     <div className="App"> 
 
       <Navbar username={UserName} level={Level} points={userpoints} 
       showprofile={!TestView&&showprofile}/>
     
-   
-<ButtonGroup orientation="vertical" className="ButtonsGroup" > 
+      
+    <ButtonGroup orientation="vertical" className="ButtonsGroup" > 
 
-{!InterfaceView&& !TestView&&
-            <Button 
-            className="ButtonChild"
-            onClick={Home} 
-            size="small"
-            variant="contained" >
-              Home
-            </Button>
+    {!InterfaceView&& !TestView&&
+    
+                <Button 
+                className="ButtonChild"
+                onClick={Home} 
+                size="small"
+                variant="contained" >
+                  Home
+                </Button>
         }
 
  
         {InterfaceView&&
             <Button 
             className="ButtonChild"
-            onClick={Getusers} 
+            onClick={FetchDashBoard} 
             size="small"
             variant="contained"  
             startIcon={<PeopleRounded/>}>
               DashBoard
             </Button>
-        }
-
-          
+        }          
           {InterfaceView&&
               <Button 
               className="ButtonChild"
-              onClick={ShowAllAnimes} 
+              onClick={ShowAvailableAnimes} 
                 size="small"
                 variant="contained" >
                 {TestsCount>=1?
                 "take Quiz":
                 "take your first Test !"  }
               </Button>
+            }
+
+             {InterfaceView&&
+            <Button 
+            className="ButtonChild"
+            onClick={Logout} 
+            size="small"
+            variant="contained"  >
+              Logout
+            </Button>
             } 
              {AnimesView && animecounter===ChoicesLimit &&
              <Button
@@ -397,11 +452,7 @@ const Home =()=>
             exit test mode
           </Button>
           }
-      
-        
         </ButtonGroup>
-        
-        
      
         {InterfaceView&& <Interface />} 
         {ResultView&&<Result score={TestScore} NumberOfQuestions={NumberOfQuestions}/>} 
@@ -423,10 +474,6 @@ const Home =()=>
         
          n={QuestionNumber} onChoose={preChoose}/>}
 
-
-
-
- 
 <ButtonGroup orientation="vertical" className="ButtonsGroup">  
 
           {TestView&& nextbtn&&
@@ -455,11 +502,22 @@ const Home =()=>
          
         {LeaderBoardView&& <LeaderBoard otakus= {TopOtakus} username={UserName} animes={AllAnimes}/>  }  
         <br/>
-        
-
-   
     </div>
+
   );
+}
+
+
+else
+{
+    return(    
+
+        <LoginRegisterView csrftoken={CsrfToken} IP={IP} 
+        authenticated={Authenticated}
+        authenticate={AuthenticateUser}/>
+    );
+  }
+  
 }
 
 export default App;

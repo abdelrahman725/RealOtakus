@@ -19,10 +19,6 @@ const Navbar = ({username,level,points,showprofile})=>
           {level} 
         </div>
         
-        <div>
-         <a href="/logout">logout</a>
-        </div>
-
     </div>
   )
 }
