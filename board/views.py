@@ -21,6 +21,9 @@ from .helpers import login_required, ValidatePassword
 @login_required
 @api_view(["GET"])
 def GetUserData(request):
+  print("#"*30)
+  print("Current Logged in User :",request.user.username)
+  print("#"*30)
   serialized_data = UserSerializer(request.user,many=False)
   return Response(serialized_data.data)
   

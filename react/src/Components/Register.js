@@ -1,4 +1,9 @@
 import {useState} from 'react'
+import {Button,FormControl,TextField} from '@material-ui/core'
+
+import Countries from '../countries.json'
+
+
 const Register = ({register_path,authenticate,csrftoken})=>
 {
   const [RegisterData,setRegisterData] = useState({
@@ -36,25 +41,52 @@ const Register = ({register_path,authenticate,csrftoken})=>
   {
     authenticate()
   }
- 
+ }
+
+ const countries =[]
+ for (const code in Countries){
+   countries.push({code:code,countrname:Countries[code]})
  }
 
   return(
 
     <div className="RegisterView">
-      <form onSubmit={(e)=>HandleRegister(e)}>
-          <input onChange={(e) =>  HandleRegisterForm(e)} type="text" id="registername"  placeholder="username" value={RegisterData.registername}
-          required autoComplete="off"/>
-          <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass1"  placeholder="password" value={RegisterData.pass1} required/>
-          <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass2"  placeholder="confirm password" value={RegisterData.pass2} required/>
+           <form onSubmit={(e)=>HandleRegister(e)} className="RegisterForm">
+            {/* <input onChange={(e) =>  HandleRegisterForm(e)} type="text" id="registername"  placeholder="username" value={RegisterData.registername}
+            required autoComplete="off"/>
+            <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass1"  placeholder="password" value={RegisterData.pass1} required/>
+            <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass2"  placeholder="confirm password" value={RegisterData.pass2} required/> */}
 
-          <input onChange={(e) =>  HandleRegisterForm(e)} type="text" id="country"  placeholder="country" value={RegisterData.country} required autoComplete="off"/>
-          <button type="submit">Sign up</button>
+
+            <TextField className="TextField" id="outlined-basic" label="username" variant="filled" size="small" autoComplete="off" autoFocus />
+            <TextField className="TextField" type="password" id="outlined-basic" label="password" variant="filled" size="small" />
+            <TextField className="TextField" type="password" id="outlined-basic" label="confirm" variant="filled" size="small" />
+
+
+            <select>
+            {countries.map((country)=>(
+              <option value={country.code}>
+              {country.countrname}
+              </option>
+            ))}
+        </select>
+
+        <Button className="RegisterLoginBtn"
+          variant="outlined" color="primary" size="small">
+            Sign up
+          </Button>
+
         </form>
-      
 
-        
+       
+
+
+
     </div>
   )
 }
 export default Register
+
+
+
+

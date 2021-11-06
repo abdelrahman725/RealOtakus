@@ -8,6 +8,7 @@ $defaul_round:  10px;
   div{
     margin-left: auto;
     margin-right: auto;
+   
   }
 }
 .EachAnime
@@ -19,6 +20,21 @@ $defaul_round:  10px;
   color: white;
 }
 
+.RegisterForm,.LoginForm
+{
+  display: flex;
+  flex-direction: column;
+ 
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 130px;
+  max-width: 30%;
+  .TextField,.RegisterLoginBtn,select{
+    margin-bottom: 25px;
+  }
+  .RegisterLoginBtn{
+  }
+}
 .Navbar
 {
   

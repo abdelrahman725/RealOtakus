@@ -12,7 +12,7 @@ import Result from './Components/Result'
 import getCookie from './GetCookie'
 
 //Material UI Components :
-import {Button, ButtonGroup} from '@material-ui/core'
+import {Button, ButtonGroup} from '@material-ui/core';
 // //Material Icons :
 import ExitToAppRounded from '@material-ui/icons/ExitToAppRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded'

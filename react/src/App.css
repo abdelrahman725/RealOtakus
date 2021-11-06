@@ -21,6 +21,24 @@
   color: white;
 }
 
+.RegisterForm, .LoginForm {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 130px;
+  max-width: 30%;
+}
+
+.RegisterForm .TextField, .RegisterForm .RegisterLoginBtn, .RegisterForm select, .LoginForm .TextField, .LoginForm .RegisterLoginBtn, .LoginForm select {
+  margin-bottom: 25px;
+}
+
 .Navbar {
   display: -webkit-box;
   display: -ms-flexbox;
