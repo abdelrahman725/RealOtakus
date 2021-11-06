@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {Button,FormControl,TextField} from '@material-ui/core'
-const Login = ({login_path,authenticate,csrftoken})=>
+const Login = ({login_path,authenticate,csrftoken,switchview})=>
 {
 
   const [LoginData,setLoginData] = useState({
@@ -46,25 +46,22 @@ const Login = ({login_path,authenticate,csrftoken})=>
   return(
     <div className="LoginView">
 
-         {/* 
+         
        <form onSubmit={(e)=>HandleLogin(e)} className="LoginForm">
-          <input onChange={(e) => HandleLoginForm(e)} type="text" id="name"  placeholder="username" value={LoginData.name}
-          required autoFocus autoComplete="off"/>
+  
 
-          <input onChange={(e) => HandleLoginForm(e)} type="password" id="pass" placeholder="password" value={LoginData.pass} required/>
-          
-          <button type="submit">Sign in</button> 
-
-        <TextField className="TextField" id="outlined-basic" label="username" variant="filled" size="small" autoComplete="off" autoFocus />
-        <TextField className="TextField" type="password" id="outlined-basic" label="password" variant="filled" size="small" />
+        <TextField onChange={(e) => HandleLoginForm(e)} className="TextField" id="name" label="username" variant="filled" size="small"   value={LoginData.name} autoComplete="off" autoFocus />
+        <TextField onChange={(e) => HandleLoginForm(e)} className="TextField" id="pass" label="password" variant="filled" size="small" 
+        value={LoginData.pass}
+        type="password" required/>
 
             <Button className="RegisterLoginBtn"
-          variant="outlined" color="primary" size="small">
-            Sign 
+          variant="outlined" color="primary" size="small" type="submit">
+            Sign in !
           </Button> 
-      
+          <a onClick={switchview}>don't have account ?</a>
         </form>
-             */}
+            
 
         
     </div>
