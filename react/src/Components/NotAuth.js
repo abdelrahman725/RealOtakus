@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Register from './Register'
 import Login from './Login'
+import Countries from '../countries.json'
 
 const LoginRegisterView = ({csrftoken,IP,authenticate,isauthenticated})=>
 {

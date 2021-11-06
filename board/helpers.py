@@ -8,3 +8,6 @@ def login_required(f):
             x=f(request,*args,**kwargs)
             return x
     return wraper  
+
+def ValidatePassword():
+    pass

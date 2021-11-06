@@ -2,30 +2,32 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib import messages
 from django.urls import reverse
-import json
-import re
-from itertools import chain
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, generics
+
+import json
+import re
+from itertools import chain
+
 from .models import *
 from .serializers import *
-from .helpers import login_required
+from .helpers import login_required, ValidatePassword
 
 
 @login_required
 @api_view(["GET"])
 def GetUserData(request):
-  print(request.user.username)
   serialized_data = UserSerializer(request.user,many=False)
   return Response(serialized_data.data)
   
 
 
 class GetUsers(generics.ListAPIView):
-  queryset = User.objects.exclude(pk=1).order_by('-points')[:10]
+  queryset = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')[:10]
   serializer_class = UserSerializer
 
 @login_required
@@ -34,6 +36,7 @@ def TopAnimes(request):
   #user's top 3 animes based on his score in each of them
   query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
   UserTopAnimesNames = Anime.objects.filter(id__in=query)
+  # serialized_data = AnimeScoreSerializer(UserTopAnimes,many=True)
   serialized_data = AnimeSerializer(UserTopAnimesNames,many=True)
 
   return Response(serialized_data.data)
@@ -134,21 +137,22 @@ def UpdateAnimesScores(request):
 def Register(request):
   registration_data = request.data["registerdata"]
   username= registration_data["registername"]
+  country = registration_data["country"]
   password = registration_data["pass1"]
   confirmation = registration_data["pass2"]
-  if password != confirmation:
 
+  if password != confirmation:
     return JsonResponse({"msg":"passwords must be matching"},status=401)
    # Attempt to create new user
   try:
-      user = User.objects.create_user(username,password)
+      user = User.objects.create_user(username=username,password=password,country=country)
       user.save()
       login(request, user)
   except IntegrityError:
       return JsonResponse({"msg": "Username already taken"},status=401)
 
   
-  return JsonResponse({"msg": "successful registration"}, status=201)
+  return JsonResponse({"msg": "registered","info":1}, status=201)
  
 
 
@@ -158,12 +162,9 @@ def Login(request):
   username = logindata["name"]
   password = logindata["pass"]
   user = authenticate(request,username=username,password=password)
-  
-  if user:
+  if user is not None:
     login(request,user)
-    print(user.username)
-    serialized_data = UserSerializer(request.user,many=False)
-    return Response({"msg": "success", "data": serialized_data.data}, status=status.HTTP_200_OK)
+    return Response({"msg": "success"}, status=status.HTTP_200_OK)
 
   return Response({"msg": "wrong password or username"}, status=401)
 

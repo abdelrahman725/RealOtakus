@@ -119,7 +119,6 @@ const Logout =  async()=>{
     method:'GET'
   })
   const data = await res.json()
-  console.log(data)
   setusername(data.username)
   setLevel(data.level)
   setTestsCount(data.TestsCount)
