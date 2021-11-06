@@ -10,7 +10,6 @@ from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, generics
-
 from .models import *
 from .serializers import *
 from .helpers import login_required
@@ -35,7 +34,6 @@ def TopAnimes(request):
   #user's top 3 animes based on his score in each of them
   query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
   UserTopAnimesNames = Anime.objects.filter(id__in=query)
-  # serialized_data = AnimeScoreSerializer(UserTopAnimes,many=True)
   serialized_data = AnimeSerializer(UserTopAnimesNames,many=True)
 
   return Response(serialized_data.data)
