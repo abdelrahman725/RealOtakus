@@ -9,5 +9,7 @@ def login_required(f):
             return x
     return wraper  
 
-def ValidatePassword():
-    pass
+def ValidatePassword(password):
+    if len(str(password))>=3:
+        return True
+    return False

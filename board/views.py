@@ -144,7 +144,7 @@ def Register(request):
   password = registration_data["pass1"]
   confirmation = registration_data["pass2"]
 
-  if password != confirmation:
+  if password != confirmation or not ValidatePassword(password):
     return JsonResponse({"msg":"passwords must be matching"},status=401)
    # Attempt to create new user
   try:

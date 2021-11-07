@@ -18,11 +18,21 @@ const Register = ({register_path,authenticate,csrftoken,switchview})=>
     newdata[e.target.id] = e.target.value
     setRegisterData(newdata)
   }
+  const EnsureData =()=>{
+    if (RegisterData.registername==="" ||RegisterData.country ===""||RegisterData.pass1===""||RegisterData.pass2==="" || RegisterData.pass1!==RegisterData.pass2)
+    {   
+        console.log("not valid form")
+        return false;
+    }
+    console.log("is indeed a valid form")
+    return true;
+  }
 
 
   const HandleRegister = async (e) =>{
     e.preventDefault();
  
+
     const res = await fetch(register_path,{
     method : 'POST',
     headers : {
@@ -33,6 +43,8 @@ const Register = ({register_path,authenticate,csrftoken,switchview})=>
       registerdata:RegisterData
     })
   })
+
+
   const response= await res.json()
   console.log(response.msg)
   
@@ -50,16 +62,16 @@ const Register = ({register_path,authenticate,csrftoken,switchview})=>
   return(
 
     <div className="RegisterView">
-           <form onSubmit={(e)=>HandleRegister(e)} className="RegisterForm">
+           <form onSubmit={(e)=>EnsureData()?HandleRegister(e):e.preventDefault()} className="RegisterForm">
             {/* <input onChange={(e) =>  HandleRegisterForm(e)} type="text" id="registername"  placeholder="username" value={RegisterData.registername}
             required autoComplete="off"/>
             <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass1"  placeholder="password" value={RegisterData.pass1} required/>
             <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass2"  placeholder="confirm password" value={RegisterData.pass2} required/> */}
 
 
-            <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="registername" label="username" variant="filled" size="small" autoComplete="off" autoFocus  value={RegisterData.registername} required/>
-            <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="pass1" type="password"  label="password" variant="filled" size="small" required/>
-            <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="pass2" type="password"  label="confirm" variant="filled" size="small" required/>
+            <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="registername" label="username" variant="filled" size="small" autoComplete="off" autoFocus  value={RegisterData.registername} />
+            <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="pass1" type="password"  label="password" variant="filled" size="small" />
+            <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="pass2" type="password"  label="confirm" variant="filled" size="small" />
 
       
                
