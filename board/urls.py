@@ -10,7 +10,9 @@ urlpatterns = [
 
     path('userdata',GetUserData,name="userdata"),
     path('leaderboard',GetUsers.as_view()),
-    path('allanimes',GetAllAnimes),
+    path('animes',GetAvailableAnimes),
+    path('sorted_animes',GetAnimeOrdered),
+    
     path('points', UpdatePoints,name="update_points"),
     path('animescore', UpdateAnimesScores,name="anime_score"),
     path('topanimes',TopAnimes,name="topanimes"),

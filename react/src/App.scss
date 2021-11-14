@@ -90,6 +90,9 @@ $defaul_round:  10px;
 }
 
 a {text-decoration: none;}
+a:hover{
+  cursor: pointer;
+}
 
 .Navbar
 {
@@ -129,7 +132,6 @@ a {text-decoration: none;}
   }
   .UserName:hover,a:hover{
     background-color: rgb(22, 68, 206);
-    cursor: pointer;
   }
 }
 

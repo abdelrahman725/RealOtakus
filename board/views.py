@@ -39,7 +39,6 @@ def TopAnimes(request):
   #user's top 3 animes based on his score in each of them
   query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
   UserTopAnimesNames = Anime.objects.filter(id__in=query)
-  # serialized_data = AnimeScoreSerializer(UserTopAnimes,many=True)
   serialized_data = AnimeSerializer(UserTopAnimesNames,many=True)
 
   return Response(serialized_data.data)
@@ -48,9 +47,18 @@ def TopAnimes(request):
 
 @login_required
 @api_view(["GET"])
-def GetAllAnimes(request):
-  AllAnimes=  Anime.objects.all()
-  serialized_data = AnimeSerializer(AllAnimes,many=True)
+def GetAvailableAnimes(request):
+  AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
+  serialized_data = AnimeSimpleSerializer(AnimesWithQuestions,many=True)
+  return Response(serialized_data.data)
+
+
+
+@login_required
+@api_view(["GET"])
+def GetAnimeOrdered(request):
+  sorted_animes = (Anime.objects.filter(anime_question__isnull=False).distinct()).order_by('-total_score')
+  serialized_data = AnimeSerializer(sorted_animes,many=True)
   return Response(serialized_data.data)
 
 
@@ -123,7 +131,7 @@ def UpdateAnimesScores(request):
     current_anime = Anime.objects.get(pk=anime["id"])
     try:
       potential_anime = AnimeScore.objects.get(user=current_user.id,anime=anime["id"])
-      potential_anime.score+= int(anime["score"])
+      potential_anime.score += int(anime["score"])
       potential_anime.TestsCount+=1
       potential_anime.save()
     except:

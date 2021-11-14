@@ -98,6 +98,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  cursor: pointer;
+}
+
 .Navbar {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -142,7 +146,6 @@ a {
 
 .Navbar .UserName:hover, .Navbar a:hover {
   background-color: #1644ce;
-  cursor: pointer;
 }
 
 .TablesContainer {

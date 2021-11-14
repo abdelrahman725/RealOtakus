@@ -17,7 +17,7 @@ class QuestionInfo(admin.ModelAdmin):
 
 @admin.register(Anime)
 class AnimeInfo(admin.ModelAdmin):
-  list_display = ("anime_name","url")
+  list_display = ("anime_name","total_score","id")
   search_fields = ("anime_name",)
 
 # admin.site.register(AnimeScore)

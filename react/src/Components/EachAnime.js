@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+ import {useState} from "react";
 const EachAnime = ({eachanime,onSelect,choicesnumber})=>
 {
   const [color,setcolor] = useState("black")

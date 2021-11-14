@@ -1,6 +1,6 @@
 import EachAnime from "./EachAnime"
 
-const AnimesChoices = ({all_animes,onSelect,color,choicesnumber,number})=>
+const AnimesChoices = ({all_animes,onSelect,color,choicesnumber})=>
 {
   return(
     <div className="AnimesChoices">
