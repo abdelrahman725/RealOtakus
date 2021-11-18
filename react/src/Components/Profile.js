@@ -1,17 +1,16 @@
-
-const Profile = ({level,top_animes,tests_count,loading})=>
+import {Button} from '@material-ui/core'
+const Profile = ({tests_count, logout})=>
 {
   return(
     <div className="Profile">
-    
-     <p>number of tests : {tests_count}</p>
-     {loading===false&&top_animes.map((topanime,index)=>(
-
-       <p key={index}>
-         {topanime.anime_name}
-       </p>
-
-     ))}
+      <p>number of tests : {tests_count}</p>
+      <Button 
+            className="ButtonChild"
+            onClick={logout} 
+            size="small"
+            variant="contained"  >
+              Logout
+      </Button>
     </div>
   )
 

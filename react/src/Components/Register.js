@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {Button,FormControl,TextField,Select,InputLabel,MenuItem} from '@material-ui/core'
+import {Button,TextField} from '@material-ui/core'
 
 import Countries from '../countries.json'
 
@@ -63,10 +63,7 @@ const Register = ({register_path,authenticate,csrftoken,switchview})=>
 
     <div className="RegisterView">
            <form onSubmit={(e)=>EnsureData()?HandleRegister(e):e.preventDefault()} className="RegisterForm">
-            {/* <input onChange={(e) =>  HandleRegisterForm(e)} type="text" id="registername"  placeholder="username" value={RegisterData.registername}
-            required autoComplete="off"/>
-            <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass1"  placeholder="password" value={RegisterData.pass1} required/>
-            <input onChange={(e) =>  HandleRegisterForm(e)} type="password" id="pass2"  placeholder="confirm password" value={RegisterData.pass2} required/> */}
+  
 
 
             <TextField onChange={(e) =>  HandleRegisterForm(e)} className="TextField" id="registername" label="username" variant="filled" size="small" autoComplete="off" autoFocus  value={RegisterData.registername} />

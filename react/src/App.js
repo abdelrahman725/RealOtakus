@@ -12,7 +12,9 @@ import Result from './Components/Result'
 import getCookie from './GetCookie'
 
 //Material UI Components :
-import {Button, ButtonGroup} from '@material-ui/core';
+import {Button, ButtonGroup} from '@material-ui/core'
+//import CircularProgress from '@material-ui/core/CircularProgress';
+//import Box from '@material-ui/core/Box';
 // //Material Icons :
 import ExitToAppRounded from '@material-ui/icons/ExitToAppRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded'
@@ -28,40 +30,41 @@ function App() {
   const AnimesPathUrl = `http://${IP}:8000/animes`
   const AnimesOrderedPathUrl = `http://${IP}:8000/sorted_animes`
   const QuestionsPathUrl = `http://${IP}:8000/test`
+  const SubmitTestPathUrl = `http://${IP}:8000/submit`
   const UserDataPathUrl = `http://${IP}:8000/userdata`
   const LogoutPathUrl = `http://${IP}:8000/logout`
+
   const ChoicesLimit = 5 
- // const [Loading,setUserDataLoading] = useState(true)
-  const [animecounter,setanimecounter] = useState(0) 
+
+ // views
+  const [LeaderBoardView,setLeaderBoard] = useState(false)
   const [TestView,setTestView] = useState(false)
   const [AnimesView,setAnimesView] = useState(false)
   const [ProfileView,setProfileView]  = useState(false)
   const [InterfaceView,setInterfaceView]  = useState(true)
   const [ResultView,setResultView]  = useState(false)
-  const [Testended,setTestended] = useState(false)
-
-  const [TheNext,setTheNext]= useState(true)
   const [nextbtn,setnextbtn] = useState(false)
   const [submitbtn,setsubmitbtn]= useState(false)
+
+  const [SubmitLoading,setSubmitLoading]= useState(false)
+  const [TestScore,setTestScore] = useState() 
   const [Passed,setPassed] = useState()
-  const [LeaderBoardView,setLeaderBoard] = useState(false)
-
-  const [CurrentAnswer,setCurrentAnswer] = useState(false)
   
-  const [TopOtakus,setUsers] = useState([])
-  const [QuestionNumber,setQuestionNumber] = useState(0)
-  const [UserQuestions,setQuestions] = useState([])
-  const [AnimesData,setAnimesData] = useState([])
   const [AvailableAnimes,setAvailableAnimes]= useState([])
-
   const [SelectedAnimes,setSelectedAnimes]=  useState([])
-  const [TopAnimes,setTopAnimes] = useState()
-  const [TestScore,setTestScore] = useState(0) 
+  const [animecounter,setanimecounter] = useState(0) 
+  const [UserQuestions,setQuestions] = useState([])
+  const [QuestionNumber,setQuestionNumber] = useState(0)
+  const [QuestionsLength,setQuestionsLength] = useState(0)
+  const [UserAnswers,setUserAnswers] = useState({})
+
+  const [TopOtakus,setUsers] = useState([])
+  const [AnimesData,setAnimesData] = useState([])
+
   const [userpoints,setPoints] = useState() 
   const [UserName,setusername] = useState()
   const [Level,setLevel] = useState("")
   const [TestsCount,setTestsCount] = useState()
-  const [TopAnimesLoading,setTopAnimesLoading] = useState({})
   const [Authenticated,setAuthenticated] = useState()
 
     
@@ -75,23 +78,23 @@ const AuthenticateUser = ()=>
 }
  
 
+// on loading get basic user data if he is authenticated
+useEffect(() => {
 
-  useEffect(() => {
-
-    const Logged = localStorage.getItem("Logged");
-    if (Logged)
-    {
-      setAuthenticated(true)
-      GetUserData();
-    }
-    else
-    {
-      setAuthenticated(false)
-      
-    }
-
+  const Logged = localStorage.getItem("Logged");
+  if (Logged)
+  {
+    setAuthenticated(true)
+    GetUserData();
+  }
+  else
+  {
+    setAuthenticated(false)
     
-  }, []);
+  }
+
+  
+}, []);
 
 
 
@@ -112,7 +115,7 @@ const Logout =  async()=>{
     ExitTestMode()
     setAuthenticated(false)
 
-    setTestScore(0)
+    setTestScore()
     setQuestionNumber(0)
     setanimecounter(0)
    
@@ -134,8 +137,6 @@ const Logout =  async()=>{
 
 }
 
-
-
 //get the DashBoard data (topusers, animes)
 const FetchDashBoard  =  async()=>
 {  
@@ -156,19 +157,15 @@ const FetchAnimes  =  async()=>
 }
 
 
-
 // show available animes for the user to choose from
 const ShowAvailableAnimes = async()=>
 {
   const res = await fetch(AnimesPathUrl)
   const animes = await res.json()
   setAvailableAnimes(animes)
-
   setSelectedAnimes([])
-  setQuestions([])
   setanimecounter(0)
-  setQuestionNumber(0)
-  setTestScore(0)
+  setTestScore()
   setInterfaceView(false)
   setTestView(false)
   
@@ -176,14 +173,6 @@ const ShowAvailableAnimes = async()=>
 }
 
 
-
-const topanimes = async()=>
-{
-  const response = await fetch(`http://${IP}:8000/topanimes`)
-  const animes  = await response.json()  
-  setTopAnimes(animes)
-  setTopAnimesLoading(false)
-}
 
 
 const showprofile = ()=>
@@ -194,8 +183,8 @@ const showprofile = ()=>
   setAnimesView(false)
   setInterfaceView(false)
   setResultView(false)
-  setTopAnimesLoading(true)
-  topanimes()
+
+  
 
   setProfileView(true)
 }
@@ -216,15 +205,20 @@ const Home =()=>
 const GetQuestions = async()=>
 {
   
-  SelectedAnimes.map((selected_anime)=>(
-    selected_anime.score=0
-  ))
- 
-  let anime_ids = SelectedAnimes.map((anime)=>anime.id)
+  const res = await fetch(QuestionsPathUrl,{
+    method : 'POST',
+    headers : {
+      'Content-type': 'application/json',
+      'X-CSRFToken': CsrfToken,
+    },
+    body: JSON.stringify({
+      selectedanimes:SelectedAnimes
+    })
+  })
 
-  const response = await fetch((`${QuestionsPathUrl}/${anime_ids}`))
-  const questions  = await response.json()
+  const questions = await res.json()
 
+  setQuestionsLength(questions.length)
   setQuestions(questions)  
   setAnimesView(false)
   setnextbtn( true)
@@ -255,49 +249,14 @@ const ToggleAddRemoveAnime = (id) =>
 
 }
 
-const preChoose = (answer)=>
+const HandleAnswerChoose = (answer,question_id) =>
 {
-  setCurrentAnswer(answer)  
-} 
-
-const ActualChoose = (answer,anime_id,fromsubmit)=>
-{
-
-  if(answer===true && TheNext && !Testended)
-  { 
-      setTestScore(TestScore+1) 
-      setTheNext(false)
-    
-    for (let i =0;i<ChoicesLimit;i++)
-    {
-      if (SelectedAnimes[i].id===anime_id)
-      {
-        let items = [...SelectedAnimes]
-        let item =  {...items[i]}
-        item.score +=1
-        items[i] = item
-        setSelectedAnimes(items)
-
-      }
-
-    } 
-  }
-    
-  if(fromsubmit)
-  {
-  
-    if (TestScore > Math.ceil(UserQuestions.length/2))
-    {
-      setPassed(true)
-    }
-    else{
-      setPassed(false)
-    }
-    setTestended(true)
-  }
-    
-
+  //setUserAnswers([...UserAnswers,{id:question_id,answer:answer}])
+  const dict = UserAnswers
+  dict[question_id] = answer
+  setUserAnswers(dict)
 }
+
 
 const nextquestion =()=>
 {
@@ -310,87 +269,63 @@ const nextquestion =()=>
 
   if(QuestionNumber < UserQuestions.length-1)
   {
-    ActualChoose(CurrentAnswer,UserQuestions[QuestionNumber].anime,false)
-   
     setQuestionNumber(QuestionNumber+1)
-    setTheNext(true)
   }
 
 }
 
 //end quiz
-const Submit = async ()=>
+const Submit =  ()=>
 {
-    ActualChoose(CurrentAnswer,UserQuestions[UserQuestions.length-1].anime,true)  
-    setTestView(false)
-    setsubmitbtn(false)
-    setResultView(true)
-       
-}
-
-const ExitTestMode = ()=>
-{
-  setTestScore(0)
-  setQuestionNumber(0)
-  setanimecounter(0)
-  setSelectedAnimes([])
-  setQuestions([])
+  setSubmitLoading(true)
+  SendTestResulst()
   setTestView(false)
-  setAnimesView(true)
+  setsubmitbtn(false)
+  setResultView(true)
 }
 
-
-const UpdateUserPoints = async()=>
+const  SendTestResulst = async()=>
 {
- 
-  const res = await fetch(`http://${IP}:8000/points`,{
-    method : 'PUT',
+  const res = await fetch(SubmitTestPathUrl,{
+    method : 'POST',
     headers : {
       'Content-type': 'application/json',
       'X-CSRFToken': CsrfToken,
     },
     body: JSON.stringify({
-      points:userpoints+TestScore
+      results:UserAnswers,
+      questionslength:QuestionsLength
     })
   })
-  const data = await res.json()
-  console.log(data)
-}
-
-const SendAnimesScores = async()=>
-{
- 
-  const res = await fetch(`http://${IP}:8000/animescore`,{
-    method : 'POST',
-    headers : {
-      'Content-type': 'application/json',
-      'X-CSRFToken': CsrfToken
-    },
-    body: JSON.stringify({
-      AnimesResults:SelectedAnimes
-    })
-  })
-  const data = await res.json()
-  console.log(data)
-
-
-}
-
-// sending test data after the test ends but only if the user passed (answered more than 50% of the questions correctly)
-useEffect(()=>{
   
-  if (Testended===true && Passed===true)
-  {    
-    UpdateUserPoints()
-    SendAnimesScores() 
-    setPoints(userpoints+TestScore)   
-  }
-},[Testended,Passed])
+  const result = await res.json()
+  
+  console.log(result)
+  setTestScore(result.testscore)
+  setPassed(result.passed)
+  result.passed && setPoints(userpoints+result.testscore)
+  setUserAnswers({})
+  setQuestions([])
+  setQuestionNumber(0)
+  
+  setTimeout(()=>{
+    setSubmitLoading(false)
+  }, 2000);
+}
 
+const ExitTestMode = ()=>
+{
+  setTestScore()
+  setQuestionNumber(0)
+  setanimecounter(0)
+  setSelectedAnimes([])
+  setUserAnswers({})
+  setQuestions([])
+  setTestView(false)
+  setAnimesView(true)
+}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
  if(Authenticated)
@@ -400,13 +335,12 @@ useEffect(()=>{
     <div className="App"> 
 
       <Navbar username={UserName} level={Level} points={userpoints} 
-      showprofile={!TestView&&showprofile}/>
+      showprofile={showprofile} test={TestView}/>
     
       
     <ButtonGroup orientation="vertical" className="ButtonsGroup" > 
 
-    {!InterfaceView&& !TestView&&
-    
+          {!InterfaceView&& !TestView&&
                 <Button 
                 className="ButtonChild"
                 onClick={Home} 
@@ -414,7 +348,7 @@ useEffect(()=>{
                 variant="contained" >
                   Home
                 </Button>
-        }
+          }
 
  
         {InterfaceView&&
@@ -433,21 +367,13 @@ useEffect(()=>{
               onClick={ShowAvailableAnimes} 
                 size="small"
                 variant="contained" >
-                {TestsCount>=1?
+
+                {TestsCount !== undefined? TestsCount>=1?
                 "take Quiz":
-                "take your first Test !"  }
+                "take your first Test !"  :""}
               </Button>
             }
 
-             {InterfaceView&&
-            <Button 
-            className="ButtonChild"
-            onClick={Logout} 
-            size="small"
-            variant="contained"  >
-              Logout
-            </Button>
-            } 
              {AnimesView && animecounter===ChoicesLimit &&
              <Button
               className="ButtonChild"
@@ -471,48 +397,50 @@ useEffect(()=>{
         </ButtonGroup>
      
         {InterfaceView&& <Interface />} 
-        {ResultView&&<Result score={TestScore} NumberOfQuestions={UserQuestions.length} passed={Passed}/>} 
+
+        {ResultView &&
+          <Result score={TestScore} NumberOfQuestions={QuestionsLength} passed={Passed} loading={SubmitLoading}/>
+        } 
+
 
 
         {AnimesView&& <AnimesChoices all_animes = {AvailableAnimes} onSelect= {ToggleAddRemoveAnime}
         choicesnumber={animecounter}/>}
 
-          <h4> {TestScore} </h4>
+        
 
         {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber].question}
-         id =  {UserQuestions[QuestionNumber].id}
-         right_answer = {UserQuestions[QuestionNumber].right_answer}
-          choices = {[UserQuestions[QuestionNumber].right_answer,
-          UserQuestions[QuestionNumber].choice1,
-          UserQuestions[QuestionNumber].choice2,
+          id =  {UserQuestions[QuestionNumber].id}
+          choices = {[UserQuestions[QuestionNumber].choice1,
+          UserQuestions[QuestionNumber].choice4,
           UserQuestions[QuestionNumber].choice3,
-           ]}
-        
-         n={QuestionNumber} onChoose={preChoose}/>}
+          UserQuestions[QuestionNumber].choice2,
+           ]}        
+           question_number={QuestionNumber} onChoose={HandleAnswerChoose}/>}
 
-<ButtonGroup orientation="vertical" className="ButtonsGroup">  
+      <ButtonGroup orientation="vertical" className="ButtonsGroup">  
 
-          {TestView&& nextbtn&& 
-          <Button onClick={nextquestion} 
-          className="ButtonChild"
-          size="small"
-          variant="contained"  disableElevation
-          endIcon={< NavigateNextRoundedIcon/>}>
-            next
-          </Button>
-          }
+            {TestView&& nextbtn&& 
+            <Button onClick={nextquestion} 
+            className="ButtonChild"
+            size="small"
+            variant="contained"  disableElevation
+            endIcon={< NavigateNextRoundedIcon/>}>
+              next
+            </Button>
+            }
 
-          {TestView&&submitbtn&& 
-          <Button className="ButtonChild" onClick={Submit} variant="contained" endIcon={<ArrowUpwardIcon/>}>
-            submit
-          </Button>}
-  </ButtonGroup>
+            {TestView&&submitbtn&& 
+            <Button className="ButtonChild" onClick={Submit} variant="contained" endIcon={<ArrowUpwardIcon/>}>
+              submit
+            </Button>}
+
+      </ButtonGroup>
 
          { ProfileView && 
-        <Profile  level={Level}
+        <Profile  
         tests_count={TestsCount}
-        top_animes = {TopAnimes}
-        loading = {TopAnimesLoading} 
+        logout={Logout}
         /> } 
 
          
@@ -522,6 +450,8 @@ useEffect(()=>{
 
   );
 }
+
+
 
 
 else

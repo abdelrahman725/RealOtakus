@@ -26,19 +26,9 @@ class Question(models.Model):
   choice1 =  models.TextField(blank=False,null=True)
   choice2 =  models.TextField(blank=False,null=True)
   choice3 =  models.TextField(blank=False,null=True)
+  choice4 = models.TextField(blank=False,null=True)
   right_answer = models.TextField(blank=False,null=True)
   def __str__(self):
-        lenn=len(self.question)
-        if lenn>70:
-          lenn = 70
-        return f"{self.question[:lenn]}"
-
-class AnimeScore(models.Model):
-  user  = models.ForeignKey(User,on_delete=models.CASCADE) 
-  anime = models.ForeignKey(Anime,on_delete=models.CASCADE)
-  score = models.IntegerField(default=0)
-  TestsCount = models.IntegerField(default=0)
-  
-  def __str__(self):
-      return f"{self.user} total score on {self.anime} : {self.score}"
-  
+        if len(self.question)>70:
+          return f"{self.question[:70]}"
+        return f"{self.question}"

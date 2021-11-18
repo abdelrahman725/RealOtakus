@@ -22,11 +22,5 @@ class AnimeSimpleSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Question
-    fields = '__all__'
+    fields = ("id","question","advanced","choice1","choice2","choice3","choice4")
 
-
-
-class AnimeScoreSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = AnimeScore
-    fields = '__all__'

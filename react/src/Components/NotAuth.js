@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Register from './Register'
 import Login from './Login'
 
-
 const LoginRegisterView = ({csrftoken,IP,authenticate,isauthenticated})=>
 {
 
@@ -29,14 +28,11 @@ return(
   
   <div className="LoginRegisterView">
 
-
     {LoginView&&<Login login_path={LoginPathUrl} authenticate={authenticate} csrftoken={csrftoken} switchview={Switch}/>}
     {RegisterView&& <Register register_path={RegisterPathUrl} authenticate={authenticate} csrftoken={csrftoken} switchview={Switch}/>}
- 
 
   </div>
   )
-
 }
 
 export default LoginRegisterView

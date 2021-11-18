@@ -20,10 +20,3 @@ class AnimeInfo(admin.ModelAdmin):
   list_display = ("anime_name","total_score","id")
   search_fields = ("anime_name",)
 
-# admin.site.register(AnimeScore)
-
-@admin.register(AnimeScore)
-class AnimeScoreInfo(admin.ModelAdmin):
-  list_display = ("user","anime","score","TestsCount")
-  list_filter = ("user","anime")
-  search_fields = ("user__username","anime__anime_name")

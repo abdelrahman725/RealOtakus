@@ -1,11 +1,11 @@
 import EachAnime from "./EachAnime"
 
-const AnimesChoices = ({all_animes,onSelect,color,choicesnumber})=>
+const AnimesChoices = ({all_animes,onSelect,choicesnumber})=>
 {
   return(
     <div className="AnimesChoices">
       
-      choose 5 animes you are confident about{" "}
+      pick your favorite 5 animes {" "}
         <strong>
         {choicesnumber}/5:
         </strong>

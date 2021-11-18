@@ -9,40 +9,23 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, generics
 
-import json
-import re
+import json,math,re
+
 from itertools import chain
 
 from .models import *
 from .serializers import *
 from .helpers import login_required, ValidatePassword
 
-
 @login_required
 @api_view(["GET"])
 def GetUserData(request):
-  print("#"*30)
-  print("Current Logged in User :",request.user.username)
-  print("#"*30)
   serialized_data = UserSerializer(request.user,many=False)
   return Response(serialized_data.data)
-  
-
 
 class GetUsers(generics.ListAPIView):
   queryset = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')[:10]
   serializer_class = UserSerializer
-
-@login_required
-@api_view(["GET"])
-def TopAnimes(request):
-  #user's top 3 animes based on his score in each of them
-  query =  list(AnimeScore.objects.filter(user=request.user).order_by('-score')[:3].values_list('anime',flat=True))
-  UserTopAnimesNames = Anime.objects.filter(id__in=query)
-  serialized_data = AnimeSerializer(UserTopAnimesNames,many=True)
-
-  return Response(serialized_data.data)
-
 
 
 @login_required
@@ -53,7 +36,6 @@ def GetAvailableAnimes(request):
   return Response(serialized_data.data)
 
 
-
 @login_required
 @api_view(["GET"])
 def GetAnimeOrdered(request):
@@ -62,38 +44,59 @@ def GetAnimeOrdered(request):
   return Response(serialized_data.data)
 
 
-# @login_required
-# @api_view(["GET"])
-# def GetTest(request,anime_ids):
-#   SelectedAnimes = map(int,re.split(",", anime_ids))
-#   AllQuestions = list()
-#   slicing = 0
-#   for Id in SelectedAnimes:
-#     try:
-#       potential_used_anime = AnimeScore.objects.get(anime=Id)
-#       if potential_used_anime:
-#         if potential_used_anime.TestsCount<=3:
-#           slicing = (potential_used_anime.TestsCount) *4
-#     except:
-#       pass
-#     EachAnime_4_Questions = Question.objects.filter(anime=Id)[slicing:slicing+4]
-#     AllQuestions.append(EachAnime_4_Questions)
-#   data = list(chain(*AllQuestions))
-#   serialized_data = QuestionSerializer(data,many=True)
-#   return Response(serialized_data.data)
 
 
 @login_required
-@api_view(["GET"])
-def GetTest(request,anime_ids):
-  SelectedAnimes = map(int,re.split(",", anime_ids))
-  AllQuestions = list()
-  for Id in SelectedAnimes:
-    EachAnime_4_Questions = Question.objects.filter(anime=Id)[:4]
-    AllQuestions.append(EachAnime_4_Questions)
-  data = list(chain(*AllQuestions))
-  serialized_data = QuestionSerializer(data,many=True)
+@api_view(["POST"])
+def GetTest(request):
+  selected_animes=request.data["selectedanimes"]
+  questions=[]
+  for anime in selected_animes:
+    EachAnime_4_Questions=Question.objects.filter(anime=anime["id"])[:4]
+    questions.append(EachAnime_4_Questions)
+  final_questions = list(chain(*questions))
+  
+  serialized_data = QuestionSerializer(final_questions,many=True)
   return Response(serialized_data.data)
+
+
+@login_required
+@api_view(["POST"])
+def CheckTest(request):
+  answers = request.data["results"]
+  questions_length = request.data["questionslength"]
+  test_score = 0
+  for Id, user_answer in answers.items():
+    question = Question.objects.get(pk=Id) 
+    if question.right_answer == user_answer:
+      test_score+=1
+      anime = Anime.objects.get(pk=question.anime.id)
+      anime.total_score+=1
+      anime.save()
+
+
+  current_user = request.user
+  current_user.TestsCount+=1
+  passed = False
+  if test_score >= math.ceil(questions_length/2):
+    passed=True
+    current_user.points += test_score
+  
+
+  
+  if current_user.points >=200:
+    current_user.level = "real otaku"
+
+  elif current_user.points >=100:
+    current_user.level = "intermediate"
+
+  current_user.save()
+
+  return JsonResponse({"message": "test answers have been received","passed":passed,"testscore":test_score}, status=201)
+
+
+
+
 
 
 @login_required
@@ -120,30 +123,6 @@ def UpdatePoints(request):
 
   return JsonResponse({"message": "error"}, status=201)
 
-
-@login_required
-@api_view(["POST"])
-def UpdateAnimesScores(request):
-  current_user = request.user
-  animes = request.data["AnimesResults"]
-
-  for anime in animes:
-    current_anime = Anime.objects.get(pk=anime["id"])
-    try:
-      potential_anime = AnimeScore.objects.get(user=current_user.id,anime=anime["id"])
-      potential_anime.score += int(anime["score"])
-      potential_anime.TestsCount+=1
-      potential_anime.save()
-    except:
-      new_anime_score = AnimeScore(user = current_user,anime=current_anime,score=int(anime["score"]))
-      new_anime_score.TestsCount=1
-      new_anime_score.save()
-
-    current_anime.total_score+=int(anime["score"])
-    current_anime.save()
-
-  return JsonResponse({"message": "animes scores are updated"}, status=201)
-
 @api_view(["POST"])
 def Register(request):
   registration_data = request.data["registerdata"]
@@ -164,7 +143,6 @@ def Register(request):
 
   
   return JsonResponse({"msg": "registered","info":1}, status=201)
- 
 
 
 @api_view(["POST"])
