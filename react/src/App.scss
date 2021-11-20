@@ -1,4 +1,3 @@
-
 $defaul_round:  10px;
 
 .App
@@ -19,11 +18,43 @@ $defaul_round:  10px;
   padding: 12px;  
   color: white;
 }
-.Result
+.ResultView
 {
- 
-}
+  margin-top: 30px;
+  p
+  {
+    margin-top: 10px;
+  }
+ .Result
+ {
+  //  display: flex;
+  //  flex-direction: column;
+  //  align-items: center;
+   
+   div
+   {
+     border-radius: $defaul_round;
+   }
+  
+  .Resultmsg
+  {
+    padding: 20px;
+    color: white;
+    font-size: large;
 
+  }
+  .NewScore
+  {
+    background-color: #0066b2;
+  }
+  
+  .Points
+  {
+    font-size:large ;
+  }
+ } 
+
+}
 
 .RegisterForm,.LoginForm
 {

@@ -45,10 +45,12 @@ def GetAnimeOrdered(request):
 
 
 
-
 @login_required
 @api_view(["POST"])
 def GetTest(request):
+  current_user = request.user
+  current_user.tests_started+=1
+  current_user.save()
   selected_animes=request.data["selectedanimes"]
   questions=[]
   for anime in selected_animes:
@@ -76,19 +78,24 @@ def CheckTest(request):
 
 
   current_user = request.user
-  current_user.TestsCount+=1
+  current_user.tests_completed+=1
   passed = False
+
+  # check if user has passed the test
+  # because no quiz or score related data will be updated if the user failed the quiz
+
   if test_score >= math.ceil(questions_length/2):
     passed=True
     current_user.points += test_score
-  
+    
+    if test_score > current_user.best_score:
+      current_user.best_score = test_score
+    
+    if current_user.points >=200:
+      current_user.level = "real otaku"
 
-  
-  if current_user.points >=200:
-    current_user.level = "real otaku"
-
-  elif current_user.points >=100:
-    current_user.level = "intermediate"
+    elif current_user.points >=100:
+      current_user.level = "intermediate"
 
   current_user.save()
 
@@ -96,32 +103,6 @@ def CheckTest(request):
 
 
 
-
-
-
-@login_required
-@api_view(["PUT"])
-def UpdatePoints(request):
-  current_user= request.user
-  if current_user:
-    new_points = int(request.data["points"])
-
-    current_user.TestsCount+=1
-    current_user.points = new_points
-    
-    if new_points > 1000:
-      current_user.level = "advanced"
-    elif new_points > 200:
-      current_user.level = "intermediate" 
-
-    current_user.save()
-
-    return JsonResponse({"message": "user points updated successfully"}, status=201)
-    print()
-    print(f"{request.user.username} has submitted the test")
-    print()
-
-  return JsonResponse({"message": "error"}, status=201)
 
 @api_view(["POST"])
 def Register(request):

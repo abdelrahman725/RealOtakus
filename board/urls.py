@@ -13,7 +13,6 @@ urlpatterns = [
     path('animes',GetAvailableAnimes),
     path('sorted_animes',GetAnimeOrdered),
     
-    path('points', UpdatePoints,name="update_points"),
     path('test',GetTest),
     path('submit',CheckTest),
     re_path(r'^.*',TemplateView.as_view(template_name='index.html'))

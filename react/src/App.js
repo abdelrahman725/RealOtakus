@@ -64,7 +64,11 @@ function App() {
   const [userpoints,setPoints] = useState() 
   const [UserName,setusername] = useState()
   const [Level,setLevel] = useState("")
-  const [TestsCount,setTestsCount] = useState()
+  const [TestsCompleted,setTestsCompleted] = useState()
+  const [TestsStarted,setTestsStarted] = useState()
+  const [BestScore,setBestScore] = useState()
+
+  
   const [Authenticated,setAuthenticated] = useState()
 
     
@@ -72,9 +76,10 @@ function App() {
 const AuthenticateUser = ()=>
 {
   // save session in local storage
-  localStorage.setItem("Logged",true) 
+  localStorage.setItem("Logged",true)
   GetUserData()
   setAuthenticated(true)
+  setInterfaceView(true) 
 }
  
 
@@ -92,7 +97,6 @@ useEffect(() => {
     setAuthenticated(false)
     
   }
-
   
 }, []);
 
@@ -108,17 +112,19 @@ const Logout =  async()=>{
     // clear local storage
     localStorage.removeItem("Logged");
     
+    ExitTestMode()
     setusername()
     setLevel()
-    setTestsCount()
+    setTestsCompleted()
+    setTestsStarted()
     setPoints()
-    ExitTestMode()
+    setBestScore()
     setAuthenticated(false)
 
     setTestScore()
     setQuestionNumber(0)
     setanimecounter(0)
-   
+    setProfileView(false)
     setTestView(false)
     setAnimesView(false)
   }
@@ -132,8 +138,10 @@ const Logout =  async()=>{
   const data = await res.json()
   setusername(data.username)
   setLevel(data.level)
-  setTestsCount(data.TestsCount)
+  setTestsCompleted(data.tests_completed)
+  setTestsStarted(data.tests_started)
   setPoints(data.points)
+  setBestScore(data.best_score)
 
 }
 
@@ -368,7 +376,7 @@ const ExitTestMode = ()=>
                 size="small"
                 variant="contained" >
 
-                {TestsCount !== undefined? TestsCount>=1?
+                {TestsCompleted !== undefined? TestsCompleted>=1?
                 "take Quiz":
                 "take your first Test !"  :""}
               </Button>
@@ -399,7 +407,7 @@ const ExitTestMode = ()=>
         {InterfaceView&& <Interface />} 
 
         {ResultView &&
-          <Result score={TestScore} NumberOfQuestions={QuestionsLength} passed={Passed} loading={SubmitLoading}/>
+          <Result score={TestScore} NumberOfQuestions={QuestionsLength} passed={Passed} loading={SubmitLoading} highest_score={BestScore}/>
         } 
 
 
@@ -439,7 +447,9 @@ const ExitTestMode = ()=>
 
          { ProfileView && 
         <Profile  
-        tests_count={TestsCount}
+        tests_completed={TestsCompleted}
+        tests_started = {TestsStarted}
+        best_score = {BestScore}
         logout={Logout}
         /> } 
 

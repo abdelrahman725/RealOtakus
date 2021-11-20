@@ -1,9 +1,11 @@
 import {Button} from '@material-ui/core'
-const Profile = ({tests_count, logout})=>
+const Profile = ({tests_started, tests_completed, best_score, logout})=>
 {
   return(
     <div className="Profile">
-      <p>number of tests : {tests_count}</p>
+      <p> tests started   : {tests_started}</p>
+      <p> tests completed : {tests_completed}</p>
+      <p> best quiz score : {best_score}</p>
       <Button 
             className="ButtonChild"
             onClick={logout} 

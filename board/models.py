@@ -6,7 +6,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
   points = models.IntegerField(default=0)
   level = models.CharField(max_length=30,null=False,default="beginner")
-  TestsCount= models.IntegerField(default=0)  
+  tests_completed = models.IntegerField(default=0)
+  tests_started = models.IntegerField(default=0)
+  best_score = models.IntegerField(default=0)
   country = models.CharField(null=True,max_length=60)
   def __str__(self):
     return self.username

@@ -21,7 +21,7 @@ component={Paper} className="Table">
             <TableRow>
                 <TableCell style={{color:"white"}}>Name</TableCell>
                 <TableCell style={{color:"white"}}>Country</TableCell>
-                <TableCell style={{color:"white"}}>Score</TableCell>
+                <TableCell style={{color:"white"}}>Total Score</TableCell>
                 <TableCell style={{color:"white"}}>Level</TableCell>
                 <TableCell style={{color:"white"}}>right answers</TableCell>
             </TableRow>
@@ -44,7 +44,7 @@ component={Paper} className="Table">
                     </TableCell>
                   <TableCell ><strong>{otaku.points}</strong></TableCell>
                   <TableCell >{otaku.level}</TableCell>
-                  <TableCell >{Math.round((otaku.points/(otaku.TestsCount*20))*100)+" %"}</TableCell>       
+                  <TableCell >{Math.round((otaku.points/(otaku.tests_completed*20))*100)+" %"}</TableCell>       
               </TableRow>
           ))}
         </TableBody>

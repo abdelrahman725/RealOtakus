@@ -22,6 +22,32 @@
   color: white;
 }
 
+.ResultView {
+  margin-top: 30px;
+}
+
+.ResultView p {
+  margin-top: 10px;
+}
+
+.ResultView .Result div {
+  border-radius: 10px;
+}
+
+.ResultView .Result .Resultmsg {
+  padding: 20px;
+  color: white;
+  font-size: large;
+}
+
+.ResultView .Result .NewScore {
+  background-color: #0066b2;
+}
+
+.ResultView .Result .Points {
+  font-size: large;
+}
+
 .RegisterForm, .LoginForm {
   display: -webkit-box;
   display: -ms-flexbox;
