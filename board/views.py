@@ -70,11 +70,12 @@ def CheckTest(request):
   test_score = 0
   for Id, user_answer in answers.items():
     question = Question.objects.get(pk=Id) 
+    anime = Anime.objects.get(pk=question.anime.id)
+    anime.total_answers+=1
     if question.right_answer == user_answer:
       test_score+=1
-      anime = Anime.objects.get(pk=question.anime.id)
       anime.total_score+=1
-      anime.save()
+    anime.save()
 
 
   current_user = request.user
