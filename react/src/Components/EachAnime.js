@@ -1,25 +1,32 @@
  import {useState} from "react";
+ import {FormControlLabel,Checkbox,FormGroup} from '@material-ui/core'
+
+
 const EachAnime = ({eachanime,onSelect,choicesnumber})=>
 {
-  const [color,setcolor] = useState("black")
 
-  const onChoose =()=>
+  const [Checked,setChecked] = useState(false)
+  const onCheck =()=>
   {
       onSelect(eachanime.id)
-      color==="black"?
-      choicesnumber<5 && setcolor("green"):
-      setcolor("black")
+  
+      !Checked && choicesnumber < 5 ? setChecked(true) : setChecked(false)
+
   }
 
-
   return(
+
  
       <div id ={eachanime.id}
-      className="EachAnime" onClick={onChoose} 
-       style={{backgroundColor:color}}>
-      <div className="AnimeName">
-      {eachanime.anime_name}
-      </div> 
+      className="EachAnime">
+      <FormGroup>
+      <FormControlLabel
+       control={<Checkbox  color="secondary"
+        checked={Checked}
+        onChange={onCheck}/>}
+      label= {eachanime.anime_name} />  
+     </FormGroup>
+
     </div>
   )
 }

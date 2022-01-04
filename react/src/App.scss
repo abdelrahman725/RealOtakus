@@ -13,48 +13,66 @@ $defaul_round:  10px;
 .EachAnime
 {
   margin-bottom: 20px;
-  border-radius: $defaul_round;
   text-align: center;
-  padding: 12px;  
-  color: white;
+  
+}
+
+.EachQuestion
+{
+  margin:20px;
+
+  .Choices
+  {
+    .choice{
+      margin-top: 15px;
+    }
+  }
 }
 .ResultView
 {
+
   margin-top: 30px;
-  p
-  {
-    margin-top: 10px;
-  }
+ div
+ {
+   border-radius: 5px;
+   text-align: center;
+ }
  .Result
  {
-  //  display: flex;
-  //  flex-direction: column;
-  //  align-items: center;
-   
-   div
-   {
-     border-radius: $defaul_round;
-   }
-  
-  .Resultmsg
-  {
-    padding: 20px;
-    color: white;
-    font-size: large;
+
+    .NewScore
+    {
+      margin-bottom: 25px;
+    }
+    .Resultmsg
+    {
+        width: 100%;
+        .Score{
+          padding-top: 7px;
+        }
+      
+      margin-bottom: 25px;
+      font-family: sans-serif;
+      color: white;
+      padding: 20px;
+    }
 
   }
-  .NewScore
-  {
-    background-color: #0066b2;
-  }
-  
+
   .Points
   {
-    font-size:large ;
+    font-size:medium ;
+  
   }
- } 
+ 
 
 }
+
+.Interface{
+  
+  
+}
+
 
 .RegisterForm,.LoginForm
 {
@@ -74,53 +92,54 @@ $defaul_round:  10px;
 }
 
 .RegisterForm{
-  .select-box {
-    cursor: pointer;
-    position : relative;
-    max-width:  20em;
-    // margin: 5em auto;
-    width: 100%;
-  }
+
+  // .select-box {
+  //   cursor: pointer;
+  //   position : relative;
+  //   max-width:  20em;
+  //   // margin: 5em auto;
+  //   width: 100%;
+  // }
   
-  .select,
-  .label {
-    color: #414141;
-    display: block;
-    font: 400 17px/2em 'Source Sans Pro', sans-serif;
-  }
+  // .select,
+  // .label {
+  //   color: #414141;
+  //   display: block;
+  //   font: 400 17px/2em 'Source Sans Pro', sans-serif;
+  // }
   
-  .select {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    padding: 5px 0;
-    height: 40px;
-    opacity: 0;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    background: none transparent;
-    border: 0 none;
-  }
-  .select-box1 {
-    background: #ececec;
-  }
+  // .select {
+  //   width: 100%;
+  //   position: absolute;
+  //   top: 0;
+  //   padding: 5px 0;
+  //   height: 40px;
+  //   opacity: 0;
+  //   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  //   background: none transparent;
+  //   border: 0 none;
+  // }
+  // .select-box1 {
+  //   background: #ececec;
+  // }
   
-  .label {
-    position: relative;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  .open .label::after {
-     content: "▲";
-  }
-  .label::after {
-    content: "▼";
-    font-size: 12px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 5px 15px;
-    border-left: 5px solid #fff;
-  }
+  // .label {
+  //   position: relative;
+  //   padding: 5px 10px;
+  //   cursor: pointer;
+  // }
+  // .open .label::after {
+  //    content: "▲";
+  // }
+  // .label::after {
+  //   content: "▼";
+  //   font-size: 12px;
+  //   position: absolute;
+  //   right: 0;
+  //   top: 0;
+  //   padding: 5px 15px;
+  //   border-left: 5px solid #fff;
+  // }
 }
 
 a {text-decoration: none;}

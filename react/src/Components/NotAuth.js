@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Interface from './Interface'
 import Register from './Register'
 import Login from './Login'
 
@@ -31,6 +32,7 @@ return(
     {LoginView&&<Login login_path={LoginPathUrl} authenticate={authenticate} csrftoken={csrftoken} switchview={Switch}/>}
     {RegisterView&& <Register register_path={RegisterPathUrl} authenticate={authenticate} csrftoken={csrftoken} switchview={Switch}/>}
 
+    <Interface className="interface"/>
   </div>
   )
 }

@@ -81,7 +81,7 @@ const Register = ({register_path,authenticate,csrftoken,switchview})=>
             <span>
 
             <img  src={`https://flagcdn.com/120x90/${RegisterData.country}.png`}width="20" alt="flag"/>
-             {" "}{Countries[RegisterData.country]}
+             {/* {" "}{Countries[RegisterData.country]} */}
             </span>
             }
             </div> 

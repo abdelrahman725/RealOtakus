@@ -5,7 +5,6 @@ import EachQuestion from './Components/EachQuestion'
 import LeaderBoard from './Components/LeaderBoard'
 import Profile from './Components/Profile'
 import AnimesChoices from './Components/Animes'
-import Interface from './Components/Interface'
 import Navbar from './Components/Navbar'
 import LoginRegisterView from './Components/NotAuth'
 import Result from './Components/Result'
@@ -13,8 +12,7 @@ import getCookie from './GetCookie'
 
 //Material UI Components :
 import {Button, ButtonGroup} from '@material-ui/core'
-//import CircularProgress from '@material-ui/core/CircularProgress';
-//import Box from '@material-ui/core/Box';
+
 // //Material Icons :
 import ExitToAppRounded from '@material-ui/icons/ExitToAppRounded'
 import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded'
@@ -33,7 +31,6 @@ function App() {
   const SubmitTestPathUrl = `http://${IP}:8000/submit`
   const UserDataPathUrl = `http://${IP}:8000/userdata`
   const LogoutPathUrl = `http://${IP}:8000/logout`
-
   const ChoicesLimit = 5 
 
  // views
@@ -41,7 +38,6 @@ function App() {
   const [TestView,setTestView] = useState(false)
   const [AnimesView,setAnimesView] = useState(false)
   const [ProfileView,setProfileView]  = useState(false)
-  const [InterfaceView,setInterfaceView]  = useState(true)
   const [ResultView,setResultView]  = useState(false)
   const [nextbtn,setnextbtn] = useState(false)
   const [submitbtn,setsubmitbtn]= useState(false)
@@ -68,9 +64,11 @@ function App() {
   const [TestsStarted,setTestsStarted] = useState()
   const [BestScore,setBestScore] = useState()
 
-  
   const [Authenticated,setAuthenticated] = useState()
+  const [quiztimer,setQuizTimer] = useState(5)
 
+  const [LoadingQuiz,setLoadingQuiz]= useState(false)
+  const [Time_over,setTime_over] = useState(false)
     
 // authenticate user and load base data
 const AuthenticateUser = ()=>
@@ -78,8 +76,7 @@ const AuthenticateUser = ()=>
   // save session in local storage
   localStorage.setItem("Logged",true)
   GetUserData()
-  setAuthenticated(true)
-  setInterfaceView(true) 
+  setAuthenticated(true) 
 }
  
 
@@ -90,7 +87,7 @@ useEffect(() => {
   if (Logged)
   {
     setAuthenticated(true)
-    GetUserData();
+    GetUserData()
   }
   else
   {
@@ -99,7 +96,6 @@ useEffect(() => {
   }
   
 }, []);
-
 
 
 
@@ -152,8 +148,9 @@ const FetchDashBoard  =  async()=>
   const Users  = await response.json()
   FetchAnimes()
   setUsers(Users)
+
+  setAnimesView(false)
   setLeaderBoard(true)
-  setInterfaceView(false)
 }
 
 //fetch sorted animes for the dashboard
@@ -174,68 +171,27 @@ const ShowAvailableAnimes = async()=>
   setSelectedAnimes([])
   setanimecounter(0)
   setTestScore()
-  setInterfaceView(false)
+  setResultView(false)
   setTestView(false)
-  
+  setLeaderBoard(false )
   setAnimesView(true)
 }
 
 
-
-
 const showprofile = ()=>
 {
-  
   setTestView(false)
   setLeaderBoard(false)
   setAnimesView(false)
-  setInterfaceView(false)
   setResultView(false)
-
-  
-
   setProfileView(true)
 }
 
-const Home =()=>
-{
-  setInterfaceView(true)
-  setResultView(false)
-  setLeaderBoard(false)
-  setProfileView(false)
-  setAnimesView(false)
-}
-
-
 ///////////////////////////////////////////  Quiz Handling Functions   ////////////////////////////////////////////////
-
-
-const GetQuestions = async()=>
-{
-  
-  const res = await fetch(QuestionsPathUrl,{
-    method : 'POST',
-    headers : {
-      'Content-type': 'application/json',
-      'X-CSRFToken': CsrfToken,
-    },
-    body: JSON.stringify({
-      selectedanimes:SelectedAnimes
-    })
-  })
-
-  const questions = await res.json()
-
-  setQuestionsLength(questions.length)
-  setQuestions(questions)  
-  setAnimesView(false)
-  setnextbtn( true)
-  setTestView(true)
-
-}
 
 const ToggleAddRemoveAnime = (id) =>
 {  
+
 
   // removing anime 
  if( SelectedAnimes.filter((anime)=>(anime.id===id)).length>=1)
@@ -257,38 +213,149 @@ const ToggleAddRemoveAnime = (id) =>
 
 }
 
+
+
+const GetQuestions = async()=>
+{
+  
+  const res = await fetch(QuestionsPathUrl,{
+    method : 'POST',
+    headers : {
+      'Content-type': 'application/json',
+      'X-CSRFToken': CsrfToken,
+    },
+    body: JSON.stringify({
+      selectedanimes:SelectedAnimes
+    })
+  })
+
+  const questions = await res.json()
+  console.log(questions)
+
+  setQuestionsLength(questions.length)
+  setQuestions(questions)  
+  setAnimesView(false)
+  setLoadingQuiz(true)
+
+
+}
+
+useEffect(()=>{
+  if (LoadingQuiz)
+  {
+
+    const QuizCountDown = setInterval(()=>{
+      setQuizTimer(quiztimer-1)
+    },1000)
+    
+    if (quiztimer===0)
+    {
+      setLoadingQuiz(false)
+      setTestView(true)
+      setnextbtn( true)
+      clearInterval(QuizCountDown)
+    } 
+    return ()=>clearInterval(QuizCountDown)
+  }
+    
+},[quiztimer,LoadingQuiz])
+
+
+const [seconds,setseconds]= useState(0)
+const [minutes,setminutes]= useState(2)
+
+const reset_question_timer = ()=>
+{
+  setseconds(0)
+  setminutes(2)
+} 
+
+const submit_view = ()=>
+{
+  setnextbtn(false)
+  setsubmitbtn(true)  
+}
+useEffect(()=>{
+  if(TestView)
+  { 
+    const timer = setTimeout(()=>{
+
+      // 00:00
+      seconds===0 &&  minutes>0 && setseconds(59)
+      seconds >=1 && minutes>=0 && setseconds(seconds-1)
+
+      minutes >0 && seconds===0 && setminutes(minutes-1)
+    },100)
+    
+
+    if( minutes===0 && seconds===0 )
+    {
+      if ( QuestionNumber+1 ===UserQuestions.length )
+      {
+        setTime_over(true)
+        alert("Times up, over, blaow !")
+        return ()=>clearTimeout(timer)
+
+      }
+      else
+      {
+        reset_question_timer()
+        setQuestionNumber(QuestionNumber+1)
+      }
+    }
+    
+    return ()=>clearTimeout(timer)
+  }
+},[seconds,minutes,QuestionNumber,TestView])
+
+
+const reset_things = ()=>
+{
+  setQuizTimer(5)
+  reset_question_timer()
+  setQuestionNumber(0)
+  setQuestions([])
+  setSelectedAnimes([])
+  setTime_over(false)
+  setsubmitbtn(false)
+  setanimecounter(0)
+}
+
+
 const HandleAnswerChoose = (answer,question_id) =>
 {
-  //setUserAnswers([...UserAnswers,{id:question_id,answer:answer}])
   const dict = UserAnswers
   dict[question_id] = answer
   setUserAnswers(dict)
 }
 
-
 const nextquestion =()=>
 {
-  // last question 
-  if (QuestionNumber+1 ===UserQuestions.length-1)
-  {
-    setnextbtn(false)
-    setsubmitbtn(true)  
-  }
-
+ 
   if(QuestionNumber < UserQuestions.length-1)
   {
     setQuestionNumber(QuestionNumber+1)
+    reset_question_timer()
   }
 
 }
+useEffect(()=>
+{
+  if (QuestionNumber+1 ===UserQuestions.length)
+  {
+    submit_view()
+  }
+
+},[QuestionNumber])
 
 //end quiz
 const Submit =  ()=>
 {
+  console.log(UserAnswers)
+  reset_things()
   setSubmitLoading(true)
   SendTestResulst()
   setTestView(false)
-  setsubmitbtn(false)
   setResultView(true)
 }
 
@@ -305,6 +372,7 @@ const  SendTestResulst = async()=>
       questionslength:QuestionsLength
     })
   })
+
   
   const result = await res.json()
   
@@ -313,8 +381,7 @@ const  SendTestResulst = async()=>
   setPassed(result.passed)
   result.passed && setPoints(userpoints+result.testscore)
   setUserAnswers({})
-  setQuestions([])
-  setQuestionNumber(0)
+
   
   setTimeout(()=>{
     setSubmitLoading(false)
@@ -323,12 +390,9 @@ const  SendTestResulst = async()=>
 
 const ExitTestMode = ()=>
 {
+  reset_things()
   setTestScore()
-  setQuestionNumber(0)
-  setanimecounter(0)
-  setSelectedAnimes([])
   setUserAnswers({})
-  setQuestions([])
   setTestView(false)
   setAnimesView(true)
 }
@@ -348,19 +412,7 @@ const ExitTestMode = ()=>
       
     <ButtonGroup orientation="vertical" className="ButtonsGroup" > 
 
-          {!InterfaceView&& !TestView&&
-                <Button 
-                className="ButtonChild"
-                onClick={Home} 
-                size="small"
-                variant="contained" >
-                  Home
-                </Button>
-          }
-
- 
-        {InterfaceView&&
-            <Button 
+            {!TestView &&  !LoadingQuiz&& <Button 
             className="ButtonChild"
             onClick={FetchDashBoard} 
             size="small"
@@ -368,19 +420,17 @@ const ExitTestMode = ()=>
             startIcon={<PeopleRounded/>}>
               DashBoard
             </Button>
-        }          
-          {InterfaceView&&
-              <Button 
+            }
+              {!TestView && !LoadingQuiz&&<Button 
               className="ButtonChild"
               onClick={ShowAvailableAnimes} 
                 size="small"
                 variant="contained" >
-
                 {TestsCompleted !== undefined? TestsCompleted>=1?
                 "take Quiz":
                 "take your first Test !"  :""}
-              </Button>
-            }
+              </Button>}
+            
 
              {AnimesView && animecounter===ChoicesLimit &&
              <Button
@@ -403,8 +453,15 @@ const ExitTestMode = ()=>
           </Button>
           }
         </ButtonGroup>
+        {LoadingQuiz && <div>
+          <p>
+            quiz starts in 
+          </p>
+          <p>
+            {quiztimer}
+          </p>
+          </div>}
      
-        {InterfaceView&& <Interface />} 
 
         {ResultView &&
           <Result score={TestScore} NumberOfQuestions={QuestionsLength} passed={Passed} loading={SubmitLoading} highest_score={BestScore}/>
@@ -415,8 +472,6 @@ const ExitTestMode = ()=>
         {AnimesView&& <AnimesChoices all_animes = {AvailableAnimes} onSelect= {ToggleAddRemoveAnime}
         choicesnumber={animecounter}/>}
 
-        
-
         {TestView&& <EachQuestion question = {UserQuestions[QuestionNumber].question}
           id =  {UserQuestions[QuestionNumber].id}
           choices = {[UserQuestions[QuestionNumber].choice1,
@@ -424,7 +479,10 @@ const ExitTestMode = ()=>
           UserQuestions[QuestionNumber].choice3,
           UserQuestions[QuestionNumber].choice2,
            ]}        
-           question_number={QuestionNumber} onChoose={HandleAnswerChoose}/>}
+           question_number={QuestionNumber}
+           test_end={Time_over}
+           onChoose={HandleAnswerChoose}seconds= {seconds} minutes={minutes}/>
+           }
 
       <ButtonGroup orientation="vertical" className="ButtonsGroup">  
 

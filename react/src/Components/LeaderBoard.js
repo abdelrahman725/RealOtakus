@@ -52,7 +52,7 @@ component={Paper} className="Table">
     </TableContainer>
 
 
-
+Otakus perofrmance in each anime
 
     <TableContainer 
 component={Paper} className="Table">
@@ -61,10 +61,9 @@ component={Paper} className="Table">
             <TableRow>
                 <TableCell style={{color:"white"}}></TableCell>
                 <TableCell style={{color:"white"}}>Anime</TableCell>
-                <TableCell style={{color:"white"}}>anime score</TableCell>
+                <TableCell style={{color:"white"}}>correct answers out of all answers</TableCell>
             </TableRow>
         </TableHead>
-
         <TableBody>
         {animes.map((anime,index) => (
  
@@ -73,7 +72,7 @@ component={Paper} className="Table">
                   <img src={anime.url} width="90px" alt={anime.anime_name} style={{borderRadius:"10px"}}/>
                   </TableCell>
                   <TableCell>{anime.anime_name}</TableCell>    
-                  <TableCell>{anime.total_score}</TableCell>     
+                  <TableCell>{(anime.total_score/anime.total_answers)*100}%</TableCell>     
               </TableRow>
             ))}
         </TableBody>
