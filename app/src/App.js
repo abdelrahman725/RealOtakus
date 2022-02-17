@@ -1,8 +1,8 @@
 import './App.css';
 import {useState,useEffect} from 'react'
+
 function App() {
-
-
+  
   const getUsers = async()=>{
   const res = await fetch("http://localhost:8000/leaderboard")
   const data=await res.json()
@@ -12,6 +12,7 @@ function App() {
   useEffect(()=>{
   getUsers()
   },[])
+
   return (
     <div className="App">
       <h1>

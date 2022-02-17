@@ -17,6 +17,7 @@ from .models import *
 from .serializers import *
 from .helpers import login_required, ValidatePassword
 
+
 @login_required
 @api_view(["GET"])
 def GetUserData(request):
