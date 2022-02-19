@@ -1,23 +1,17 @@
 import './App.css';
 import {useState,useEffect} from 'react'
+import NotAuth from './NotAuth'
 
 function App() {
-  
-  const getUsers = async()=>{
-  const res = await fetch("http://localhost:8000/leaderboard")
-  const data=await res.json()
-  console.log(data)
-  }
 
-  useEffect(()=>{
-  getUsers()
-  },[])
+  const[authenticated,setauthenticated] =useState(true)
 
   return (
     <div className="App">
       <h1>
         My Frontend
       </h1>
+      {authenticated && <NotAuth/>}
     </div>
   );
 }
