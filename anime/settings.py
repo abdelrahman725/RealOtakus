@@ -39,12 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+   
     'rest_framework',
-    'corsheaders',
-    
+    'corsheaders',    
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount', 
+    'allauth.socialaccount.providers.google',
 ]
 
 
+SITE_ID = 1
 
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:3000",
@@ -52,7 +59,6 @@ CORS_ALLOWED_ORIGINS = [
     # "http://127.0.0.1:8000",
     # "http://localhost:8000"
 ]
-
 
 
 
@@ -101,6 +107,15 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Needed to login by username in Django admin, regardless of `allauth`
+# `allauth` specific authentication methods, such as login by e-mail
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
 
 AUTH_USER_MODEL = "board.User"
 

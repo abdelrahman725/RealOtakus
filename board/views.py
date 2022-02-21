@@ -18,90 +18,90 @@ from .serializers import *
 from .helpers import login_required, ValidatePassword
 
 
-@login_required
-@api_view(["GET"])
-def GetUserData(request):
-  serialized_data = UserSerializer(request.user,many=False)
-  return Response(serialized_data.data)
+# @login_required
+# @api_view(["GET"])
+# def GetUserData(request):
+#   serialized_data = UserSerializer(request.user,many=False)
+#   return Response(serialized_data.data)
 
-class GetUsers(generics.ListAPIView):
-  queryset = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')[:10]
-  serializer_class = UserSerializer
-
-
-@login_required
-@api_view(["GET"])
-def GetAvailableAnimes(request):
-  AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
-  serialized_data = AnimeSimpleSerializer(AnimesWithQuestions,many=True)
-  return Response(serialized_data.data)
+# class GetUsers(generics.ListAPIView):
+#   queryset = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')[:10]
+#   serializer_class = UserSerializer
 
 
-@login_required
-@api_view(["GET"])
-def GetAnimeOrdered(request):
-  sorted_animes = (Anime.objects.filter(anime_question__isnull=False).distinct()).order_by('-total_score')
-  serialized_data = AnimeSerializer(sorted_animes,many=True)
-  return Response(serialized_data.data)
+# @login_required
+# @api_view(["GET"])
+# def GetAvailableAnimes(request):
+#   AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
+#   serialized_data = AnimeSimpleSerializer(AnimesWithQuestions,many=True)
+#   return Response(serialized_data.data)
+
+
+# @login_required
+# @api_view(["GET"])
+# def GetAnimeOrdered(request):
+#   sorted_animes = (Anime.objects.filter(anime_question__isnull=False).distinct()).order_by('-total_score')
+#   serialized_data = AnimeSerializer(sorted_animes,many=True)
+#   return Response(serialized_data.data)
 
 
 
-@login_required
-@api_view(["POST"])
-def GetTest(request):
-  current_user = request.user
-  current_user.tests_started+=1
-  current_user.save()
-  selected_animes=request.data["selectedanimes"]
-  questions=[]
-  for anime in selected_animes:
-    EachAnime_4_Questions=Question.objects.filter(anime=anime["id"])[:4]
-    questions.append(EachAnime_4_Questions)
-  final_questions = list(chain(*questions))
+# @login_required
+# @api_view(["POST"])
+# def GetTest(request):
+#   current_user = request.user
+#   current_user.tests_started+=1
+#   current_user.save()
+#   selected_animes=request.data["selectedanimes"]
+#   questions=[]
+#   for anime in selected_animes:
+#     EachAnime_4_Questions=Question.objects.filter(anime=anime["id"])[:4]
+#     questions.append(EachAnime_4_Questions)
+#   final_questions = list(chain(*questions))
   
-  serialized_data = QuestionSerializer(final_questions,many=True)
-  return Response(serialized_data.data)
+#   serialized_data = QuestionSerializer(final_questions,many=True)
+#   return Response(serialized_data.data)
 
 
-@login_required
-@api_view(["POST"])
-def CheckTest(request):
-  answers = request.data["results"]
-  questions_length = request.data["questionslength"]
-  test_score = 0
-  for Id, user_answer in answers.items():
-    question = Question.objects.get(pk=Id) 
-    anime = Anime.objects.get(pk=question.anime.id)
-    anime.total_answers+=1
-    if question.right_answer == user_answer:
-      test_score+=1
-      anime.total_score+=1
-    anime.save()
+# @login_required
+# @api_view(["POST"])
+# def CheckTest(request):
+#   answers = request.data["results"]
+#   questions_length = request.data["questionslength"]
+#   test_score = 0
+#   for Id, user_answer in answers.items():
+#     question = Question.objects.get(pk=Id) 
+#     anime = Anime.objects.get(pk=question.anime.id)
+#     anime.total_answers+=1
+#     if question.right_answer == user_answer:
+#       test_score+=1
+#       anime.total_score+=1
+#     anime.save()
 
 
-  current_user = request.user
-  current_user.tests_completed+=1
-  passed = False
+#   current_user = request.user
+#   current_user.tests_completed+=1
+#   passed = False
 
-  # check if user has passed the test
-  # because no quiz or score related data will be updated if the user failed the quiz
+#   # check if user has passed the test
+#   # because no quiz or score related data will be updated if the user failed the quiz
 
-  if test_score >= math.ceil(questions_length/2):
-    passed=True
-    current_user.points += test_score
+#   if test_score >= math.ceil(questions_length/2):
+#     passed=True
+#     current_user.points += test_score
     
-    if test_score > current_user.best_score:
-      current_user.best_score = test_score
+#     if test_score > current_user.best_score:
+#       current_user.best_score = test_score
     
-    if current_user.points >=200:
-      current_user.level = "real otaku"
+#     if current_user.points >=200:
+#       current_user.level = "real otaku"
 
-    elif current_user.points >=100:
-      current_user.level = "intermediate"
+#     elif current_user.points >=100:
+#       current_user.level = "intermediate"
 
-  current_user.save()
+#   current_user.save()
 
-  return JsonResponse({"message": "test answers have been received","passed":passed,"testscore":test_score}, status=201)
+#   return JsonResponse({"message": "test answers have been received","passed":passed,"testscore":test_score}, status=201)
 
 
 

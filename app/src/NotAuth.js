@@ -5,6 +5,7 @@ const NotAuth = () => {
   return (
     <div>
     <Register/>      
+  
     </div>
   )
 }
