@@ -2,55 +2,54 @@ import './App.css';
 import {useState,useEffect} from 'react'
 
 function App() {
-  const [name,setname] = useState()
+ 
   const[competitors,setcompitotrs] = useState()
-  const LoadUserData = async()=>
+  const[Animes,setanimes] = useState()
+  const[UserData,setUserData] = useState({})
+
+
+  const GetUserData = async()=>
   {
     const res = await fetch("http://127.0.0.1:8000/home/data")
-    const data = await res.json()
-    setname(data.username)
-    console.log(data)
+    const data= await res.json()
+    setUserData(data)
+    console.log(UserData)
   }
 
 
 
-  const LoadCompetitors = async()=>
+  const GetCompetitors = async()=>
   {
     const res = await fetch("http://127.0.0.1:8000/home/competitors")
     const data = await res.json()
     setcompitotrs(data)
+  }
 
+  const  GetAnimes= async()=>
+  {
+    const res = await fetch("http://127.0.0.1:8000/home/animes")
+    const animes  = await res.json()
+    setanimes(animes)
   }
 
 
   useEffect(()=>{
-   LoadUserData()
-   LoadCompetitors()
+    GetUserData()
+    GetCompetitors()
+    GetAnimes()
+    
+
   },[])
 
   return (
     <div className="App">
       <h1>
-        welcome otakus
+      {/* signed in as  {UserData.user}      */}
       </h1>
       <h2>
-        signed in as  {name}
+      so you are a real otaku ? lets see
       </h2>
-   <h3>
-     current competitors : 
-   </h3>
-   {competitors &&
-    <div>
 
-      {competitors.map((competitor)=>(
-        <p>
-        {competitor.username}
-        </p>
-      ))}
-     
-      </div>
-  }
-  
     </div>
   );
 }

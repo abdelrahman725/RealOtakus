@@ -31,16 +31,16 @@ def GetUserData(request):
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
-  serialized_data = AnimeSimpleSerializer(AnimesWithQuestions,many=True)
+  
+  serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
 
 @api_view(["GET"])
 def AllCompetitors(request):
-  otakus = User.objects.all()
+  otakus = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')
   serialized_data = UserSerializer(otakus,many=True)
   return Response(serialized_data.data)
-
 
 
 
