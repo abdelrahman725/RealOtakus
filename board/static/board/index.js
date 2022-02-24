@@ -1,22 +1,27 @@
 let RegisterPage;
 let LoginPage;
 
+function ClearMessages()
+{
+    document.querySelector(".messages").innerHTML=""
+}
 function ShowRegister()
 {
+  ClearMessages()
   RegisterPage.style.display = "block";
   LoginPage.style.display = "none";
-  document.getElementsByName("registerusername")[0].focus();
+  document.getElementById("register_name").focus();
 
 }
 
 function ShowLogin()
 {
+  ClearMessages()
   RegisterPage.style.display = "none";
   LoginPage.style.display = "block";
-  document.getElementsByName("loginusername")[0].focus();
+  document.getElementById("login_name").focus();
 
 }
-
 
 function CheckPasswords()
 {
@@ -31,20 +36,18 @@ function CheckPasswords()
             if (pass_inputs[0].value!=pass_inputs[1].value)
             {
                 RegisterBtn.disabled = true;
-                console.log("not equal")
-
             }
             else
             {
                 RegisterBtn.disabled = false;
-                console.log("equal")
-
             }
 
         })
     })
 
 }
+
+
 document.addEventListener("DOMContentLoaded",()=>
 {
    RegisterPage = document.querySelector(".RegisterPage");

@@ -1,7 +1,3 @@
-from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
-from django.contrib import messages
-from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 
@@ -9,32 +5,49 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, generics
 
-import json,math,re
-
-from itertools import chain
+import json
 
 from .models import *
 from .serializers import *
-from .helpers import login_required, ValidatePassword
+from .helpers import login_required 
+
+def DevelopmentUser(): return User.objects.get(pk=28)
 
 
-# @login_required
-# @api_view(["GET"])
-# def GetUserData(request):
-#   serialized_data = UserSerializer(request.user,many=False)
-#   return Response(serialized_data.data)
-
-# class GetUsers(generics.ListAPIView):
-#   queryset = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')[:10]
-#   serializer_class = UserSerializer
+# render react build page
+@login_required
+def ReactApp(request):
+  return redirect("http://localhost:3000/home")
+  #return render(request, "index.html")
 
 
-# @login_required
-# @api_view(["GET"])
-# def GetAvailableAnimes(request):
-#   AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
-#   serialized_data = AnimeSimpleSerializer(AnimesWithQuestions,many=True)
-#   return Response(serialized_data.data)
+@api_view(["GET"])
+def GetUserData(request):
+  serialized_data = UserSerializer(DevelopmentUser(),many=False)
+  return Response(serialized_data.data)
+
+  
+
+@api_view(["GET"])
+def GetAvailableAnimes(request):
+  AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
+  serialized_data = AnimeSimpleSerializer(AnimesWithQuestions,many=True)
+  return Response(serialized_data.data)
+
+
+@api_view(["GET"])
+def AllCompetitors(request):
+  otakus = User.objects.all()
+  serialized_data = UserSerializer(otakus,many=True)
+  return Response(serialized_data.data)
+
+
+
+
+@api_view(["POST"])
+def TestPost(request):
+  return JsonResponse({"message": "oka ya gamd"})
+
 
 
 # @login_required
@@ -105,42 +118,3 @@ from .helpers import login_required, ValidatePassword
 
 
 
-
-@api_view(["POST"])
-def Register(request):
-  registration_data = request.data["registerdata"]
-  username= registration_data["registername"]
-  country = registration_data["country"]
-  password = registration_data["pass1"]
-  confirmation = registration_data["pass2"]
-
-  if password != confirmation or not ValidatePassword(password):
-    return JsonResponse({"msg":"passwords must be matching"},status=401)
-   # Attempt to create new user
-  try:
-      user = User.objects.create_user(username=username,password=password,country=country)
-      user.save()
-      login(request, user)
-  except IntegrityError:
-      return JsonResponse({"msg": "Username already taken"},status=401)
-
-  
-  return JsonResponse({"msg": "registered","info":1}, status=201)
-
-
-@api_view(["POST"])
-def Login(request):
-  logindata = request.data["logindata"]
-  username = logindata["name"]
-  password = logindata["pass"]
-  user = authenticate(request,username=username,password=password)
-  if user is not None:
-    login(request,user)
-    return Response({"msg": "success"}, status=status.HTTP_200_OK)
-
-  return Response({"msg": "wrong password or username"}, status=401)
-
-@api_view(["GET"])
-def Logout(request):
-  logout(request)
-  return JsonResponse({"msg": "Loged Out!"}, status=200)

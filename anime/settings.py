@@ -47,17 +47,17 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount', 
-    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google'
+
 ]
 
-
 SITE_ID = 1
-
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:3000",
-     "http://127.0.0.1:3000"
-    # "http://127.0.0.1:8000",
-    # "http://localhost:8000"
+     "http://127.0.0.1:3000",
+     "http://127.0.0.1:8000",
+     "http://localhost:8000"
 ]
 
 
@@ -65,12 +65,12 @@ CORS_ALLOWED_ORIGINS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ] 
 
 
@@ -79,9 +79,7 @@ ROOT_URLCONF = 'anime.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'react/build')
-        ],
+        'DIRS':  ['templates/',  os.path.join(BASE_DIR, 'app/build')] , 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -108,16 +106,18 @@ DATABASES = {
     }
 }
 
+
+AUTH_USER_MODEL = "board.User"
+
+
 # Needed to login by username in Django admin, regardless of `allauth`
 # `allauth` specific authentication methods, such as login by e-mail
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    # 'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 
-
-AUTH_USER_MODEL = "board.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -157,15 +157,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'react/build/static')
+    os.path.join(BASE_DIR, 'app/build/static')
 ]
 
-
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES':[
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-#     'DEFAULT_AUTHENTICATION_CLASSES':[
-#         'rest_framework.authentication.SessionAuthentication',
-#     ]
-# }
+LOGIN_REDIRECT_URL ='http://localhost:3000/home'

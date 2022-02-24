@@ -1,0 +1,85 @@
+{% load static %}
+{% load socialaccount %}
+{% load account %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <link href="{% static 'board/styles.css' %}" rel="stylesheet"> 
+  <script src="{% static 'board/index.js' %}"></script>
+
+  <title>Otakus welcome page</title>
+</head>
+<body>
+
+<h1> welcome to te set up page</h1>
+
+
+
+
+{% if registerview  %} 
+<div class="LoginPage" style="display: none">
+{%else%}
+<div class="LoginPage" style="display: block">
+{% endif %}
+
+
+       <h3>Login</h3>
+        <div class="container">
+          <form action="{%url 'login_url' %}" method="post" class="box" >
+            {% csrf_token %}
+
+              <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus>
+              <input type="password" name="password" placeholder="Passsword" autocomplete="off" required>
+      
+              <input type="submit" value="Sign in" class="btn1">
+            </form>
+         </div>
+         <button id="registerview" onclick="ShowRegister()">create a new account</button> 
+    </div>
+
+
+
+    {% if registerview  %} 
+    <div class="RegisterPage" style="display: block">
+    {%else%}
+    <div class="RegisterPage" style="display: none">
+    {% endif %}
+      
+    <h3>Sign Up</h3>
+        <div class="container">
+
+          <form  action="{%url 'register_url' %}" method="post" class="box" >
+            {% csrf_token %}
+
+              <input id="register_name" type="text" name="registerusername" placeholder="username" autocomplete="off" required >
+              <input type="password" name="registerpassword" placeholder="passsword"  autocomplete="off" required class="pass">
+              
+              <input type="password" name="confirmpassword" placeholder="confirm passsword"  autocomplete="off" required class="pass">
+      
+              <input type="submit" value="Sign Up" class="btn1"
+              id= "registerbtn">
+            </form>
+         </div> 
+         <button id="loginview" onclick="ShowLogin()">already have an account</button> 
+    </div> 
+
+    <div class="messages">
+      {% if messages %}
+      {% for msg in messages  %}
+      {{msg}}
+      {% endfor %}
+      {% endif %}
+  </div>
+    
+    <a href="{% provider_login_url 'google' %}">or continue with google </a>
+
+
+
+</body>
+            
+</html>

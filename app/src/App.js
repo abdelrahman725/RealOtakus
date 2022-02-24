@@ -1,17 +1,56 @@
 import './App.css';
 import {useState,useEffect} from 'react'
-import NotAuth from './NotAuth'
 
 function App() {
+  const [name,setname] = useState()
+  const[competitors,setcompitotrs] = useState()
+  const LoadUserData = async()=>
+  {
+    const res = await fetch("http://127.0.0.1:8000/home/data")
+    const data = await res.json()
+    setname(data.username)
+    console.log(data)
+  }
 
-  const[authenticated,setauthenticated] =useState(true)
+
+
+  const LoadCompetitors = async()=>
+  {
+    const res = await fetch("http://127.0.0.1:8000/home/competitors")
+    const data = await res.json()
+    setcompitotrs(data)
+
+  }
+
+
+  useEffect(()=>{
+   LoadUserData()
+   LoadCompetitors()
+  },[])
 
   return (
     <div className="App">
       <h1>
-        My Frontend
+        welcome otakus
       </h1>
-      {authenticated && <NotAuth/>}
+      <h2>
+        signed in as  {name}
+      </h2>
+   <h3>
+     current competitors : 
+   </h3>
+   {competitors &&
+    <div>
+
+      {competitors.map((competitor)=>(
+        <p>
+        {competitor.username}
+        </p>
+      ))}
+     
+      </div>
+  }
+  
     </div>
   );
 }
