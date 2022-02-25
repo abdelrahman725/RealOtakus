@@ -26,7 +26,7 @@ SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.5","localhost","127.0.0.1"]
+ALLOWED_HOSTS = ["localhost","127.0.0.1"]
 
 
 # Application definition
@@ -157,7 +157,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'app/build/static')
+    os.path.join(os.path.join(BASE_DIR, 'app'), 'build', 'static'),
 ]
 
-LOGIN_REDIRECT_URL ='http://localhost:3000/home'
+LOGIN_REDIRECT_URL ='/home'

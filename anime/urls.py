@@ -12,5 +12,4 @@ urlpatterns = [
     path('register/',Register,name="register_url"),
     path('logout/',Logout),
     path('home/',include("board.urls")),
-
 ]

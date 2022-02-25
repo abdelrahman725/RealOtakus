@@ -28,25 +28,36 @@ function CheckPasswords()
 
     let pass_inputs = document.getElementsByClassName("pass");
     let RegisterBtn = document.getElementById("registerbtn");
+
     Array.from(pass_inputs).forEach(input =>
     {
-        input.addEventListener("keyup",()=>
+        input.addEventListener("input",()=>
         {
 
-            if (pass_inputs[0].value!=pass_inputs[1].value)
+            if(pass_inputs[0].value.length<6)
             {
-                RegisterBtn.disabled = true;
+                document.querySelector(".messages").innerHTML= "password must be at least 6 charcters length"
+            }
+            else
+            {  
+               document.querySelector(".messages").innerHTML= ""
+            }
+            
+
+            if (pass_inputs[0].value.length>=6 && pass_inputs[0].value==pass_inputs[1].value)
+            {
+                RegisterBtn.disabled = false;
             }
             else
             {
-                RegisterBtn.disabled = false;
+                RegisterBtn.disabled = true;
             }
 
         })
     })
 
+   
 }
-
 
 document.addEventListener("DOMContentLoaded",()=>
 {

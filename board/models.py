@@ -18,12 +18,12 @@ class Anime(models.Model):
   anime_name = models.CharField(max_length=100,null=False,unique=True)
   url= models.CharField(max_length=300,default="/")
   total_answers =  models.IntegerField(default=0)
-  total_score = models.IntegerField(default=0)
+  total_score = models.IntegerField (default=0)
   def __str__(self):
         return f"{self.anime_name}"
 
 class Question(models.Model):
-  anime = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_question")
+  anime = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
   question =  models.TextField(blank=False,unique=True)
   advanced = models.BooleanField(default=False)
   choice1 =  models.TextField(blank=False,null=True)

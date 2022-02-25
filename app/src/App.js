@@ -1,11 +1,17 @@
 import './App.css';
+import Competitors from './Components/Dashboard';
+import Profile from './Components/Profile';
 import {useState,useEffect} from 'react'
 
 function App() {
  
-  const[competitors,setcompitotrs] = useState()
+  const[AllCompetitors,setCompitotrs] = useState()
   const[Animes,setanimes] = useState()
   const[UserData,setUserData] = useState({})
+
+  const[UserDataLoading,setUserDataLoading] = useState(true)
+  const[DashBoardLoding,setDashBoardLoding] = useState(true)
+  const[AnimesLoading,setAnimesLoading] = useState(true)
 
 
   const GetUserData = async()=>
@@ -13,16 +19,15 @@ function App() {
     const res = await fetch("http://127.0.0.1:8000/home/data")
     const data= await res.json()
     setUserData(data)
-    console.log(UserData)
   }
-
 
 
   const GetCompetitors = async()=>
   {
     const res = await fetch("http://127.0.0.1:8000/home/competitors")
     const data = await res.json()
-    setcompitotrs(data)
+    setCompitotrs(data)
+    setDashBoardLoding(false)
   }
 
   const  GetAnimes= async()=>
@@ -35,20 +40,21 @@ function App() {
 
   useEffect(()=>{
     GetUserData()
-    GetCompetitors()
     GetAnimes()
-    
+    // GetCompetitors()
 
   },[])
 
   return (
     <div className="App">
       <h1>
-      {/* signed in as  {UserData.user}      */}
+        welcome ya  { UserData.username}
       </h1>
       <h2>
-      so you are a real otaku ? lets see
+       so you are a real otaku ? lets see
       </h2>
+      {!DashBoardLoding &&<Competitors competitors={AllCompetitors}/>}
+      
 
     </div>
   );
