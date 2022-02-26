@@ -13,7 +13,9 @@ function App() {
   const[DashBoardLoding,setDashBoardLoding] = useState(true)
   const[AnimesLoading,setAnimesLoading] = useState(true)
 
+  const[GameMode,setGameMode] = useState(false)
 
+  const LogoutUrl = "http://127.0.0.1:8000/logout"
   const GetUserData = async()=>
   {
     const res = await fetch("http://127.0.0.1:8000/home/data")
@@ -53,11 +55,12 @@ function App() {
       <h2>
        so you are a real otaku ? lets see
       </h2>
+      <a href={LogoutUrl}><strong>Logout</strong> </a>
       {!DashBoardLoding &&<Competitors competitors={AllCompetitors}/>}
       
-
     </div>
   );
 }
 
 export default App;
+  

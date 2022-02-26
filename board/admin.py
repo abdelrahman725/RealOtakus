@@ -11,7 +11,7 @@ class User_info(admin.ModelAdmin):
 @admin.register(Question)
 class QuestionInfo(admin.ModelAdmin):
   list_display=("anime","question","right_answer","advanced")
-  list_filter = ("anime","advanced")
+  list_filter = ("anime","advanced","contributor",)
   search_fields = ("question",)
 
 
@@ -20,3 +20,8 @@ class AnimeInfo(admin.ModelAdmin):
   list_display = ("anime_name","total_score","id")
   search_fields = ("anime_name",)
 
+
+@admin.register(Game)
+class GameInfo(admin.ModelAdmin):
+  list_display = ("game_owner","anime","gamesnumber")
+  list_filter = ("game_owner",)

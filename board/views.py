@@ -23,15 +23,14 @@ def ReactApp(request):
 
 @api_view(["GET"])
 def GetUserData(request):
-  serialized_data = UserSerializer(DevelopmentUser(),many=False)
+  serialized_data = UserSerializer(request.user,many=False)
   return Response(serialized_data.data)
 
   
 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
-  AnimesWithQuestions = Anime.objects.filter(anime_question__isnull=False).distinct()
-  
+  AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
@@ -46,7 +45,7 @@ def AllCompetitors(request):
 
 @api_view(["POST"])
 def TestPost(request):
-  return JsonResponse({"message": "oka ya gamd"})
+  return JsonResponse({"message": "successfull post request with its csrf token and that is the response"})
 
 
 
@@ -66,7 +65,12 @@ def GetTest(request):
   current_user.tests_started+=1
   current_user.save()
   selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
-  questions=selected_anime.anime_questions.all()
+  questions=selected_anime.anime_questions.filter(approved=True)
+
+  newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
+  newgame.gamesnumber+=1
+  newgame.save()
+  
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
 
