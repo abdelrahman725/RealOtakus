@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 
 import json
+import random
 
 from .models import *
 from .serializers import *
@@ -19,6 +20,9 @@ def DevelopmentUser(): return User.objects.get(pk=28)
 def ReactApp(request):
   #return redirect("http://localhost:3000/home")
   return render(request, "index.html")
+
+def Random():
+  return random.randint(1, 4)
 
 
 @api_view(["GET"])
@@ -65,7 +69,8 @@ def GetTest(request):
   current_user.tests_started+=1
   current_user.save()
   selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
-  questions=selected_anime.anime_questions.filter(approved=True)
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)
+
 
   newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
   newgame.gamesnumber+=1
@@ -74,3 +79,65 @@ def GetTest(request):
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
 
+
+
+@login_required
+@api_view(["POST"])
+def MakeContribution(request):
+  anime=request.data["anime"]
+  question=request.data["question"]
+  right_answer=request.data["correct"]
+  
+  c1=request.data["choice_1"]
+  c2=request.data["choice_2"]
+  c3=request.data["choice_3"]
+  c4=right_answer
+
+  random_number = Random()
+
+
+  if random_number == 1:
+    c1=request.data["choice_3"]
+    c2=request.data["choice_2"]
+    c3=right_answer
+    c4=request.data["choice_1"]
+
+  if random_number == 2:
+    c1=request.data["choice_1"]
+    c2=right_answer
+    c3=request.data["choice_3"]
+    c4=request.data["choice_2"]
+
+  if random_number == 3:
+    c1=right_answer
+    c2=request.data["choice_2"]
+    c3=request.data["choice_3"]
+    c4=request.data["choice_1"]
+  
+
+  new_question = Question(anime=anime,contributor=request.user,approved=False,question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+  new_question.save()
+  return JsonResponse({"message": "new question has been added by a contributor and waits approval"})
+
+
+@login_required
+@api_view(["GET"])
+def PotentialContributions(request):
+  contributed_questions = Question.objects.filter(approved=False)
+  serialized_data = QuestionSerializer(contributed_questions,many=True)
+  return Response(serialized_data.data)
+
+
+@login_required
+@api_view(["POST"])
+def ReviewContribution(request):
+  id_ = request.data["id"]
+  approved = request.data["approved"]
+  q=Question.objects.get(pk=id_)
+  if approved:
+    q.approved=True
+    q.save()
+    return JsonResponse({"message": "question has been approved and ready to be in the tests"})
+  q.delete()
+  
+  return JsonResponse({"message": "question was declined as it didn't meet the required criteria and as a result has been deleted"})

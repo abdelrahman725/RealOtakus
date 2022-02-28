@@ -10,6 +10,7 @@ class User(AbstractUser):
   tests_started = models.IntegerField(default=0)
   best_score = models.IntegerField(default=0)
   country = models.CharField(null=True,max_length=60)
+  contributor =  models.BooleanField(default=False)
   def __str__(self):
     return self.username
 
@@ -17,8 +18,6 @@ class User(AbstractUser):
 class Anime(models.Model):
   anime_name = models.CharField(max_length=100,null=False,unique=True)
   url= models.CharField(max_length=300,default="/")
-  total_answers =  models.IntegerField(default=0)
-  total_score = models.IntegerField (default=0)
   def __str__(self):
         return f"{self.anime_name}"
 
@@ -33,10 +32,12 @@ class Question(models.Model):
   choice3  =  models.TextField(blank=False,null=True)
   choice4  =  models.TextField(blank=False,null=True)
   right_answer = models.TextField(blank=False,null=True)
+  correct_answers= models.IntegerField(default=0)
+  wrong_answers= models.IntegerField(default=0)
   
   def __str__(self):
     if len(self.question)>70:
-      return f"{self.question[:70]}"
+      return f"{self.question[:70] }"
     return f"{self.question}"
 
 
@@ -44,5 +45,6 @@ class Game(models.Model):
   game_owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name="get_games")
   anime =  models.ForeignKey(Anime,on_delete=models.CASCADE)
   gamesnumber = models.IntegerField(default=0)
+  review = models.TextField(null=True)
   def __str__(self):
     return f"{self.game_owner} has {self.gamesnumber} games for {self.anime}"

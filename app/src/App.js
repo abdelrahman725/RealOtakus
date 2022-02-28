@@ -15,6 +15,7 @@ function App() {
 
   const[GameMode,setGameMode] = useState(false)
 
+  const server  = "http://127.0.0.1:8000"
   const LogoutUrl = "http://127.0.0.1:8000/logout"
   const GetUserData = async()=>
   {
@@ -42,7 +43,7 @@ function App() {
 
   useEffect(()=>{
     GetUserData()
-    GetAnimes()
+   // GetAnimes()
     // GetCompetitors()
 
   },[])

@@ -10,14 +10,14 @@ class User_info(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionInfo(admin.ModelAdmin):
-  list_display=("anime","question","right_answer","advanced")
+  list_display=("anime","question","right_answer","advanced","correct_answers","wrong_answers")
   list_filter = ("anime","advanced","contributor",)
   search_fields = ("question",)
 
 
 @admin.register(Anime)
 class AnimeInfo(admin.ModelAdmin):
-  list_display = ("anime_name","total_score","id")
+  list_display = ("anime_name","id")
   search_fields = ("anime_name",)
 
 
