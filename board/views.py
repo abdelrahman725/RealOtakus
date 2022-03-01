@@ -53,14 +53,6 @@ def TestPost(request):
 
 
 
-# @login_required
-# @api_view(["GET"])
-# def GetAnimeOrdered(request):
-#   sorted_animes = (Anime.objects.filter(anime_question__isnull=False).distinct()).order_by('-total_score')
-#   serialized_data = AnimeSerializer(sorted_animes,many=True)
-#   return Response(serialized_data.data)
-
-
 
 @login_required
 @api_view(["POST"])
@@ -69,7 +61,7 @@ def GetTest(request):
   current_user.tests_started+=1
   current_user.save()
   selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)
+  questions=selected_anime.anime_questions.filter(status="approved").exclude(contributor=current_user)
 
 
   newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
@@ -115,29 +107,24 @@ def MakeContribution(request):
     c4=request.data["choice_1"]
   
 
-  new_question = Question(anime=anime,contributor=request.user,approved=False,question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+  new_question = Question(anime=anime,contributor=request.user,status="pending",question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
   new_question.save()
   return JsonResponse({"message": "new question has been added by a contributor and waits approval"})
 
 
 @login_required
 @api_view(["GET"])
-def PotentialContributions(request):
-  contributed_questions = Question.objects.filter(approved=False)
-  serialized_data = QuestionSerializer(contributed_questions,many=True)
+def UserContributions(request):
+  user_questions = Question.objects.filter(contributor=request.user)
+  serialized_data = QuestionSerializer(user_questions,many=True)
   return Response(serialized_data.data)
 
 
+
 @login_required
-@api_view(["POST"])
-def ReviewContribution(request):
-  id_ = request.data["id"]
-  approved = request.data["approved"]
-  q=Question.objects.get(pk=id_)
-  if approved:
-    q.approved=True
-    q.save()
-    return JsonResponse({"message": "question has been approved and ready to be in the tests"})
-  q.delete()
-  
-  return JsonResponse({"message": "question was declined as it didn't meet the required criteria and as a result has been deleted"})
+@api_view(["GET"])
+def GetAllContributions(request):
+  contributors = User.objects.filter(contributor=True)
+  serialized_data = UserSerializer(contributors,many=True)
+  return Response(serialized_data.data)
+

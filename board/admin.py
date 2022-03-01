@@ -10,8 +10,8 @@ class User_info(admin.ModelAdmin):
 
 @admin.register(Question)
 class QuestionInfo(admin.ModelAdmin):
-  list_display=("anime","question","right_answer","advanced","correct_answers","wrong_answers")
-  list_filter = ("anime","advanced","contributor",)
+  list_display=("anime","question","right_answer","advanced","status")
+  list_filter = ("anime","advanced","contributor","status",)
   search_fields = ("question",)
 
 
