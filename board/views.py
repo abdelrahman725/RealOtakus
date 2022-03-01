@@ -3,7 +3,6 @@ from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, generics
 
 import json
 import random
@@ -35,6 +34,7 @@ def GetUserData(request):
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
+
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
@@ -49,9 +49,7 @@ def AllCompetitors(request):
 
 @api_view(["POST"])
 def TestPost(request):
-  return JsonResponse({"message": "successfull post request with its csrf token and that is the response"})
-
-
+  return JsonResponse({"message": "successfull post request with its csrf token and this is the response"})
 
 
 @login_required
@@ -62,7 +60,6 @@ def GetTest(request):
   current_user.save()
   selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
   questions=selected_anime.anime_questions.filter(status="approved").exclude(contributor=current_user)
-
 
   newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
   newgame.gamesnumber+=1

@@ -1,9 +1,8 @@
 from django.db import models
-from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
-from datetime import datetime, timezone
+from datetime import datetime
 
-# Create your models here.
+
 class User(AbstractUser):
   points = models.IntegerField(default=0)
   level = models.CharField(max_length=30,null=False,default="beginner")
@@ -14,6 +13,7 @@ class User(AbstractUser):
   contributor =  models.BooleanField(default=False)
   def __str__(self):
     return self.username
+
 
 Admin = User.objects.filter(is_superuser=True)[0]
   
@@ -47,27 +47,28 @@ class Question(models.Model):
   
   def save(self, *args, **kwargs):
     if not self.contributor.is_superuser:
-      msg=""
 
       user = self.contributor
-      if self.status == "approved" :
+      if self.status == "approved" : 
+
         msg = "congratulations your question has been approved and ready to be included in the upcoming tests"
+        new_notification = Notification(owner=user,notification=msg, time=datetime.now())
+        new_notification.save()
         if user.contributor == False:
           user.contributor = True
-          user.save()
+        user.points+=10
+        user.save()
 
       if self.status == "declined":
         msg="sorry your question is declined as it didn't meet the requirements"
-
-
-      new_notification = Notification(owner=user,notification=msg, time=datetime.now())
-      new_notification.save()
+        new_notification = Notification(owner=user,notification=msg, time=datetime.now())
+        new_notification.save()
       
     super(Question, self).save(*args, **kwargs)
 
   def __str__(self):
-    if len(self.question)>70: 
-      return f"{self.question[:70] }"
+    if len(self.question)>50: 
+      return f"{self.question[:50] }"
     return f"{self.question}"
 
 
