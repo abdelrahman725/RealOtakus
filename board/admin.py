@@ -27,7 +27,7 @@ class GameInfo(admin.ModelAdmin):
   list_filter = ("game_owner",)
 
 
-@admin.register(Game)
+@admin.register(Notification)
 class Notifications(admin.ModelAdmin):
   list_display = ("owner","notification","time")
   list_filter = ("owner",)
