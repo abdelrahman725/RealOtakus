@@ -31,8 +31,8 @@ class Question(models.Model):
   status_options = [
     ('approved', 'approved'),
     ('declined', 'declined'),
-    ('pending', 'pending'),
-  ]
+    ('pending', 'pending'),]
+
   status = models.CharField(
     choices=status_options,max_length=20,default="approved")
 
@@ -46,11 +46,21 @@ class Question(models.Model):
   wrong_answers= models.IntegerField(default=0)
   
   def save(self, *args, **kwargs):
-    if self.approved == "approved" and not self.contributor.is_superuser:
-      new_contributor  = self.contributor
-      if not new_contributor.contributor:
-        new_contributor.contributor = True
-      new_notification = Notification(owner=new_contributor,time=datetime.now(),notification="your question has been approved and ready to be included in the tests")
+    if not self.contributor.is_superuser:
+      msg=""
+
+      user = self.contributor
+      if self.status == "approved" :
+        msg = "congratulations your question has been approved and ready to be included in the upcoming tests"
+        if user.contributor == False:
+          user.contributor = True
+          user.save()
+
+      if self.status == "declined":
+        msg="sorry your question is declined as it didn't meet the requirements"
+
+
+      new_notification = Notification(owner=user,notification=msg, time=datetime.now())
       new_notification.save()
       
     super(Question, self).save(*args, **kwargs)

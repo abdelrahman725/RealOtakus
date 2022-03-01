@@ -87,7 +87,6 @@ def MakeContribution(request):
 
   random_number = Random()
 
-
   if random_number == 1:
     c1=request.data["choice_3"]
     c2=request.data["choice_2"]
@@ -105,7 +104,6 @@ def MakeContribution(request):
     c2=request.data["choice_2"]
     c3=request.data["choice_3"]
     c4=request.data["choice_1"]
-  
 
   new_question = Question(anime=anime,contributor=request.user,status="pending",question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
   new_question.save()
@@ -123,7 +121,7 @@ def UserContributions(request):
 
 @login_required
 @api_view(["GET"])
-def GetAllContributions(request):
+def GetAllContributors(request):
   contributors = User.objects.filter(contributor=True)
   serialized_data = UserSerializer(contributors,many=True)
   return Response(serialized_data.data)
