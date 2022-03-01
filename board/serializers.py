@@ -29,3 +29,10 @@ class GameSerializer(serializers.ModelSerializer):
   class Meta:
     model = Game
     fields = '__all__'
+
+    
+
+class NotificationsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Notification
+    fields = '__all__'

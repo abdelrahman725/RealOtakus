@@ -25,3 +25,9 @@ class AnimeInfo(admin.ModelAdmin):
 class GameInfo(admin.ModelAdmin):
   list_display = ("game_owner","anime","gamesnumber")
   list_filter = ("game_owner",)
+
+
+@admin.register(Game)
+class Notifications(admin.ModelAdmin):
+  list_display = ("owner","notification","time")
+  list_filter = ("owner",)
