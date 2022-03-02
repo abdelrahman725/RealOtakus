@@ -59,7 +59,7 @@ def GetTest(request):
   current_user.tests_started+=1
   current_user.save()
   selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
-  questions=selected_anime.anime_questions.filter(status="approved").exclude(contributor=current_user)
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)
 
   newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
   newgame.gamesnumber+=1
@@ -102,7 +102,9 @@ def MakeContribution(request):
     c3=request.data["choice_3"]
     c4=request.data["choice_1"]
 
-  new_question = Question(anime=anime,contributor=request.user,status="pending",question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+  new_question = Question(anime=anime,contributor=request.user,approved=False,
+  
+  question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
   new_question.save()
   return JsonResponse({"message": "new question has been added by a contributor and waits approval"})
 
@@ -122,4 +124,3 @@ def GetAllContributors(request):
   contributors = User.objects.filter(contributor=True)
   serialized_data = UserSerializer(contributors,many=True)
   return Response(serialized_data.data)
-

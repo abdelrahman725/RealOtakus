@@ -3,15 +3,15 @@ from .models import *
 
 @admin.register(User)
 class User_info(admin.ModelAdmin):
-  list_display=("username","points","best_score","tests_completed","tests_started","country")
-  list_filter = ("level",)
+  list_display=("username","points","tests_completed","tests_started","contributor")
+  list_filter = ("level","contributor",)
   search_fields = ("username",)
   
 
 @admin.register(Question)
 class QuestionInfo(admin.ModelAdmin):
-  list_display=("anime","question","right_answer","contributor","status")
-  list_filter = ("anime","advanced","contributor","status",)
+  list_display=("anime","question","right_answer","contributor","approved")
+  list_filter = ("anime","advanced","contributor","approved",)
   search_fields = ("question",)
 
 
