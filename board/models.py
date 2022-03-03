@@ -7,7 +7,6 @@ class User(AbstractUser):
   points = models.IntegerField(default=0)
   tests_completed = models.IntegerField(default=0)
   tests_started = models.IntegerField(default=0)
-  best_score = models.IntegerField(default=0)
   country = models.CharField(null=True,max_length=60)
   contributor =  models.BooleanField(default=False)
   contributions_count = models.IntegerField(default=0)
@@ -82,8 +81,10 @@ class Question(models.Model):
 class Game(models.Model):
   game_owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name="get_games")
   anime =  models.ForeignKey(Anime,on_delete=models.CASCADE)
+  score =models.IntegerField(default=0)
   gamesnumber = models.IntegerField(default=0)
   review = models.TextField(null=True,blank=True)
+  
   def __str__(self):
     return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
 

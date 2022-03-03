@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from .serializers import *
 from .helpers import login_required 
 
 def DevelopmentUser(): return User.objects.get(pk=28)
+
 
 
 # # render react build page
@@ -59,15 +61,54 @@ def GetTest(request):
   current_user.tests_started+=1
   current_user.save()
   selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)
+  index=0
+  try:
+    game = Game.objects.get(game_owner=current_user,anime=selected_anime)
+    index= game.gamesnumber
+    game.gamesnumber+=1
+    game.save()
+    
+  except ObjectDoesNotExist:
+    newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
+    newgame.gamesnumber+=1
+    newgame.save()
+    
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]
 
-  newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
-  newgame.gamesnumber+=1
-  newgame.save()
   
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
 
+
+
+@login_required
+@api_view(["POST"])
+def SubmitTest(request):
+  user = request.user
+  test_score = 0
+  test_results = request.data["answers"]
+  anime = Anime.objects.get(anime_name=request.data["anime"]) 
+
+  for q in test_results:
+    question=Question.objects.get(pk=int(q))
+    if test_results[q] == question.right_answer:
+      question.correct_answers+=1
+      user.points+=1
+      test_score+=1
+    else:
+      question.wrong_answers+=1
+    question.save()
+  
+  user.tests_completed+=1
+  game = Game.objects.get(game_owner=user,anime=anime)
+  game.score += test_score
+  game.save()
+
+  user.save()
+  return JsonResponse({"message": "test submitted successfully","test_score":test_score})
+
+
+  
 
 
 @login_required
