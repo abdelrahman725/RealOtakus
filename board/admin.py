@@ -3,7 +3,7 @@ from .models import *
 
 @admin.register(User)
 class User_info(admin.ModelAdmin):
-  list_display=("username","points","tests_completed","tests_started","contributor")
+  list_display=("username","points","tests_completed","tests_started","contributor","contributions_count")
   list_filter = ("level","contributor",)
   search_fields = ("username",)
   
@@ -30,4 +30,10 @@ class GameInfo(admin.ModelAdmin):
 @admin.register(Notification)
 class Notifications(admin.ModelAdmin):
   list_display = ("owner","notification","time")
+  list_filter = ("owner",)
+
+
+@admin.register(Post)
+class Posts(admin.ModelAdmin):
+  list_display = ("owner","post","likes","time")
   list_filter = ("owner",)

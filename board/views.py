@@ -14,7 +14,7 @@ from .helpers import login_required
 def DevelopmentUser(): return User.objects.get(pk=28)
 
 
-# render react build page
+# # render react build page
 @login_required
 def ReactApp(request):
   #return redirect("http://localhost:3000/home")
@@ -117,10 +117,9 @@ def UserContributions(request):
   return Response(serialized_data.data)
 
 
-
 @login_required
 @api_view(["GET"])
-def GetAllContributors(request):
-  contributors = User.objects.filter(contributor=True)
-  serialized_data = UserSerializer(contributors,many=True)
+def GetUserProfiel(request,user):
+  requested_user = User.objects.get(pk=user)
+  serialized_data = UserSerializer(requested_user)
   return Response(serialized_data.data)

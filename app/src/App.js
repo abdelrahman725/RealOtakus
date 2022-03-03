@@ -16,10 +16,12 @@ function App() {
   const[GameMode,setGameMode] = useState(false)
 
   const server  = "http://127.0.0.1:8000"
-  const LogoutUrl = "http://127.0.0.1:8000/logout"
+  
+  const LogoutUrl = `${server}/logout`
+
   const GetUserData = async()=>
   {
-    const res = await fetch("http://127.0.0.1:8000/home/data")
+    const res = await fetch(`${server}/home/data`)
     const data= await res.json()
     setUserData(data)
   }
@@ -27,7 +29,7 @@ function App() {
 
   const GetCompetitors = async()=>
   {
-    const res = await fetch("http://127.0.0.1:8000/home/competitors")
+    const res = await fetch(`${server}/home/competitors`)
     const data = await res.json()
     setCompitotrs(data)
     setDashBoardLoding(false)
@@ -35,7 +37,7 @@ function App() {
 
   const  GetAnimes= async()=>
   {
-    const res = await fetch("http://127.0.0.1:8000/home/animes")
+    const res = await fetch(`${server}/home/animes`)
     const animes  = await res.json()
     setanimes(animes)
   }
@@ -45,9 +47,15 @@ function App() {
     GetUserData()
    // GetAnimes()
     // GetCompetitors()
-
   },[])
 
+
+
+  const SwitchViews = (view)=>
+  {
+    // to do 
+    //set all views to none except the passed view
+  }
   return (
     <div className="App">
       <h1>
