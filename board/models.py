@@ -26,6 +26,7 @@ Admin = User.objects.get(is_superuser=True)
   
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,null=False,unique=True)
+  questions_number= models.IntegerField(default=0)
   url= models.CharField(max_length=300,default="/")
   def __str__(self):
         return f"{self.anime_name}"
@@ -45,6 +46,11 @@ class Question(models.Model):
   wrong_answers= models.IntegerField(default=0)
   
   def save(self, *args, **kwargs):
+    # if self.approved :
+    #   the_anime = self.anime
+    #   the_anime.questions_number+=1
+    #   the_anime.save()
+
     if not self.contributor.is_superuser:
       user = self.contributor
       if self.approved :

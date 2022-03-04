@@ -14,15 +14,11 @@ class AnimeSerializer(serializers.ModelSerializer):
     fields = '__all__'
 
 
-class AnimeSimpleSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Anime
-    fields = ("id","anime_name")
 
 class QuestionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Question
-    fields = '__all__'
+    fields = ("id","anime","question","choice1","choice2","choice3","choice4")
 
 
 class GameSerializer(serializers.ModelSerializer):

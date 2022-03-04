@@ -55,25 +55,32 @@ def TestPost(request):
 
 # ----------------------Test Handling functions  ----------------------
 
-@login_required
+# @login_required
 @api_view(["GET"])
-def GetTest(request):
+def GetTest(request,game_anime):
   current_user = request.user
   current_user.tests_started+=1
   current_user.save()
   
-  TestAnime = Anime.objects.get(anime_name=request.data["selectedanime"])
-
+  TestAnime = Anime.objects.get(pk=game_anime)
+  
+  
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=TestAnime)
-  
   index = CurrentGame.gamesnumber
-  CurrentGame.gamesnumber+=1
-  CurrentGame.save()
-    
-  questions=TestAnime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]
-  
-  serialized_data = QuestionSerializer(questions,many=True)
-  return Response(serialized_data.data)
+
+  if index * 5 < len(TestAnime.anime_questions.all()):
+    CurrentGame.gamesnumber+=1
+    CurrentGame.save() 
+    questions=TestAnime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
+    serialized_data = QuestionSerializer(questions,many=True)
+    return Response(serialized_data.data)
+
+  return JsonResponse({"message": "sorry out of questions for this anime"})
+
+
+
+
+
 
 
 
@@ -109,8 +116,6 @@ def SubmitTest(request):
 
 
   # ----------------------------------------------------------------
-
-
 
 
 @login_required
@@ -166,7 +171,6 @@ def GetUserProfiel(request,user):
   requested_user = User.objects.get(pk=user)
   serialized_data = UserSerializer(requested_user)
   return Response(serialized_data.data)
-
 
 
 @login_required
