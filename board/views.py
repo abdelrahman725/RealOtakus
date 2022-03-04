@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
+from django.http import  JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.decorators import api_view
@@ -7,12 +7,16 @@ from rest_framework.response import Response
 
 import json
 import random
+from datetime import datetime
 
 from .models import *
 from .serializers import *
 from .helpers import login_required 
 
 def DevelopmentUser(): return User.objects.get(pk=28)
+
+def Random():
+  return random.randint(1, 4)
 
 
 
@@ -21,9 +25,6 @@ def DevelopmentUser(): return User.objects.get(pk=28)
 def ReactApp(request):
   #return redirect("http://localhost:3000/home")
   return render(request, "index.html")
-
-def Random():
-  return random.randint(1, 4)
 
 
 @api_view(["GET"])
@@ -36,7 +37,6 @@ def GetUserData(request):
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
-
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
@@ -53,28 +53,30 @@ def AllCompetitors(request):
 def TestPost(request):
   return JsonResponse({"message": "successfull post request with its csrf token and this is the response"})
 
+# ----------------------Test Handling functions  ----------------------
+TestAnime = None
+CurrentGame = None
 
 @login_required
-@api_view(["POST"])
+@api_view(["GET"])
 def GetTest(request):
   current_user = request.user
   current_user.tests_started+=1
   current_user.save()
-  selected_anime= Anime.objects.get(anime_name=request.data["selectedanime"])
+  TestAnime= Anime.objects.get(anime_name=request.data["selectedanime"])
+
   index=0
   try:
-    game = Game.objects.get(game_owner=current_user,anime=selected_anime)
-    index= game.gamesnumber
-    game.gamesnumber+=1
-    game.save()
+    CurrentGame = Game.objects.get(game_owner=current_user,anime=TestAnime)
+    index = CurrentGame.gamesnumber
     
   except ObjectDoesNotExist:
-    newgame=Game.objects.create(game_owner=current_user,anime=selected_anime)
-    newgame.gamesnumber+=1
-    newgame.save()
+    CurrentGame=Game.objects.create(game_owner=current_user,anime=TestAnime)
+  
+  CurrentGame.gamesnumber+=1
+  CurrentGame.save()
     
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]
-
+  questions=TestAnime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]
   
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
@@ -87,7 +89,7 @@ def SubmitTest(request):
   user = request.user
   test_score = 0
   test_results = request.data["answers"]
-  anime = Anime.objects.get(anime_name=request.data["anime"]) 
+  review = request.date["review"]
 
   for q in test_results:
     question=Question.objects.get(pk=int(q))
@@ -100,15 +102,18 @@ def SubmitTest(request):
     question.save()
   
   user.tests_completed+=1
-  game = Game.objects.get(game_owner=user,anime=anime)
-  game.score += test_score
-  game.save()
+  CurrentGame.score += test_score
+  if review:
+    CurrentGame.review = review
 
+  CurrentGame.save()
   user.save()
   return JsonResponse({"message": "test submitted successfully","test_score":test_score})
 
 
-  
+  # ----------------------------------------------------------------
+
+
 
 
 @login_required
@@ -164,3 +169,12 @@ def GetUserProfiel(request,user):
   requested_user = User.objects.get(pk=user)
   serialized_data = UserSerializer(requested_user)
   return Response(serialized_data.data)
+
+
+
+@login_required
+@api_view(["POST"])
+def SharePost(request):
+  post_content = request.data["post"]
+  Post.objects.create(owner=request.user,post=post_content,time=datetime.now())
+  return JsonResponse({"message": "you have shared a post successfully"})
