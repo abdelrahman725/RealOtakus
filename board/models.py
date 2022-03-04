@@ -22,7 +22,7 @@ class User(AbstractUser):
     return self.username
 
 
-#Admin = User.objects.filter(is_superuser=True)[0]
+Admin = User.objects.get(is_superuser=True)
   
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,null=False,unique=True)
@@ -32,7 +32,7 @@ class Anime(models.Model):
 
 class Question(models.Model):
   anime    =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
-  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
+  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=Admin.pk)
   advanced =  models.BooleanField(default=False)
   question =  models.TextField(blank=False,unique=True)
   choice1  =  models.TextField(blank=False,null=True)

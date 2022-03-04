@@ -54,8 +54,6 @@ def TestPost(request):
   return JsonResponse({"message": "successfull post request with its csrf token and this is the response"})
 
 # ----------------------Test Handling functions  ----------------------
-TestAnime = None
-CurrentGame = None
 
 @login_required
 @api_view(["GET"])
@@ -63,16 +61,12 @@ def GetTest(request):
   current_user = request.user
   current_user.tests_started+=1
   current_user.save()
-  TestAnime= Anime.objects.get(anime_name=request.data["selectedanime"])
-
-  index=0
-  try:
-    CurrentGame = Game.objects.get(game_owner=current_user,anime=TestAnime)
-    index = CurrentGame.gamesnumber
-    
-  except ObjectDoesNotExist:
-    CurrentGame=Game.objects.create(game_owner=current_user,anime=TestAnime)
   
+  TestAnime = Anime.objects.get(anime_name=request.data["selectedanime"])
+
+  CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=TestAnime)
+  
+  index = CurrentGame.gamesnumber
   CurrentGame.gamesnumber+=1
   CurrentGame.save()
     
@@ -89,6 +83,7 @@ def SubmitTest(request):
   user = request.user
   test_score = 0
   test_results = request.data["answers"]
+  TestAnime =  request.data["selectedanime"]
   review = request.date["review"]
 
   for q in test_results:
@@ -102,6 +97,8 @@ def SubmitTest(request):
     question.save()
   
   user.tests_completed+=1
+  CurrentGame= Game.objects.get(game_owner=user,anime=TestAnime)
+
   CurrentGame.score += test_score
   if review:
     CurrentGame.review = review
