@@ -46,10 +46,10 @@ class Question(models.Model):
   wrong_answers= models.IntegerField(default=0)
   
   def save(self, *args, **kwargs):
-    # if self.approved :
-    #   the_anime = self.anime
-    #   the_anime.questions_number+=1
-    #   the_anime.save()
+    if self.approved :
+      anime_= self.anime
+      anime_.questions_number+=1
+      anime_.save()
 
     if not self.contributor.is_superuser:
       user = self.contributor

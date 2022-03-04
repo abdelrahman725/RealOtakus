@@ -33,7 +33,7 @@ def GetUserData(request):
   return Response(serialized_data.data)
 
   
-
+# to cache later
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
@@ -53,7 +53,8 @@ def AllCompetitors(request):
 def TestPost(request):
   return JsonResponse({"message": "successfull post request with its csrf token and this is the response"})
 
-# ----------------------Test Handling functions  ----------------------
+
+# -------------------------------------- Test Handling functions  ----------------------------------------
 
 # @login_required
 @api_view(["GET"])
@@ -76,10 +77,6 @@ def GetTest(request,game_anime):
     return Response(serialized_data.data)
 
   return JsonResponse({"message": "sorry out of questions for this anime"})
-
-
-
-
 
 
 
@@ -115,7 +112,9 @@ def SubmitTest(request):
   return JsonResponse({"message": "test submitted successfully","test_score":test_score})
 
 
-  # ----------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+
 
 
 @login_required
@@ -150,10 +149,10 @@ def MakeContribution(request):
     c3=request.data["choice_3"]
     c4=request.data["choice_1"]
 
-  new_question = Question(anime=anime,contributor=request.user,approved=False,
-  
+
+  Question.objects.create(anime=anime,contributor=request.user,approved=False,
   question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
-  new_question.save()
+
   return JsonResponse({"message": "new question has been added by a contributor and waits approval"})
 
 
