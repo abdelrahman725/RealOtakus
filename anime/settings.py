@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    # 'debug_toolbar',
    
     'rest_framework',
     'corsheaders',    
@@ -68,9 +69,11 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.common.CommonMiddleware',
+ 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ] 
 
 
@@ -161,3 +164,11 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_REDIRECT_URL ='/home'
+
+
+# INTERNAL_IPS = [
+#     "127.0.0.1:8000",
+# ]
+# DEBUG_TOOLBAR_CONFIG = {
+#     "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+# }

@@ -3,8 +3,11 @@ import Competitors from './Components/Dashboard';
 //import Profile from './Components/Profile';
 import Animes from './Components/AnimesList';
 import {useState,useEffect} from 'react'
+import getCookie from './GetCookie.js'
 
 function App() {
+  
+  const CsrfToken = getCookie('csrftoken')
  
   const[AllCompetitors,setCompitotrs] = useState()
   const[AllAnimes,setanimes] = useState()
@@ -18,11 +21,17 @@ function App() {
   const[AnimesLoading,setAnimesLoading] = useState(true)
   const[QuestionsLoading,setQuestionsLoading] = useState(true)
 
-  //const[GameMode,setGameMode] = useState(false)
+  const[GameMode,setGameMode] = useState(false)
 
   const server  = "http://127.0.0.1:8000"
   
   const LogoutUrl = `${server}/logout`
+  
+  const SwitchViews = (view)=>
+  {
+    // to do 
+    //set all views to none except the passed view
+  }
 
   const GetUserData = async()=>
   {
@@ -49,30 +58,28 @@ function App() {
     setAnimesLoading(false)
   }
 
+  const GetGame = async(anime)=>
+  {
+
+  }
+
+  const SendGame = async()=>
+  {
+
+  }
 
   useEffect(()=>{
     GetUserData()
     GetAnimes()
-    // GetCompetitors()
+    
+    
+    //SendGame()
+    //GetGame()
+    //GetCompetitors()
   },[])
 
-const FetchGame= async(anime) =>{
-  const res = await fetch(`${server}/home/game/${anime}`)
-  const requested_questions  = await res.json()
-  
-  console.log(requested_questions)
-
-  setquestions(requested_questions)
-  setQuestionsLoading(false)
-
-}
 
 
-  const SwitchViews = (view)=>
-  {
-    // to do 
-    //set all views to none except the passed view
-  }
   return (
     <div className="App">
      { !UserDataLoading&&<h1>
@@ -82,10 +89,6 @@ const FetchGame= async(anime) =>{
        so you are a real otaku ? lets see
       </h2>
       <a href={LogoutUrl}><strong>Logout</strong> </a>
-      <br /><br />
-      {/* {!DashBoardLoding &&<Competitors competitors={AllCompetitors}/>} */}
-      {!AnimesLoading &&<Animes animes={AllAnimes} GetTest={FetchGame}/>}
-      
     </div>
   );
 }

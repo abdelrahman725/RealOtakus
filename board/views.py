@@ -19,14 +19,12 @@ def Random():
   return random.randint(1, 4)
 
 
-
-# # render react build page
 @login_required
 def ReactApp(request):
   #return redirect("http://localhost:3000/home")
   return render(request, "index.html")
 
-
+@login_required
 @api_view(["GET"])
 def GetUserData(request):
   serialized_data = UserSerializer(request.user,many=False)
@@ -34,13 +32,14 @@ def GetUserData(request):
 
   
 # to cache later
+@login_required
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
-
+@login_required
 @api_view(["GET"])
 def AllCompetitors(request):
   otakus = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')
@@ -49,35 +48,31 @@ def AllCompetitors(request):
 
 
 
-@api_view(["POST"])
-def TestPost(request):
-  return JsonResponse({"message": "successfull post request with its csrf token and this is the response"})
-
-
 # -------------------------------------- Test Handling functions  ----------------------------------------
 
-# @login_required
+
+@login_required
 @api_view(["GET"])
 def GetTest(request,game_anime):
   current_user = request.user
   current_user.tests_started+=1
   current_user.save()
   
-  TestAnime = Anime.objects.get(pk=game_anime)
+  selected_anime = Anime.objects.get(pk=game_anime)
   
-  
-  CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=TestAnime)
+  CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
   index = CurrentGame.gamesnumber
 
-  if index * 5 < len(TestAnime.anime_questions.all()):
+  
+  if index * 5 < selected_anime.questions_number:
     CurrentGame.gamesnumber+=1
     CurrentGame.save() 
-    questions=TestAnime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
+    questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
+    
     serialized_data = QuestionSerializer(questions,many=True)
     return Response(serialized_data.data)
 
   return JsonResponse({"message": "sorry out of questions for this anime"})
-
 
 
 
@@ -88,7 +83,7 @@ def SubmitTest(request):
   test_score = 0
   test_results = request.data["answers"]
   TestAnime =  request.data["selectedanime"]
-  review = request.date["review"]
+  review = request.data["review"]
 
   for q in test_results:
     question=Question.objects.get(pk=int(q))
@@ -106,21 +101,20 @@ def SubmitTest(request):
   CurrentGame.score += test_score
   if review:
     CurrentGame.review = review
-
   CurrentGame.save()
   user.save()
+
   return JsonResponse({"message": "test submitted successfully","test_score":test_score})
 
 
-# ------------------------------------------------------------------------------------------
 
 
-
+# ------------------------------------------------------------------------------------
 
 @login_required
 @api_view(["POST"])
 def MakeContribution(request):
-  anime=request.data["anime"]
+  anime = Anime.objects.get(pk=request.data["anime"])
   question=request.data["question"]
   right_answer=request.data["correct"]
   
@@ -166,7 +160,7 @@ def UserContributions(request):
 
 @login_required
 @api_view(["GET"])
-def GetUserProfiel(request,user):
+def GetUserProfile(request,user):
   requested_user = User.objects.get(pk=user)
   serialized_data = UserSerializer(requested_user)
   return Response(serialized_data.data)
