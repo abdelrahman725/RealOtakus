@@ -14,6 +14,7 @@ urlpatterns = [
     path('logout/',Logout),
     path('home/',include("board.urls")),
 ]
-# if settings.DEBUG:
-#     import debug_toolbar
-#     urlpatterns +=path('__dubug__/',include(debug_toolbar.urls)),
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns +=path('__dubug__/',include(debug_toolbar.urls)),

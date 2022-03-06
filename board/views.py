@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import  JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,6 +13,16 @@ from datetime import datetime
 from .models import *
 from .serializers import *
 from .helpers import login_required 
+
+animes_dict = {}
+games = {}
+posts_dict = {}
+
+
+AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
+
+for anime in AnimesWithQuestions:
+  animes_dict[anime.pk] = anime
 
 def DevelopmentUser(): return User.objects.get(pk=28)
 
@@ -31,13 +42,14 @@ def GetUserData(request):
   return Response(serialized_data.data)
 
   
-# to cache later
+# done chache
 @login_required
 @api_view(["GET"])
 def GetAvailableAnimes(request):
-  AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
+
+
 
 @login_required
 @api_view(["GET"])
@@ -45,7 +57,6 @@ def AllCompetitors(request):
   otakus = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')
   serialized_data = UserSerializer(otakus,many=True)
   return Response(serialized_data.data)
-
 
 
 # -------------------------------------- Test Handling functions  ----------------------------------------
@@ -57,15 +68,15 @@ def GetTest(request,game_anime):
   current_user = request.user
   current_user.tests_started+=1
   current_user.save()
-  
-  selected_anime = Anime.objects.get(pk=game_anime)
+  selected_anime = animes_dict[game_anime]
   
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
-  index = CurrentGame.gamesnumber
 
+  index = CurrentGame.gamesnumber
   
   if index * 5 < selected_anime.questions_number:
     CurrentGame.gamesnumber+=1
+    games[current_user.id] = CurrentGame
     CurrentGame.save() 
     questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
     
@@ -82,7 +93,6 @@ def SubmitTest(request):
   user = request.user
   test_score = 0
   test_results = request.data["answers"]
-  TestAnime =  request.data["selectedanime"]
   review = request.data["review"]
 
   for q in test_results:
@@ -96,25 +106,27 @@ def SubmitTest(request):
     question.save()
   
   user.tests_completed+=1
-  CurrentGame= Game.objects.get(game_owner=user,anime=TestAnime)
+  CurrentGame= games[user.id]
 
   CurrentGame.score += test_score
   if review:
     CurrentGame.review = review
+  
   CurrentGame.save()
   user.save()
 
   return JsonResponse({"message": "test submitted successfully","test_score":test_score})
 
 
-
-
 # ------------------------------------------------------------------------------------
+
+
 
 @login_required
 @api_view(["POST"])
 def MakeContribution(request):
-  anime = Anime.objects.get(pk=request.data["anime"])
+  anime = animes_dict[request.data["anime"]]
+
   question=request.data["question"]
   right_answer=request.data["correct"]
   
@@ -170,5 +182,39 @@ def GetUserProfile(request,user):
 @api_view(["POST"])
 def SharePost(request):
   post_content = request.data["post"]
-  Post.objects.create(owner=request.user,post=post_content,time=datetime.now())
+  new_post=Post.objects.create(owner=request.user,post=post_content,time=datetime.now())
+  
+  posts_dict[new_post.id] = new_post
+  
   return JsonResponse({"message": "you have shared a post successfully"})
+
+
+
+@login_required
+@api_view(["PUT"])
+def Like(request,id):
+  post= None
+  try:
+    post = posts_dict[id]
+  except KeyError:
+    post = Post.objects.get(pk=id)
+  post.likes+=1
+  post.save()
+  posts_dict[id] = post
+
+  return JsonResponse({"message": "like received, post has been updated"})
+
+
+@login_required
+@api_view(["GET"])
+def GetPosts(request):
+  allposts = posts_dict.values()
+  serialized_data = PostSerializer(allposts,many=True)
+  return Response(serialized_data.data)
+
+
+
+
+# str_repr = repr(AnimesWithQuestions)
+# connection.queries:
+

@@ -15,7 +15,6 @@ function App() {
   const [questions,setquestions] = useState()
 
 
-
   const[UserDataLoading,setUserDataLoading] = useState(true)
   const[DashBoardLoding,setDashBoardLoding] = useState(true)
   const[AnimesLoading,setAnimesLoading] = useState(true)
@@ -23,7 +22,12 @@ function App() {
 
   const[GameMode,setGameMode] = useState(false)
 
-  const server  = "http://127.0.0.1:8000"
+  const  server  = "http://127.0.0.1:8000/home"
+  const  userdataurl = `${server}/data`
+  const  animesurl = `${server}/animes`
+  const  competitorsurl = `${server}/competitors`
+  // const  animegameurl = `${server}/getgame`
+  // const  sendresultsurl = `${server}/postgame`
   
   const LogoutUrl = `${server}/logout`
   
@@ -35,7 +39,7 @@ function App() {
 
   const GetUserData = async()=>
   {
-    const res = await fetch(`${server}/home/data`)
+    const res = await fetch(userdataurl)
     const data= await res.json()
     setUserData(data)
     setUserDataLoading(false)
@@ -44,7 +48,7 @@ function App() {
 
   const GetCompetitors = async()=>
   {
-    const res = await fetch(`${server}/home/competitors`)
+    const res = await fetch(competitorsurl)
     const data = await res.json()
     setCompitotrs(data)
     setDashBoardLoding(false)
@@ -52,12 +56,13 @@ function App() {
 
   const  GetAnimes= async()=>
   {
-    const res = await fetch(`${server}/home/animes`)
+    const res = await fetch(animesurl)
     const animes  = await res.json()
     setanimes(animes)
     setAnimesLoading(false)
   }
 
+  
   const GetGame = async(anime)=>
   {
 
@@ -68,11 +73,10 @@ function App() {
 
   }
 
+
   useEffect(()=>{
     GetUserData()
-    GetAnimes()
-    
-    
+    //GetAnimes()  
     //SendGame()
     //GetGame()
     //GetCompetitors()
@@ -89,6 +93,8 @@ function App() {
        so you are a real otaku ? lets see
       </h2>
       <a href={LogoutUrl}><strong>Logout</strong> </a>
+    {!AnimesLoading&&
+      <Animes animes={AllAnimes}/>}
     </div>
   );
 }

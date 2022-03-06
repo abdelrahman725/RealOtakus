@@ -71,10 +71,12 @@ class Question(models.Model):
 
 
   def delete(self, *args, **kwargs):
-    if not self.contributor.is_superuser and not self.approved:
-      msg = "sorry your question has been declined as it didn't meet the required criteria"
-      new_notification = Notification(owner=self.contributor,notification=msg, time=datetime.now())
-      new_notification.save()
+    if not self.contributor.is_superuser:
+      if not self.approved:
+        msg = "sorry your question has been declined as it didn't meet the required criteria"
+        new_notification = Notification(owner=self.contributor,notification=msg, time=datetime.now())
+        new_notification.save()
+    
     super(Question, self).delete(*args, **kwargs)
 
 
