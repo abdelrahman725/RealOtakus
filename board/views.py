@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import  JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 
 from rest_framework.decorators import api_view
@@ -15,14 +14,20 @@ from .serializers import *
 from .helpers import login_required 
 
 animes_dict = {}
-games = {}
 posts_dict = {}
+
+game = {}
+game_questions = {}
 
 
 AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
+AllPosts = Post.objects.all()
 
 for anime in AnimesWithQuestions:
   animes_dict[anime.pk] = anime
+
+for post in AllPosts:
+  posts_dict[post.id] = post
 
 def DevelopmentUser(): return User.objects.get(pk=28)
 
@@ -30,20 +35,20 @@ def Random():
   return random.randint(1, 4)
 
 
-@login_required
+#@login_required
 def ReactApp(request):
-  #return redirect("http://localhost:3000/home")
-  return render(request, "index.html")
+  return redirect("http://localhost:3000/home")
+  #return render(request, "index.html")
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetUserData(request):
-  serialized_data = UserSerializer(request.user,many=False)
+  print(request.user)
+  serialized_data = UserSerializer(DevelopmentUser(),many=False)
   return Response(serialized_data.data)
 
   
 # done chache
-@login_required
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
@@ -51,7 +56,7 @@ def GetAvailableAnimes(request):
 
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def AllCompetitors(request):
   otakus = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')
@@ -62,10 +67,10 @@ def AllCompetitors(request):
 # -------------------------------------- Test Handling functions  ----------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request,game_anime):
-  current_user = request.user
+  current_user =  DevelopmentUser()
   current_user.tests_started+=1
   current_user.save()
   selected_anime = animes_dict[game_anime]
@@ -76,9 +81,11 @@ def GetTest(request,game_anime):
   
   if index * 5 < selected_anime.questions_number:
     CurrentGame.gamesnumber+=1
-    games[current_user.id] = CurrentGame
+    game[current_user.id] = CurrentGame
     CurrentGame.save() 
     questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
+
+    game_questions[current_user.id] =questions
     
     serialized_data = QuestionSerializer(questions,many=True)
     return Response(serialized_data.data)
@@ -87,16 +94,17 @@ def GetTest(request,game_anime):
 
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitTest(request):
-  user = request.user
+  user =  DevelopmentUser()
   test_score = 0
   test_results = request.data["answers"]
   review = request.data["review"]
+  questions =game_questions[user.id]
 
-  for q in test_results:
-    question=Question.objects.get(pk=int(q))
+  for q,question in zip(test_results,questions):
+    
     if test_results[q] == question.right_answer:
       question.correct_answers+=1
       user.points+=1
@@ -105,8 +113,11 @@ def SubmitTest(request):
       question.wrong_answers+=1
     question.save()
   
+  del game_questions[user.id]
+  
+  
   user.tests_completed+=1
-  CurrentGame= games[user.id]
+  CurrentGame= game[user.id]
 
   CurrentGame.score += test_score
   if review:
@@ -122,7 +133,7 @@ def SubmitTest(request):
 
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def MakeContribution(request):
   anime = animes_dict[request.data["anime"]]
@@ -156,21 +167,21 @@ def MakeContribution(request):
     c4=request.data["choice_1"]
 
 
-  Question.objects.create(anime=anime,contributor=request.user,approved=False,
+  Question.objects.create(anime=anime,contributor= DevelopmentUser(),approved=False,
   question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
 
   return JsonResponse({"message": "new question has been added by a contributor and waits approval"})
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def UserContributions(request):
-  user_questions = Question.objects.filter(contributor=request.user)
+  user_questions = Question.objects.filter(contributor=DevelopmentUser())
   serialized_data = QuestionSerializer(user_questions,many=True)
   return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetUserProfile(request,user):
   requested_user = User.objects.get(pk=user)
@@ -178,19 +189,17 @@ def GetUserProfile(request,user):
   return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SharePost(request):
   post_content = request.data["post"]
-  new_post=Post.objects.create(owner=request.user,post=post_content,time=datetime.now())
-  
+  new_post=Post.objects.create(owner=DevelopmentUser(),post=post_content,time=datetime.now())
   posts_dict[new_post.id] = new_post
-  
   return JsonResponse({"message": "you have shared a post successfully"})
 
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def Like(request,id):
   post= None
@@ -205,7 +214,7 @@ def Like(request,id):
   return JsonResponse({"message": "like received, post has been updated"})
 
 
-@login_required
+
 @api_view(["GET"])
 def GetPosts(request):
   allposts = posts_dict.values()
@@ -213,8 +222,15 @@ def GetPosts(request):
   return Response(serialized_data.data)
 
 
+#@login_required
+@api_view(["POST"])
+def DeletePost(request,id):
+  del posts_dict[id]
+  post=Post.objects.get(pk=id)
+  if post.owner == DevelopmentUser():
+    post.delete()
+  return JsonResponse({"message": "post is deleted"})
 
 
 # str_repr = repr(AnimesWithQuestions)
 # connection.queries:
-

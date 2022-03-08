@@ -12,8 +12,10 @@ urlpatterns = [
 
     path('getgame/<int:game_anime>',GetTest,name="getgame"),
     path('sendgame',SubmitTest,name="postgame"),
-    
-    # path('sharepost',SharePost,name="sharepost"),
+
+
+    # path('sharepost',SharePost),
+    # path('getposts',GetPosts),
     # path('contributions',UserContributions),
     # path('contribute',MakeContribution),
 

@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 
-
 class User(AbstractUser):
   points = models.IntegerField(default=0)
   tests_completed = models.IntegerField(default=0)
@@ -45,11 +44,14 @@ class Question(models.Model):
   correct_answers= models.IntegerField(default=0)
   wrong_answers= models.IntegerField(default=0)
   
+  
   def save(self, *args, **kwargs):
     if self.approved :
-      anime_= self.anime
-      anime_.questions_number+=1
-      anime_.save()
+      from .views import animes_dict
+      updated_anime= self.anime
+      updated_anime.questions_number+=1
+      animes_dict[updated_anime.id] = updated_anime
+      updated_anime.save()
 
     if not self.contributor.is_superuser:
       user = self.contributor
@@ -113,5 +115,7 @@ class Post(models.Model):
     if not self.owner.contributor:
       print("\n" *3 + "##  Error! Post is not saved: only contributors allow to share posts" + "\n"*2)
       return
-
     super(Post, self).save(*args, **kwargs)
+
+  def __str__(self):
+    return f"{self.owner} posted : {self.post}"
