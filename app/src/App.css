@@ -1,17 +1,16 @@
-.App {
-  text-align: center;
-  cursor: default;
-}
-
 .eachanime {
   padding: 10px;
   background-color: black;
   color: white;
-  margin: 5px;
-  width: 30%;
 }
 
 .eachanime:hover {
   background-color: green;
+}
+
+div {
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
 }
 /*# sourceMappingURL=App.css.map */

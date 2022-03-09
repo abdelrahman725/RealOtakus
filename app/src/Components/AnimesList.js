@@ -1,15 +1,24 @@
-const Animes = ({animes,GetTest}) => {
+import Anime from "./Anime"
+import {useState} from 'react'
+
+const Animes = ({allanimes,startest}) => {
+
+  const [selected_anime,setanime] = useState()
+
 
   return (
-    <> 
-   <div>
-    {animes.map((anime,index)=>(
-    <div className="eachanime" onClick={()=>GetTest(anime.id)} key={index}>
-      {anime.anime_name}
-    </div>
+    <>
+    {allanimes.map((anime,index)=>(
+     <Anime key={index} eachanime={anime} 
+     onchoose={(a)=>setanime(a)} 
+     selected={selected_anime}/>
     ))}
-      
-   </div>
+      <br />
+
+     <button onClick={()=>selected_anime&&startest(selected_anime)}>
+       start game
+      </button>
+ 
     </>
   )
 }

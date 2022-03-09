@@ -1,11 +1,16 @@
-const Game = ({questions}) => {
+import Question from "./Question"
+import { GamdeModeContext } from "../App"
+import { useContext } from "react"
 
+const Game = ({questions}) => {
+  const gamemode= useContext(GamdeModeContext)
+  
   return (
-    <> 
-   <div>
-   
-      
-   </div>
+    <>
+     {questions.map((q,index)=>(
+     <Question key={index} each_question={q}/>
+    ))}
+
     </>
   )
 }

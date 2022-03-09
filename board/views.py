@@ -71,26 +71,40 @@ def AllCompetitors(request):
 @api_view(["GET"])
 def GetTest(request,game_anime):
   current_user =  DevelopmentUser()
-  current_user.tests_started+=1
-  current_user.save()
   selected_anime = animes_dict[game_anime]
   
-  CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
+  #current_user.tests_started+=1
+  #current_user.save()
 
-  index = CurrentGame.gamesnumber
+#---------testing only and to delete later--------------
+
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
+  serialized_data = QuestionSerializer(questions,many=True)
+  return Response(serialized_data.data)
+
+
+
+  #-------------real code ---------
+  # CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
+
+  # index = CurrentGame.gamesnumber
   
-  if index * 5 < selected_anime.questions_number:
-    CurrentGame.gamesnumber+=1
-    game[current_user.id] = CurrentGame
-    CurrentGame.save() 
-    questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
+  # if index * 5 < selected_anime.questions_number:
+  #   CurrentGame.gamesnumber+=1
+  #   game[current_user.id] = CurrentGame
+  #   CurrentGame.save() 
+  #   questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[5*index:(5*index)+5]  
 
-    game_questions[current_user.id] =questions
+  #   game_questions[current_user.id] =questions
     
-    serialized_data = QuestionSerializer(questions,many=True)
-    return Response(serialized_data.data)
+  #   serialized_data = QuestionSerializer(questions,many=True)
+  #   return Response(serialized_data.data)
 
-  return JsonResponse({"message": "sorry out of questions for this anime"})
+  # return JsonResponse({"message": "sorry out of questions for this anime"})
+
+
+
+
 
 
 

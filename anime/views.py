@@ -19,11 +19,13 @@ def MainRequest(request):
 
 def Register(request):
   if request.method == "POST":
+
     username = request.POST["registerusername"]
     password= request.POST["registerpassword"]
     confirmed_password= request.POST["confirmpassword"]
     if password != confirmed_password:
       messages.warning(request, 'must match')
+      return HttpResponseRedirect(reverse("welcome"))
 
     else:
       try:
@@ -34,7 +36,7 @@ def Register(request):
         messages.warning(request, 'username already exists')
         return render(request, "board/home.html", {"registerview":"stay"})
 
-  return MainRequest(request)
+  return HttpResponseRedirect(reverse("welcome"))
 
 
 
@@ -48,8 +50,9 @@ def Login(request):
       return redirect("/home")
     else:
       messages.error(request, 'wrong username or password')
+      return HttpResponseRedirect(reverse("welcome"))
  
-  return render(request, "board/home.html")
+  return HttpResponseRedirect(reverse("welcome"))
     
   
 
