@@ -43,7 +43,6 @@ def ReactApp(request):
 #@login_required
 @api_view(["GET"])
 def GetUserData(request):
-  print(request.user)
   serialized_data = UserSerializer(DevelopmentUser(),many=False)
   return Response(serialized_data.data)
 
@@ -111,10 +110,12 @@ def GetTest(request,game_anime):
 #@login_required
 @api_view(["POST"])
 def SubmitTest(request):
+
   user =  DevelopmentUser()
   test_score = 0
-  test_results = request.data["answers"]
-  review = request.data["review"]
+  test_results = request.data["results"]
+
+  #review = request.data["review"]
   questions =game_questions[user.id]
 
   for q,question in zip(test_results,questions):
@@ -134,13 +135,12 @@ def SubmitTest(request):
   CurrentGame= game[user.id]
 
   CurrentGame.score += test_score
-  if review:
-    CurrentGame.review = review
+  #if review: CurrentGame.review = review
   
   CurrentGame.save()
   user.save()
 
-  return JsonResponse({"message": "test submitted successfully","test_score":test_score})
+  return JsonResponse({"message": "test submitted successfully"})
 
 
 # ------------------------------------------------------------------------------------

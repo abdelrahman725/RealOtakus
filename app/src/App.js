@@ -5,8 +5,12 @@ import Animes from './Components/AnimesList';
 import React, {useState,useEffect} from 'react'
 import getCookie from './GetCookie.js'
 import Game from './Components/Game';
+import { createContext } from 'react';
 
-export const GamdeModeContext  = React.createContext()
+export const GamdeModeContext  = createContext()
+
+export const ServerContext  = createContext()
+
 
 function App() {
   
@@ -28,6 +32,7 @@ function App() {
 
 
   const[GameMode,setGameMode] = useState(false)
+
   
   const  server  = "http://127.0.0.1:8000"
   const  userdataurl = `${server}/home/data`
@@ -79,26 +84,7 @@ function App() {
     
   }
 
-  const SendGame = async()=>
-  {
-
-    const send = await fetch("",{
-
-      method : 'POST',
-      headers : {
-        'Content-type': 'application/json',
-        'X-CSRFToken': CsrfToken,
-      },
-      body: JSON.stringify({
-        results:"results"
-      })
-    })
-    const res  = await send.json()
-    console.log(res)
-
-  }
-
-
+ 
   useEffect(()=>{
     GetUserData()
     GetAnimes()
@@ -106,25 +92,32 @@ function App() {
 
 
 
-  return (
-    <div className="App">
+
+return (
+
+  <div className="App">
+
+      <ServerContext.Provider value={{server}}>
+
      { !UserDataLoading&& <h1> {"welcome =>"}    { UserData.username} </h1>}
 
       <br /><br />
-      {!AnimesLoading&&!GameMode&&
-      <div>
+   
+       {!AnimesLoading&&!GameMode&&
+      <>
       <Animes allanimes={AllAnimes}  startest={GetGame}/>
-    
-      </div>
-      }
+      </>
+      } 
       
+        
       <GamdeModeContext.Provider value={{GameMode,setGameMode}}>
         {GameMode&& <Game questions={gamequestions}/>}
       </GamdeModeContext.Provider>
 
-    </div>
-  );
+      </ServerContext.Provider>
+  </div>
+ );
 }
 
+
 export default App;
-  
