@@ -1,6 +1,6 @@
 import Competitor from "./Competitor"
 
-const Competitors = ({competitors}) => {
+const DashBoard = ({competitors}) => {
   return (
     <> 
      {competitors.map((competitor)=> (
@@ -9,10 +9,11 @@ const Competitors = ({competitors}) => {
       name={competitor.username}
       points={competitor.points}
       level={competitor.level}
+      contributor={competitor.contributor}
      />
      ))}
     </>
   )
 }
 
-export default Competitors
+export default DashBoard

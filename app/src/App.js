@@ -1,11 +1,10 @@
 import './App.css';
-//import Competitors from './Components/Dashboard';
-import Profile from './Components/Profile';
-import Animes from './Components/AnimesList';
-import React, {useState,useEffect} from 'react'
+import DashBoard from './Components/Dashboard'
+//import Profile from './Components/Profile'
+import Contripution from './Components/Contripution'
+import Animes from './Components/AnimesList'
+import React, {useState,useEffect,createContext} from 'react'
 import getCookie from './GetCookie.js'
-import Game from './Components/Game';
-import { createContext } from 'react';
 
 export const GamdeModeContext  = createContext()
 
@@ -13,25 +12,20 @@ export const ServerContext  = createContext()
 
 
 function App() {
-  
-  const CsrfToken = getCookie('csrftoken')
- 
 
-
-  //const[AllCompetitors,setCompitotrs] = useState()
-  const[AllAnimes,setanimes] = useState()
   const[UserData,setUserData] = useState({})
-  const [gamequestions,setgamequestions] = useState()
-
+  const[AllAnimes,setanimes] = useState()
+  //const[AllCompetitors,setCompitotrs] = useState()
 
   const[UserDataLoading,setUserDataLoading] = useState(true)
   //const[DashBoardLoding,setDashBoardLoding] = useState(true)
   
   const[AnimesLoading,setAnimesLoading] = useState(true)
-  const[QuestionsLoading,setQuestionsLoading] = useState(true)
-
 
   const[GameMode,setGameMode] = useState(false)
+
+  const [Contributionsmode,setContributionsmode]= useState(false)
+  const[takequizmode,settakequizmode] = useState(false)
 
   
   const  server  = "http://127.0.0.1:8000"
@@ -39,28 +33,21 @@ function App() {
   const  animesurl = `${server}/home/animes`
   
   //const  competitorsurl = `${server}/home/competitors`
-  const  animegameurl = `${server}/home/getgame`
+  
   //const  sendresultsurl = `${server}/home/sendgame`
   
   const  LogoutUrl = `${server}/logout`
   
-  const SwitchViews = (view)=>
-  {
-
-    // to do 
-    //set all views to none except the passed view
-  }
-
 
 
   const GetUserData = async()=>
   {
     const res = await fetch(userdataurl)
     const data= await res.json()
+    console.log(data)
     setUserData(data)
     setUserDataLoading(false)
   }
-
 
 
   const  GetAnimes= async()=>
@@ -71,18 +58,6 @@ function App() {
     setAnimesLoading(false)
   }
 
-  
-  const GetGame = async(selectedanime)=>
-  {
-
-    const res = await fetch(`${animegameurl}/${selectedanime}`)
-    const anime_questions  = await res.json()
-    console.log("questions: ",anime_questions)
-    setgamequestions(anime_questions)
-    setQuestionsLoading(false)
-    setGameMode(true)
-    
-  }
 
  
   useEffect(()=>{
@@ -99,19 +74,21 @@ return (
 
       <ServerContext.Provider value={{server}}>
 
-     { !UserDataLoading&& <h1> {"welcome =>"}    { UserData.username} </h1>}
-
-      <br /><br />
-   
-       {!AnimesLoading&&!GameMode&&
-      <>
-      <Animes allanimes={AllAnimes}  startest={GetGame}/>
-      </>
-      } 
-      
-        
+     {!UserDataLoading&& <h1>{"welcome => "}{UserData.username}</h1>}<br/><br/>
+  
       <GamdeModeContext.Provider value={{GameMode,setGameMode}}>
-        {GameMode&& <Game questions={gamequestions}/>}
+
+   
+       {/* {takequizmode && <Animes allanimes={AllAnimes} />}
+       {!takequizmode && <button onClick={()=>settakequizmode(true)}>Take quiz !</button> }<br/><br/>
+
+      {!takequizmode&&<><strong>Dashboard : </strong><hr /></> }<br/> */}
+
+
+      {!Contributionsmode&& <button onClick={()=>setContributionsmode(true)}>make a contribution !</button>}
+      {Contributionsmode&& <Contripution animes={AllAnimes}/>}
+    
+
       </GamdeModeContext.Provider>
 
       </ServerContext.Provider>

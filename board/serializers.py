@@ -5,7 +5,15 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count')
+    fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count','contributor')
+
+
+
+class DashBoardSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ('username','points','level','country','contributions_count')
+
 
 
 class AnimeSerializer(serializers.ModelSerializer):

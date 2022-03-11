@@ -1,18 +1,17 @@
 import Question from "./Question"
 import { GamdeModeContext,ServerContext } from "../App"
-import { useContext, useState,useEffect, useCallback } from "react"
+import { useContext, useState, useEffect } from "react"
 import getCookie from "../GetCookie"
 
 const Game = ({questions}) => {
   const CsrfToken = getCookie('csrftoken')
-  const {GameMode} = useContext(GamdeModeContext)
+//  const {GameMode} = useContext(GamdeModeContext)
 
   const {setGameMode} = useContext(GamdeModeContext)
   const {server} = useContext(ServerContext)
-  
   const [Answers,setAnswer] = useState({})
   const [timeout,settimout] = useState(false)
-  const [loading,setloading]= useState()
+  //const [loading,setloading]= useState()
 
   const[index,setindex] = useState(0)
   const len = questions.length
@@ -47,7 +46,7 @@ const Game = ({questions}) => {
                     setseconds(59);
                 }
             } 
-        }, 100)
+        }, 1000)
         return ()=> {
             clearInterval(myInterval);
           };
@@ -60,7 +59,6 @@ const Game = ({questions}) => {
     const new_answers = Answers
     new_answers[id] = useranswer
     setAnswer(new_answers)
-    console.log(Answers)
   }
 
   const SubmitGame = async()=>
