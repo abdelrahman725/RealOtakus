@@ -4,10 +4,6 @@
   color: white;
 }
 
-.eachanime:hover {
-  background-color: green;
-}
-
 div {
   margin-left: auto;
   margin-right: auto;
@@ -23,12 +19,13 @@ div {
   max-width: 40%;
 }
 
-button {
-  margin: 10px;
-  padding: 20px;
-}
-
 .rightchoice {
   background-color: green;
+}
+
+button, input {
+  margin: 10px;
+  padding: 15px;
+  width: 150px;
 }
 /*# sourceMappingURL=App.css.map */

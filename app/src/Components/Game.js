@@ -11,7 +11,6 @@ const Game = ({questions}) => {
   const {server} = useContext(ServerContext)
   const [Answers,setAnswer] = useState({})
   const [timeout,settimout] = useState(false)
-  //const [loading,setloading]= useState()
 
   const[index,setindex] = useState(0)
   const len = questions.length
@@ -24,7 +23,7 @@ const Game = ({questions}) => {
     if (index < len-1){ setseconds(0) ;setminutes(2) }
    }
 
-  const Next = ()=>{    nextquestion(); resettimer()  }
+  const Next = ()=>{nextquestion() ;resettimer() }
 
 
   useEffect(()=>{

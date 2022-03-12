@@ -1,15 +1,10 @@
-
-
 .eachanime
 {
   padding: 10px;
   background-color: black;
   color:white;
 }
-.eachanime:hover
-{
-  background-color: green;
-}
+
 div
 {
   margin-left: auto;
@@ -26,13 +21,13 @@ div
   border-radius: 20px;
   max-width: 40%;
 }
-button
+
+.rightchoice{ background-color: green;}
+
+button,input
 {
   margin:10px;
-  padding:20px;
-}
+  padding:15px;
+  width:150px;
 
-.rightchoice
-{
-  background-color: green;
 }

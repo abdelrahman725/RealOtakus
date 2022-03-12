@@ -1,15 +1,14 @@
 import './App.css';
-import DashBoard from './Components/Dashboard'
+//import DashBoard from './Components/Dashboard'
 //import Profile from './Components/Profile'
 import Contripution from './Components/Contripution'
 import Animes from './Components/AnimesList'
 import React, {useState,useEffect,createContext} from 'react'
-import getCookie from './GetCookie.js'
+//import getCookie from './GetCookie.js'
 
 export const GamdeModeContext  = createContext()
 
 export const ServerContext  = createContext()
-
 
 function App() {
 
@@ -44,12 +43,13 @@ function App() {
   {
     const res = await fetch(userdataurl)
     const data= await res.json()
-    console.log(data)
     setUserData(data)
     setUserDataLoading(false)
   }
 
 
+
+  // animes with questions
   const  GetAnimes= async()=>
   {
     const res = await fetch(animesurl)
@@ -59,13 +59,10 @@ function App() {
   }
 
 
- 
   useEffect(()=>{
     GetUserData()
     GetAnimes()
   },[])
-
-
 
 
 return (
@@ -79,14 +76,15 @@ return (
       <GamdeModeContext.Provider value={{GameMode,setGameMode}}>
 
    
-       {/* {takequizmode && <Animes allanimes={AllAnimes} />}
+       {takequizmode && <Animes allanimes={AllAnimes} />}
        {!takequizmode && <button onClick={()=>settakequizmode(true)}>Take quiz !</button> }<br/><br/>
 
-      {!takequizmode&&<><strong>Dashboard : </strong><hr /></> }<br/> */}
+      {!takequizmode&&<><strong>Dashboard : </strong><hr /></> }<br/> 
 
 
-      {!Contributionsmode&& <button onClick={()=>setContributionsmode(true)}>make a contribution !</button>}
-      {Contributionsmode&& <Contripution animes={AllAnimes}/>}
+      
+      {/* {!Contributionsmode&& <button onClick={()=>setContributionsmode(true)}>make a contribution !</button>}
+      {Contributionsmode&& <Contripution />} */}
     
 
       </GamdeModeContext.Provider>

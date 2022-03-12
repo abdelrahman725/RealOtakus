@@ -18,12 +18,11 @@ posts_dict = {}
 
 game = {}
 game_questions = {}
-
-
-AnimesWithQuestions = Anime.objects.filter(anime_questions__isnull=False).distinct()
 AllPosts = Post.objects.all()
 
-for anime in AnimesWithQuestions:
+AllAnimes = Anime.objects.all()
+
+for anime in AllAnimes:
   animes_dict[anime.pk] = anime
 
 for post in AllPosts:
@@ -46,25 +45,24 @@ def GetUserData(request):
   serialized_data = UserSerializer(DevelopmentUser(),many=False)
   return Response(serialized_data.data)
 
-  
-# done chache
-@api_view(["GET"])
-def GetAvailableAnimes(request):
-  serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
-  return Response(serialized_data.data)
 
 
 
 #@login_required
 @api_view(["GET"])
 def AllCompetitors(request):
-
   otakus = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')
   serialized_data = DashBoardSerializer(otakus,many=True)
   return Response(serialized_data.data)
 
 
 # -------------------------------------- Test Handling functions  ----------------------------------------
+  
+@api_view(["GET"])
+def GetAvailableAnimes(request):
+  AnimesWithQuestions=Anime.objects.filter(questions_number__gt=0)
+  serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
+  return Response(serialized_data.data)
 
 
 #@login_required
@@ -84,16 +82,20 @@ def GetTest(request,game_anime):
   game[current_user.id] = CurrentGame
   CurrentGame.save() 
   questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
+  
+  if not questions:
+    return JsonResponse({"msg":"sorry you can't take a quiz on this anime because all its current questions are yours"})
 
   game_questions[current_user.id] ={}
   for q in questions:
     game_questions[current_user.id][q.id] = q
 
-    
+
+
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
 
-  return JsonResponse({"message": "sorry out of questions for this anime"})
+
 
 
 
@@ -141,45 +143,56 @@ def SubmitTest(request):
 # ------------------------------------------------------------------------------------
 
 
+@api_view(["GET"])
+def GetAllAnimes(request):
+  serialized_data = AnimeSerializer(AllAnimes,many=True)
+  return Response(serialized_data.data)
+
 
 #@login_required
 @api_view(["POST"])
 def MakeContribution(request):
-  anime = animes_dict[request.data["anime"]]
-
-  question=request.data["question"]
-  right_answer=request.data["correct"]
   
-  c1=request.data["choice_1"]
-  c2=request.data["choice_2"]
-  c3=request.data["choice_3"]
+  anime = animes_dict[int(request.data["anime"])]
+  ContributedQ=request.data["question"]
+
+  right_answer=ContributedQ["rightanswer"]
+  actualquestion = ContributedQ["question"]
+
+
+  c1=ContributedQ["choice1"]
+  c2=ContributedQ["choice2"]
+  c3=ContributedQ["choice3"]
   c4=right_answer
 
   random_number = Random()
 
   if random_number == 1:
-    c1=request.data["choice_3"]
-    c2=request.data["choice_2"]
+    c1=ContributedQ["choice1"]
+    c2=ContributedQ["choice2"]
     c3=right_answer
-    c4=request.data["choice_1"]
+    c4=ContributedQ["choice3"]
 
   if random_number == 2:
-    c1=request.data["choice_1"]
+    c1=ContributedQ["choice1"]
     c2=right_answer
-    c3=request.data["choice_3"]
-    c4=request.data["choice_2"]
+    c3=ContributedQ["choice3"]
+    c4=ContributedQ["choice2"]
 
   if random_number == 3:
     c1=right_answer
-    c2=request.data["choice_2"]
-    c3=request.data["choice_3"]
-    c4=request.data["choice_1"]
+    c2=ContributedQ["choice1"]
+    c3=ContributedQ["choice2"]
+    c4=ContributedQ["choice3"]
 
 
   Question.objects.create(anime=anime,contributor= DevelopmentUser(),approved=False,
-  question=question,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+  question=actualquestion,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
 
-  return JsonResponse({"message": "new question has been added by a contributor and waits approval"})
+  return JsonResponse({"message": f"new question has been added by {DevelopmentUser().username} and waits approval"})
+
+
+
 
 
 #@login_required
@@ -244,5 +257,5 @@ def DeletePost(request,id):
   return JsonResponse({"message": "post is deleted"})
 
 
-# str_repr = repr(AnimesWithQuestions)
+# str_repr = repr()
 # connection.queries:

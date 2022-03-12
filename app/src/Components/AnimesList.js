@@ -21,8 +21,14 @@ const Animes = ({allanimes }) => {
 
     const res = await fetch(`${animegameurl}/${selectedanime}`)
     const anime_questions  = await res.json()
-    setgamequestions(anime_questions)
-    setGameMode(true)
+    console.log(anime_questions)
+
+    if (anime_questions.length>=1)
+    {
+      setgamequestions(anime_questions)
+      setGameMode(true)
+    }
+  
     
   }
 
