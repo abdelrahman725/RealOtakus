@@ -17,6 +17,9 @@ class User(AbstractUser):
 
   level = models.CharField(
     choices=level_options,max_length=20,default="beginner")
+
+  class Meta:
+    ordering= ["-points"]
   def __str__(self):
     return self.username
 
@@ -24,11 +27,23 @@ class User(AbstractUser):
 Admin = User.objects.get(is_superuser=True)
   
 class Anime(models.Model):
-  anime_name = models.CharField(max_length=40,null=False,unique=True)
-  questions_number= models.IntegerField(default=0)
+  anime_name = models.CharField(max_length=40,unique=True)
   url= models.CharField(max_length=300,default="/")
-  def __str__(self):
-        return f"{self.anime_name}"
+  def save(self, *args, **kwargs):
+    new = False
+    if not self.id:
+      new =True
+    super(Anime, self).save(*args, **kwargs)
+    if new:
+      from .views import animes_dict
+      animes_dict[self.id] = self
+
+  def delete(self, *args, **kwargs):
+    from .views import animes_dict
+    del animes_dict[self.id] 
+    super(Anime, self).delete(*args, **kwargs)
+
+  def __str__(self): return f"{self.anime_name}"
 
 class Question(models.Model):
   anime    =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
@@ -44,15 +59,7 @@ class Question(models.Model):
   correct_answers= models.IntegerField(default=0)
   wrong_answers= models.IntegerField(default=0)
   
-  
   def save(self, *args, **kwargs):
-    if self.approved :
-      from .views import animes_dict
-      updated_anime= self.anime
-      updated_anime.questions_number+=1
-      animes_dict[updated_anime.id] = updated_anime
-      updated_anime.save()
-
     if not self.contributor.is_superuser:
       user = self.contributor
       if self.approved :
@@ -61,7 +68,7 @@ class Question(models.Model):
           msg = "congratulations ! your first contribution has been approved and you are now an otaku contributor"
           user.contributor = True
         else:
-          msg="congratulations you got your question approved another contribution added to your profile"
+          msg=f"congratulations your question on {self.anime} got  approved, another contribution added to your profile"
 
         new_notification = Notification(owner=user,notification=msg, time=datetime.now())
         new_notification.save()
@@ -111,11 +118,16 @@ class Post(models.Model):
   post = models.TextField(blank=False)
   time = models.DateTimeField(default=None)
   likes = models.IntegerField(default=0)
+  
+
   def save(self, *args, **kwargs):
+    from .views import posts_dict
     if not self.owner.contributor:
       print("\n" *3 + "##  Error! Post is not saved: only contributors allow to share posts" + "\n"*2)
       return
     super(Post, self).save(*args, **kwargs)
+    from .views import posts_dict
+    posts_dict[self.id]=self
 
   def __str__(self):
     return f"{self.owner} posted : {self.post}"

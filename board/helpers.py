@@ -5,8 +5,8 @@ def login_required(f):
         if not request.user.is_authenticated:
             return redirect("/")
         else: 
-            x=f(request,*args,**kwargs)
-            return x
+            old_function=f(request,*args,**kwargs)
+            return old_function
     return wraper  
 
 def ValidatePassword(password):

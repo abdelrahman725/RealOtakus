@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import  JsonResponse
 from django.db import connection
+from django.db.models import Count,Q
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -20,9 +21,8 @@ game = {}
 game_questions = {}
 AllPosts = Post.objects.all()
 
-AllAnimes = Anime.objects.all()
 
-for anime in AllAnimes:
+for anime in Anime.objects.all():
   animes_dict[anime.pk] = anime
 
 for post in AllPosts:
@@ -42,25 +42,25 @@ def ReactApp(request):
 #@login_required
 @api_view(["GET"])
 def GetUserData(request):
-  serialized_data = UserSerializer(DevelopmentUser(),many=False)
+  serialized_data = BasicUserSerializer(DevelopmentUser(),many=False)
   return Response(serialized_data.data)
-
 
 
 
 #@login_required
 @api_view(["GET"])
 def AllCompetitors(request):
-  otakus = User.objects.exclude(pk=1).exclude(points=0).order_by('-points')
+  otakus = User.objects.exclude(pk=1).order_by('-points')
   serialized_data = DashBoardSerializer(otakus,many=True)
   return Response(serialized_data.data)
 
 
-# -------------------------------------- Test Handling functions  ----------------------------------------
+# -------------------------------------- Test Handling functions ----------------------------------------
   
 @api_view(["GET"])
 def GetAvailableAnimes(request):
-  AnimesWithQuestions=Anime.objects.filter(questions_number__gt=0)
+  AnimesWithQuestions = Anime.objects.annotate(num_questions=Count("anime_questions")).filter(num_questions__gte=4)
+
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
@@ -73,30 +73,28 @@ def GetTest(request,game_anime):
   current_user.tests_started+=1
   current_user.save()
 
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
+  
+  #  number of approved question for the selected anime : 
+  if questions.count() <5:
+    return JsonResponse({"msg":"sorry not enough questions"})
+  
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
 
   index = CurrentGame.gamesnumber
-  
-  #if index * 5 < selected_anime.questions_number:
+
   CurrentGame.gamesnumber+=1
   game[current_user.id] = CurrentGame
   CurrentGame.save() 
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
   
-  if not questions:
-    return JsonResponse({"msg":"sorry you can't take a quiz on this anime because all its current questions are yours"})
-
   game_questions[current_user.id] ={}
+
   for q in questions:
     game_questions[current_user.id][q.id] = q
 
-
-
+  print(game_questions[current_user.id])
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
-
-
-
 
 
 
@@ -104,7 +102,6 @@ def GetTest(request,game_anime):
 #@login_required
 @api_view(["POST"])
 def SubmitTest(request):
-
   user =  DevelopmentUser()
   test_score = 0
   test_results = request.data["results"]
@@ -112,6 +109,7 @@ def SubmitTest(request):
   #review = request.data["review"]
 
   questions =game_questions[user.id]
+  answers = AnswersSerializer(questions.values(),many=True).data
 
   for q in test_results:
     Q=questions[int(q)]
@@ -125,6 +123,14 @@ def SubmitTest(request):
       Q.wrong_answers+=1
     Q.save()
   
+
+  if user.points >=3000:
+    user.level = "realOtaku" 
+
+  elif user.points >= 1000:
+    user.level  = "advanced"
+  elif user.points >= 200:
+    user.level = "intermediate"
   
   user.tests_completed+=1
   CurrentGame= game[user.id]
@@ -137,7 +143,8 @@ def SubmitTest(request):
   del game[user.id]
 
 
-  return JsonResponse({"message": "test submitted successfully","socre":test_score})
+
+  return JsonResponse({"message": "test submitted successfully","score":test_score,"answers" :answers})
 
 
 # ------------------------------------------------------------------------------------
@@ -145,20 +152,19 @@ def SubmitTest(request):
 
 @api_view(["GET"])
 def GetAllAnimes(request):
-  serialized_data = AnimeSerializer(AllAnimes,many=True)
+  serialized_data = AnimeSerializer(animes_dict.values(),many=True)
   return Response(serialized_data.data)
 
 
 #@login_required
 @api_view(["POST"])
 def MakeContribution(request):
-  
+
   anime = animes_dict[int(request.data["anime"])]
   ContributedQ=request.data["question"]
 
   right_answer=ContributedQ["rightanswer"]
   actualquestion = ContributedQ["question"]
-
 
   c1=ContributedQ["choice1"]
   c2=ContributedQ["choice2"]
@@ -168,22 +174,16 @@ def MakeContribution(request):
   random_number = Random()
 
   if random_number == 1:
-    c1=ContributedQ["choice1"]
-    c2=ContributedQ["choice2"]
+    c4=c3
     c3=right_answer
-    c4=ContributedQ["choice3"]
-
+  
   if random_number == 2:
-    c1=ContributedQ["choice1"]
+    c4=c2
     c2=right_answer
-    c3=ContributedQ["choice3"]
-    c4=ContributedQ["choice2"]
 
   if random_number == 3:
+    c4=c1
     c1=right_answer
-    c2=ContributedQ["choice1"]
-    c3=ContributedQ["choice2"]
-    c4=ContributedQ["choice3"]
 
 
   Question.objects.create(anime=anime,contributor= DevelopmentUser(),approved=False,
@@ -194,28 +194,28 @@ def MakeContribution(request):
 
 
 
-
-#@login_required
 @api_view(["GET"])
-def UserContributions(request):
-  user_questions = Question.objects.filter(contributor=DevelopmentUser())
-  serialized_data = QuestionSerializer(user_questions,many=True)
-  return Response(serialized_data.data)
+def GetMyProfile(request):
+  my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
+  my_pending_contributions = QuestionSerializer(Question.objects.filter(contributor=DevelopmentUser(),approved=False),many=True)
+  my_posts = PostSerializer(Post.objects.filter(owner=DevelopmentUser()), many=True)
+  return Response({
+     "data": my_data.data,
+     "contributions": my_pending_contributions.data,
+     "posts": my_posts.data,
+    })
 
 
-#@login_required
-@api_view(["GET"])
-def GetUserProfile(request,user):
-  requested_user = User.objects.get(pk=user)
-  serialized_data = UserSerializer(requested_user)
-  return Response(serialized_data.data)
+
+# -----------------------------------------------------------------------------------------------------------------------
+
+
 
 @api_view(["GET"])
 def GetPosts(request):
   allposts = posts_dict.values()
   serialized_data = PostSerializer(allposts,many=True)
   return Response(serialized_data.data)
-
 
 
 #@login_required
@@ -225,7 +225,6 @@ def SharePost(request):
   new_post=Post.objects.create(owner=DevelopmentUser(),post=post_content,time=datetime.now())
   posts_dict[new_post.id] = new_post
   return JsonResponse({"message": "you have shared a post successfully"})
-
 
 
 #@login_required
@@ -244,7 +243,6 @@ def Like(request,id):
 
 
 
-
 #@login_required
 @api_view(["POST"])
 def DeletePost(request,id):
@@ -259,3 +257,6 @@ def DeletePost(request,id):
 
 # str_repr = repr()
 # connection.queries:
+
+
+#Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=4)

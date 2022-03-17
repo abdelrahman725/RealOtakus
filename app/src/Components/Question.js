@@ -38,8 +38,7 @@ const Question = ({each_question,onselect,i}) => {
      onClick={()=>onChoice(each_question.choice4)}>  
      {each_question.choice4}
     </div>
-    
-    <strong>{i+1}</strong><br />
+
   
     </>
   )
