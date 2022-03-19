@@ -5,7 +5,6 @@ from django.db.models import Count,Q
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 import json
 import random
 from datetime import datetime
@@ -34,15 +33,15 @@ def Random():
   return random.randint(1, 4)
 
 
-#@login_required
+@login_required
 def ReactApp(request):
-  return redirect("http://localhost:3000/home")
-  #return render(request, "index.html")
+  #return redirect("http://localhost:3000/home")
+  return render(request, "index.html")
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetUserData(request):
-  serialized_data = BasicUserSerializer(DevelopmentUser(),many=False)
+  serialized_data = BasicUserSerializer(request.user,many=False)
   return Response(serialized_data.data)
 
 
@@ -124,6 +123,8 @@ def SubmitTest(request):
     Q.save()
   
 
+  previous_level = user.level
+
   if user.points >=3000:
     user.level = "realOtaku" 
 
@@ -131,7 +132,13 @@ def SubmitTest(request):
     user.level  = "advanced"
   elif user.points >= 200:
     user.level = "intermediate"
-  
+
+  # level up the user by pushing a notfication 
+  if previous_level != user.level :
+    Notification.objects.create(owner=DevelopmentUser(),notification=f"Level up to {user.level}! good work")
+
+
+
   user.tests_completed+=1
   CurrentGame= game[user.id]
   CurrentGame.score += test_score
@@ -144,7 +151,7 @@ def SubmitTest(request):
 
 
 
-  return JsonResponse({"message": "test submitted successfully","score":test_score,"answers" :answers})
+  return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers, "level":user.level})
 
 
 # ------------------------------------------------------------------------------------

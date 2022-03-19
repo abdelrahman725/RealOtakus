@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
+from .consumer import NotificationConsumer
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+import json
 
 class User(AbstractUser):
   points = models.IntegerField(default=0)
@@ -59,16 +63,28 @@ class Question(models.Model):
   correct_answers= models.IntegerField(default=0)
   wrong_answers= models.IntegerField(default=0)
   
+  previous_status = None
+
+  def __init__(self,*args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.previous_status  = self.approved
+
+     
   def save(self, *args, **kwargs):
+
     if not self.contributor.is_superuser:
       user = self.contributor
-      if self.approved :
-        msg="" 
-        if user.contributor == False:
-          msg = "congratulations ! your first contribution has been approved and you are now an otaku contributor"
-          user.contributor = True
+      if self.previous_status == False and self.approved==True:
+        msg=""
+        # then it's his first approved contribution
+        if user.contributor ==False:
+          user.contributor=True
+          msg = "your first contribution has been approved and you are now an otaku contributor"
+        
+        # subsequent approved contributions 
         else:
           msg=f"congratulations your question on {self.anime} got  approved, another contribution added to your profile"
+
 
         new_notification = Notification(owner=user,notification=msg, time=datetime.now())
         new_notification.save()
@@ -82,7 +98,7 @@ class Question(models.Model):
   def delete(self, *args, **kwargs):
     if not self.contributor.is_superuser:
       if not self.approved:
-        msg = "sorry your question has been declined as it didn't meet the required criteria"
+        msg = f"sorry your last question on {self.anime} has been declined as it didn't meet the required criteria"
         new_notification = Notification(owner=self.contributor,notification=msg, time=datetime.now())
         new_notification.save()
     
@@ -103,13 +119,25 @@ class Game(models.Model):
   review = models.TextField(null=True,blank=True)
   
   def __str__(self):
-    return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
+    return f"{self.game_owner} had {self.gamesnumber} tests for {self.anime}"
 
 
 class Notification(models.Model):
   owner =  models.ForeignKey(User,on_delete=models.CASCADE,related_name="getnotifications")
   notification = models.CharField(max_length=250)
   time = models.DateTimeField(default=None)
+  seen = models.BooleanField(default=False)
+
+  def save(self, *args, **kwargs):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+      f'notifications_group_{self.owner.id}',{
+        'type':'send_notifications',
+        'value':{ "notification": self.notification}
+      }
+
+    )
+    super(Notification, self).save(*args, **kwargs)
 
 
 
@@ -119,7 +147,6 @@ class Post(models.Model):
   time = models.DateTimeField(default=None)
   likes = models.IntegerField(default=0)
   
-
   def save(self, *args, **kwargs):
     from .views import posts_dict
     if not self.owner.contributor:

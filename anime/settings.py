@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',    
+    'channels',
 
     'allauth',
     'allauth.account',
@@ -52,14 +53,30 @@ INSTALLED_APPS = [
 
 ]
 
+
+
+
+
+
+CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+
+
 SITE_ID = 1
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:3000",
      "http://127.0.0.1:3000",
+     
      "http://127.0.0.1:8000",
-     "http://localhost:8000"
+     "https://127.0.0.1:8000",
+
+     "http://localhost:8000",
+     "https://localhost:8000"
 ]
 
 
@@ -71,13 +88,13 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.common.CommonMiddleware',
- 
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ] 
 
+ASGI_APPLICATION = "anime.asgi.application"
 
 ROOT_URLCONF = 'anime.urls'
 

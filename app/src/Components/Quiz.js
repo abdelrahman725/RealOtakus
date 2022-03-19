@@ -74,9 +74,7 @@ const Game = ({questions,setgameresults}) => {
       })
     })
     const res  = await send.json()
-    console.log(res)
-    setgameresults(res.answers,res.score)
-
+    setgameresults(res.answers,res.score,res.level)
   }
 
 
