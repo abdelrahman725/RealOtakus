@@ -47,7 +47,7 @@ function App() {
 
   useEffect(()=>{
     GetUserData()
-    mysocket()
+    //mysocket()
   },[])
 
 

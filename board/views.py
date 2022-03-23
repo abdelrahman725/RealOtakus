@@ -35,14 +35,18 @@ def Random():
 
 @login_required
 def ReactApp(request):
-  #return redirect("http://localhost:3000/home")
-  return render(request, "index.html")
+  return redirect("http://localhost:3000/home")
+  #return render(request, "index.html")
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetUserData(request):
-  serialized_data = BasicUserSerializer(request.user,many=False)
-  return Response(serialized_data.data)
+  serialized_basic_data = BasicUserSerializer(DevelopmentUser(),many=False)
+  serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=DevelopmentUser()) ,many=True)
+  return Response({
+     "user_data": serialized_basic_data.data,
+     "notifications": serialized_notifications.data,
+    })
 
 
 

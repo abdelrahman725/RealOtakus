@@ -8,8 +8,6 @@ class BasicUserSerializer(serializers.ModelSerializer):
     fields = ('id','username','points','level')
 
 
-
-
 class AllUserInfo_Serializer(serializers.ModelSerializer):
   class Meta:
     model = User
@@ -53,7 +51,7 @@ class GameSerializer(serializers.ModelSerializer):
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta:
     model = Notification
-    fields = '__all__'
+    fields = ("notification","time","seen")
 
 
 
