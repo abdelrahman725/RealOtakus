@@ -6,30 +6,6 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
 
-class User(AbstractUser):
-  points = models.IntegerField(default=0)
-  tests_completed = models.IntegerField(default=0)
-  tests_started = models.IntegerField(default=0)
-  country = models.CharField(null=True,max_length=60)
-  contributor =  models.BooleanField(default=False)
-  contributions_count = models.IntegerField(default=0)
-  level_options = [
-    ('beginner', 'beginner'),
-    ('intermediate', 'intermediate'),
-    ('advanced', 'advanced'),
-    ('realOtaku', 'realOtaku'),]
-
-  level = models.CharField(
-    choices=level_options,max_length=20,default="beginner")
-
-  class Meta:
-    ordering= ["-points"]
-  def __str__(self):
-    return self.username
-
-
-Admin = User.objects.get(is_superuser=True)
-  
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
   url= models.CharField(max_length=300,default="/")
@@ -49,9 +25,37 @@ class Anime(models.Model):
 
   def __str__(self): return f"{self.anime_name}"
 
+class User(AbstractUser):
+  points = models.IntegerField(default=0)
+  tests_completed = models.IntegerField(default=0)
+  tests_started = models.IntegerField(default=0)
+  country = models.CharField(null=True,max_length=60)
+  contributor =  models.BooleanField(default=False)
+  contributions_count = models.IntegerField(default=0)
+  animes_to_review = models.ManyToManyField(Anime,related_name="reviewers")
+
+  level_options = [
+    ('beginner', 'beginner'),
+    ('intermediate', 'intermediate'),
+    ('advanced', 'advanced'),
+    ('realOtaku', 'realOtaku'),]
+
+  level = models.CharField(
+    choices=level_options,max_length=20,default="beginner")
+
+  class Meta:
+    ordering= ["-points"]
+  def __str__(self):
+    return self.username
+
+#Admin = User.objects.get(is_superuser=True)
+
+
+
+
 class Question(models.Model):
   anime    =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
-  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=Admin.pk)
+  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
   advanced =  models.BooleanField(default=False)
   question =  models.TextField(blank=False,unique=True)
   choice1  =  models.TextField(blank=False,null=True)
@@ -158,3 +162,4 @@ class Post(models.Model):
 
   def __str__(self):
     return f"{self.owner} posted : {self.post}"
+

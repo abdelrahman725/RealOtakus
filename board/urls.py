@@ -18,6 +18,4 @@ urlpatterns = [
 
     path('profile',GetMyProfile),
 
-    # path('sharepost',SharePost),
-    # path('getposts',GetPosts),
 ]

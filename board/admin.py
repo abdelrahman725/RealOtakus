@@ -5,12 +5,13 @@ from .models import *
 class User_info(admin.ModelAdmin):
   list_display=("id","username","points","country","tests_started","contributor","contributions_count")
   list_filter = ("level","contributor",)
+  filter_horizontal=("animes_to_review",)
   search_fields = ("username",)
   
 
 @admin.register(Question)
 class QuestionInfo(admin.ModelAdmin):
-  list_display=("id","anime","question","right_answer","contributor","approved","correct_answers","wrong_answers")
+  list_display=("anime","question","right_answer","contributor","approved","correct_answers","wrong_answers")
   list_filter = ("anime","advanced","contributor","approved",)
   search_fields = ("question",)
 

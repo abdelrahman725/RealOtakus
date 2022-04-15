@@ -146,6 +146,11 @@ def SubmitTest(request):
   user.tests_completed+=1
   CurrentGame= game[user.id]
   CurrentGame.score += test_score
+  if CurrentGame.anime not in user.animes_to_review.all() and CurrentGame.score > 30:
+    user.animes_to_review.add(CurrentGame.anime)
+    Notification.objects.create(owner=DevelopmentUser(),notification=f"you got >=30 points in {CurrentGame.anime}! that's really good, now you can review and approve questions from other users on this anime!")
+
+
   CurrentGame.save()
   user.save()
 
@@ -210,10 +215,16 @@ def GetMyProfile(request):
   my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
   my_pending_contributions = QuestionSerializer(Question.objects.filter(contributor=DevelopmentUser(),approved=False),many=True)
   my_posts = PostSerializer(Post.objects.filter(owner=DevelopmentUser()), many=True)
+  
+  #pending questions for the user to review and approve if any
+  pending_reviews = QuestionSerializer(Question.objects.filter(approved=False,anime=DevelopmentUser().anime_review),many=True)
+  
+
   return Response({
      "data": my_data.data,
      "contributions": my_pending_contributions.data,
      "posts": my_posts.data,
+     "pending_reviews":pending_reviews.data
     })
 
 
@@ -222,48 +233,48 @@ def GetMyProfile(request):
 
 
 
-@api_view(["GET"])
-def GetPosts(request):
-  allposts = posts_dict.values()
-  serialized_data = PostSerializer(allposts,many=True)
-  return Response(serialized_data.data)
+# @api_view(["GET"])
+# def GetPosts(request):
+#   allposts = posts_dict.values()
+#   serialized_data = PostSerializer(allposts,many=True)
+#   return Response(serialized_data.data)
 
 
-#@login_required
-@api_view(["POST"])
-def SharePost(request):
-  post_content = request.data["post"]
-  new_post=Post.objects.create(owner=DevelopmentUser(),post=post_content,time=datetime.now())
-  posts_dict[new_post.id] = new_post
-  return JsonResponse({"message": "you have shared a post successfully"})
+# #@login_required
+# @api_view(["POST"])
+# def SharePost(request):
+#   post_content = request.data["post"]
+#   new_post=Post.objects.create(owner=DevelopmentUser(),post=post_content,time=datetime.now())
+#   posts_dict[new_post.id] = new_post
+#   return JsonResponse({"message": "you have shared a post successfully"})
 
 
-#@login_required
-@api_view(["PUT"])
-def Like(request,id):
-  post= None
-  try:
-    post = posts_dict[id]
-  except KeyError:
-    post = Post.objects.get(pk=id)
-  post.likes+=1
-  post.save()
-  posts_dict[id] = post
+# #@login_required
+# @api_view(["PUT"])
+# def Like(request,id):
+#   post= None
+#   try:
+#     post = posts_dict[id]
+#   except KeyError:
+#     post = Post.objects.get(pk=id)
+#   post.likes+=1
+#   post.save()
+#   posts_dict[id] = post
 
-  return JsonResponse({"message": "like received, post has been updated"})
+#   return JsonResponse({"message": "like received, post has been updated"})
 
 
 
-#@login_required
-@api_view(["POST"])
-def DeletePost(request,id):
-  post=posts_dict[id]
+# #@login_required
+# @api_view(["POST"])
+# def DeletePost(request,id):
+#   post=posts_dict[id]
   
-  if post.owner == DevelopmentUser():
-    post.delete()
+#   if post.owner == DevelopmentUser():
+#     post.delete()
 
-  del posts_dict[id]
-  return JsonResponse({"message": "post is deleted"})
+#   del posts_dict[id]
+#   return JsonResponse({"message": "post is deleted"})
 
 
 # str_repr = repr()
