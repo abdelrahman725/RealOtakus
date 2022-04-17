@@ -53,9 +53,3 @@ class NotificationsSerializer(serializers.ModelSerializer):
     model = Notification
     fields = ("notification","time","seen")
 
-
-
-class PostSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Post
-    fields = '__all__'

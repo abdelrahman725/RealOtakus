@@ -7,7 +7,8 @@ questions = Question.objects.all()
 
 Game.objects.all().delete()
 Notification.objects.all().delete()
-Post.objects.all().delete()
+
+Question.objects.exclude(contributor=User.objects.get(username="admin")).delete()
 
 for user in users:
   user.points=0
@@ -19,9 +20,7 @@ for user in users:
   user.save()
 
 
-
-
 for q in questions:
-  q.correct_answers=0
-  q.wrong_answers=0
-  q.save()
+    q.correct_answers=0
+    q.wrong_answers=0
+    q.save()

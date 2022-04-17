@@ -9,6 +9,8 @@ import json
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
   url= models.CharField(max_length=300,default="/")
+  class Meta:
+    ordering=["id"]
   def save(self, *args, **kwargs):
     new = False
     if not self.id:
@@ -51,8 +53,6 @@ class User(AbstractUser):
 #Admin = User.objects.get(is_superuser=True)
 
 
-
-
 class Question(models.Model):
   anime    =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
   contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
@@ -79,12 +79,22 @@ class Question(models.Model):
     if not self.contributor.is_superuser:
       user = self.contributor
       if self.previous_status == False and self.approved==True:
+        # so now a user has an approved contribution , we want to check if the anime of that contributed quesion has a game field with score >=10 points in order to make the contributor user also a reviewr
+        # in other words for the user to be a reviewr he must contribute at least one question on anime and has score of >= 10 points on the same anime
+        try:
+          game=Game.objects.get(game_owner=self.contributor,anime=self.anime)
+          if game.score >=10 and self.anime not in self.contributor.animes_to_review:
+            self.contributor.animes_to_review.add(self.anime)
+            Notification.objects.create(owner=self.contributor,notification=f"you can now review and approve questions created by others users on {self.anime} anime",time=datetime.now())
+        except Game.DoesNotExist():
+          pass
+        
         msg=""
         # then it's his first approved contribution
         if user.contributor ==False:
           user.contributor=True
           msg = "your first contribution has been approved and you are now an otaku contributor"
-        
+
         # subsequent approved contributions 
         else:
           msg=f"congratulations your question on {self.anime} got  approved, another contribution added to your profile"
@@ -142,24 +152,4 @@ class Notification(models.Model):
 
     )
     super(Notification, self).save(*args, **kwargs)
-
-
-
-class Post(models.Model):
-  owner =models.ForeignKey(User,on_delete=models.CASCADE,related_name="user_posts")
-  post = models.TextField(blank=False)
-  time = models.DateTimeField(default=None)
-  likes = models.IntegerField(default=0)
-  
-  def save(self, *args, **kwargs):
-    from .views import posts_dict
-    if not self.owner.contributor:
-      print("\n" *3 + "##  Error! Post is not saved: only contributors allow to share posts" + "\n"*2)
-      return
-    super(Post, self).save(*args, **kwargs)
-    from .views import posts_dict
-    posts_dict[self.id]=self
-
-  def __str__(self):
-    return f"{self.owner} posted : {self.post}"
 

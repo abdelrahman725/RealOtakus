@@ -6,8 +6,9 @@ const Profile = () => {
   const profileurl  = `${server}/home/profile`
 
   const[mydata,setmydata]= useState()
-  const[contributions,setcontributions]= useState()
-  const[posts,setposts]= useState()
+  const[pendingcontributions,setpendingcontributions]= useState()
+  const[reviews,setreviews]= useState()
+
   const[loading,setloading]= useState(true)
 
   const LoadData =async()=>
@@ -15,10 +16,10 @@ const Profile = () => {
     const res = await fetch(profileurl)
     const data  = await res.json()
       setmydata(data.data)
-      setcontributions(data.contributions)
-      setposts(data.posts)
+      setpendingcontributions(data.pendingcontributions)
+      setreviews(data.pending_reviews)
       setloading(false)
-     console.log(data)
+      console.log(data)
 
   }
 
@@ -38,3 +39,4 @@ const Profile = () => {
 }
 
 export default Profile
+

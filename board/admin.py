@@ -18,7 +18,7 @@ class QuestionInfo(admin.ModelAdmin):
 
 @admin.register(Anime)
 class AnimeInfo(admin.ModelAdmin):
-  list_display = ("id","anime_name","id")
+  list_display = ("anime_name","id")
   search_fields = ("anime_name",)
 
 
@@ -33,8 +33,3 @@ class Notifications(admin.ModelAdmin):
   list_display = ("owner","notification","time")
   list_filter = ("owner",)
 
-
-@admin.register(Post)
-class Posts(admin.ModelAdmin):  
-  list_display = ("owner","post","likes","time")
-  list_filter = ("owner",)

@@ -1,7 +1,7 @@
 import './App.css';
 import DashBoard from './Components/Dashboard'
 import Bar from './Components/Bar' 
-//import Profile from './Components/Profile'
+import Profile from './Components/Profile'
 //import Contripution from './Components/Contripution'
 import Animes from './Components/AnimesList'
 import React, {useState,useEffect,createContext} from 'react'
@@ -29,6 +29,7 @@ function App() {
     const res = await fetch(userdataurl)
     const data= await res.json()
     setUserData(data)
+    console.log(data)
   }
 
   const mysocket = ()=>
@@ -69,6 +70,7 @@ return (
   
        
       <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
+        <Profile/>
         {/* {quiz && <Animes/>}
           {!quiz  && <button onClick={()=>setquiz(true)}>Take quiz !</button> }<br/><br/> */}
 

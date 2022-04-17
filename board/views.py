@@ -14,18 +14,16 @@ from .serializers import *
 from .helpers import login_required 
 
 animes_dict = {}
-posts_dict = {}
+
 
 game = {}
 game_questions = {}
-AllPosts = Post.objects.all()
+
 
 
 for anime in Anime.objects.all():
   animes_dict[anime.pk] = anime
 
-for post in AllPosts:
-  posts_dict[post.id] = post
 
 def DevelopmentUser(): return User.objects.get(pk=28)
 
@@ -63,7 +61,6 @@ def AllCompetitors(request):
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.annotate(num_questions=Count("anime_questions")).filter(num_questions__gte=4)
-
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
@@ -146,9 +143,12 @@ def SubmitTest(request):
   user.tests_completed+=1
   CurrentGame= game[user.id]
   CurrentGame.score += test_score
-  if CurrentGame.anime not in user.animes_to_review.all() and CurrentGame.score > 30:
-    user.animes_to_review.add(CurrentGame.anime)
-    Notification.objects.create(owner=DevelopmentUser(),notification=f"you got >=30 points in {CurrentGame.anime}! that's really good, now you can review and approve questions from other users on this anime!")
+  #in order for a user to be responsible for reviewing an anime he must first have at least one contribution for that anime 
+
+  if  CurrentGame.score >= 10 and CurrentGame.anime not in DevelopmentUser().animes_to_review.all():
+      if CurrentGame.anime.anime_questions.filter(contributor=DevelopmentUser()):
+          user.animes_to_review.add(CurrentGame.anime)
+
 
 
   CurrentGame.save()
@@ -157,7 +157,6 @@ def SubmitTest(request):
   # deleteing used cache from memory : 
   del game_questions[user.id]
   del game[user.id]
-
 
 
   return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers, "level":user.level})
@@ -201,8 +200,12 @@ def MakeContribution(request):
     c4=c1
     c1=right_answer
 
+# check if the contributer user is already a reviewer of the anime associated with the question 
+  is_anime_reviewr = False
+  if anime in DevelopmentUser().animes_to_review.all():
+    is_anime_reviewr=True
 
-  Question.objects.create(anime=anime,contributor= DevelopmentUser(),approved=False,
+  Question.objects.create(anime=anime,contributor= DevelopmentUser(),approved=is_anime_reviewr,
   question=actualquestion,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
 
   return JsonResponse({"message": f"new question has been added by {DevelopmentUser().username} and waits approval"})
@@ -214,67 +217,22 @@ def MakeContribution(request):
 def GetMyProfile(request):
   my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
   my_pending_contributions = QuestionSerializer(Question.objects.filter(contributor=DevelopmentUser(),approved=False),many=True)
-  my_posts = PostSerializer(Post.objects.filter(owner=DevelopmentUser()), many=True)
   
   #pending questions for the user to review and approve if any
-  pending_reviews = QuestionSerializer(Question.objects.filter(approved=False,anime=DevelopmentUser().anime_review),many=True)
+  pending_reviews = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
   
+
+  # animes with contributed questions made by current user : 
+  contributed_animes=Anime.objects.filter(anime_questions__contributor=DevelopmentUser(),anime_questions__approved=True).distinct()  
+  animes = AnimeSerializer(contributed_animes,many=True)
 
   return Response({
      "data": my_data.data,
-     "contributions": my_pending_contributions.data,
-     "posts": my_posts.data,
-     "pending_reviews":pending_reviews.data
+     "pending_contributions": my_pending_contributions.data,
+     "pending_reviews":pending_reviews.data,
+     "animes":animes.data
     })
 
-
-
-# -----------------------------------------------------------------------------------------------------------------------
-
-
-
-# @api_view(["GET"])
-# def GetPosts(request):
-#   allposts = posts_dict.values()
-#   serialized_data = PostSerializer(allposts,many=True)
-#   return Response(serialized_data.data)
-
-
-# #@login_required
-# @api_view(["POST"])
-# def SharePost(request):
-#   post_content = request.data["post"]
-#   new_post=Post.objects.create(owner=DevelopmentUser(),post=post_content,time=datetime.now())
-#   posts_dict[new_post.id] = new_post
-#   return JsonResponse({"message": "you have shared a post successfully"})
-
-
-# #@login_required
-# @api_view(["PUT"])
-# def Like(request,id):
-#   post= None
-#   try:
-#     post = posts_dict[id]
-#   except KeyError:
-#     post = Post.objects.get(pk=id)
-#   post.likes+=1
-#   post.save()
-#   posts_dict[id] = post
-
-#   return JsonResponse({"message": "like received, post has been updated"})
-
-
-
-# #@login_required
-# @api_view(["POST"])
-# def DeletePost(request,id):
-#   post=posts_dict[id]
-  
-#   if post.owner == DevelopmentUser():
-#     post.delete()
-
-#   del posts_dict[id]
-#   return JsonResponse({"message": "post is deleted"})
 
 
 # str_repr = repr()
