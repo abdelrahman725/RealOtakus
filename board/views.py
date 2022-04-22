@@ -50,7 +50,7 @@ def GetUserData(request):
 
 #@login_required
 @api_view(["GET"])
-def AllCompetitors(request):
+def GetDashBoard(request):
   otakus = User.objects.exclude(pk=1).order_by('-points')
   serialized_data = DashBoardSerializer(otakus,many=True)
   return Response(serialized_data.data)
@@ -146,8 +146,9 @@ def SubmitTest(request):
   #in order for a user to be responsible for reviewing an anime he must first have at least one contribution for that anime 
 
   if  CurrentGame.score >= 10 and CurrentGame.anime not in DevelopmentUser().animes_to_review.all():
-      if CurrentGame.anime.anime_questions.filter(contributor=DevelopmentUser()):
+      if CurrentGame.anime.anime_questions.filter(contributor=DevelopmentUser(),approved=True):
           user.animes_to_review.add(CurrentGame.anime)
+          Notification.objects.create(owner=DevelopmentUser(),notification=f"you can now review and approve questions created by others users on {CurrentGame.anime} anime",time=datetime.now())
 
 
 
@@ -200,7 +201,9 @@ def MakeContribution(request):
     c4=c1
     c1=right_answer
 
-# check if the contributer user is already a reviewer of the anime associated with the question 
+
+  # check if the contributer user is already a reviewer of the anime associated with the question 
+
   is_anime_reviewr = False
   if anime in DevelopmentUser().animes_to_review.all():
     is_anime_reviewr=True
@@ -211,14 +214,14 @@ def MakeContribution(request):
   return JsonResponse({"message": f"new question has been added by {DevelopmentUser().username} and waits approval"})
 
 
-
-
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
   my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
-  my_pending_contributions = QuestionSerializer(Question.objects.filter(contributor=DevelopmentUser(),approved=False),many=True)
+  my_pending_contributions = QuestionSerializer(DevelopmentUser().contributions.filter(approved=False),many=True)
+   
   
-  #pending questions for the user to review and approve if any
+  #contributed questions by other users for the current user to review and approve if any
   pending_reviews = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
   
 

@@ -54,7 +54,7 @@ class User(AbstractUser):
 
 
 class Question(models.Model):
-  anime    =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
+  anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
   contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
   advanced =  models.BooleanField(default=False)
   question =  models.TextField(blank=False,unique=True)
@@ -83,10 +83,10 @@ class Question(models.Model):
         # in other words for the user to be a reviewr he must contribute at least one question on anime and has score of >= 10 points on the same anime
         try:
           game=Game.objects.get(game_owner=self.contributor,anime=self.anime)
-          if game.score >=10 and self.anime not in self.contributor.animes_to_review:
+          if game.score >=10 and self.anime not in self.contributor.animes_to_review.all():
             self.contributor.animes_to_review.add(self.anime)
-            Notification.objects.create(owner=self.contributor,notification=f"you can now review and approve questions created by others users on {self.anime} anime",time=datetime.now())
-        except Game.DoesNotExist():
+            Notification.objects.create(owner=self.contributor,notification=f"you can now review and approve questions created by others users on {self.anime}",time=datetime.now())
+        except Game.DoesNotExist:
           pass
         
         msg=""

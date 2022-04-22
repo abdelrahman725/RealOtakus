@@ -2,7 +2,7 @@ import './App.css';
 import DashBoard from './Components/Dashboard'
 import Bar from './Components/Bar' 
 import Profile from './Components/Profile'
-//import Contripution from './Components/Contripution'
+import Contripution from './Components/Contripution'
 import Animes from './Components/AnimesList'
 import React, {useState,useEffect,createContext} from 'react'
 
@@ -28,9 +28,10 @@ function App() {
   {
     const res = await fetch(userdataurl)
     const data= await res.json()
-    setUserData(data)
-    console.log(data)
+    setUserData(data.user_data)
   }
+
+
 
   const mysocket = ()=>
   {
@@ -60,19 +61,17 @@ return (
  
      
 
-      <h2><a href="http://127.0.0.1:8000/admin" target="_blank" rel="noopener noreferrer">admin</a></h2>
+      {/* <h2><a href="http://127.0.0.1:8000/admin" target="_blank" rel="noopener noreferrer">admin</a></h2> */}
 
       <ServerContext.Provider value={{server}}>
       
-    
-      {/* <strong>Dashboard : </strong><hr />
-      <DashBoard /> */}
+
   
        
       <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
-        <Profile/>
-        {/* {quiz && <Animes/>}
-          {!quiz  && <button onClick={()=>setquiz(true)}>Take quiz !</button> }<br/><br/> */}
+       
+        {quiz && <Animes/>}
+          {!quiz  && <button onClick={()=>setquiz(true)}>Take quiz !</button> }<br/><br/>
 
 
         {/* 

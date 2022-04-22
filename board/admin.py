@@ -32,4 +32,3 @@ class GameInfo(admin.ModelAdmin):
 class Notifications(admin.ModelAdmin):
   list_display = ("owner","notification","time")
   list_filter = ("owner",)
-

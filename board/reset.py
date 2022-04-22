@@ -1,6 +1,7 @@
 from board.models import *
 
-# file for reseting state of the database by deleting any data used in testing
+# script for reseting state of the database by deleting any data used in testing
+
 
 users = User.objects.exclude(pk=1)
 questions = Question.objects.all()
@@ -17,6 +18,7 @@ for user in users:
   user.contributor=False
   user.contributions_count=0
   user.level = "beginner"
+  user.animes_to_review.clear()
   user.save()
 
 
@@ -24,3 +26,5 @@ for q in questions:
     q.correct_answers=0
     q.wrong_answers=0
     q.save()
+
+print(f"\n\nall generated data has been delelted sucessfully !\n")

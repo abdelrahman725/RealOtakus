@@ -4,6 +4,7 @@ const Bar = ({data}) => {
     <>
     <h1>welcome {data.username}</h1>
     <strong>{data.points} points</strong>
+    <br />
     </>
   )
 }
