@@ -1,7 +1,7 @@
 import Competitor from "./Competitor"
 import { useEffect,useState,useContext } from "react"
 import { ServerContext } from "../App"
-const DashBoard = () => {
+const TheDashBoard = () => {
 
   const {server} = useContext(ServerContext)
   const dashboardurl = `${server}/home/dashboard`
@@ -29,8 +29,8 @@ return (
           <th>username </th>
           <th>points</th>
           <th>level</th>
+          <th>contributions &nbsp;</th>
           <th>country</th>
-          <th>contributions</th>
         </tr>
       </thead>
 
@@ -52,4 +52,4 @@ return (
   )
 }
 
-export default DashBoard
+export default TheDashBoard

@@ -5,16 +5,16 @@ const Competitor = ({name,points,level,country,contributions}) => {
     <td>{name}</td>
     <td>{points}</td>
     <td>{level}</td>
+    <td>{contributions}</td>
     <td>        
-        <img
+        {country? <img
         src= {`https://flagcdn.com/256x192/${country}.png`}
         width="32"
         height="24"
         alt="">
-        </img>
+        </img>: "N/A"}
     </td>
-    <td>{contributions}</td>
-      </tr>
+  </tr>
     
   )
 }

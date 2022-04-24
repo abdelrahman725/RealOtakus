@@ -31,10 +31,10 @@ class User(AbstractUser):
   points = models.IntegerField(default=0)
   tests_completed = models.IntegerField(default=0)
   tests_started = models.IntegerField(default=0)
-  country = models.CharField(null=True,max_length=60)
+  country = models.CharField(null=True,max_length=60,blank=True)
   contributor =  models.BooleanField(default=False)
   contributions_count = models.IntegerField(default=0)
-  animes_to_review = models.ManyToManyField(Anime,related_name="reviewers")
+  animes_to_review = models.ManyToManyField(Anime,related_name="reviewers",blank=True)
 
   level_options = [
     ('beginner', 'beginner'),
@@ -43,7 +43,7 @@ class User(AbstractUser):
     ('realOtaku', 'realOtaku'),]
 
   level = models.CharField(
-    choices=level_options,max_length=20,default="beginner")
+    choices=level_options,max_length=12,default="beginner")
 
   class Meta:
     ordering= ["-points"]
@@ -139,7 +139,7 @@ class Game(models.Model):
 class Notification(models.Model):
   owner =  models.ForeignKey(User,on_delete=models.CASCADE,related_name="getnotifications")
   notification = models.CharField(max_length=250)
-  time = models.DateTimeField(default=None)
+  time = models.DateTimeField(default=None,null=True)
   seen = models.BooleanField(default=False)
 
   def save(self, *args, **kwargs):

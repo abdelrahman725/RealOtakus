@@ -5,6 +5,8 @@ from django.db.models import Count,Q
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
+
 import json
 import random
 from datetime import datetime
@@ -25,7 +27,7 @@ for anime in Anime.objects.all():
   animes_dict[anime.pk] = anime
 
 
-def DevelopmentUser(): return User.objects.get(pk=28)
+def DevelopmentUser(): return User.objects.get(pk=35)
 
 def Random():
   return random.randint(1, 4)
@@ -37,14 +39,22 @@ def ReactApp(request):
   #return render(request, "index.html")
 
 #@login_required
-@api_view(["GET"])
+@api_view(["GET","POST"])
 def GetUserData(request):
+  if request.method == "POST":
+    user = DevelopmentUser()
+    user.country = request.data["country"]
+    user.save()
+    return Response({"countrycreated":"to do b2a"},status=status.HTTP_201_CREATED)
+
+    
   serialized_basic_data = BasicUserSerializer(DevelopmentUser(),many=False)
   serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=DevelopmentUser()) ,many=True)
   return Response({
      "user_data": serialized_basic_data.data,
-     "notifications": serialized_notifications.data,
+     "notifications": serialized_notifications.data
     })
+
 
 
 
@@ -218,22 +228,26 @@ def MakeContribution(request):
 @api_view(["GET"])
 def GetMyProfile(request):
   my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
-  my_pending_contributions = QuestionSerializer(DevelopmentUser().contributions.filter(approved=False),many=True)
+  pending_contributions = QuestionSerializer(DevelopmentUser().contributions.filter(approved=False),many=True)
    
   
   #contributed questions by other users for the current user to review and approve if any
-  pending_reviews = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
+  questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
   
 
   # animes with contributed questions made by current user : 
   contributed_animes=Anime.objects.filter(anime_questions__contributor=DevelopmentUser(),anime_questions__approved=True).distinct()  
   animes = AnimeSerializer(contributed_animes,many=True)
 
+  # animes that the user should review their created questions to approve or discard them
+  animes_to_review = AnimeSerializer(DevelopmentUser().animes_to_review.all(),many=True)
+
   return Response({
      "data": my_data.data,
-     "pending_contributions": my_pending_contributions.data,
-     "pending_reviews":pending_reviews.data,
-     "animes":animes.data
+     "PendingContributions": pending_contributions.data,
+     "ToReview":questionsForReview.data,
+     "animes":animes.data,
+     "animes_to_review" : animes_to_review.data
     })
 
 

@@ -3,7 +3,7 @@ from .models import *
 
 @admin.register(User)
 class User_info(admin.ModelAdmin):
-  list_display=("id","username","points","country","tests_started","contributor","contributions_count")
+  list_display=("username","points","country","tests_started","contributor","contributions_count")
   list_filter = ("level","contributor",)
   filter_horizontal=("animes_to_review",)
   search_fields = ("username",)

@@ -1,11 +1,14 @@
 import Notifications from "./Notifications"
-const Bar = ({data}) => {
+
+const Bar = ({data,country,noti,showprofile,switch_to_profile}) => {
   return (
-    <>
-    <h1>welcome {data.username}</h1>
-    <strong>{data.points} points</strong>
-    <br />
-    </>
+    <div className="bar">
+      <div onClick={()=>{showprofile(true); switch_to_profile("profile")} }>{data.username}</div>
+      <div>{data.level}</div>
+      <div>{country}</div>
+      <div>{data.points}</div>
+      <div>activity</div>
+    </div>
   )
 }
 
