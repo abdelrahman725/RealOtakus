@@ -24,7 +24,7 @@ class AnimeInfo(admin.ModelAdmin):
 
 @admin.register(Game)
 class GameInfo(admin.ModelAdmin):
-  list_display = ("game_owner","anime","gamesnumber","score")
+  list_display = ("game_owner","anime","gamesnumber","score","contributions")
   list_filter = ("game_owner",)
 
 

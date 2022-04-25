@@ -33,9 +33,12 @@ function App() {
   const  userdataurl = `${server}/home/data`
   const getUserCountryViaApiService = async()=>
   {
-    // after we got the country successfully we save it to the database so subsequent requests for the same don't have to ask the api service again
-    const usercountry = "es"
-    postcountry(usercountry)
+    // after we got the country successfully we save it to the database so subsequent requests for the same user don't have to query the country from the api service again
+
+    const res = await fetch("http://ip-api.com/json")
+    const data = await res.json()
+   postcountry(data.countryCode.toLowerCase())
+  
   }
 
   const postcountry =async (country)=>
@@ -95,7 +98,6 @@ function App() {
   useEffect(()=>{
     GetUserData()
     //mysocket()
-
   },[])
 
   const ManageViews = (View)=>
@@ -123,14 +125,15 @@ function App() {
 return (
  <div className="App">
   <br />
+  
   {UserData&& <Bar data={UserData} country={Countries[UserData.country]} noti = {Noti} showprofile={setProfileView} switch_to_profile = {ManageViews}/>}
      
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
 
-  <button onClick={()=>ManageViews("home")}>Home</button>
-
-
+       <button onClick={()=>ManageViews("home")}>Home</button>
+ 
+      
 
         {HomeView&&<button onClick={()=>ManageViews("quiz")}>test your inner otaku !</button> }
         {QuizView&& <Animes/>} 
@@ -142,8 +145,6 @@ return (
 
         { ProfileView && <Profile />}
 
-    
-   
 
         {HomeView&&<TheDashBoard/>}
      

@@ -79,15 +79,6 @@ class Question(models.Model):
     if not self.contributor.is_superuser:
       user = self.contributor
       if self.previous_status == False and self.approved==True:
-        # so now a user has an approved contribution , we want to check if the anime of that contributed quesion has a game field with score >=10 points in order to make the contributor user also a reviewr
-        # in other words for the user to be a reviewr he must contribute at least one question on anime and has score of >= 10 points on the same anime
-        try:
-          game=Game.objects.get(game_owner=self.contributor,anime=self.anime)
-          if game.score >=10 and self.anime not in self.contributor.animes_to_review.all():
-            self.contributor.animes_to_review.add(self.anime)
-            Notification.objects.create(owner=self.contributor,notification=f"you can now review and approve questions created by others users on {self.anime}",time=datetime.now())
-        except Game.DoesNotExist:
-          pass
         
         msg=""
         # then it's his first approved contribution
@@ -99,6 +90,11 @@ class Question(models.Model):
         else:
           msg=f"congratulations your question on {self.anime} got  approved, another contribution added to your profile"
 
+
+        CurrentGame, created = Game.objects.get_or_create(game_owner=user,anime=self.anime)
+        CurrentGame.contributions+=1
+        CurrentGame.save()
+  
 
         new_notification = Notification(owner=user,notification=msg, time=datetime.now())
         new_notification.save()
@@ -127,11 +123,20 @@ class Question(models.Model):
 
 class Game(models.Model):
   game_owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name="get_games")
-  anime =  models.ForeignKey(Anime,on_delete=models.CASCADE)
+  anime =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_game")
   score =models.IntegerField(default=0)
   gamesnumber = models.IntegerField(default=0)
+  contributions = models.IntegerField(default=0)
   review = models.TextField(null=True,blank=True)
-  
+  def save(self,*args,**kwargs):
+    # if the number of approved contributions for that particular user in that specific anime becomes reaches 5 contributions then the user is qualified to be a reviewer for that anime 
+    
+    if self.contributions == 5:
+      self.game_owner.animes_to_review.add(self.anime)
+
+      Notification.objects.create(owner=self.game_owner,notification=f"now you can review {self.anime} questions!")
+    super(Game,self).save(*args, **kwargs)
+    
   def __str__(self):
     return f"{self.game_owner} had {self.gamesnumber} tests for {self.anime}"
 

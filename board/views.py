@@ -136,12 +136,12 @@ def SubmitTest(request):
 
   previous_level = user.level
 
-  if user.points >=3000:
+  if user.points >=5000:
     user.level = "realOtaku" 
 
-  elif user.points >= 1000:
+  elif user.points >= 3000:
     user.level  = "advanced"
-  elif user.points >= 200:
+  elif user.points >= 1000:
     user.level = "intermediate"
 
   # level up the user by pushing a notfication 
@@ -153,14 +153,6 @@ def SubmitTest(request):
   user.tests_completed+=1
   CurrentGame= game[user.id]
   CurrentGame.score += test_score
-  #in order for a user to be responsible for reviewing an anime he must first have at least one contribution for that anime 
-
-  if  CurrentGame.score >= 10 and CurrentGame.anime not in DevelopmentUser().animes_to_review.all():
-      if CurrentGame.anime.anime_questions.filter(contributor=DevelopmentUser(),approved=True):
-          user.animes_to_review.add(CurrentGame.anime)
-          Notification.objects.create(owner=DevelopmentUser(),notification=f"you can now review and approve questions created by others users on {CurrentGame.anime} anime",time=datetime.now())
-
-
 
   CurrentGame.save()
   user.save()
@@ -229,24 +221,22 @@ def MakeContribution(request):
 def GetMyProfile(request):
   my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
   pending_contributions = QuestionSerializer(DevelopmentUser().contributions.filter(approved=False),many=True)
-   
-  
   #contributed questions by other users for the current user to review and approve if any
   questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
   
 
   # animes with contributed questions made by current user : 
-  contributed_animes=Anime.objects.filter(anime_questions__contributor=DevelopmentUser(),anime_questions__approved=True).distinct()  
-  animes = AnimeSerializer(contributed_animes,many=True)
+  contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=DevelopmentUser(),contributions__gt=0) 
+   ,many=True)
 
   # animes that the user should review their created questions to approve or discard them
-  animes_to_review = AnimeSerializer(DevelopmentUser().animes_to_review.all(),many=True)
+  animes_to_review = AnimeNameSerializer(DevelopmentUser().animes_to_review.all(),many=True)
 
   return Response({
      "data": my_data.data,
      "PendingContributions": pending_contributions.data,
      "ToReview":questionsForReview.data,
-     "animes":animes.data,
+     "animes":contributed_animes.data,
      "animes_to_review" : animes_to_review.data
     })
 
@@ -257,3 +247,4 @@ def GetMyProfile(request):
 
 
 #Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=4)
+

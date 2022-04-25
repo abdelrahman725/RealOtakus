@@ -9,7 +9,7 @@ questions = Question.objects.all()
 Game.objects.all().delete()
 Notification.objects.all().delete()
 
-Question.objects.exclude(contributor=User.objects.get(username="admin")).delete()
+Question.objects.exclude(contributor=User.objects.get(username="admin",pk=1,is_superuser=True)).delete()
 
 for user in users:
   user.points=0
@@ -27,4 +27,4 @@ for q in questions:
     q.wrong_answers=0
     q.save()
 
-print(f"\n\nall generated data has been delelted sucessfully !\n")
+print(f"\n\nall generated data has been deleted sucessfully !\n")

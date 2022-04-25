@@ -24,8 +24,7 @@ const Profile = () => {
 
       //console.log("user own data : ",data.data)
       console.log("animes that you contributed to  : ",data.animes)
-      console.log("animes that you should review their questions",data.animes_to_review)
-      //console.log("questions for the user to review : ",data.ToReview)
+      //console.log("animes that you should review their questions",data.animes_to_review)
       //console.log("questions user have created but are not approved yet : ",data.PendingContributions)
 
 

@@ -25,7 +25,13 @@ class AnimeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
     fields = '__all__'
+    
 
+
+class AnimeNameSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Anime 
+    fields = ("anime_name",)
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -46,6 +52,14 @@ class GameSerializer(serializers.ModelSerializer):
     model = Game
     fields = '__all__'
 
+
+
+
+class AnimeContributionsSerializer(serializers.ModelSerializer):
+  anime = AnimeNameSerializer() 
+  class Meta:
+    model = Game
+    fields = ("contributions","anime")
     
 
 class NotificationsSerializer(serializers.ModelSerializer):
