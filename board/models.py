@@ -54,7 +54,7 @@ class User(AbstractUser):
 
 
 class Question(models.Model):
-  anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
+  anime  = models.ForeignKey(Anime,on_delete=models.SET_NULL,related_name="anime_questions",null=True)
   contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
   advanced =  models.BooleanField(default=False)
   question =  models.TextField(blank=False,unique=True)

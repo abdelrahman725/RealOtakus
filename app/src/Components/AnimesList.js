@@ -1,5 +1,5 @@
 import Anime from "./Anime"
-import Game from "./Game"
+import Quiz from "./Quiz"
 import {useState,useContext,useEffect} from 'react'
 import { GamdeModeContext ,ServerContext} from "../App"
 
@@ -7,14 +7,15 @@ import { GamdeModeContext ,ServerContext} from "../App"
 const Animes = () => {
 
   const {server} = useContext(ServerContext)
-  const {GameMode} = useContext(GamdeModeContext)
-  const {setGameMode} = useContext(GamdeModeContext)
+  const {setGameMode,GameMode} = useContext(GamdeModeContext)
   const  animegameurl = `${server}/home/getgame`
   const  animesurl = `${server}/home/animes`
 
   const [animesoptions,setanimesoptions] = useState()
   const [gamequestions,setgamequestions] = useState()
-  const [selected_anime,setanime] = useState()
+  const [selected_anime,setselected_anime] = useState()
+  const [startquiz,setquizstart] = useState()
+
 
 //animes that have questions only
   const GetAnimes = async()=>
@@ -34,36 +35,39 @@ const Animes = () => {
     if (anime_questions.length>=1)
     {
       setgamequestions(anime_questions)
+      setquizstart(true)
       setGameMode(true)
     }
   
-   
   }
-
-  useEffect(()=>{
-    !GameMode&& setanime() 
-  },[GameMode])
-
+  
 
   useEffect(()=>{
     GetAnimes()
   },[])
 
 
+  useEffect(()=>{
+    !startquiz && setselected_anime()
+  },[startquiz])
+
+
+
 return (
   <>
-    {GameMode ? <Game questions={gamequestions}/>
-    :  
+    {startquiz?<Quiz questions={gamequestions} setquizstart={setquizstart}/>
+    :
      <div>
+      <button onClick={()=>selected_anime&&GetGame(selected_anime)}>start game</button>
+
       {animesoptions&&animesoptions.map((anime,index)=>(
         <Anime key={index} eachanime={anime} 
-        onchoose={(a)=>setanime(a)} 
+        onchoose={(a)=>setselected_anime(a)} 
         selected={selected_anime}/>
         ))} <br />
 
-      <button onClick={()=>selected_anime&&GetGame(selected_anime)}>start game</button>
-     </div>
-    }
+     </div>}
+
 
   </>
  )}

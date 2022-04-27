@@ -1,13 +1,13 @@
 import { GamdeModeContext } from "../App"
 import { useContext } from "react"
-const Result = ({results,score}) => {
+const Result = ({results,score,start}) => {
 
   const {setGameMode} = useContext(GamdeModeContext)
 
   return (
     <>
-      <h2>test results </h2>
-  <h3>you scored {score}/5 </h3>      
+    <p>test results </p>
+    <p>you scored {score}/5 </p>      
       {results.map((res,index)=>(
         <div key={index}>
 
@@ -19,10 +19,8 @@ const Result = ({results,score}) => {
         </p>
         <hr /><br />
         </div>
-      ))
-
-      }
-      <button onClick={()=>setGameMode(false)}>take another quiz</button>
+      ))}
+      <button onClick={()=>{start(false);setGameMode(false)}}>take another quiz</button>
       </>
   )
 }

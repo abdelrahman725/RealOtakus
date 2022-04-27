@@ -1,7 +1,11 @@
-import { ServerContext } from "../App"
+import { ServerContext } from '../../App'
+import PendingQuestions from './PendingQuestions'
+import Reviews from "./Reviews"
+import Animes from './Animes'
 import { useContext, useState, useEffect } from "react"
-const Profile = () => {
 
+export const UserProfile = () => {
+  
   const {server} = useContext(ServerContext)
   const profileurl  = `${server}/home/profile`
 
@@ -22,12 +26,9 @@ const Profile = () => {
       setanimes(data.animes)
       setloading(false)
 
-      //console.log("user own data : ",data.data)
-      console.log("animes that you contributed to  : ",data.animes)
-      //console.log("animes that you should review their questions",data.animes_to_review)
-      //console.log("questions user have created but are not approved yet : ",data.PendingContributions)
-
-
+     //console.log("user own data : ",data.data)
+     console.log("animes that you contributed to  : ",data.animes_with_contributions)
+     //console.log("questions that you  have created but are not approved yet : ",data.PendingContributions)
   }
 
 
@@ -36,14 +37,13 @@ const Profile = () => {
   },[])
 
   return (
-    <> 
-    {!loading?
-    <strong>data has been loaded successfully</strong>:
+    <div>
+       {!loading?
+    <strong>data has been loaded successfully</strong> :
     <strong>still loading</strong>
     }
-    </>
+
+ 
+    </div>
   )
 }
-
-export default Profile
-

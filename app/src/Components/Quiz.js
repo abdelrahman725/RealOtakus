@@ -1,12 +1,14 @@
+import Result from "./Result"
 import Question from "./Question"
+
 import { GamdeModeContext,ServerContext } from "../App"
 import { useContext, useState, useEffect } from "react"
 import getCookie from "../GetCookie"
 
-const Game = ({questions,setgameresults}) => {
+const Game = ({questions,setquizstart}) => {
   
   const CsrfToken = getCookie('csrftoken')
-  const {setGameMode} = useContext(GamdeModeContext)
+  const {setGameMode,GameMode} = useContext(GamdeModeContext)
   const {server} = useContext(ServerContext)
   const [Answers,setAnswer] = useState({})
   const [timeout,settimout] = useState(false)
@@ -15,6 +17,11 @@ const Game = ({questions,setgameresults}) => {
   const len = questions.length
   const[minutes,setminutes] = useState(2)
   const [seconds,setseconds]= useState(0) 
+
+
+  const [gameresults,setgameresults] = useState() 
+  const [score,setscore] = useState()
+  const {setUserData} = useContext(GamdeModeContext)
   const nextquestion = ()=>index <len-1 && setindex(index+1)
 
   const resettimer = ()=>
@@ -74,28 +81,42 @@ const Game = ({questions,setgameresults}) => {
       })
     })
     const res  = await send.json()
-    setgameresults(res.answers,res.score,res.level)
+
+    setresults(res.answers,res.score,res.level)
+    setGameMode(false)
+  }
+
+  const setresults = (results,score,level)=>
+  {
+    setgameresults(results)
+    setscore(score)
+    setUserData(prev => ({...prev, points : prev.points + score}))
   }
 
 
   return (
     <>    
-    <div className="Game"> 
-    <strong>
-      time left <br />{minutes}:{seconds}
-    </strong>
 
-      <br /><br />
-     {!timeout?  <Question  each_question={questions[index]} i={index} onselect={onAnswer}/>: <strong>time is up</strong>}
-     <br />
+    {gameresults&&<Result results={gameresults} score={score} setquizstart={setquizstart}/>}
+    
+    {GameMode &&
+        <div className="Game"> 
+        <strong>
+          time left <br />{minutes}:{seconds}
+        </strong>
 
-     {index<len-1?
-     <button onClick={Next} className="next">next</button>:
-     <button onClick={SubmitGame}> submit</button>
-     }
-     <br />
-     <button onClick={()=>setGameMode(false)}>Cancel </button>
-     </div>
+          <br /><br />
+        {!timeout?  <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer}/>: <strong>time is up</strong>}
+        <br />
+        
+        {index<len-1?
+          <button onClick={Next} className="next">next</button>:
+          <button onClick={SubmitGame}> submit</button>}
+          
+        <br />
+        <button onClick={()=>{setquizstart(false);setGameMode(false)}}>Cancel </button>
+        </div>
+    }
 
     </>
   )

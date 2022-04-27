@@ -1,6 +1,6 @@
-import { useState} from "react"
+import { useEffect, useState} from "react"
 
-const Question = ({each_question,onselect,i}) => {
+const Question = ({each_question,onselect,Q_no}) => {
   const [selected,setselected] = useState()
   
   const onChoice = (useranswer)=>
@@ -8,9 +8,11 @@ const Question = ({each_question,onselect,i}) => {
     setselected(useranswer)
     onselect(each_question.id,useranswer)
   }
+
+ useEffect(()=>{
+  setselected() 
+  },[Q_no])
   
-
-
   return (
     <>
     <strong>

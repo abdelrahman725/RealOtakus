@@ -45,7 +45,7 @@ def GetUserData(request):
     user = DevelopmentUser()
     user.country = request.data["country"]
     user.save()
-    return Response({"countrycreated":"to do b2a"},status=status.HTTP_201_CREATED)
+    return Response({"countrycreated"},status=status.HTTP_201_CREATED)
 
     
   serialized_basic_data = BasicUserSerializer(DevelopmentUser(),many=False)
@@ -86,7 +86,7 @@ def GetTest(request,game_anime):
   questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
   
   #  number of approved question for the selected anime : 
-  if questions.count() <5:
+  if questions.count() <4:
     return JsonResponse({"msg":"sorry not enough questions"})
   
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
@@ -102,7 +102,6 @@ def GetTest(request,game_anime):
   for q in questions:
     game_questions[current_user.id][q.id] = q
 
-  print(game_questions[current_user.id])
   serialized_data = QuestionSerializer(questions,many=True)
   return Response(serialized_data.data)
 
@@ -177,8 +176,14 @@ def GetAllAnimes(request):
 #@login_required
 @api_view(["POST"])
 def MakeContribution(request):
+  
+  if not isinstance(request.data["anime"], int):
+    return  JsonResponse({"anime_id is not an int !"})
+  try:
+    anime = animes_dict[int(request.data["anime"])]
+  except: 
+    return  JsonResponse({"anime_id doesn't exist! or it's not an int"})
 
-  anime = animes_dict[int(request.data["anime"])]
   ContributedQ=request.data["question"]
 
   right_answer=ContributedQ["rightanswer"]
@@ -222,6 +227,7 @@ def GetMyProfile(request):
   my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
   pending_contributions = QuestionSerializer(DevelopmentUser().contributions.filter(approved=False),many=True)
   #contributed questions by other users for the current user to review and approve if any
+  
   questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
   
 
@@ -236,9 +242,8 @@ def GetMyProfile(request):
      "data": my_data.data,
      "PendingContributions": pending_contributions.data,
      "ToReview":questionsForReview.data,
-     "animes":contributed_animes.data,
-     "animes_to_review" : animes_to_review.data
-    })
+     "animes_with_contributions":contributed_animes.data   
+      })
 
 
 

@@ -38,7 +38,7 @@ const Contripution = () => {
     setQuestion(prev => ({...prev, [name]: value}))
   }
 
-  const handlecselect=(e)=> { setanime(e.target.value)}
+  const handleselect=(e)=> {setanime(e.target.value)}
 
   const HandleSubmision = (e)=>
   {
@@ -70,7 +70,7 @@ const Contripution = () => {
       }
       
 
-      anime!==undefined&& SendContribution()
+     anime&& anime!=="choose an anime" && SendContribution()
   }
 
 
@@ -80,15 +80,21 @@ const Contripution = () => {
     GetAllAnimes()
   },[])
 
+
+ 
+
+  
+
+
   return (
     <div>
       <h1>contribute a quesion </h1>
 
       <form onSubmit={HandleSubmision} >
         
-      <select onChange={handlecselect} id="pet-select" >
+      <select onChange={handleselect} id="pet-select" >
 
-        <option value="">choose an anime</option>
+        <option>choose an anime</option>
         
           {animesoptions&&animesoptions.map((anime,index)=>(
           <option value={anime.id} key={index}>{anime.anime_name}</option>))}

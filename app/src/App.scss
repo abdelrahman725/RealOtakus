@@ -1,8 +1,17 @@
+*{
+  box-sizing: border-box; 
+}
+div
+{
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+}
+
 
 .bar
 {
-  display: flex;
-  
+  display: flex;  
 }
 .eachanime
 {
@@ -11,12 +20,6 @@
   color:white;
 }
 
-div
-{
-  margin-left: auto;
-  margin-right: auto;
-  width: 90%;
-}
 
 .choice 
 {
@@ -30,9 +33,4 @@ div
 
 .rightchoice{ background-color: green;}
 
-button,input
-{
-  margin:10px;
-  padding:15px;
-  width:150px;
-}
+button{ padding:20px; }

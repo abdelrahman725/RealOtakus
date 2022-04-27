@@ -11,3 +11,5 @@ const Anime = ({eachanime,onchoose,selected}) => {
 }
 
 export default Anime
+
+
