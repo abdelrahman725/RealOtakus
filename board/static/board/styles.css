@@ -1,3 +1,154 @@
+body
+{
+  margin:0;
+  padding:0;
+  font-family: montserrat;
+  /* background-image: url('images/Attack.png'); */
+  background-attachment: fixed;  
+  background-size: cover;
+}
 *{
+  box-sizing: border-box;
+  /* -webkit-touch-callout: none;
+  /* -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  */
+  user-select: none;  
+}
+.navbar
+{
+  padding: 10px; 
+}
+
+
+#start
+{
+  position: absolute;
+  right: 50%;
+  width:200px;
+  transition: 0.5s;
+  transform: translate(50%);
+  background-color: #024a92;
+  color: white;
+  
+  padding: 10px 10px;
+}
+#start:hover
+{
+  background-color: #ff4500;
+}
+
+.forms
+{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  transition: 1s;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 60px;
+  background-color: rgb(22, 23, 31);
+  color: white;
+  text-align: center;
+  padding:10px; 
+  border-radius: 4px;
+  margin-bottom: 200px;
+}
+input[type="submit"], button
+{
+  cursor: pointer;
+
+
+}
+input, button
+{
+  border-radius: 4px;
+  outline: none;
+  border: none;
+}
+
+
+.formcontainer input
+{
   margin-bottom: 15px;
+  width:80%;
+  padding: 10px;
+  transition: 0.4s;
+}
+input:focus
+{
+  outline: none;
+  border: none;
+}
+
+
+.formcontainer input[type="text"]:focus, input[type="password"]:focus
+{
+ 
+}
+
+.formcontainer .formbtn
+{
+  padding:10px;
+  width:60%;
+}
+.switchbtn{
+  padding:6px;
+  margin: 20px 0px;
+}
+
+.messages
+{
+  color: red;
+}
+
+
+.google
+{
+  height: 40px;
+  border-radius: 4px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  transition: 0.5s;
+  color: black;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+  font-size: small;
+  border-right: 4px solid white;
+}
+
+.google:hover,.formbtn:hover,.switchbtn:hover
+{
+  color:white;
+  background-color: #024a92;
+  border-color: #024a92; 
+}
+.google p
+{
+  margin-left: 5px;
+}
+
+.footer
+{
+  padding:4px;
+  user-select: all;
+}
+
+@media screen and (max-width: 550px)
+{
+  .forms{
+    width: 250px;
+  }
+  .google
+  {
+    width: 90%;
+   
+  }
 }

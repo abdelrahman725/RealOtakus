@@ -1,6 +1,6 @@
 import { GamdeModeContext } from "../App"
 import { useContext } from "react"
-const Result = ({results,score,start}) => {
+const Result = ({results,score,setquizstart}) => {
 
   const {setGameMode} = useContext(GamdeModeContext)
 
@@ -20,7 +20,7 @@ const Result = ({results,score,start}) => {
         <hr /><br />
         </div>
       ))}
-      <button onClick={()=>{start(false);setGameMode(false)}}>take another quiz</button>
+      <button onClick={()=>{setquizstart(false);setGameMode(false)}}>take another quiz</button>
       </>
   )
 }

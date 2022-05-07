@@ -34,7 +34,6 @@ def Register(request):
         login(request, user)
       except IntegrityError:
         messages.warning(request, 'username already exists')
-        return render(request, "board/home.html", {"registerview":"stay"})
 
   return HttpResponseRedirect(reverse("welcome"))
 
@@ -50,7 +49,6 @@ def Login(request):
       return redirect("/home")
     else:
       messages.error(request, 'wrong username or password')
-      return HttpResponseRedirect(reverse("welcome"))
  
   return HttpResponseRedirect(reverse("welcome"))
     

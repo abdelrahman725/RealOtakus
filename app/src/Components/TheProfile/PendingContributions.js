@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PendingQuestions = () => {
+const PendingQuestions = ({questions}) => {
   return (
     <div>PendingQuestions</div>
   )

@@ -29,7 +29,7 @@ const Game = ({questions,setquizstart}) => {
     if (index < len-1){ setseconds(0) ;setminutes(2) }
    }
 
-  const Next = ()=>{nextquestion() ;resettimer() }
+  const Next = ()=>{resettimer();nextquestion()  }
 
 
   useEffect(()=>{
@@ -51,7 +51,7 @@ const Game = ({questions,setquizstart}) => {
                     setseconds(59);
                 }
             } 
-        }, 1000)
+        }, 10)
         return ()=> {
             clearInterval(myInterval);
           };

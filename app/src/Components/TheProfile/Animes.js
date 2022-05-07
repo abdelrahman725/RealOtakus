@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Animes = () => {
+const Animes = ({animes}) => {
   return (
     <div>Animes</div>
   )

@@ -27,13 +27,16 @@ for anime in Anime.objects.all():
   animes_dict[anime.pk] = anime
 
 
-def DevelopmentUser(): return User.objects.get(pk=35)
+def GetWantedUser(request):
+  #return request.user
+  return User.objects.get(pk=35)
+
 
 def Random():
   return random.randint(1, 4)
 
 
-@login_required
+#@login_required
 def ReactApp(request):
   return redirect("http://localhost:3000/home")
   #return render(request, "index.html")
@@ -41,15 +44,16 @@ def ReactApp(request):
 #@login_required
 @api_view(["GET","POST"])
 def GetUserData(request):
+
+  user =  GetWantedUser(request)
   if request.method == "POST":
-    user = DevelopmentUser()
     user.country = request.data["country"]
     user.save()
     return Response({"countrycreated"},status=status.HTTP_201_CREATED)
 
     
-  serialized_basic_data = BasicUserSerializer(DevelopmentUser(),many=False)
-  serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=DevelopmentUser()) ,many=True)
+  serialized_basic_data = BasicUserSerializer(user,many=False)
+  serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=user) ,many=True)
   return Response({
      "user_data": serialized_basic_data.data,
      "notifications": serialized_notifications.data
@@ -67,7 +71,8 @@ def GetDashBoard(request):
 
 
 # -------------------------------------- Test Handling functions ----------------------------------------
-  
+
+#@login_required 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   AnimesWithQuestions = Anime.objects.annotate(num_questions=Count("anime_questions")).filter(num_questions__gte=4)
@@ -78,7 +83,7 @@ def GetAvailableAnimes(request):
 #@login_required
 @api_view(["GET"])
 def GetTest(request,game_anime):
-  current_user =  DevelopmentUser()
+  current_user =  GetWantedUser(request)
   selected_anime = animes_dict[game_anime]
   current_user.tests_started+=1
   current_user.save()
@@ -111,11 +116,10 @@ def GetTest(request,game_anime):
 #@login_required
 @api_view(["POST"])
 def SubmitTest(request):
-  user =  DevelopmentUser()
+  user =  GetWantedUser(request)
   test_score = 0
   test_results = request.data["results"]
   
-  #review = request.data["review"]
 
   questions =game_questions[user.id]
   answers = AnswersSerializer(questions.values(),many=True).data
@@ -145,7 +149,7 @@ def SubmitTest(request):
 
   # level up the user by pushing a notfication 
   if previous_level != user.level :
-    Notification.objects.create(owner=DevelopmentUser(),notification=f"Level up to {user.level}! good work")
+    Notification.objects.create(owner=user,notification=f"Level up to {user.level}! good work")
 
 
 
@@ -166,19 +170,19 @@ def SubmitTest(request):
 
 # ------------------------------------------------------------------------------------
 
-
+#@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
   serialized_data = AnimeSerializer(animes_dict.values(),many=True)
   return Response(serialized_data.data)
 
 
+
 #@login_required
 @api_view(["POST"])
 def MakeContribution(request):
+  user = GetWantedUser(request)
   
-  if not isinstance(request.data["anime"], int):
-    return  JsonResponse({"anime_id is not an int !"})
   try:
     anime = animes_dict[int(request.data["anime"])]
   except: 
@@ -212,36 +216,40 @@ def MakeContribution(request):
   # check if the contributer user is already a reviewer of the anime associated with the question 
 
   is_anime_reviewr = False
-  if anime in DevelopmentUser().animes_to_review.all():
+  if anime in user.animes_to_review.all():
     is_anime_reviewr=True
 
-  Question.objects.create(anime=anime,contributor= DevelopmentUser(),approved=is_anime_reviewr,
+  Question.objects.create(anime=anime,contributor= user,approved=is_anime_reviewr,
   question=actualquestion,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+  if is_anime_reviewr:
+    return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
-  return JsonResponse({"message": f"new question has been added by {DevelopmentUser().username} and waits approval"})
+  return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval ya y3m{user.username} "})
 
 
 #@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
-  my_data = AllUserInfo_Serializer(DevelopmentUser(),many=False)
-  pending_contributions = QuestionSerializer(DevelopmentUser().contributions.filter(approved=False),many=True)
+  user = GetWantedUser(request)
+
+  my_data = AllUserInfo_Serializer(user,many=False)
+  pending_contributions = QuestionSerializer(user.contributions.filter(approved=False),many=True)
   #contributed questions by other users for the current user to review and approve if any
   
-  questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=DevelopmentUser().animes_to_review.all()),many=True)
+  questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=user.animes_to_review.all()),many=True)
   
 
   # animes with contributed questions made by current user : 
-  contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=DevelopmentUser(),contributions__gt=0) 
+  contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
    ,many=True)
 
   # animes that the user should review their created questions to approve or discard them
-  animes_to_review = AnimeNameSerializer(DevelopmentUser().animes_to_review.all(),many=True)
+  animes_to_review = AnimeNameSerializer(user.animes_to_review.all(),many=True)
 
   return Response({
      "data": my_data.data,
      "PendingContributions": pending_contributions.data,
-     "ToReview":questionsForReview.data,
+     "questionsForReview":questionsForReview.data,
      "animes_with_contributions":contributed_animes.data   
       })
 

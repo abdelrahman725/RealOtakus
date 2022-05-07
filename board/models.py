@@ -129,7 +129,7 @@ class Game(models.Model):
   contributions = models.IntegerField(default=0)
   review = models.TextField(null=True,blank=True)
   def save(self,*args,**kwargs):
-    # if the number of approved contributions for that particular user in that specific anime becomes reaches 5 contributions then the user is qualified to be a reviewer for that anime 
+    # if the number of approved contributions for that particular user in that specific anime reaches 5 contributions then the user is qualified to be a reviewer for that anime 
     
     if self.contributions == 5:
       self.game_owner.animes_to_review.add(self.anime)

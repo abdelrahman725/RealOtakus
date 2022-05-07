@@ -18,6 +18,7 @@ function App() {
   
   const[UserData,setUserData] = useState({})
   const[Noti,setNoti] = useState({})
+  const[notification,setnotification] = useState()
   
   const [HomeView,setHomeView] = useState(true)
   const [ContributionView,setContributionView]= useState(false)
@@ -36,6 +37,8 @@ function App() {
     const socket_connection = new WebSocket(socket_server)
     socket_connection.onmessage = (e)=>{
       const data = JSON.parse(e.data)
+      
+      data.payload.notification&&(setnotification(data.payload))
       console.log(data)
     }
   }
