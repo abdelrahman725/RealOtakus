@@ -3,9 +3,11 @@ body
   margin:0;
   padding:0;
   font-family: montserrat;
-  /* background-image: url('images/Attack.png'); */
+  /* background-image: url('images/Attack.png');
   background-attachment: fixed;  
   background-size: cover;
+  background-color: #09487f;
+  color: white; */
 }
 *{
   box-sizing: border-box;
@@ -17,29 +19,49 @@ body
   */
   user-select: none;  
 }
+
 .navbar
 {
-  padding: 10px; 
+  overflow: hidden;
+  position: fixed;
+  z-index:2;
+  top: 0;
+  width: 100%;
+  background-color: #262F36;
+  color: beige;
+  padding:0.5px;
+}
+.navbar h1{
+  /* font-size: x-large; */
+  padding-left: 10px;
 }
 
-
+.content
+{
+  margin-top: 120px;
+  padding : 0px 10px;
+}
+.intro
+{
+  font-size: large;
+}
 #start
 {
   position: absolute;
   right: 50%;
   width:200px;
   transition: 0.5s;
-  transform: translate(50%);
-  background-color: #024a92;
-  color: white;
+  transform: translate(50%);  
+  
+  color: #084F8E;
   
   padding: 10px 10px;
 }
-#start:hover
-{
-  background-color: #ff4500;
-}
 
+/* .forms:hover
+{
+  transform: scale(1.1);
+} */
 .forms
 {
   text-align: center;
@@ -50,12 +72,13 @@ body
   margin-left: auto;
   margin-right: auto;
   margin-top: 60px;
-  background-color: rgb(22, 23, 31);
   color: white;
   text-align: center;
   padding:10px; 
   border-radius: 4px;
-  margin-bottom: 200px;
+  margin-bottom: 100px;
+  background-color: #262F36;  
+
 }
 input[type="submit"], button
 {
@@ -97,7 +120,8 @@ input:focus
 }
 .switchbtn{
   padding:6px;
-  margin: 20px 0px;
+  margin-bottom: 10px;
+  margin-top: 5px;
 }
 
 .messages
@@ -108,7 +132,7 @@ input:focus
 
 .google
 {
-  height: 40px;
+  height: 42px;
   border-radius: 4px;
   background-color: white;
   display: flex;
@@ -139,6 +163,9 @@ input:focus
 {
   padding:4px;
   user-select: all;
+  background-color: #262F36;
+  color: white;
+  
 }
 
 @media screen and (max-width: 550px)
