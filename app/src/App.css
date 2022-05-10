@@ -8,7 +8,17 @@ div {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  margin-bottom: 40px;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  width: 100%;
+  background-color: #262F36;
+  color: beige;
+  padding: 20px;
+}
+
+.upperbuttons {
+  margin-top: 70px;
 }
 
 .dashboardview {
@@ -16,6 +26,8 @@ div {
 }
 
 .dashboardview .dashboard {
+  -webkit-transition: 1s;
+  transition: 1s;
   width: 40%;
   border-radius: 10px;
   border-collapse: collapse;
@@ -26,8 +38,20 @@ div {
   background-color: #262F36;
 }
 
-.dashboardview .dashboard td, .dashboardview .dashboard th {
-  border-bottom: 0.2px solid #3e4d58;
+.dashboardview .dashboard .head {
+  border-bottom: 5px solid #3e4d58;
+}
+
+.dashboardview .dashboard .eachcompetitor {
+  border-bottom: 1.5px solid #3e4d58;
+}
+
+.dashboardview .dashboard .eachcompetitor:hover {
+  background-color: #363e45;
+}
+
+.dashboardview .dashboard tbody tr:last-child {
+  border-bottom: none;
 }
 
 .dashboardview .dashboard td {
@@ -35,7 +59,7 @@ div {
 }
 
 .dashboardview .dashboard th {
-  padding: 20px 13px;
+  padding: 20px 15px;
 }
 
 @media screen and (max-width: 580px) {

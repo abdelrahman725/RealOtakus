@@ -130,13 +130,17 @@ return (
      
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
+    
+      <div className="upperbuttons">
 
-       { !GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}
 
-       { HomeView&&<button onClick={()=>ManageViews("quiz")}>test your inner otaku !</button> }
+        { !GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}
 
-       { HomeView&& <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
+        { HomeView&&<button onClick={()=>ManageViews("quiz")}>test your inner otaku !</button> }
 
+        { HomeView&& <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
+      </div>
+        
         { ProfileView && <UserProfile/>}
 
         { ContributionView && <Contripution />}

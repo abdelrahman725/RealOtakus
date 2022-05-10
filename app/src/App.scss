@@ -8,7 +8,21 @@ div
 .bar
 {
   display: flex;
-  margin-bottom: 40px;  
+  
+  position: fixed;
+  // border-bottom: solid 1px red;  
+  z-index:2;
+  top: 0;
+  width: 100%;
+  background-color: #262F36;
+  color: beige;
+  padding:20px;
+
+}
+.upperbuttons
+{
+  margin-top: 70px;
+
 }
 
 .dashboardview
@@ -17,6 +31,7 @@ div
   margin-top: 50px;
  
   .dashboard{
+    transition:  1s;
     width: 40%;
     border-radius: 10px;
     border-collapse: collapse;
@@ -27,18 +42,31 @@ div
     color: white; 
     background-color: #262F36;
 
-    td,th
-    { 
-      border-bottom: 0.2px solid #3e4d58;
+    .head{
+      border-bottom: 5px solid #3e4d58; 
+    }
+    .eachcompetitor
+    {
+      border-bottom: 1.5px solid #3e4d58;
+    }
+    .eachcompetitor:hover{
+      background-color: #363e45;;
+    }
+
+  
+    tbody tr:last-child{
+      border-bottom: none;
     }
 
     td{ padding:  20px   18px; }
     
-    th{ padding: 20px 13px;   }
- 
-  }
+    th{ padding: 20px 15px;   }
 
+    
+  }
+ 
 }
+
 @media screen and(max-width: 580px)
 {
   .dashboardview

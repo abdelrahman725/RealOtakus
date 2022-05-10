@@ -31,12 +31,11 @@ return (
   <thead>
 
   <tr>
-    <th>name</th>
-    <th>points</th>
-    <th>level</th>
-    <th>contributions</th>
-    <th>country</th>
-
+    <th className="head">name</th>
+    <th className="head">points</th>
+    <th className="head">level</th>
+    <th className="head">contributions</th>
+    <th className="head">country</th>
   </tr>
   </thead>
 <tbody>
