@@ -2,7 +2,7 @@ const Competitor = ({name,points,level,country,contributions}) => {
   return (
     
   <tr>
-    <td>{name}</td>
+    <td className="ok">{name}</td>
     <td>{points}</td>
     <td>{level}</td>
     <td>{contributions}</td>

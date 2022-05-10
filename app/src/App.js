@@ -147,7 +147,6 @@ return (
 
         { HomeView&& <TheDashBoard/>}
         {/* {HomeView&& <AnimesDashBoard/>} */}
-    
 
      
 

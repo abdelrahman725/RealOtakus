@@ -51,7 +51,7 @@ const Game = ({questions,setquizstart}) => {
                     setseconds(59);
                 }
             } 
-        }, 10)
+        }, 1000)
         return ()=> {
             clearInterval(myInterval);
           };

@@ -12,7 +12,10 @@ const TheDashBoard = () => {
   {
     const res = await fetch(dashboardurl)
     const otakus= await res.json()
-    setotakus(otakus)
+    setTimeout(()=>{
+
+      setotakus(otakus)
+    },1000)
 
   }
 
@@ -21,32 +24,39 @@ const TheDashBoard = () => {
     GetDashbBoard()
   },[])
 return (
-  <div className="dashboard">
+  <div className="dashboardview">
   {otakus?
-      <table>
-      <thead>
-        <tr>
-          <th>username </th>
-          <th>points</th>
-          <th>level</th>
-          <th>contributions &nbsp;</th>
-          <th>country</th>
-        </tr>
-      </thead>
 
-      <tbody>
-        {otakus.map((competitor,index)=> (
-          <Competitor
-          key={index}
-          name={competitor.username}
-          points={competitor.points}
-          level={competitor.level}
-          contributions={competitor.contributions_count}
-          country = {competitor.country}
-          />))}
-      </tbody>
-          
+<table className="dashboard">
+  <thead>
+
+  <tr>
+    <th>name</th>
+    <th>points</th>
+    <th>level</th>
+    <th>contributions</th>
+    <th>country</th>
+
+  </tr>
+  </thead>
+<tbody>
+  
+    {otakus.map((competitor,index)=> (
+      
+      <Competitor
+      key={index}
+      name={competitor.username}
+      points={competitor.points}
+      level={competitor.level}
+      contributions={competitor.contributions_count}
+      country = {competitor.country}/>
+      ))}
+
+  </tbody>
   </table>
+      
+  
+          
   :"loading dashboard"}
   </div> 
   )

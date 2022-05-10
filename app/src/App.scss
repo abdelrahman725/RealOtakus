@@ -1,21 +1,80 @@
-
 div
 {
   margin-left: auto;
   margin-right: auto;
-  width: 90%;
+  text-align: center; 
 }
 
 .bar
 {
-  display: flex;  
+  display: flex;
+  margin-bottom: 40px;  
 }
-.eachanime
+
+.dashboardview
 {
-  padding: 10px;
-  background-color: black;
-  color:white;
+
+  margin-top: 50px;
+ 
+  .dashboard{
+    width: 40%;
+    border-radius: 10px;
+    border-collapse: collapse;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+ 
+    color: white; 
+    background-color: #262F36;
+
+    td,th
+    { 
+      border-bottom: 0.2px solid #3e4d58;
+    }
+
+    td{ padding:  20px   18px; }
+    
+    th{ padding: 20px 13px;   }
+ 
+  }
+
 }
+@media screen and(max-width: 580px)
+{
+  .dashboardview
+  {
+
+    .dashboard
+    {
+      font-size: x-small;
+    
+      td{ padding:  10px   10px; }
+    
+     th{ padding: 10px 12px;   }
+      
+      
+    }
+    
+  }
+  
+
+  
+}
+
+
+
+.animes_choices
+{
+  margin-top: 20px;
+  color: aliceblue;
+  div{
+    padding: 5px 0px;
+    width: 350px;
+    border-bottom: 1px solid grey;
+  }
+}
+
+
 
 
 .choice 
@@ -23,11 +82,13 @@ div
   margin-bottom: 10px;
   background-color: black;
   color:white;
-  padding:20px;
-  border-radius: 20px;
+  padding:15px;
+  border-radius: 20px;  
   max-width: 40%;
 }
 
 .rightchoice{ background-color: green;}
 
-button{ padding:20px; }
+button{ padding:5px 20px; 
+cursor: pointer;
+}

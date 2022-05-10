@@ -24,3 +24,6 @@ code {
   */
   user-select: none;  
 }
+.App{
+  margin-bottom: 200px;
+}

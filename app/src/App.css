@@ -1,31 +1,71 @@
-* {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
 div {
   margin-left: auto;
   margin-right: auto;
-  width: 90%;
+  text-align: center;
 }
 
 .bar {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  margin-bottom: 40px;
 }
 
-.eachanime {
-  padding: 10px;
-  background-color: black;
+.dashboardview {
+  margin-top: 50px;
+}
+
+.dashboardview .dashboard {
+  width: 40%;
+  border-radius: 10px;
+  border-collapse: collapse;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
   color: white;
+  background-color: #262F36;
+}
+
+.dashboardview .dashboard td, .dashboardview .dashboard th {
+  border-bottom: 0.2px solid #3e4d58;
+}
+
+.dashboardview .dashboard td {
+  padding: 20px   18px;
+}
+
+.dashboardview .dashboard th {
+  padding: 20px 13px;
+}
+
+@media screen and (max-width: 580px) {
+  .dashboardview .dashboard {
+    font-size: x-small;
+  }
+  .dashboardview .dashboard td {
+    padding: 10px   10px;
+  }
+  .dashboardview .dashboard th {
+    padding: 10px 12px;
+  }
+}
+
+.animes_choices {
+  margin-top: 20px;
+  color: aliceblue;
+}
+
+.animes_choices div {
+  padding: 5px 0px;
+  width: 350px;
+  border-bottom: 1px solid grey;
 }
 
 .choice {
   margin-bottom: 10px;
   background-color: black;
   color: white;
-  padding: 20px;
+  padding: 15px;
   border-radius: 20px;
   max-width: 40%;
 }
@@ -35,6 +75,7 @@ div {
 }
 
 button {
-  padding: 20px;
+  padding: 5px 20px;
+  cursor: pointer;
 }
 /*# sourceMappingURL=App.css.map */

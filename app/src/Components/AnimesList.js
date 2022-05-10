@@ -59,13 +59,15 @@ return (
     :
      <div>
       <button onClick={()=>selected_anime&&GetGame(selected_anime)}>start game</button>
+      
+       <div className="animes_choices">
+          {animesoptions&&animesoptions.map((anime,index)=>(
+            <Anime key={index} eachanime={anime}           
+            onchoose={(a)=>setselected_anime(a)} 
+            selected={selected_anime}/>
+            ))} <br />
 
-      {animesoptions&&animesoptions.map((anime,index)=>(
-        <Anime key={index} eachanime={anime} 
-        onchoose={(a)=>setselected_anime(a)} 
-        selected={selected_anime}/>
-        ))} <br />
-
+       </div>
      </div>}
 
 
