@@ -4,7 +4,7 @@ const Anime = ({eachanime,onchoose,selected}) => {
     <div className="eachanime" 
     onClick={()=>onchoose(eachanime.id)}
      
-    style={{backgroundColor:selected===eachanime.id?"green":"black"}}>
+    style={{backgroundColor:selected===eachanime.id?"#ff4500":"#262F36"}}>
     <strong>{eachanime.anime_name} </strong>
     </div>
   )

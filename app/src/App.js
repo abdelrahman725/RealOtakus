@@ -119,8 +119,11 @@ function App() {
     //mysocket()
   },[])
 
+    const [color,setcolor] = useState()
+    const  clicked = ()=>{
+      setcolor("2px")
 
-    
+    }
 
 return (
  <div className="App">
@@ -133,13 +136,16 @@ return (
     
       <div className="upperbuttons">
 
+        <div>
+        { !GameMode&& <button onClick={()=>{ManageViews("home");clicked()}}>Home</button>}
+        </div>
 
-        { !GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}
-
-        { HomeView&&<button onClick={()=>ManageViews("quiz")}>test your inner otaku !</button> }
+        { HomeView&&<button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
         { HomeView&& <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
       </div>
+
+        { HomeView&& <TheDashBoard/>}
         
         { ProfileView && <UserProfile/>}
 
@@ -148,8 +154,6 @@ return (
         { AnimesChoicesView&& <Animes/>} 
         
 
-
-        { HomeView&& <TheDashBoard/>}
         {/* {HomeView&& <AnimesDashBoard/>} */}
 
      

@@ -81,13 +81,9 @@ const Contripution = () => {
   },[])
 
 
- 
-
-  
-
 
   return (
-    <div>
+    <div className="container">
       <h1>contribute a quesion </h1>
 
       <form onSubmit={HandleSubmision} >

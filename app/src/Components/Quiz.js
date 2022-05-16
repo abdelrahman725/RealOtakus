@@ -51,7 +51,7 @@ const Game = ({questions,setquizstart}) => {
                     setseconds(59);
                 }
             } 
-        }, 1000)
+        }, 100000000)
         return ()=> {
             clearInterval(myInterval);
           };
@@ -99,22 +99,28 @@ const Game = ({questions,setquizstart}) => {
 
     {gameresults&&<Result results={gameresults} score={score} setquizstart={setquizstart}/>}
     
-    {GameMode &&
-        <div className="Game"> 
-        <strong>
-          time left <br />{minutes}:{seconds}
-        </strong>
+    
+    {GameMode&& <div className="Game"> 
+            <strong>
+              time left <br />{minutes}:{seconds}
+            </strong>
 
-          <br /><br />
-        {!timeout?  <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer}/>: <strong>time is up</strong>}
-        <br />
-        
-        {index<len-1?
-          <button onClick={Next} className="next">next</button>:
-          <button onClick={SubmitGame}> submit</button>}
-          
-        <br />
-        <button onClick={()=>{setquizstart(false);setGameMode(false)}}>Cancel </button>
+              <br/>
+            {!timeout?  <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer}/>: <strong>time is up</strong>}
+            <br />
+            
+            
+            <div className="buttoncontainer">
+              <button onClick={()=>{setquizstart(false);setGameMode(false)}}>Cancel </button>
+              
+              {index===len-1&& <button onClick={SubmitGame}> submit</button>}
+
+             
+                <button onClick={Next} className={index===len-1?"faded":""}
+                 disabled={index===len-1} >next</button>
+                
+            
+              </div>
         </div>
     }
 

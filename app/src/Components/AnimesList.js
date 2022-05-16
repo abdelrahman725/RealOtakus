@@ -12,6 +12,7 @@ const Animes = () => {
   const  animesurl = `${server}/home/animes`
 
   const [animesoptions,setanimesoptions] = useState()
+  const [restaniems,setresanimes] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
   const [startquiz,setquizstart] = useState()
@@ -38,8 +39,8 @@ const Animes = () => {
       setquizstart(true)
       setGameMode(true)
     }
-  
   }
+  const [len,setlen] = useState(3)
   
 
   useEffect(()=>{
@@ -57,17 +58,20 @@ return (
   <>
     {startquiz?<Quiz questions={gamequestions} setquizstart={setquizstart}/>
     :
-     <div>
-      <button onClick={()=>selected_anime&&GetGame(selected_anime)}>start game</button>
-      
+    <div className="animeslist">
        <div className="animes_choices">
-          {animesoptions&&animesoptions.map((anime,index)=>(
-            <Anime key={index} eachanime={anime}           
-            onchoose={(a)=>setselected_anime(a)} 
-            selected={selected_anime}/>
-            ))} <br />
+            {animesoptions&&animesoptions.map((anime,index)=>(
+              index <len&&
+              <Anime key={index} eachanime={anime}           
+              onchoose={(a)=>setselected_anime(a)} 
+              selected={selected_anime}/>
+              ))} 
+        </div>
 
-       </div>
+          <button className="show"
+          onClick={()=>setlen(len===3?animesoptions.length:3)}>show {len===3?"more...":"less"}</button><br />
+          <button className="startgame" onClick={()=>selected_anime&&GetGame(selected_anime)}>start the game !</button>
+
      </div>}
 
 

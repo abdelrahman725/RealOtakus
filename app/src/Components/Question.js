@@ -14,11 +14,13 @@ const Question = ({each_question,onselect,Q_no}) => {
   },[Q_no])
   
   return (
-    <>
-    <strong>
-      {each_question.question} ? 
-      <hr />
-    </strong>
+    <div className="Question">
+
+    <p>
+        <strong>
+          {each_question.question} ? 
+        </strong>
+    </p>
 
 
     <div className={each_question.choice1===selected?"choice rightchoice":"choice"}
@@ -42,7 +44,7 @@ const Question = ({each_question,onselect,Q_no}) => {
     </div>
 
   
-    </>
+    </div>
   )
 }
 

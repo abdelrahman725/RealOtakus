@@ -8,115 +8,210 @@ div
 .bar
 {
   display: flex;
-  
   position: fixed;
-  // border-bottom: solid 1px red;  
   z-index:2;
   top: 0;
   width: 100%;
   background-color: #262F36;
   color: beige;
   padding:20px;
-
+  .profilename
+  {
+    cursor: pointer;
+  }
 }
+
 .upperbuttons
 {
   margin-top: 70px;
-
-}
-
-.dashboardview
-{
-
-  margin-top: 50px;
- 
-  .dashboard{
-    transition:  1s;
-    width: 40%;
+  display: flex;
+  flex-direction: column;
+  width:300px;
+  button{
+    margin-bottom: 7px;
+    color: white;
     border-radius: 10px;
-    border-collapse: collapse;
-    text-align: center;
+    padding: 12px 0px;
+    background-color: #262F36;
+    letter-spacing: 3px;
+    font-weight: 200;
+  }
+  div{
+margin-bottom: 50px;
+  }
+  button:first-child{
+    position: absolute;
     margin-left: auto;
     margin-right: auto;
- 
-    color: white; 
-    background-color: #262F36;
+    right:50%;
+    transform: translate(50%);
+    width:300px;
 
-    .head{
-      border-bottom: 5px solid #3e4d58; 
-    }
-    .eachcompetitor
-    {
-      border-bottom: 1.5px solid #3e4d58;
-    }
-    .eachcompetitor:hover{
-      background-color: #363e45;;
-    }
+  }
+}
+
+.container
+{
+
+}
+ 
+.dashboard{
+  margin-top: 30px;
+  transition:  2s;
+
+  width: 40%;
+  border-radius: 10px;
+
+  border-collapse: collapse;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+
+  color: white; 
+  background-color: #262F36;
+
+  .head{
+    border-bottom: 5px solid #3e4d58; 
+  }
+  .eachcompetitor
+  {
+    border-bottom: 1.5px solid #3e4d58;
+  }
+
+
+  tbody tr:last-child{
+    border-bottom: none;
+  }
+  .eachcompetitor:hover{
+    background-color: #363e45;
+  }
+
+
+  td{ padding:  20px   18px; }
+  
+  th{ padding: 20px 15px;   }
 
   
-    tbody tr:last-child{
-      border-bottom: none;
-    }
-
-    td{ padding:  20px   18px; }
-    
-    th{ padding: 20px 15px;   }
-
-    
-  }
- 
 }
+ 
+
 
 @media screen and(max-width: 580px)
 {
-  .dashboardview
-  {
+  
 
     .dashboard
     {
-      font-size: x-small;
     
-      td{ padding:  10px   10px; }
-    
-     th{ padding: 10px 12px;   }
-      
+     td{ padding:  10px   4px; font-size: small;}
+     th{ padding: 10px 8px;   font-size: medium;} 
       
     }
     
+  .Question{
+    width:90%;
+
   }
   
 
   
 }
 
+
+.animeslist
+{
 
 
 .animes_choices
 {
-  margin-top: 20px;
+  margin-top:20px;
   color: aliceblue;
+  width: 250px;
+  margin-top: 50px;
   div{
-    padding: 5px 0px;
-    width: 350px;
-    border-bottom: 1px solid grey;
+    padding: 12px 0px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    cursor: pointer;
   }
 }
+.show{
+  margin-top: 10px;
+  margin-bottom: 30px;
+  background-color: #365FAA;
+  color: white;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 2px;
+  letter-spacing: 1px;
 
-
-
-
-.choice 
-{
-  margin-bottom: 10px;
-  background-color: black;
-  color:white;
-  padding:15px;
-  border-radius: 20px;  
-  max-width: 40%;
+}
+.startgame{
+  padding: 15px 30px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: x-large;
+  color: white;
+  border-radius: 30px;
+  border: none;
+  background-color: #00AD83;
+}
+.startgame:hover{
+  color: rgb(175, 175, 175);
 }
 
-.rightchoice{ background-color: green;}
+}
 
-button{ padding:5px 20px; 
+
+
+.Question{
+
+  width: 700px;
+  .choice 
+  {
+    margin-bottom: 10px;
+    background-color: black;
+    color:white;
+    padding:20px 15px;  
+  }
+  .rightchoice{ background-color: green;}
+}
+
+
+
+
+.Game{
+  .buttoncontainer
+  {
+    width:650px;
+    display: flex;
+    justify-content: space-between;
+    button{
+      color: white;
+      border: none ;
+      background-color: #365FAA;
+      padding: 5px 20px;
+    }
+    .faded{
+
+      opacity: 60%;
+    }
+   
+
+  }
+}
+@media screen and(max-width: 800px)
+{
+  .Question{
+    width: 85%;
+  }
+  .Game{
+    .buttoncontainer
+    {
+      width:75%;
+    }}
+}
+
+button{  
 cursor: pointer;
 }

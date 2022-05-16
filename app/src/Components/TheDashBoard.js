@@ -24,12 +24,12 @@ const TheDashBoard = () => {
     GetDashbBoard()
   },[])
 return (
-  <div className="dashboardview">
-  {otakus?
+  <div className="container">
+  
+  <h1>Top Otakus</h1>
 
 <table className="dashboard">
   <thead>
-
   <tr>
     <th className="head">name</th>
     <th className="head">points</th>
@@ -38,10 +38,8 @@ return (
     <th className="head">country</th>
   </tr>
   </thead>
-<tbody>
-  
-    {otakus.map((competitor,index)=> (
-      
+<tbody>  
+    {otakus?otakus.map((competitor,index)=> (    
       <Competitor
       key={index}
       name={competitor.username}
@@ -49,14 +47,21 @@ return (
       level={competitor.level}
       contributions={competitor.contributions_count}
       country = {competitor.country}/>
-      ))}
+      )):
+      <Competitor
+      name={" laoding "}
+      points={"___________"}
+      level={"___________"}
+      contributions={"___________"}
+      country = {"eg"}/>
+
+      }
 
   </tbody>
   </table>
       
   
-          
-  :"loading dashboard"}
+        
   </div> 
   )
 }
