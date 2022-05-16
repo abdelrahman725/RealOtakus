@@ -136,26 +136,22 @@ return (
     
       <div className="upperbuttons">
 
-        <div>
-        { !GameMode&& <button onClick={()=>{ManageViews("home");clicked()}}>Home</button>}
-        </div>
+        <div>{!GameMode&& <button onClick={()=>{ManageViews("home");clicked()}}>Home</button>}</div>
 
         { HomeView&&<button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
         { HomeView&& <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
+
       </div>
 
-        { HomeView&& <TheDashBoard/>}
-        
-        { ProfileView && <UserProfile/>}
+      { HomeView&& <TheDashBoard/>}
+      
+      { ProfileView && <UserProfile/>}
 
-        { ContributionView && <Contripution />}
+      { ContributionView && <Contripution />}
 
-        { AnimesChoicesView&& <Animes/>} 
-        
-
-        {/* {HomeView&& <AnimesDashBoard/>} */}
-
+      { AnimesChoicesView&& <Animes/>} 
+      
      
 
   

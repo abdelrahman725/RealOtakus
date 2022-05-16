@@ -26,7 +26,7 @@ const TheDashBoard = () => {
 return (
   <div className="container">
   
-  <h1>Top Otakus</h1>
+  <h1>Top Ranked Otakus</h1>
 
 <table className="dashboard">
   <thead>

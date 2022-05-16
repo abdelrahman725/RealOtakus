@@ -3,9 +3,9 @@ import { ServerContext } from "../App"
 import getCookie from "../GetCookie"
 
 const Contripution = () => {
+
   const {server} = useContext(ServerContext)  
   const CsrfToken = getCookie('csrftoken')
-
   const [animesoptions,setanimesoptions] = useState()
   
   
@@ -19,7 +19,6 @@ const Contripution = () => {
    }
 
   
-
   const [Question,setQuestion] = useState({
     question:"",
     rightanswer:"",
@@ -76,80 +75,62 @@ const Contripution = () => {
 
   
   useEffect(()=>{ 
-    firstinput.current.focus()
+    // firstinput.current.focus()
     GetAllAnimes()
   },[])
 
 
 
   return (
-    <div className="container">
+    <div className="container contribution">
       <h1>contribute a quesion </h1>
 
       <form onSubmit={HandleSubmision} >
         
-      <select onChange={handleselect} id="pet-select" >
+        <div className="form_elements">
+       
 
-        <option>choose an anime</option>
-        
-          {animesoptions&&animesoptions.map((anime,index)=>(
-          <option value={anime.id} key={index}>{anime.anime_name}</option>))}
+          <select onChange={handleselect} id="pet-select"    >
+            <option>choose an anime</option>        
+            
+              {animesoptions&&animesoptions.map((anime,index)=>(
+              <option value={anime.id} key={index}>{anime.anime_name}</option>))}
+          </select>
+      <br /><br />
 
-      </select>
 
+
+     <textarea name="question" cols="30" rows="3" typeof="text" value={Question.question}
+   
+       onChange={handlechange} required placeholder="what is the question?">
+       </textarea><br />
+
+     <textarea name="rightanswer" cols="30" rows="3" typeof="text" value={Question.rightanswer}
+       onChange={handlechange} required placeholder="right answer">
+       </textarea><br />
   
 
+     <h3>choices  <span>(wrong answers)</span></h3>
+
+   
+
+       <textarea name="choice1" cols="30" rows="3" typeof="text" value={Question.choice1}
+       onChange={handlechange} required placeholder="choice 1">
+       </textarea><br />
+    
+       <textarea name="choice2" cols="30" rows="3" typeof="text" value={Question.choice2}
+       onChange={handlechange} required placeholder="choice 2">
+       </textarea><br />
+    
+       <textarea name="choice3" cols="30" rows="3" typeof="text" value={Question.choice3}
+       onChange={handlechange} required placeholder="choice 3">
+       </textarea><br />
+
       <br />
-      <label>
-        Question 
-        <input type="text"  ref={firstinput}
-        value={Question.question}
-        onChange={handlechange}
-        autoComplete="off"
-        name="question" required/>
-      </label><br />
+      <button type="submit">submit question </button>
 
 
-      <label>
-        Right Answer
-        <input type="text"  
-        value={Question.rightanswer}
-        onChange={handlechange}
-        name="rightanswer" 
-        autoComplete="off" required/>
-      </label><br />
-      <hr />
-      <h2>choices: </h2>
-      <label>
-         choice 1
-        <input type="text"
-        value={Question.choice1}
-        onChange={handlechange}
-        name="choice1"
-        autoComplete="off" required/>
-      </label><br />
-
-      <label>
-      choice 2
-        <input type="text"   
-        value={Question.choice2}
-        onChange={handlechange}
-        name="choice2"
-        autoComplete="off" required/>
-      </label><br />
-
-
-      <label>
-      choice 3
-        <input type="text"  
-        value={Question.choice3}
-        onChange={handlechange}
-        name="choice3"
-        autoComplete="off" required/>
-      </label><br />
-
-
-      <input type="submit" value="Submit" />
+      </div>
     </form>
     </div>
   )

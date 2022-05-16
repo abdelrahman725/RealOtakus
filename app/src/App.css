@@ -58,9 +58,8 @@ div {
 }
 
 .dashboard {
-  margin-top: 30px;
-  -webkit-transition: 2s;
-  transition: 2s;
+  -webkit-transition: 1s;
+  transition: 1s;
   width: 40%;
   border-radius: 10px;
   border-collapse: collapse;
@@ -79,30 +78,33 @@ div {
   border-bottom: 1.5px solid #3e4d58;
 }
 
-.dashboard tbody tr:last-child {
-  border-bottom: none;
-}
-
 .dashboard .eachcompetitor:hover {
   background-color: #363e45;
 }
 
+.dashboard tbody tr:last-child {
+  border-bottom: none;
+}
+
 .dashboard td {
-  padding: 20px   18px;
+  padding: 15px   18px;
 }
 
 .dashboard th {
-  padding: 20px 15px;
+  padding: 20px;
+  font-size: medium;
 }
 
-@media screen and (max-width: 580px) {
+@media screen and (max-width: 630px) {
+  .dashboard {
+    font-size: x-small;
+  }
   .dashboard td {
-    padding: 10px   4px;
-    font-size: small;
+    padding: 10px   5px;
   }
   .dashboard th {
-    padding: 10px 8px;
-    font-size: medium;
+    padding: 15px 10px;
+    font-size: x-small;
   }
   .Question {
     width: 90%;
@@ -149,19 +151,22 @@ div {
   color: #afafaf;
 }
 
-.Question {
+.Game .Question {
   width: 700px;
 }
 
-.Question .choice {
+.Game .Question .choice {
   margin-bottom: 10px;
-  background-color: black;
-  color: white;
+  cursor: pointer;
+  color: black;
   padding: 20px 15px;
+  -webkit-box-shadow: 0.5px 0.5px 4px 0.5px grey;
+          box-shadow: 0.5px 0.5px 4px 0.5px grey;
 }
 
-.Question .rightchoice {
-  background-color: green;
+.Game .Question .rightchoice {
+  background-color: #00AD83;
+  color: white;
 }
 
 .Game .buttoncontainer {
@@ -186,12 +191,23 @@ div {
 }
 
 @media screen and (max-width: 800px) {
-  .Question {
+  .Game .Question {
     width: 85%;
   }
   .Game .buttoncontainer {
-    width: 75%;
+    width: 85%;
   }
+}
+
+.contribution span {
+  font-weight: lighter;
+}
+
+.contribution .form_elements textarea {
+  padding: 10px;
+  resize: none;
+  border-radius: 8px;
+  font-size: large;
 }
 
 button {

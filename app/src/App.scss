@@ -5,6 +5,7 @@ div
   text-align: center; 
 }
 
+
 .bar
 {
   display: flex;
@@ -56,12 +57,9 @@ margin-bottom: 50px;
 }
  
 .dashboard{
-  margin-top: 30px;
-  transition:  2s;
-
+  transition:  1s;
   width: 40%;
   border-radius: 10px;
-
   border-collapse: collapse;
   text-align: center;
   margin-left: auto;
@@ -77,37 +75,36 @@ margin-bottom: 50px;
   {
     border-bottom: 1.5px solid #3e4d58;
   }
+  .eachcompetitor:hover{
+    background-color: #363e45;;
+  }
 
 
   tbody tr:last-child{
     border-bottom: none;
   }
-  .eachcompetitor:hover{
-    background-color: #363e45;
-  }
 
-
-  td{ padding:  20px   18px; }
+  td{ padding:  15px   18px; }
   
-  th{ padding: 20px 15px;   }
+  th{ padding: 20px; font-size: medium;}
 
   
 }
  
 
 
-@media screen and(max-width: 580px)
+@media screen and(max-width: 630px)
 {
   
-
-    .dashboard
-    {
-    
-     td{ padding:  10px   4px; font-size: small;}
-     th{ padding: 10px 8px;   font-size: medium;} 
-      
-    }
-    
+  .dashboard
+  {
+    font-size: x-small;
+  
+    td{ padding:  10px   5px; }
+  
+   th{ padding: 15px 10px;   font-size: x-small;}
+     
+  }
   .Question{
     width:90%;
 
@@ -164,23 +161,25 @@ margin-bottom: 50px;
 
 
 
-.Question{
-
-  width: 700px;
-  .choice 
-  {
-    margin-bottom: 10px;
-    background-color: black;
-    color:white;
-    padding:20px 15px;  
-  }
-  .rightchoice{ background-color: green;}
-}
-
-
 
 
 .Game{
+  .Question{
+
+    width: 700px;
+    .choice 
+    {
+      margin-bottom: 10px;
+      // border: solid 0.5px rgb(174, 173, 173);
+      cursor: pointer;
+      color:black;
+      padding:20px 15px;  
+      box-shadow: 0.5px 0.5px 4px 0.5px grey;
+    }
+    .rightchoice{ background-color: #00AD83; color:white}
+  }
+  
+    
   .buttoncontainer
   {
     width:650px;
@@ -196,20 +195,40 @@ margin-bottom: 50px;
 
       opacity: 60%;
     }
-   
-
   }
+
 }
 @media screen and(max-width: 800px)
 {
-  .Question{
-    width: 85%;
-  }
+  
   .Game{
-    .buttoncontainer
-    {
-      width:75%;
-    }}
+      .Question{
+        width: 85%;
+      }
+      .buttoncontainer
+      {
+        width:85%;
+      }
+  }
+}
+
+
+.contribution
+{ 
+  span{
+    font-weight: lighter;
+  }
+  .form_elements{
+    textarea{
+      padding:10px;
+      resize: none;
+      border-radius: 8px;
+      font-size: large;
+
+    }
+  
+  }
+
 }
 
 button{  
