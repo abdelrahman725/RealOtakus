@@ -221,12 +221,35 @@ margin-bottom: 50px;
   .form_elements{
     textarea{
       padding:10px;
-      resize: none;
+      width: 350px;
       border-radius: 8px;
       font-size: large;
-
+      resize: none;
+      outline: none;
     }
-  
+    textarea:first-of-type{
+      height: 120px;
+    }
+    textarea:focus{
+      border-color: white;
+      outline: #2684FF solid 2px;
+      // border : 2px solid #2684FF;
+    }
+    .select_animes
+    {
+      width:300px;
+    }
+
+    button{
+      padding : 10px 15px;
+      font-size: large;
+      letter-spacing: 2px;
+      border-radius: 4px;
+      color: aliceblue;
+      border: none;
+      background-color: #00AD83;
+    }
+    
   }
 
 }
