@@ -122,7 +122,6 @@ def SubmitTest(request):
   
 
   questions =game_questions[user.id]
-  answers = AnswersSerializer(questions.values(),many=True).data
 
   for q in test_results:
     Q=questions[int(q)]
@@ -160,12 +159,19 @@ def SubmitTest(request):
   CurrentGame.save()
   user.save()
 
+  answers_dict = {}
+
+  for key in game_questions[user.id]:
+    answers_dict[key]= game_questions[user.id][key].right_answer
+
+
   # deleteing used cache from memory : 
   del game_questions[user.id]
   del game[user.id]
+  
 
 
-  return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers, "level":user.level})
+  return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers_dict, "level":user.level})
 
 
 # ------------------------------------------------------------------------------------
@@ -226,6 +232,25 @@ def MakeContribution(request):
 
   return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval ya y3m{user.username} "})
 
+
+
+
+# endpoint for a reviewr to approve/decline a question contributed by other user/s
+#@login_required
+@api_view(["POST"])
+def ReviewContribution(request):
+  state = request.data["state"]
+  q_id = request.data["question"]
+  question = Question.objects.get(pk=q_id)
+
+  if state =="approve":
+    question.approved=True
+    question.save()
+
+  if state =="decline":
+     question.delete()
+
+  Response({"ok"},status=status.HTTP_201_CREATED)
 
 #@login_required
 @api_view(["GET"])

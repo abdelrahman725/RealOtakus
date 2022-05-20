@@ -95,23 +95,27 @@ function App() {
   
   const ManageViews = (View)=>
   {
-    if(View==="home"){
-      setHomeView(true);setAnimesChoicesView(false); setContributionView(false); setProfileView(false)
-    } 
+    if (!GameMode)
+    {
 
-    if(View==="profile"){
-      setProfileView(true); setHomeView(false) ;
-      ;setAnimesChoicesView(false); setContributionView(false);
-    } 
-    
-    if(View==="contribution"){
-      setContributionView(true); setHomeView(false) ;
-    } 
-    
-    if(View==="quiz"){
-      setAnimesChoicesView(true); setHomeView(false) ;
-    } 
+      if(View==="home"){
+        setHomeView(true);setAnimesChoicesView(false); setContributionView(false); setProfileView(false)
+      } 
 
+      if(View==="profile"){
+        setProfileView(true); setHomeView(false) ;
+        ;setAnimesChoicesView(false); setContributionView(false);
+      } 
+      
+      if(View==="contribution"){
+        setContributionView(true); setHomeView(false) ;
+      } 
+      
+      if(View==="quiz"){
+        setAnimesChoicesView(true); setHomeView(false) ;
+      } 
+
+    }
   }
   
   useEffect(()=>{
@@ -119,24 +123,18 @@ function App() {
     //mysocket()
   },[])
 
-    const [color,setcolor] = useState()
-    const  clicked = ()=>{
-      setcolor("2px")
-
-    }
-
 return (
  <div className="App">
   <br />
   
-  {UserData&& <Bar data={UserData} noti = {Noti} showprofile={!GameMode && ManageViews} />}
+  {UserData&& <Bar data={UserData} noti = {Noti} showprofile={ManageViews} />}
      
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
     
       <div className="upperbuttons">
 
-        <div>{!GameMode&& <button onClick={()=>{ManageViews("home");clicked()}}>Home</button>}</div>
+        <div>{!GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}</div>
 
         { HomeView&&<button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 

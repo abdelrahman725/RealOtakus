@@ -6,7 +6,7 @@ const Bar = ({data,noti,showprofile}) => {
       <div>{data.level}</div>
       <div>{data.points}</div>
       <div>activity</div>
-      <div onClick={()=> showprofile("profile") } className="profilename">{data.username}</div>
+      <div onClick={ ()=> showprofile("profile") } className="profilename">{data.username}</div>
     </div>
   )
 }

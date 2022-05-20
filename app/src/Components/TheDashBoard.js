@@ -12,8 +12,8 @@ const TheDashBoard = () => {
   {
     const res = await fetch(dashboardurl)
     const otakus= await res.json()
+    
     setTimeout(()=>{
-
       setotakus(otakus)
     },1000)
 
@@ -49,7 +49,7 @@ return (
       country = {competitor.country}/>
       )):
       <Competitor
-      name={" laoding "}
+      name={" loading "}
       points={"___________"}
       level={"___________"}
       contributions={"___________"}

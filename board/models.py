@@ -79,7 +79,6 @@ class Question(models.Model):
     if not self.contributor.is_superuser:
       user = self.contributor
       if self.previous_status == False and self.approved==True:
-        
         msg=""
         # then it's his first approved contribution
         if user.contributor ==False:

@@ -1,17 +1,17 @@
-import Result from "./Result"
 import Question from "./Question"
-
 import { GamdeModeContext,ServerContext } from "../App"
 import { useContext, useState, useEffect } from "react"
 import getCookie from "../GetCookie"
 
-const Game = ({questions,setquizstart}) => {
+const Game = ({questions,setquizstart,setgameresults}) => {
   
   const CsrfToken = getCookie('csrftoken')
   const {setGameMode,GameMode} = useContext(GamdeModeContext)
   const {server} = useContext(ServerContext)
   const [Answers,setAnswer] = useState({})
+
   const [timeout,settimout] = useState(false)
+
 
   const[index,setindex] = useState(0)
   const len = questions.length
@@ -19,9 +19,6 @@ const Game = ({questions,setquizstart}) => {
   const [seconds,setseconds]= useState(0) 
 
 
-  const [gameresults,setgameresults] = useState() 
-  const [score,setscore] = useState()
-  const {setUserData} = useContext(GamdeModeContext)
   const nextquestion = ()=>index <len-1 && setindex(index+1)
 
   const resettimer = ()=>
@@ -51,7 +48,7 @@ const Game = ({questions,setquizstart}) => {
                     setseconds(59);
                 }
             } 
-        }, 100000000)
+        }, 1000)
         return ()=> {
             clearInterval(myInterval);
           };
@@ -82,30 +79,18 @@ const Game = ({questions,setquizstart}) => {
     })
     const res  = await send.json()
 
-    setresults(res.answers,res.score,res.level)
-    setGameMode(false)
-  }
-
-  const setresults = (results,score,level)=>
-  {
-    setgameresults(results)
-    setscore(score)
-    setUserData(prev => ({...prev, points : prev.points + score}))
+    setgameresults(res.answers,res.score,res.level,Answers)
   }
 
 
   return (
     <>    
-
-    {gameresults&&<Result results={gameresults} score={score} setquizstart={setquizstart}/>}
     
-    
-    {GameMode&& <div className="Game"> 
-            <strong>
-              time left <br />{minutes}:{seconds}
-            </strong>
+     <div className="Quiz"> 
+            <p>
+              time left : <strong> {minutes}:{seconds} </strong>
+            </p>
 
-              <br/>
             {!timeout?  <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer}/>: <strong>time is up</strong>}
             <br />
             
@@ -122,7 +107,7 @@ const Game = ({questions,setquizstart}) => {
             
               </div>
         </div>
-    }
+    
 
     </>
   )

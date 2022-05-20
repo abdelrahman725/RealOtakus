@@ -23,22 +23,22 @@ const Question = ({each_question,onselect,Q_no}) => {
     </p>
 
 
-    <div className={each_question.choice1===selected?"choice rightchoice":"choice"}
+    <div className={each_question.choice1===selected?"choice selected_choice":"choice"}
      onClick={()=>onChoice(each_question.choice1)}>  
      {each_question.choice1}
     </div>
 
-    <div className={each_question.choice2===selected?"choice rightchoice":"choice"}
+    <div className={each_question.choice2===selected?"choice selected_choice":"choice"}
      onClick={()=>onChoice(each_question.choice2)}>  
      {each_question.choice2}
     </div>
 
-    <div className={each_question.choice3===selected?"choice rightchoice":"choice"}
+    <div className={each_question.choice3===selected?"choice selected_choice":"choice"}
      onClick={()=>onChoice(each_question.choice3)}>  
      {each_question.choice3}
     </div>
 
-    <div className={each_question.choice4===selected?"choice rightchoice":"choice"}
+    <div className={each_question.choice4===selected?"choice selected_choice":"choice"}
      onClick={()=>onChoice(each_question.choice4)}>  
      {each_question.choice4}
     </div>

@@ -2,28 +2,40 @@ import Quiz from "./Quiz"
 import Result from "./Result"
 import {useState,useContext} from "react"
 import { GamdeModeContext} from "../App"
-const Game = ({questions}) => {
-  const {setGameMode} = useContext(GamdeModeContext)
+const Game = ({questions,setquizstart}) => {
 
-  const [gameresults,setgameresults] = useState() 
+  const {setGameMode,GameMode} = useContext(GamdeModeContext)
+
+  const [quizresults,setquizresults] = useState({}) 
   const [score,setscore] = useState()
   const {setUserData} = useContext(GamdeModeContext)
+  const [useranswers,setuseranswers] = useState()
+  const [resultview,setresultview] = useState(false)
 
-  const setresults = (results,score)=>
+  
+  const makeresults = (results,score,level,answers)=>
   {
-    setgameresults(results)
+    setquizresults(results)
     setscore(score)
-    setUserData(prev => ({...prev, points :prev.points +score }))
+    setUserData(prev => ({...prev, points :prev.points + score }))
+    setuseranswers(answers)
+    console.log("questions :",questions)
+    console.log("test right answers:",results)
+    console.log("user answers : ",answers)
+    setGameMode(false)
+    setresultview(true)
   }
- 
     
 
   return (
     <>
-    {gameresults ? 
-    <Result results={gameresults} score={score} /> :
-    <Quiz questions={questions} setgameresults= {setresults} />
-     }
+    
+    {resultview&&
+    <Result setquizstart={setquizstart} results={quizresults} score={score}  questions={questions}
+    useranswers={useranswers}/> }
+
+    {GameMode&&<Quiz questions={questions} setgameresults= {makeresults}  setquizstart={setquizstart} />}
+    
     </>
   )
 }

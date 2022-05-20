@@ -151,25 +151,38 @@ div {
   color: #afafaf;
 }
 
-.Game .Question {
+.Question {
   width: 700px;
 }
 
-.Game .Question .choice {
+.Question .choice {
   margin-bottom: 10px;
-  cursor: pointer;
   color: black;
   padding: 20px 15px;
   -webkit-box-shadow: 0.5px 0.5px 4px 0.5px grey;
           box-shadow: 0.5px 0.5px 4px 0.5px grey;
 }
 
-.Game .Question .rightchoice {
+.Question .selected_choice, .Question .rightchoice {
   background-color: #00AD83;
   color: white;
 }
 
-.Game .buttoncontainer {
+.Question .wrongchoice {
+  background-color: #C41E3A;
+  color: white;
+}
+
+.Quiz .Question .choice:hover {
+  background-color: #00AD83;
+  color: white;
+}
+
+.Quiz .Question .choice {
+  cursor: pointer;
+}
+
+.Quiz .buttoncontainer {
   width: 650px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -179,22 +192,22 @@ div {
           justify-content: space-between;
 }
 
-.Game .buttoncontainer button {
+.Quiz .buttoncontainer button {
   color: white;
   border: none;
   background-color: #365FAA;
   padding: 5px 20px;
 }
 
-.Game .buttoncontainer .faded {
+.Quiz .buttoncontainer .faded {
   opacity: 60%;
 }
 
 @media screen and (max-width: 800px) {
-  .Game .Question {
+  .Question {
     width: 85%;
   }
-  .Game .buttoncontainer {
+  .Quiz .buttoncontainer {
     width: 85%;
   }
 }

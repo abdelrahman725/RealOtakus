@@ -160,26 +160,38 @@ margin-bottom: 50px;
 }
 
 
+.Question{
 
-
-
-.Game{
-  .Question{
-
-    width: 700px;
-    .choice 
-    {
-      margin-bottom: 10px;
-      // border: solid 0.5px rgb(174, 173, 173);
-      cursor: pointer;
-      color:black;
-      padding:20px 15px;  
-      box-shadow: 0.5px 0.5px 4px 0.5px grey;
-    }
-    .rightchoice{ background-color: #00AD83; color:white}
+  width: 700px;
+  .choice 
+  {
+    margin-bottom: 10px;
+   
+    color:black;
+    padding:20px 15px;  
+    box-shadow: 0.5px 0.5px 4px 0.5px grey;
+  }
+  .selected_choice,.rightchoice{ background-color: #00AD83; color:white}
+  .wrongchoice{
+    background-color: #C41E3A;
+    color:white
   }
   
+}
+
+
+
+
+.Quiz{
     
+  .Question{
+    .choice:hover{
+      background-color: #00AD83; color:white
+    }
+    .choice{
+      cursor: pointer;
+    }
+  }
   .buttoncontainer
   {
     width:650px;
@@ -192,7 +204,6 @@ margin-bottom: 50px;
       padding: 5px 20px;
     }
     .faded{
-
       opacity: 60%;
     }
   }
@@ -201,10 +212,10 @@ margin-bottom: 50px;
 @media screen and(max-width: 800px)
 {
   
-  .Game{
-      .Question{
-        width: 85%;
-      }
+  .Question{
+    width: 85%;
+  }
+  .Quiz{
       .buttoncontainer
       {
         width:85%;

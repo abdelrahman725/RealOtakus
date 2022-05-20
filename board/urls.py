@@ -14,6 +14,7 @@ urlpatterns = [
     path('sendgame',SubmitTest,name="postgame"),
 
     path('contribute',MakeContribution),
+    path('review',ReviewContribution),
     path('animesoptions',GetAllAnimes),
 
     path('profile',GetMyProfile),

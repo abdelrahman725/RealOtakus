@@ -40,12 +40,6 @@ class QuestionSerializer(serializers.ModelSerializer):
     fields = ("id","anime","question","choice1","choice2","choice3","choice4")
 
 
-class AnswersSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Question
-    fields = ("question","right_answer")
-
-
 
 class GameSerializer(serializers.ModelSerializer):
   class Meta:

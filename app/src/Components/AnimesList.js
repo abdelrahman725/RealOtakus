@@ -1,5 +1,5 @@
 import Anime from "./Anime"
-import Quiz from "./Quiz"
+import Game from "./Game"
 import {useState,useContext,useEffect} from 'react'
 import { GamdeModeContext ,ServerContext} from "../App"
 
@@ -56,7 +56,9 @@ const Animes = () => {
 
 return (
   <>
-    {startquiz?<Quiz questions={gamequestions} setquizstart={setquizstart}/>
+    {/* /* {startquiz?<Quiz questions={gamequestions} setquizstart={setquizstart}/>  */}
+    {startquiz?<Game questions={gamequestions}  setquizstart={setquizstart}/>
+    
     :
     <div className="animeslist">
        <div className="animes_choices">
