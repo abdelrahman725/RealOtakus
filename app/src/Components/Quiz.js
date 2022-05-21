@@ -65,7 +65,7 @@ const Game = ({questions,setquizstart,setgameresults}) => {
 
   const SubmitGame = async()=>
   {
-      
+    setGameMode(false)
     const send = await fetch(`${server}/home/sendgame`,{
 
       method : 'POST',
@@ -80,6 +80,7 @@ const Game = ({questions,setquizstart,setgameresults}) => {
     const res  = await send.json()
 
     setgameresults(res.answers,res.score,res.level,Answers)
+  
   }
 
 
@@ -94,17 +95,14 @@ const Game = ({questions,setquizstart,setgameresults}) => {
             {!timeout?  <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer}/>: <strong>time is up</strong>}
             <br />
             
-            
             <div className="buttoncontainer">
-              <button onClick={()=>{setquizstart(false);setGameMode(false)}}>Cancel </button>
-              
-              {index===len-1&& <button onClick={SubmitGame}> submit</button>}
 
-             
-                <button onClick={Next} className={index===len-1?"faded":""}
-                 disabled={index===len-1} >next</button>
+                <button onClick={()=>{setquizstart(false);setGameMode(false)}}>Cancel </button>
                 
-            
+                {index===len-1&& <button onClick={SubmitGame}> submit</button>}
+
+                <button onClick={Next} className={index===len-1?"faded":""} disabled={index===len-1} >next</button>
+                              
               </div>
         </div>
     

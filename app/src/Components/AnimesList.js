@@ -36,8 +36,8 @@ const Animes = () => {
     if (anime_questions.length>=1)
     {
       setgamequestions(anime_questions)
-      setquizstart(true)
       setGameMode(true)
+      setquizstart(true)
     }
   }
   const [len,setlen] = useState(3)

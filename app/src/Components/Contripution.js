@@ -1,16 +1,18 @@
+import Message from "./Message"
 import { useContext, useState, useEffect,useRef } from "react"
 import { ServerContext } from "../App"
 import getCookie from "../GetCookie"
 import Select from 'react-select'
+
 
 const Contripution = () => {
 
   const {server} = useContext(ServerContext)  
   const CsrfToken = getCookie('csrftoken')
   const [animesoptions,setanimesoptions] = useState()
+  const [msg,setmsg] = useState()
   
 
-  //load all animes:
 
    const GetAllAnimes =async ()=>
    {
@@ -87,18 +89,18 @@ const Contripution = () => {
           })
         })
         const res  = await send.json()
-        console.log(res)
     
         // after waiting for submission now we can clear the states 
         for (const key in Question)
           setQuestion(prev => ({...prev,[key]:""}))
+
+        setmsg(res.message)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
-      
 
-
-      if (anime!==undefined){
-        SendContribution()
+      if (anime!==undefined){        
         document.activeElement.blur() 
+        SendContribution()
       }
 
       else{
@@ -117,7 +119,7 @@ const Contripution = () => {
   return (
     <div className="container contribution">
       <h1>contribute a quesion </h1>
-
+      {msg&&<Message msg={msg}/>}
       <form onSubmit={HandleSubmision} >
         
         <div className="form_elements">

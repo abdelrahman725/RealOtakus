@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import  JsonResponse
-from django.db import connection
+from django.db import connection, IntegrityError
 from django.db.models import Count,Q
 
 from rest_framework.decorators import api_view
@@ -10,6 +10,7 @@ from rest_framework import status
 import json
 import random
 from datetime import datetime
+import time
 
 from .models import *
 from .serializers import *
@@ -169,7 +170,7 @@ def SubmitTest(request):
   del game_questions[user.id]
   del game[user.id]
   
-
+  time.sleep(2)
 
   return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers_dict, "level":user.level})
 
@@ -225,13 +226,22 @@ def MakeContribution(request):
   if anime in user.animes_to_review.all():
     is_anime_reviewr=True
 
-  Question.objects.create(anime=anime,contributor= user,approved=is_anime_reviewr,
-  question=actualquestion,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
-  if is_anime_reviewr:
-    return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
-  return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval ya y3m{user.username} "})
+  try:
+    Question.objects.create(anime=anime,contributor= user,approved=is_anime_reviewr,
+    question=actualquestion,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+    if is_anime_reviewr:
+      return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
+
+    time.sleep(1)
+    return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval"})
+
+  except  IntegrityError as e:
+    if 'UNIQUE constraint' in str(e.args):
+      return JsonResponse({"message": "sorry this question already exist"})
+
+    return JsonResponse({"message": "error occurred, but stil IntegrityError"})
 
 
 

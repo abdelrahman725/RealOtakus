@@ -3,8 +3,9 @@ import { useContext,useEffect } from "react"
 const Result = ({results,score,setquizstart,questions,useranswers}) => {
 
   const {setGameMode} = useContext(GamdeModeContext)
+
 useEffect(()=>{
- console.log("Result Component Loaded")
+ //console.log("Result Component Loaded")
 },[])
 
 
