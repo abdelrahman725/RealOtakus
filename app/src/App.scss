@@ -6,17 +6,19 @@ div
 }
 
 
+button { cursor: pointer;}
 .bar
 {
   display: flex;
   position: fixed;
+
   z-index:2;
   top: 0;
   width: 100%;
   background-color: #262F36;
   color: beige;
   padding:20px;
-  .profilename
+  .profilename,.notifications
   {
     cursor: pointer;
   }
@@ -24,7 +26,7 @@ div
 
 .upperbuttons
 {
-  margin-top: 70px;
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
   width:300px;
@@ -51,10 +53,6 @@ margin-bottom: 50px;
   }
 }
 
-.container
-{
-
-}
  
 .dashboard{
   transition:  1s;
@@ -95,7 +93,15 @@ margin-bottom: 50px;
 
 @media screen and(max-width: 630px)
 {
-  
+  .upperbuttons{
+    margin-top: 200px;
+  }
+
+
+  .bar{
+    flex-direction: column;
+    div{margin-bottom: 15px;}
+  }
   .dashboard
   {
     font-size: x-small;
@@ -163,6 +169,7 @@ margin-bottom: 50px;
 .Question{
 
   width: 700px;
+
   .choice 
   {
     margin-bottom: 10px;
@@ -171,10 +178,16 @@ margin-bottom: 50px;
     padding:20px 15px;  
     box-shadow: 0.5px 0.5px 4px 0.5px grey;
   }
-  .selected_choice,.rightchoice{ background-color: #00AD83; color:white}
+  .selected_choice
+  {
+    background-color: #365FAA;
+    color: white;
+
+  }
+  .rightchoice{ background-color: #00AD83; color: white;}
   .wrongchoice{
     background-color: #C41E3A;
-    color:white
+    color: white;
   }
   
 }
@@ -186,7 +199,7 @@ margin-bottom: 50px;
     
   .Question{
     .choice:hover{
-      background-color: #00AD83; color:white
+      background-color: #365FAA; color:white
     }
     .choice{
       cursor: pointer;
@@ -263,8 +276,4 @@ margin-bottom: 50px;
     
   }
 
-}
-
-button{  
-cursor: pointer;
 }

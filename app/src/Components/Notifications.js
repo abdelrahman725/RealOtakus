@@ -1,7 +1,13 @@
-const Notifications = ({notification}) => {
+import EachNoti from "./EachNoti"
+const Notifications = ({notifications}) => {
+
 
   return (
-    <div>Notifications</div>
+    <div>
+        {notifications.map((noti,index)=>(
+              <EachNoti key={index} noti={noti.notification} time={noti.time}/>
+          ))} 
+    </div>
   )
 }
 

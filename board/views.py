@@ -66,6 +66,7 @@ def GetUserData(request):
 #@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
+  # we still have to figure out how many users will be shown in the dashboard
   otakus = User.objects.exclude(pk=1).order_by('-points')
   serialized_data = DashBoardSerializer(otakus,many=True)
   return Response(serialized_data.data)
@@ -234,7 +235,7 @@ def MakeContribution(request):
       return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
 
-    time.sleep(1)
+    #time.sleep(1)
     return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval"})
 
   except  IntegrityError as e:

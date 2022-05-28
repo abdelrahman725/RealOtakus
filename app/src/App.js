@@ -1,14 +1,13 @@
 import './App.css';
 import Bar from './Components/Bar' 
 import { UserProfile } from './Components/TheProfile/UserProfile';
+import Notifications from './Components/Notifications';
 import Contripution from './Components/Contripution'
 import Animes from './Components/AnimesList'
 import TheDashBoard from './Components/TheDashBoard'
-import AnimesDashBoard from './Components/AnimesDashBoard'
 
 import React, {useState,useEffect,createContext} from 'react'
 import getCookie from './GetCookie'
-import Countries from './Countries.json' 
 export const GamdeModeContext  = createContext()
 export const ServerContext  = createContext()
 
@@ -17,8 +16,9 @@ function App() {
   const CsrfToken = getCookie('csrftoken')
   
   const[UserData,setUserData] = useState({})
-  const[Noti,setNoti] = useState({})
-  const[notification,setnotification] = useState()
+  const [NotificationsView,setNotificationsView]= useState()
+  const[notifications,setnotifications] = useState()
+  const [newnotification,setnewnotification]= useState()
   
   const [HomeView,setHomeView] = useState(true)
   const [ContributionView,setContributionView]= useState(false)
@@ -37,8 +37,13 @@ function App() {
     const socket_connection = new WebSocket(socket_server)
     socket_connection.onmessage = (e)=>{
       const data = JSON.parse(e.data)
+      const notification_received = data.payload.notification
       
-      data.payload.notification&&(setnotification(data.payload))
+      setnewnotification(notification_received)
+
+      notification_received&&(setnotifications(previousnotifications => [...previousnotifications, notification_received]))
+      
+
       console.log(data)
     }
   }
@@ -85,11 +90,10 @@ function App() {
       getUserCountryViaApiServiceThenSaveCountry()
     } 
     
-    //console.log(data.user_data)
+    console.log(data.notifications)
     setUserData(data.user_data)
 
-    //console.log(data.notifications)
-    setNoti(data.notifications)
+    setnotifications(data.notifications)
   }
 
   
@@ -100,11 +104,13 @@ function App() {
 
       if(View==="home"){
         setHomeView(true);setAnimesChoicesView(false); setContributionView(false); setProfileView(false)
+        setNotificationsView(false) 
       } 
 
       if(View==="profile"){
         setProfileView(true); setHomeView(false) ;
         ;setAnimesChoicesView(false); setContributionView(false);
+        setNotificationsView(false) 
       } 
       
       if(View==="contribution"){
@@ -115,19 +121,28 @@ function App() {
         setAnimesChoicesView(true); setHomeView(false) ;
       } 
 
+      if(View==="notifications"){
+        setNotificationsView(true) 
+        setAnimesChoicesView(false)
+        setHomeView(false)
+        setContributionView(false)
+        setProfileView(false)
+      } 
+
+      
     }
   }
-  
+
+
   useEffect(()=>{
     GetUserData()
     //mysocket()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
 return (
- <div className="App">
-  <br />
-  
-  {UserData&& <Bar data={UserData} noti = {Noti} showprofile={ManageViews} />}
+ <div className="App">  
+  {UserData&& <Bar data={UserData} show={ManageViews} />}
      
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
@@ -145,13 +160,14 @@ return (
       { HomeView&& <TheDashBoard/>}
       
       { ProfileView && <UserProfile/>}
+      { NotificationsView && <Notifications notifications={notifications}/>}
+
 
       { ContributionView && <Contripution />}
 
-      { AnimesChoicesView&& <Animes/>} 
-      
-     
+      { AnimesChoicesView&& <Animes/>}
 
+    
   
   </GamdeModeContext.Provider>
   </ServerContext.Provider>

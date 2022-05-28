@@ -20,10 +20,9 @@ const get_choice_class=(right_answer,user_answer,choice)=>
     return "choice wrongchoice" 
   }
 
-
-  return "choice"
-  
+  return "choice"  
 }
+
   return (
     <div className="Result">
     <h2>Resulsts</h2>
@@ -55,7 +54,7 @@ const get_choice_class=(right_answer,user_answer,choice)=>
               {q.choice4}
             </div>
            
-            <br /><br /><br /><br />
+            <br/><br/><br/><br/>
         </div>
       ))}
 

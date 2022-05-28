@@ -4,6 +4,10 @@ div {
   text-align: center;
 }
 
+button {
+  cursor: pointer;
+}
+
 .bar {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -17,12 +21,12 @@ div {
   padding: 20px;
 }
 
-.bar .profilename {
+.bar .profilename, .bar .notifications {
   cursor: pointer;
 }
 
 .upperbuttons {
-  margin-top: 70px;
+  margin-top: 80px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -96,6 +100,18 @@ div {
 }
 
 @media screen and (max-width: 630px) {
+  .upperbuttons {
+    margin-top: 200px;
+  }
+  .bar {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .bar div {
+    margin-bottom: 15px;
+  }
   .dashboard {
     font-size: x-small;
   }
@@ -163,7 +179,12 @@ div {
           box-shadow: 0.5px 0.5px 4px 0.5px grey;
 }
 
-.Question .selected_choice, .Question .rightchoice {
+.Question .selected_choice {
+  background-color: #365FAA;
+  color: white;
+}
+
+.Question .rightchoice {
   background-color: #00AD83;
   color: white;
 }
@@ -174,7 +195,7 @@ div {
 }
 
 .Quiz .Question .choice:hover {
-  background-color: #00AD83;
+  background-color: #365FAA;
   color: white;
 }
 
@@ -246,9 +267,5 @@ div {
   color: aliceblue;
   border: none;
   background-color: #00AD83;
-}
-
-button {
-  cursor: pointer;
 }
 /*# sourceMappingURL=App.css.map */
