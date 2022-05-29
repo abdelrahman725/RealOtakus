@@ -1,0 +1,6 @@
+Django==3.1.4
+django-allauth==0.45.0
+django-cors-headers==3.9.0
+djangorestframework==3.12.2
+channels==3.0.4
+social-auth-core==4.2.0
