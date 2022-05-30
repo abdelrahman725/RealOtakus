@@ -26,26 +26,25 @@ export const UserProfile = () => {
       setquestionsForReview(data.questionsForReview)
       setanimes(data.animes_with_contributions)
       setloading(false)
+      console.log("questions that you  have created but are not approved yet : ",data.PendingContributions)
       //console.log("user own data : ",data.data)
-     console.log("questions that you have to review for approval : ",data.questionsForReview)
+    // console.log("questions that you have to review for approval : ",data.questionsForReview)
 
-     console.log("animes that you contributed to  : ",data.animes_with_contributions)
+     //console.log("animes that you contributed to  : ",data.animes_with_contributions)
 
-     console.log("questions that you  have created but are not approved yet : ",data.PendingContributions)
   }
 
 
   useEffect(()=>{
-    LoadData()
+    loading&&LoadData()
   },[])
 
   return (
     <div>
        {!loading?
        <>
-        <p>data has been loaded successfully</p> 
+        {questionsForReview.length >0&& <QuestionsForReview questions={questionsForReview}/>}
         <PendingQuestions questions={pendingContributions}/>
-        <QuestionsForReview questions={questionsForReview}/>
         <Animes animes={animes}/> 
        </> 
        :

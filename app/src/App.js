@@ -71,7 +71,6 @@ function App() {
           })
         })
         const res  = await sendcountry.json()
-        console.log(res)
       }
     
    postcountry(data.countryCode.toLowerCase())
@@ -90,7 +89,6 @@ function App() {
       getUserCountryViaApiServiceThenSaveCountry()
     } 
     
-    console.log(data.notifications)
     setUserData(data.user_data)
 
     setnotifications(data.notifications)

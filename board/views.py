@@ -30,7 +30,7 @@ for anime in Anime.objects.all():
 
 def GetWantedUser(request):
   #return request.user
-  return User.objects.get(pk=35)
+  return User.objects.get(pk=36)
 
 
 def Random():
@@ -263,21 +263,25 @@ def ReviewContribution(request):
 
   Response({"ok"},status=status.HTTP_201_CREATED)
 
+
 #@login_required
 @api_view(["GET"])
-def GetMyProfile(request):
+def GetMyProfile(request):  
+  
   user = GetWantedUser(request)
 
   my_data = AllUserInfo_Serializer(user,many=False)
-  pending_contributions = QuestionSerializer(user.contributions.filter(approved=False),many=True)
-  #contributed questions by other users for the current user to review and approve if any
+  pending_contributions = PendingQuestionsSerializer(user.contributions.filter(approved=False),many=True)
+
   
+#contributed questions by other users for the current user to review and approve if any  
   questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=user.animes_to_review.all()),many=True)
   
 
-  # animes with contributed questions made by current user : 
+# animes with contributed questions made by current user : 
   contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
    ,many=True)
+
 
   # animes that the user should review their created questions to approve or discard them
   animes_to_review = AnimeNameSerializer(user.animes_to_review.all(),many=True)

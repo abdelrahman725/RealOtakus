@@ -33,7 +33,7 @@ const QuestionsForReview = ({questions}) => {
 
 
   return (
-    <div>QuestionsForReview</div>
+    <div> your responsibility to review these questions</div>
   )
 }
 

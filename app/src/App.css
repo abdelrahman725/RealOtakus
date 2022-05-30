@@ -119,8 +119,8 @@ button {
     padding: 10px   5px;
   }
   .dashboard th {
-    padding: 15px 10px;
-    font-size: x-small;
+    padding: 15px 5px;
+    font-size: small;
   }
   .Question {
     width: 90%;
@@ -175,8 +175,8 @@ button {
   margin-bottom: 10px;
   color: black;
   padding: 20px 15px;
-  -webkit-box-shadow: 0.5px 0.5px 4px 0.5px grey;
-          box-shadow: 0.5px 0.5px 4px 0.5px grey;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
 .Question .selected_choice {
@@ -267,5 +267,21 @@ button {
   color: aliceblue;
   border: none;
   background-color: #00AD83;
+}
+
+.pendingquestionscontainer .eachquestion {
+  text-align: left;
+  margin-bottom: 15px;
+  width: 70%;
+  color: black;
+  padding: 10px 10px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+}
+
+.pendingquestionscontainer .eachquestion span {
+  width: 250px;
+  display: inline-block;
+  margin-right: 50px;
 }
 /*# sourceMappingURL=App.css.map */

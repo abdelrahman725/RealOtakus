@@ -27,4 +27,4 @@ for q in questions:
     q.wrong_answers=0
     q.save()
 
-print(f"\n\nall generated data has been deleted sucessfully !\n")
+print(f"\n\ data created through manual testing the application has been deleted sucessfully !\n")

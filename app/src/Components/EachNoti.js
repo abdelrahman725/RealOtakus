@@ -4,7 +4,7 @@ const EachNoti = ({noti,time}) => {
   return (
     <>
     <div>{noti}</div>
-    <div>{time}</div>
+        
       <br />
     </>
   )

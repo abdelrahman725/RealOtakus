@@ -4,6 +4,7 @@ div
   margin-right: auto;
   text-align: center; 
 }
+$base-shadow :0.5px 0.5px 3px 0.1px grey;
 
 
 button { cursor: pointer;}
@@ -67,6 +68,7 @@ margin-bottom: 50px;
   background-color: #262F36;
 
   .head{
+
     border-bottom: 5px solid #3e4d58; 
   }
   .eachcompetitor
@@ -108,7 +110,7 @@ margin-bottom: 50px;
   
     td{ padding:  10px   5px; }
   
-   th{ padding: 15px 10px;   font-size: x-small;}
+   th{ padding: 15px 5px;   font-size: small;}
      
   }
   .Question{
@@ -176,7 +178,7 @@ margin-bottom: 50px;
    
     color:black;
     padding:20px 15px;  
-    box-shadow: 0.5px 0.5px 4px 0.5px grey;
+    box-shadow: $base-shadow ;
   }
   .selected_choice
   {
@@ -276,4 +278,27 @@ margin-bottom: 50px;
     
   }
 
+}
+
+
+.pendingquestionscontainer
+{
+  
+  .eachquestion
+  {
+    text-align: left;
+    margin-bottom: 15px;
+    width: 70%;
+    color:black;
+    padding:10px 10px;  
+    box-shadow: $base-shadow ;
+
+    span{
+      width:250px;
+      display: inline-block;
+      margin-right: 50px;
+    }
+    
+    
+  }
 }
