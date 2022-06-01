@@ -4,7 +4,7 @@ from .models import *
 @admin.register(User)
 class User_info(admin.ModelAdmin):
   list_display=("id","username","points","country","tests_started","contributor","contributions_count")
-  list_filter = ("level","contributor",)
+  list_filter = ("level","contributor","country")
   filter_horizontal=("animes_to_review",)
   search_fields = ("username",)
   
@@ -25,7 +25,7 @@ class AnimeInfo(admin.ModelAdmin):
 @admin.register(Game)
 class GameInfo(admin.ModelAdmin):
   list_display = ("game_owner","anime","gamesnumber","score","contributions")
-  list_filter = ("game_owner",)
+  list_filter = ("game_owner","anime")
 
 
 @admin.register(Notification)

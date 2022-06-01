@@ -1,12 +1,8 @@
-import { GamdeModeContext } from "../App"
-import { useContext,useEffect } from "react"
+//import { GamdeModeContext } from "../App"
+//import { useContext,useEffect } from "react"
 const Result = ({results,score,setquizstart,questions,useranswers}) => {
 
-  const {setGameMode} = useContext(GamdeModeContext)
-
-useEffect(()=>{
- //console.log("Result Component Loaded")
-},[])
+//  const {setGameMode} = useContext(GamdeModeContext)
 
 
 const get_choice_class=(right_answer,user_answer,choice)=>
@@ -40,7 +36,6 @@ const get_choice_class=(right_answer,user_answer,choice)=>
               {q.choice1}
             </div>
 
-
             <div className={get_choice_class(results[q.id],useranswers[q.id],q.choice2)}>
               {q.choice2}
             </div>
@@ -49,19 +44,15 @@ const get_choice_class=(right_answer,user_answer,choice)=>
               {q.choice3}
             </div>
 
-
             <div className={get_choice_class(results[q.id],useranswers[q.id],q.choice4)}>
               {q.choice4}
             </div>
            
-            <br/><br/><br/><br/>
         </div>
       ))}
 
     </div> 
   
-
-      <button onClick={()=>{setquizstart(false);setGameMode(false)}}>take another quiz</button>
       </div>
   )
 }

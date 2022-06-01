@@ -32,13 +32,13 @@ button { cursor: pointer;}
   flex-direction: column;
   width:300px;
   button{
-    margin-bottom: 7px;
     color: white;
+    font-weight:bold;
+    margin-bottom: 7px;
     border-radius: 10px;
     padding: 12px 0px;
     background-color: #262F36;
     letter-spacing: 3px;
-    font-weight: 200;
   }
   div{
 margin-bottom: 50px;
@@ -55,9 +55,9 @@ margin-bottom: 50px;
 }
 
  
-.dashboard{
+.dashboard, .animesboard{
   transition:  1s;
-  width: 40%;
+ 
   border-radius: 10px;
   border-collapse: collapse;
   text-align: center;
@@ -71,18 +71,32 @@ margin-bottom: 50px;
 
     border-bottom: 5px solid #3e4d58; 
   }
-  .eachcompetitor
+  tr
   {
     border-bottom: 1.5px solid #3e4d58;
   }
-  .eachcompetitor:hover{
-    background-color: #363e45;;
-  }
-
-
+  
   tbody tr:last-child{
     border-bottom: none;
   }
+  
+}
+
+.animesboard{
+  width: 600px;
+  th{
+    font-size: large;
+    padding: 20px 10px;
+  }
+  td{
+    padding: 15px 10px;
+  }
+
+
+}
+
+.dashboard{
+  width: 50%;
 
   td{ padding:  15px   18px; }
   
@@ -95,6 +109,9 @@ margin-bottom: 50px;
 
 @media screen and(max-width: 630px)
 {
+  .animesboard{
+    width: 95%;
+  }
   .upperbuttons{
     margin-top: 200px;
   }
@@ -119,38 +136,23 @@ margin-bottom: 50px;
   }
   
 
+
   
 }
 
+.select_animes
+{
+  width:300px;
+}
+.select_animes::placeholder
+{
+  font-weight: bold;
+  color: #00AD83;
+}
 
 .animeslist
 {
 
-
-.animes_choices
-{
-  margin-top:20px;
-  color: aliceblue;
-  width: 250px;
-  margin-top: 50px;
-  div{
-    padding: 12px 0px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-}
-.show{
-  margin-top: 10px;
-  margin-bottom: 30px;
-  background-color: #365FAA;
-  color: white;
-  border: none;
-  padding: 5px 20px;
-  border-radius: 2px;
-  letter-spacing: 1px;
-
-}
 .startgame{
   padding: 15px 30px;
   font-weight: bold;
@@ -161,9 +163,7 @@ margin-bottom: 50px;
   border: none;
   background-color: #00AD83;
 }
-.startgame:hover{
-  color: rgb(175, 175, 175);
-}
+
 
 }
 
@@ -236,11 +236,13 @@ margin-bottom: 50px;
         width:85%;
       }
   }
+
 }
 
 
 .contribution
 { 
+  
   span{
     font-weight: lighter;
   }
@@ -258,13 +260,10 @@ margin-bottom: 50px;
     }
     textarea:focus{
       border-color: white;
-      outline: #2684FF solid 2px;
+      outline: #2684FF solid 2.5px;
       // border : 2px solid #2684FF;
     }
-    .select_animes
-    {
-      width:300px;
-    }
+
 
     button{
       padding : 10px 15px;
@@ -286,19 +285,29 @@ margin-bottom: 50px;
   
   .eachquestion
   {
+    border-radius: 3px;
+    border-left: solid 20px rgb(230, 171, 63);
     text-align: left;
     margin-bottom: 15px;
     width: 70%;
-    color:black;
-    padding:10px 10px;  
-    box-shadow: $base-shadow ;
 
-    span{
-      width:250px;
-      display: inline-block;
-      margin-right: 50px;
+    color:black;
+    padding:5px 10px;  
+    box-shadow: $base-shadow ;
+    p{
+      line-height: 2;
+          
     }
     
-    
+  }
+
+  @media screen and(max-width: 800px)
+  {
+    .eachquestion{
+      width: 90%;
+    }
   }
 }
+
+
+

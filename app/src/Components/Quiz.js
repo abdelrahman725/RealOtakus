@@ -2,6 +2,7 @@ import Question from "./Question"
 import { GamdeModeContext,ServerContext } from "../App"
 import { useContext, useState, useEffect } from "react"
 import getCookie from "../GetCookie"
+// import Prompt from 'react-router-dom' 
 
 const Game = ({questions,setquizstart,setgameresults}) => {
   
@@ -11,7 +12,6 @@ const Game = ({questions,setquizstart,setgameresults}) => {
   const [Answers,setAnswer] = useState({})
 
   const [timeout,settimout] = useState(false)
-
 
   const[index,setindex] = useState(0)
   const len = questions.length
@@ -55,6 +55,22 @@ const Game = ({questions,setquizstart,setgameresults}) => {
      
     })
 
+  const alertUserbeforeleaving = e => {
+    e.preventDefault()
+    e.returnValue = ''
+  }
+      
+
+useEffect(()=>{
+
+  window.addEventListener('beforeunload', alertUserbeforeleaving)
+  
+  return () => {
+    window.removeEventListener('beforeunload', alertUserbeforeleaving)
+  }
+
+
+},[])
 
   const onAnswer = (id,useranswer)=>
   {
@@ -87,7 +103,7 @@ const Game = ({questions,setquizstart,setgameresults}) => {
   return (
     <>    
     
-     <div className="Quiz"> 
+     <div className="Quiz">   
             <p>
               time left : <strong> {minutes}:{seconds} </strong>
             </p>

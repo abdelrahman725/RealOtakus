@@ -57,12 +57,12 @@ class Question(models.Model):
   anime  = models.ForeignKey(Anime,on_delete=models.SET_NULL,related_name="anime_questions",null=True)
   contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
   advanced =  models.BooleanField(default=False)
-  question =  models.TextField(blank=False,unique=True)
-  choice1  =  models.TextField(blank=False,null=True)
-  choice2  =  models.TextField(blank=False,null=True)
-  choice3  =  models.TextField(blank=False,null=True)
-  choice4  =  models.TextField(blank=False,null=True)
-  right_answer = models.TextField(blank=False,null=True)
+  question =  models.TextField(blank=False,unique=True,max_length=300)
+  choice1  =  models.TextField(blank=False,null=True,max_length=150)
+  choice2  =  models.TextField(blank=False,null=True,max_length=150)
+  choice3  =  models.TextField(blank=False,null=True,max_length=150)
+  choice4  =  models.TextField(blank=False,null=True,max_length=150)
+  right_answer = models.TextField(blank=False,null=True,max_length=150)
   approved = models.BooleanField(default=True)
   correct_answers= models.IntegerField(default=0)
   wrong_answers= models.IntegerField(default=0)
@@ -83,11 +83,11 @@ class Question(models.Model):
         # then it's his first approved contribution
         if user.contributor ==False:
           user.contributor=True
-          msg = "your first contribution has been approved and you are now an otaku contributor"
+          msg = f"congratulations your question for {self.anime} ({self.question[:15]}) got  approved,you are an official Otaku contributor now ! "
 
         # subsequent approved contributions 
         else:
-          msg=f"congratulations your question on {self.anime} got  approved, another contribution added to your profile"
+          msg=  f"congratulations your question for {self.anime} ({self.question[:15]}) got  approved, another contribution added to your profile"
 
 
         CurrentGame, created = Game.objects.get_or_create(game_owner=user,anime=self.anime)
@@ -129,11 +129,13 @@ class Game(models.Model):
   review = models.TextField(null=True,blank=True)
   def save(self,*args,**kwargs):
     # if the number of approved contributions for that particular user in that specific anime reaches 5 contributions then the user is qualified to be a reviewer for that anime 
-    
     if self.contributions == 5:
-      self.game_owner.animes_to_review.add(self.anime)
+      
+      if self.anime not in self.game_owner.animes_to_review:
 
-      Notification.objects.create(owner=self.game_owner,notification=f"now you can review {self.anime} questions!")
+        self.game_owner.animes_to_review.add(self.anime)
+        Notification.objects.create(owner=self.game_owner,notification=f"now you can review {self.anime} questions!")
+    
     super(Game,self).save(*args, **kwargs)
     
   def __str__(self):

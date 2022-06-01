@@ -30,11 +30,17 @@ for anime in Anime.objects.all():
 
 def GetWantedUser(request):
   #return request.user
-  return User.objects.get(pk=36)
+  return User.objects.get(pk=35)
 
 
 def Random():
   return random.randint(1, 4)
+
+def AddQuestionsForTheUser(user):
+  pass
+  AllQuestions= Question.objects.filter(approved=True)
+  # user.add(question)
+
 
 
 #@login_required
@@ -54,7 +60,7 @@ def GetUserData(request):
 
     
   serialized_basic_data = BasicUserSerializer(user,many=False)
-  serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=user) ,many=True)
+  serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=user).order_by('-id') ,many=True)
   return Response({
      "user_data": serialized_basic_data.data,
      "notifications": serialized_notifications.data
@@ -66,7 +72,9 @@ def GetUserData(request):
 #@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
-  # we still have to figure out how many users will be shown in the dashboard
+  print("dashing")
+
+#Note :  we still have to figure out how many users will be shown in the dashboard
   otakus = User.objects.exclude(pk=1).order_by('-points')
   serialized_data = DashBoardSerializer(otakus,many=True)
   return Response(serialized_data.data)
@@ -77,7 +85,8 @@ def GetDashBoard(request):
 #@login_required 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
-  AnimesWithQuestions = Anime.objects.annotate(num_questions=Count("anime_questions")).filter(num_questions__gte=4)
+  AnimesWithQuestions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=GetWantedUser(request))))).filter(approved_questions__gte=4)
+
   serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
   return Response(serialized_data.data)
 
@@ -90,15 +99,13 @@ def GetTest(request,game_anime):
   current_user.tests_started+=1
   current_user.save()
 
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
-  
-  #  number of approved question for the selected anime : 
-  if questions.count() <4:
-    return JsonResponse({"msg":"sorry not enough questions"})
   
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
 
   index = CurrentGame.gamesnumber
+  
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
+
 
   CurrentGame.gamesnumber+=1
   game[current_user.id] = CurrentGame
@@ -171,7 +178,7 @@ def SubmitTest(request):
   del game_questions[user.id]
   del game[user.id]
   
-  time.sleep(2)
+  time.sleep(1)
 
   return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers_dict, "level":user.level})
 
@@ -282,10 +289,7 @@ def GetMyProfile(request):
   contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
    ,many=True)
 
-
-  # animes that the user should review their created questions to approve or discard them
-  animes_to_review = AnimeNameSerializer(user.animes_to_review.all(),many=True)
-
+  #time.sleep(2)
   return Response({
      "data": my_data.data,
      "PendingContributions": pending_contributions.data,

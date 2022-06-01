@@ -12,11 +12,10 @@ const TheDashBoard = () => {
   {
     const res = await fetch(dashboardurl)
     const otakus= await res.json()
+    setotakus(otakus)
     
-    setTimeout(()=>{
-      setotakus(otakus)
-    },1000)
-
+    //setTimeout(()=>{
+    //},1000)
   }
 
 
@@ -32,7 +31,7 @@ return (
   <thead>
   <tr>
     <th className="head">name</th>
-    <th className="head">points</th>
+    <th className="head">score</th>
     <th className="head">level</th>
     <th className="head">contributions</th>
     <th className="head">country</th>

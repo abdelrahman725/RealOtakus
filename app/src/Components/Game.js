@@ -35,6 +35,7 @@ const Game = ({questions,setquizstart}) => {
     {resultview&& <Result setquizstart={setquizstart} results={quizresults} score={score}  questions={questions}
     useranswers={useranswers}/> }
 
+
     {GameMode&&<Quiz questions={questions} setgameresults= {makeresults}  setquizstart={setquizstart} />}
     
     </>

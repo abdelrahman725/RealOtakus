@@ -3,16 +3,15 @@ const PendingQuestions = ({questions}) => {
 
   return (
     <div>
-      <h2>your Pending Contributions</h2><br />
+      <h2>Pending Contributions</h2><br />
       <div className="pendingquestionscontainer">
       {
 
       questions.length>0?
       questions.map((q,index)=>(
         <div  className="eachquestion" key={index}>
-
            <p>
-              <span><strong>{q.anime.anime_name}</strong></span>
+              <span><strong>{q.anime.anime_name}</strong></span><br />
                {q.question}
             </p>
               
@@ -20,7 +19,7 @@ const PendingQuestions = ({questions}) => {
       ))
       :
       
-      "you don't have any  questions contributed yet"
+      "you don't have any  pending contributions "
     }
     </div>
       <br />

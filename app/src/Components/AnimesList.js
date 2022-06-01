@@ -1,6 +1,7 @@
 import Anime from "./Anime"
 import Game from "./Game"
 import {useState,useContext,useEffect} from 'react'
+import Select from 'react-select'
 import { GamdeModeContext ,ServerContext} from "../App"
 
 
@@ -12,7 +13,6 @@ const Animes = () => {
   const  animesurl = `${server}/home/animes`
 
   const [animesoptions,setanimesoptions] = useState()
-  const [restaniems,setresanimes] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
   const [startquiz,setquizstart] = useState()
@@ -23,7 +23,14 @@ const Animes = () => {
   {
     const res = await fetch(animesurl)
     const animes = await res.json()
-    setanimesoptions(animes)
+
+    const anime_array = []
+    animes.map((anime) => 
+    anime_array.push({value:anime.id,label:anime.anime_name})
+    )
+
+   setanimesoptions(anime_array)
+
   }
 
 
@@ -39,42 +46,37 @@ const Animes = () => {
       setGameMode(true)
       setquizstart(true)
     }
+    setselected_anime()
   }
-  const [len,setlen] = useState(3)
   
+
+  const handleselect=(e)=> {setselected_anime(e.value)}
 
   useEffect(()=>{
     GetAnimes()
   },[])
 
 
-  useEffect(()=>{
-    !startquiz && setselected_anime()
-  },[startquiz])
-
-
 
 return (
   <>
-    {/* /* {startquiz?<Quiz questions={gamequestions} setquizstart={setquizstart}/>  */}
     {startquiz?<Game questions={gamequestions}  setquizstart={setquizstart}/>
     
     :
     <div className="animeslist">
-       <div className="animes_choices">
-            {animesoptions&&animesoptions.map((anime,index)=>(
-              index <len&&
-              <Anime key={index} eachanime={anime}           
-              onchoose={(a)=>setselected_anime(a)} 
-              selected={selected_anime}/>
-              ))} 
-        </div>
-
-          <button className="show"
-          onClick={()=>setlen(len===3?animesoptions.length:3)}>show {len===3?"more...":"less"}</button><br />
+      <h2>which anime you want to take quiz in ?</h2>
+      <br />
+      
+       <Select options={animesoptions} className="select_animes"  placeholder="select anime" 
+        onChange={handleselect}  />
+          <br /> <br /><br />
+          
+          <h3>why i don't see my favoirte animes?</h3>
+    
           <button className="startgame" onClick={()=>selected_anime&&GetGame(selected_anime)}>start the game !</button>
 
-     </div>}
+     </div>
+     }
 
 
   </>

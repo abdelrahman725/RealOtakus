@@ -26,11 +26,11 @@ export const UserProfile = () => {
       setquestionsForReview(data.questionsForReview)
       setanimes(data.animes_with_contributions)
       setloading(false)
-      console.log("questions that you  have created but are not approved yet : ",data.PendingContributions)
+      //console.log("questions that you  have created but are not approved yet : ",data.PendingContributions)
       //console.log("user own data : ",data.data)
     // console.log("questions that you have to review for approval : ",data.questionsForReview)
 
-     //console.log("animes that you contributed to  : ",data.animes_with_contributions)
+     console.log("animes that you contributed to  : ",data.animes_with_contributions)
 
   }
 
@@ -43,12 +43,13 @@ export const UserProfile = () => {
     <div>
        {!loading?
        <>
+       <br />
         {questionsForReview.length >0&& <QuestionsForReview questions={questionsForReview}/>}
         <PendingQuestions questions={pendingContributions}/>
-        <Animes animes={animes}/> 
+        <Animes animes={animes} N_Contributions={mydata.contributions_count}/> 
        </> 
-       :
-    <strong>still loading</strong>
+       
+       :<strong>loading</strong>
     }
 
  
