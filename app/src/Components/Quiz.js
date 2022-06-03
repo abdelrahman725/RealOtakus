@@ -10,50 +10,11 @@ const Game = ({questions,setquizstart,setgameresults}) => {
   const {setGameMode,GameMode} = useContext(GamdeModeContext)
   const {server} = useContext(ServerContext)
   const [Answers,setAnswer] = useState({})
-
-  const [timeout,settimout] = useState(false)
-
   const[index,setindex] = useState(0)
   const len = questions.length
-  const[minutes,setminutes] = useState(2)
-  const [seconds,setseconds]= useState(0) 
-
 
   const nextquestion = ()=>index <len-1 && setindex(index+1)
 
-  const resettimer = ()=>
-  {
-    if (index < len-1){ setseconds(0) ;setminutes(2) }
-   }
-
-  const Next = ()=>{resettimer();nextquestion()  }
-
-
-  useEffect(()=>{
-    const myInterval = setInterval(() => {
-            if (seconds > 0) {
-                setseconds(seconds - 1);
-            }
-            if (seconds === 0) {
-                if (minutes === 0) {
-                    if(index===len-1)
-                    {
-                      settimout(true)
-                    }
-                    nextquestion()
-                    resettimer()
-                    clearInterval(myInterval)
-                } else {
-                    setminutes(minutes - 1);
-                    setseconds(59);
-                }
-            } 
-        }, 1000)
-        return ()=> {
-            clearInterval(myInterval);
-          };
-     
-    })
 
   const alertUserbeforeleaving = e => {
     e.preventDefault()
@@ -62,15 +23,12 @@ const Game = ({questions,setquizstart,setgameresults}) => {
       
 
 useEffect(()=>{
-
   window.addEventListener('beforeunload', alertUserbeforeleaving)
-  
   return () => {
     window.removeEventListener('beforeunload', alertUserbeforeleaving)
   }
-
-
 },[])
+
 
   const onAnswer = (id,useranswer)=>
   {
@@ -104,22 +62,17 @@ useEffect(()=>{
     <>    
     
      <div className="Quiz">   
-            <p>
-              time left : <strong> {minutes}:{seconds} </strong>
-            </p>
 
-            {!timeout?  <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer}/>: <strong>time is up</strong>}
+            <Question  each_question={questions[index]} Q_no={index} onselect={onAnswer} questions_length={len} nextquestion={nextquestion}/>
             <br />
+
             
             <div className="buttoncontainer">
-
                 <button onClick={()=>{setquizstart(false);setGameMode(false)}}>Cancel </button>
-                
                 {index===len-1&& <button onClick={SubmitGame}> submit</button>}
-
-                <button onClick={Next} className={index===len-1?"faded":""} disabled={index===len-1} >next</button>
+                <button onClick={nextquestion} className={index===len-1?"faded":""} disabled={index===len-1} >next</button>
                               
-              </div>
+            </div>
         </div>
     
 

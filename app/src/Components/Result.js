@@ -47,8 +47,8 @@ const get_choice_class=(right_answer,user_answer,choice)=>
             <div className={get_choice_class(results[q.id],useranswers[q.id],q.choice4)}>
               {q.choice4}
             </div>
-           
         </div>
+          
       ))}
 
     </div> 

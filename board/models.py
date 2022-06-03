@@ -1,3 +1,4 @@
+from time import time
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
@@ -5,6 +6,9 @@ from .consumer import NotificationConsumer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
+
+def CreateNotification(user,content):
+  Notification.objects.create(owner=user,notification=content,time=datetime.now())
 
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
@@ -79,24 +83,32 @@ class Question(models.Model):
     if not self.contributor.is_superuser:
       user = self.contributor
       if self.previous_status == False and self.approved==True:
-        msg=""
         # then it's his first approved contribution
         if user.contributor ==False:
           user.contributor=True
-          msg = f"congratulations your question for {self.anime} ({self.question[:15]}) got  approved,you are an official Otaku contributor now ! "
+          msg = f"congratulations your question for {self.anime} ({self.question[:30]}) got  approved,you are an official Otaku contributor now ! "
+          CreateNotification(user,msg)
 
         # subsequent approved contributions 
         else:
-          msg=  f"congratulations your question for {self.anime} ({self.question[:15]}) got  approved, another contribution added to your profile"
+          msg=  f"congratulations your question for {self.anime} ({self.question[:30]}) got  approved, another contribution added to your profile"
+          CreateNotification(user,msg)
 
 
         CurrentGame, created = Game.objects.get_or_create(game_owner=user,anime=self.anime)
         CurrentGame.contributions+=1
+      
+      # if the number of approved contributions for that particular user in that specific anime reaches 5 contributions 
+      # then the user is qualified to be a reviewer for that anime 
+
+        if CurrentGame.contributions == 5:
+          if self.anime not in user.animes_to_review.all():
+            user.animes_to_review.add(self.anime)
+            CreateNotification(user,f"now you can review {self.anime} questions!")
+
         CurrentGame.save()
   
 
-        new_notification = Notification(owner=user,notification=msg, time=datetime.now())
-        new_notification.save()
         user.contributions_count +=1
         user.points+=10
         user.save()
@@ -108,8 +120,7 @@ class Question(models.Model):
     if not self.contributor.is_superuser:
       if not self.approved:
         msg = f"sorry your last question on {self.anime} has been declined as it didn't meet the required criteria"
-        new_notification = Notification(owner=self.contributor,notification=msg, time=datetime.now())
-        new_notification.save()
+        CreateNotification(self.contributor,msg)
     
     super(Question, self).delete(*args, **kwargs)
 
@@ -127,16 +138,6 @@ class Game(models.Model):
   gamesnumber = models.IntegerField(default=0)
   contributions = models.IntegerField(default=0)
   review = models.TextField(null=True,blank=True)
-  def save(self,*args,**kwargs):
-    # if the number of approved contributions for that particular user in that specific anime reaches 5 contributions then the user is qualified to be a reviewer for that anime 
-    if self.contributions == 5:
-      
-      if self.anime not in self.game_owner.animes_to_review:
-
-        self.game_owner.animes_to_review.add(self.anime)
-        Notification.objects.create(owner=self.game_owner,notification=f"now you can review {self.anime} questions!")
-    
-    super(Game,self).save(*args, **kwargs)
     
   def __str__(self):
     return f"{self.game_owner} had {self.gamesnumber} tests for {self.anime}"

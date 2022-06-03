@@ -177,6 +177,10 @@ button {
   background-color: #00AD83;
 }
 
+.Result .Question {
+  margin-bottom: 100px;
+}
+
 .Question {
   width: 700px;
 }

@@ -10,7 +10,7 @@ from rest_framework import status
 import json
 import random
 from datetime import datetime
-import time
+from time import sleep
 
 from .models import *
 from .serializers import *
@@ -30,7 +30,7 @@ for anime in Anime.objects.all():
 
 def GetWantedUser(request):
   #return request.user
-  return User.objects.get(pk=35)
+  return User.objects.get(pk=23)
 
 
 def Random():
@@ -178,7 +178,7 @@ def SubmitTest(request):
   del game_questions[user.id]
   del game[user.id]
   
-  time.sleep(1)
+  sleep(1)
 
   return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers_dict, "level":user.level})
 
@@ -242,7 +242,7 @@ def MakeContribution(request):
       return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
 
-    #time.sleep(1)
+    #sleep(1)
     return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval"})
 
   except  IntegrityError as e:
@@ -289,7 +289,7 @@ def GetMyProfile(request):
   contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
    ,many=True)
 
-  #time.sleep(2)
+  #sleep(2)
   return Response({
      "data": my_data.data,
      "PendingContributions": pending_contributions.data,

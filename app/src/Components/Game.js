@@ -24,7 +24,7 @@ const Game = ({questions,setquizstart}) => {
 
     setresultview(true)
     
-    console.log("results loaded successfully !")
+    // console.log("results loaded successfully !")
   }
     
 
