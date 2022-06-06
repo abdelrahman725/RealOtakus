@@ -279,9 +279,15 @@ button {
   background-color: #00AD83;
 }
 
-.pendingquestionscontainer .eachquestion {
+.userprofile hr {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  width: 90%;
+}
+
+.pendingquestionscontainer .eachquestion, .reviewquestions .eachquestion {
+  border-left: solid 20px;
   border-radius: 3px;
-  border-left: solid 20px #e6ab3f;
   text-align: left;
   margin-bottom: 15px;
   width: 70%;
@@ -291,12 +297,28 @@ button {
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
-.pendingquestionscontainer .eachquestion p {
+.pendingquestionscontainer .eachquestion p, .reviewquestions .eachquestion p {
   line-height: 2;
 }
 
+.pendingquestionscontainer .reviewstate, .reviewquestions .reviewstate {
+  border-color: #5bc0de;
+}
+
+.pendingquestionscontainer .approvestate, .reviewquestions .approvestate {
+  border-color: #4ecd91;
+}
+
+.pendingquestionscontainer .declinestate, .reviewquestions .declinestate {
+  border-color: #E76450;
+}
+
+.pendingquestionscontainer .pendingstate, .reviewquestions .pendingstate {
+  border-color: #e6ab3f;
+}
+
 @media screen and (max-width: 800px) {
-  .pendingquestionscontainer .eachquestion {
+  .pendingquestionscontainer .eachquestion, .reviewquestions .eachquestion {
     width: 90%;
   }
 }

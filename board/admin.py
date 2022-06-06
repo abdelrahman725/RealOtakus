@@ -30,5 +30,5 @@ class GameInfo(admin.ModelAdmin):
 
 @admin.register(Notification)
 class Notifications(admin.ModelAdmin):
-  list_display = ("owner","notification","time")
+  list_display = ("owner","notification","time","seen")
   list_filter = ("owner",)

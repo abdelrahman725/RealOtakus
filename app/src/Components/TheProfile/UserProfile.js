@@ -14,6 +14,7 @@ export const UserProfile = () => {
   const[pendingContributions,setpendingcontributions]= useState()
   const[questionsForReview,setquestionsForReview]= useState()
   const[animes,setanimes]= useState()
+  const[animesToReview,setanimesToReview] = useState()
 
   const[loading,setloading]= useState(true)
 
@@ -22,32 +23,44 @@ export const UserProfile = () => {
     const res = await fetch(profileurl)
     const data  = await res.json()
       setmydata(data.data)
+      
+      const anime_options = [{value:1,label:"all animes"}]
+      
+      const anime_names = new Set()
+      data.questionsForReview.map((question ) => 
+      anime_names.add(question.anime.anime_name)
+      )
+
+      Array.from(anime_names).map((a) => 
+      anime_options.push({value:a,label:a})
+      )
+
+      setanimesToReview(anime_options)
+
+      setanimes(data.animes_with_contributions)
       setpendingcontributions(data.PendingContributions)
       setquestionsForReview(data.questionsForReview)
-      setanimes(data.animes_with_contributions)
+        
       setloading(false)
-      //console.log("questions that you  have created but are not approved yet : ",data.PendingContributions)
-      //console.log("user own data : ",data.data)
-    // console.log("questions that you have to review for approval : ",data.questionsForReview)
-
-     console.log("animes that you contributed to  : ",data.animes_with_contributions)
 
   }
-
 
   useEffect(()=>{
     loading&&LoadData()
   },[])
 
   return (
-    <div>
+    <div className="userprofile">
        {!loading?
        <>
        <br />
-        {questionsForReview.length >0&& <QuestionsForReview questions={questionsForReview}/>}
-        <PendingQuestions questions={pendingContributions}/>
+        {questionsForReview.length >0&& <QuestionsForReview questions={questionsForReview} 
+        animesoptions={animesToReview}/>}
+        <br />
         <Animes animes={animes} N_Contributions={mydata.contributions_count}/> 
-       </> 
+          <hr />
+        <PendingQuestions questions={pendingContributions}/><br /><br />
+       </>  
        
        :<strong>loading</strong>
     }

@@ -16,9 +16,11 @@ function App() {
   const CsrfToken = getCookie('csrftoken')
   
   const[UserData,setUserData] = useState({})
+  
   const [NotificationsView,setNotificationsView]= useState()
-  const[notifications,setnotifications] = useState()
+  const [notifications,setnotifications] = useState()
   const [newnotification,setnewnotification]= useState()
+  const [unseen_notifications,setunseen_notifications] = useState()
   
   const [HomeView,setHomeView] = useState(true)
   const [ContributionView,setContributionView]= useState(false)
@@ -32,6 +34,7 @@ function App() {
   const  userdataurl = `${server}/home/data`
 
   // connect to django via web socket to recieve notifications once they are creaetd
+
   const mysocket = ()=>
   {
     const socket_connection = new WebSocket(socket_server)
@@ -90,8 +93,10 @@ function App() {
     } 
     
     setUserData(data.user_data)
+    setunseen_notifications(data.unseencount)
 
     setnotifications(data.notifications)
+  
   }
 
   
@@ -125,8 +130,8 @@ function App() {
         setHomeView(false)
         setContributionView(false)
         setProfileView(false)
+        
       } 
-
       
     }
   }
@@ -140,7 +145,7 @@ function App() {
 
 return (
  <div className="App">  
-  {UserData&& <Bar data={UserData} show={ManageViews} />}
+  {UserData&& <Bar data={UserData} show={ManageViews} notifications_count={unseen_notifications}/>}
      
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
@@ -158,7 +163,7 @@ return (
       { HomeView&& <TheDashBoard/>}
       
       { ProfileView && <UserProfile/>}
-      { NotificationsView && <Notifications notifications={notifications}/>}
+      { NotificationsView && <Notifications notifications={notifications} setunseen_notifications={setunseen_notifications}/>}
 
 
       { ContributionView && <Contripution />}

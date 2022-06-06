@@ -18,5 +18,6 @@ urlpatterns = [
     path('animesoptions',GetAllAnimes),
 
     path('profile',GetMyProfile),
+    path('update_notifications_state',UpdateNotificationsState)
 
 ]

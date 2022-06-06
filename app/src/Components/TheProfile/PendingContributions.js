@@ -9,7 +9,7 @@ const PendingQuestions = ({questions}) => {
 
       questions.length>0?
       questions.map((q,index)=>(
-        <div  className="eachquestion" key={index}>
+        <div  className="eachquestion pendingstate" key={index}>
            <p>
               <span><strong>{q.anime.anime_name}</strong></span><br />
                {q.question}

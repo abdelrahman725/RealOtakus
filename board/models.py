@@ -1,11 +1,9 @@
-from time import time
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 from .consumer import NotificationConsumer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-import json
 
 def CreateNotification(user,content):
   Notification.objects.create(owner=user,notification=content,time=datetime.now())

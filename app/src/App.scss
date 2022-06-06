@@ -284,13 +284,28 @@ margin-bottom: 50px;
 }
 
 
-.pendingquestionscontainer
+
+
+
+
+
+.userprofile{
+  hr{
+    margin-top: 60px;
+    margin-bottom: 60px;
+    width: 90%;
+  }
+}
+
+
+.pendingquestionscontainer,.reviewquestions
 {
+
   
   .eachquestion
   {
+    border-left: solid 20px;
     border-radius: 3px;
-    border-left: solid 20px rgb(230, 171, 63);
     text-align: left;
     margin-bottom: 15px;
     width: 70%;
@@ -300,10 +315,24 @@ margin-bottom: 50px;
     box-shadow: $base-shadow ;
     p{
       line-height: 2;
-          
     }
-    
   }
+
+  
+  .reviewstate{
+    border-color: #5bc0de;
+  }
+  .approvestate{
+    border-color:#4ecd91;
+  }
+
+  .declinestate{
+    border-color: #E76450;
+  }
+  .pendingstate{
+    border-color:rgb(230, 171, 63);
+  }
+  
 
   @media screen and(max-width: 800px)
   {
@@ -311,6 +340,7 @@ margin-bottom: 50px;
       width: 90%;
     }
   }
+
 }
 
 

@@ -35,6 +35,8 @@ class AnimeNameSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+  anime = AnimeNameSerializer()
+
   class Meta:
     model = Question
     fields = ("id","anime","question","choice1","choice2","choice3","choice4")
@@ -44,7 +46,7 @@ class PendingQuestionsSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer() 
   class Meta:
     model = Question
-    fields = ("anime","question","choice1","choice2","choice3","choice4")
+    fields = ("anime","question")
 
 
 
@@ -66,5 +68,4 @@ class AnimeContributionsSerializer(serializers.ModelSerializer):
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta:
     model = Notification
-    fields = ("notification","time","seen")
-
+    fields = ("id","notification","time","seen")
