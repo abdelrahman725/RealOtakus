@@ -313,6 +313,10 @@ button {
   border-color: #E76450;
 }
 
+.pendingquestionscontainer .declinestate button, .pendingquestionscontainer .approvestate button, .reviewquestions .declinestate button, .reviewquestions .approvestate button {
+  cursor: default;
+}
+
 .pendingquestionscontainer .pendingstate, .reviewquestions .pendingstate {
   border-color: #e6ab3f;
 }

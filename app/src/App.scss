@@ -329,6 +329,15 @@ margin-bottom: 50px;
   .declinestate{
     border-color: #E76450;
   }
+  
+  .declinestate,.approvestate
+  {
+    button{
+      cursor: default;
+    }
+  }
+
+
   .pendingstate{
     border-color:rgb(230, 171, 63);
   }

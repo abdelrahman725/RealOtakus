@@ -8,6 +8,24 @@ from asgiref.sync import async_to_sync
 def CreateNotification(user,content):
   Notification.objects.create(owner=user,notification=content,time=datetime.now())
 
+def AddAnime(excluded_user,anime):
+  count=anime.anime_questions.count()+1
+  if count % 5 == 0:
+    # another condition to check instead:
+    # if count % 5 ==0 and count > (gamesnumber * 5)
+    # but this will require to fetch each user's game for that anime from the db
+    excludes = [excluded_user.id,1]
+    all_users = User.objects.exclude(pk__in=excludes)
+    
+    for user in all_users:
+      
+      if anime not in user.animes_for_quiz.all():
+        user.animes_for_quiz.add(anime)
+        user.save()
+        msg=f"new quiz is available for {anime.anime_name} !"
+        CreateNotification(user,msg)
+  
+
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
   url= models.CharField(max_length=300,default="/")
@@ -29,6 +47,7 @@ class Anime(models.Model):
 
   def __str__(self): return f"{self.anime_name}"
 
+
 class User(AbstractUser):
   points = models.IntegerField(default=0)
   tests_completed = models.IntegerField(default=0)
@@ -37,6 +56,7 @@ class User(AbstractUser):
   contributor =  models.BooleanField(default=False)
   contributions_count = models.IntegerField(default=0)
   animes_to_review = models.ManyToManyField(Anime,related_name="reviewers",blank=True)
+  animes_for_quiz= models.ManyToManyField(Anime,related_name="quiz_takers",blank=True)
 
   level_options = [
     ('beginner', 'beginner'),
@@ -52,11 +72,9 @@ class User(AbstractUser):
   def __str__(self):
     return self.username
 
-#Admin = User.objects.get(is_superuser=True)
-
 
 class Question(models.Model):
-  anime  = models.ForeignKey(Anime,on_delete=models.SET_NULL,related_name="anime_questions",null=True)
+  anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions",null=True)
   contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
   advanced =  models.BooleanField(default=False)
   question =  models.TextField(blank=False,unique=True,max_length=300)
@@ -77,13 +95,19 @@ class Question(models.Model):
 
      
   def save(self, *args, **kwargs):
+    if self.approved==True:
+    # check if there are now enough questions for this approved question anime to add that anime to the user's list of available animes for quiz:
+      AddAnime(self.contributor,self.anime)
+    
 
     if not self.contributor.is_superuser:
       user = self.contributor
+
+     # check if it wasn't approved (which is the default) and now it's approved 
       if self.previous_status == False and self.approved==True:
         # then it's his first approved contribution
-        if user.contributor ==False:
-          user.contributor=True
+        if user.contributions_count == 0 and user.contributor ==False:
+          user.contributor = True
           msg = f"congratulations your question for {self.anime} ({self.question[:30]}) got  approved,you are an official Otaku contributor now ! "
           CreateNotification(user,msg)
 

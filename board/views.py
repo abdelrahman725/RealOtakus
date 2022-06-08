@@ -30,12 +30,21 @@ for anime in Anime.objects.all():
 
 def GetWantedUser(request):
   #return request.user
-  return User.objects.get(pk=25)
+  return User.objects.get(pk=36)
 
 
 def Random():
   return random.randint(1, 4)
 
+
+def AddInitialAnimes(user):
+  initial_animes=Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=5)
+  for anime in initial_animes:
+    user.animes_for_quiz.add(anime)
+  user.save()
+  print()
+  print("first request for this user and animes have been added successfully ! so please don't worry from now on, ok?")
+  print()
 
 #@login_required
 def ReactApp(request):
@@ -46,6 +55,9 @@ def ReactApp(request):
 @api_view(["GET","POST"])
 def GetUserData(request):
   user =  GetWantedUser(request)
+
+  if not user.animes_for_quiz.first():
+    AddInitialAnimes(user)
   
   if request.method == "POST":
     user.country = request.data["country"]
@@ -55,7 +67,6 @@ def GetUserData(request):
   serialized_basic_data = BasicUserSerializer(user,many=False)
   serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=user).order_by('-id') ,many=True)
   unread_notifications = Notification.objects.filter(owner=user,seen=False).count()
-  print(unread_notifications)
 
   return Response({
      "user_data": serialized_basic_data.data,
@@ -79,8 +90,12 @@ def GetDashBoard(request):
 #@login_required 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
-  AnimesWithQuestions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=GetWantedUser(request))))).filter(approved_questions__gte=4)
-  serialized_data = AnimeSerializer(AnimesWithQuestions,many=True)
+  user = GetWantedUser(request)
+  #AnimesWithQuestions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=GetWantedUser(request))))).filter(approved_questions__gte=4)
+  
+  animes_with_questions = Anime.objects.filter(pk__in=user.animes_for_quiz.all())
+
+  serialized_data = AnimeSerializer(animes_with_questions,many=True)
   return Response(serialized_data.data)
 
 
@@ -94,9 +109,23 @@ def GetTest(request,game_anime):
 
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
 
-  index = CurrentGame.gamesnumber
+  index = CurrentGame.gamesnumber * 5
   
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[:5]
+# questions of 2 games (current and the potential next) to check the length ahead of time 
+  questions_2games=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+10]
+  if questions_2games[5:].count() <5:
+    current_user.animes_for_quiz.remove(selected_anime)
+  
+    # print("_"*40)
+    # print("'"+selected_anime.anime_name+"'"+ "has been removed from the current user animes for quiz\n")
+    # print("now only the following animes are still left in the user animes for quiz : ")
+    # for user_anime  in current_user.animes_for_quiz.all():
+    #   print(f"'{user_anime.anime_name}'")
+    # print("_"*40)
+
+     
+#this game questions
+  questions=questions_2games[:5]
 
   CurrentGame.gamesnumber+=1
   game[current_user.id] = CurrentGame
@@ -245,7 +274,6 @@ def MakeContribution(request):
 def ReviewContribution(request):
   state = request.data["state"]
   q_id = request.data["question"]
-  print(q_id,state)
   question = Question.objects.get(pk=q_id)
 
   if state =="approve":

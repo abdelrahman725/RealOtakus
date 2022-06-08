@@ -69,9 +69,9 @@ return (
       
        <Select options={animesoptions} className="select_animes"  placeholder="select anime" 
         onChange={handleselect}  />
-          <br /> <br /><br />
+          <br /> <br />
           
-          <h3>why i don't see my favoirte animes?</h3>
+          <h3>what about other animes ?</h3>
     
           <button className="startgame" onClick={()=>selected_anime&&GetGame(selected_anime)}>start the game !</button>
 

@@ -11,7 +11,7 @@ class BasicUserSerializer(serializers.ModelSerializer):
 class AllUserInfo_Serializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count','contributor')
+    fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count')
 
 
 class DashBoardSerializer(serializers.ModelSerializer):

@@ -34,7 +34,6 @@ const ReviewContribution = async(state,question)=>{
     setloading(false)
 
     }
-  
 
  
 return (
@@ -43,12 +42,10 @@ return (
             <span><strong>{anime}</strong></span><br />
             {question.question}
         </p>   
-        <button  onClick={()=>ReviewContribution("approve",question.id)}
-         disabled={reviewstate!=="reviewstate"} style={{cursor:reviewstate==="reviewstate"?"pointer":"default"}}
+        <button  onClick={()=>ReviewContribution("approve",question.id)}  disabled={reviewstate!=="reviewstate"} 
          className="approve_btn">approve</button>&nbsp;   
-       
-        <button onClick={()=>ReviewContribution("decline",question.id)}
-         disabled={reviewstate!=="reviewstate"} style={{cursor:reviewstate==="reviewstate"?"pointer":"default"}}
+    
+        <button  onClick={()=>ReviewContribution("decline",question.id)}  disabled={reviewstate!=="reviewstate"}    
         className="decline_btn">decline</button>   
     </div>
   )

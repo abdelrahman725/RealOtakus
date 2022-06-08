@@ -5,7 +5,7 @@ from .models import *
 class User_info(admin.ModelAdmin):
   list_display=("id","username","points","country","tests_started","contributor","contributions_count")
   list_filter = ("level","contributor","country")
-  filter_horizontal=("animes_to_review",)
+  filter_horizontal=("animes_to_review","animes_for_quiz")
   search_fields = ("username",)
   
 
