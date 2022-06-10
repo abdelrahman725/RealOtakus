@@ -53,8 +53,8 @@ const Animes = () => {
   const handleselect=(e)=> {setselected_anime(e.value)}
 
   useEffect(()=>{
-    GetAnimes()
-  },[])
+    !GameMode&& GetAnimes()
+  },[GameMode])
 
 
 

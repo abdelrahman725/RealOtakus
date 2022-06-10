@@ -3,9 +3,9 @@ from .models import *
 
 @admin.register(User)
 class User_info(admin.ModelAdmin):
-  list_display=("id","username","points","country","tests_started","contributor","contributions_count")
+  list_display=("username","points","country","contributor","contributions_count")
   list_filter = ("level","contributor","country")
-  filter_horizontal=("animes_to_review","animes_for_quiz")
+  filter_horizontal=("animes_to_review",)
   search_fields = ("username",)
   
 
@@ -31,4 +31,4 @@ class GameInfo(admin.ModelAdmin):
 @admin.register(Notification)
 class Notifications(admin.ModelAdmin):
   list_display = ("owner","notification","time","seen")
-  list_filter = ("owner",)
+  list_filter = ("owner","seen")

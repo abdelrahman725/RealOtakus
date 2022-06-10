@@ -4,28 +4,22 @@ from datetime import datetime
 from .consumer import NotificationConsumer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from time import sleep
+import threading
 
 def CreateNotification(user,content):
   Notification.objects.create(owner=user,notification=content,time=datetime.now())
 
-def AddAnime(excluded_user,anime):
-  count=anime.anime_questions.count()+1
-  if count % 5 == 0:
-    # another condition to check instead:
-    # if count % 5 ==0 and count > (gamesnumber * 5)
-    # but this will require to fetch each user's game for that anime from the db
-    excludes = [excluded_user.id,1]
-    all_users = User.objects.exclude(pk__in=excludes)
-    
-    for user in all_users:
-      
-      if anime not in user.animes_for_quiz.all():
-        user.animes_for_quiz.add(anime)
-        user.save()
-        msg=f"new quiz is available for {anime.anime_name} !"
-        CreateNotification(user,msg)
-  
+def NotifyReviewrs(anime):
+  msg = f"new question for {anime.anime_name} and needs review, check your profile"
+  for reviewer in anime.reviewers.all():
+    CreateNotification(reviewer,msg)
 
+
+def NewApprovedQuestion(excluded_user,anime,count):
+  pass
+
+  
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
   url= models.CharField(max_length=300,default="/")
@@ -45,6 +39,7 @@ class Anime(models.Model):
     del animes_dict[self.id] 
     super(Anime, self).delete(*args, **kwargs)
 
+
   def __str__(self): return f"{self.anime_name}"
 
 
@@ -56,7 +51,6 @@ class User(AbstractUser):
   contributor =  models.BooleanField(default=False)
   contributions_count = models.IntegerField(default=0)
   animes_to_review = models.ManyToManyField(Anime,related_name="reviewers",blank=True)
-  animes_for_quiz= models.ManyToManyField(Anime,related_name="quiz_takers",blank=True)
 
   level_options = [
     ('beginner', 'beginner'),
@@ -95,16 +89,15 @@ class Question(models.Model):
 
      
   def save(self, *args, **kwargs):
-    if self.approved==True:
-    # check if there are now enough questions for this approved question anime to add that anime to the user's list of available animes for quiz:
-      AddAnime(self.contributor,self.anime)
-    
-
+    new_approved_question =False 
+    previous_count=0
+  
     if not self.contributor.is_superuser:
       user = self.contributor
-
      # check if it wasn't approved (which is the default) and now it's approved 
       if self.previous_status == False and self.approved==True:
+        new_approved_question = True
+
         # then it's his first approved contribution
         if user.contributions_count == 0 and user.contributor ==False:
           user.contributor = True
@@ -116,26 +109,41 @@ class Question(models.Model):
           msg=  f"congratulations your question for {self.anime} ({self.question[:30]}) got  approved, another contribution added to your profile"
           CreateNotification(user,msg)
 
-
         CurrentGame, created = Game.objects.get_or_create(game_owner=user,anime=self.anime)
         CurrentGame.contributions+=1
       
       # if the number of approved contributions for that particular user in that specific anime reaches 5 contributions 
       # then the user is qualified to be a reviewer for that anime 
-
         if CurrentGame.contributions == 5:
           if self.anime not in user.animes_to_review.all():
             user.animes_to_review.add(self.anime)
             CreateNotification(user,f"now you can review {self.anime} questions!")
 
         CurrentGame.save()
-  
 
         user.contributions_count +=1
         user.points+=10
         user.save()
+  
       
+    if self.pk==None:
+      if self.approved==True:
+        new_approved_question=True 
+      else:
+        async_notification = threading.Thread(target=NotifyReviewrs, args=(self.anime,))
+        async_notification.start()
+
+    if new_approved_question:
+      previous_count = self.anime.anime_questions.count()
+
     super(Question, self).save(*args, **kwargs)
+
+    if new_approved_question:
+      async_thread = threading.Thread(target=NewApprovedQuestion, args=(self.contributor,self.anime,previous_count))
+      async_thread.start()
+
+
+
 
 
   def delete(self, *args, **kwargs):
@@ -160,9 +168,16 @@ class Game(models.Model):
   gamesnumber = models.IntegerField(default=0)
   contributions = models.IntegerField(default=0)
   review = models.TextField(null=True,blank=True)
+
+  def save(self, *args, **kwargs):
+    if self.gamesnumber > 0:
+      if (self.gamesnumber * 5) + 5 >  self.anime.anime_questions.count():
+        self.game_owner.animes_for_quiz.remove(self.anime)
+    super(Game, self).save(*args, **kwargs)
+
     
   def __str__(self):
-    return f"{self.game_owner} had {self.gamesnumber} tests for {self.anime}"
+    return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
 
 
 class Notification(models.Model):
@@ -177,8 +192,5 @@ class Notification(models.Model):
       f'notifications_group_{self.owner.id}',{
         'type':'send_notifications',
         'value':{ "notification": self.notification}
-      }
-
-    )
+      })
     super(Notification, self).save(*args, **kwargs)
-

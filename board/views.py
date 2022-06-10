@@ -18,7 +18,6 @@ from .helpers import login_required
 
 animes_dict = {}
 
-
 game = {}
 game_questions = {}
 
@@ -30,21 +29,14 @@ for anime in Anime.objects.all():
 
 def GetWantedUser(request):
   #return request.user
-  return User.objects.get(pk=36)
+  username = "Meme"
+  return User.objects.get(username=username)
 
 
 def Random():
   return random.randint(1, 4)
 
 
-def AddInitialAnimes(user):
-  initial_animes=Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=5)
-  for anime in initial_animes:
-    user.animes_for_quiz.add(anime)
-  user.save()
-  print()
-  print("first request for this user and animes have been added successfully ! so please don't worry from now on, ok?")
-  print()
 
 #@login_required
 def ReactApp(request):
@@ -56,8 +48,6 @@ def ReactApp(request):
 def GetUserData(request):
   user =  GetWantedUser(request)
 
-  if not user.animes_for_quiz.first():
-    AddInitialAnimes(user)
   
   if request.method == "POST":
     user.country = request.data["country"]
@@ -91,11 +81,10 @@ def GetDashBoard(request):
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   user = GetWantedUser(request)
-  #AnimesWithQuestions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=GetWantedUser(request))))).filter(approved_questions__gte=4)
-  
-  animes_with_questions = Anime.objects.filter(pk__in=user.animes_for_quiz.all())
+  animes_with_questions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(approved_questions__gte=5)
 
   serialized_data = AnimeSerializer(animes_with_questions,many=True)
+
   return Response(serialized_data.data)
 
 
@@ -110,22 +99,10 @@ def GetTest(request,game_anime):
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
 
   index = CurrentGame.gamesnumber * 5
-  
-# questions of 2 games (current and the potential next) to check the length ahead of time 
-  questions_2games=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+10]
-  if questions_2games[5:].count() <5:
-    current_user.animes_for_quiz.remove(selected_anime)
-  
-    # print("_"*40)
-    # print("'"+selected_anime.anime_name+"'"+ "has been removed from the current user animes for quiz\n")
-    # print("now only the following animes are still left in the user animes for quiz : ")
-    # for user_anime  in current_user.animes_for_quiz.all():
-    #   print(f"'{user_anime.anime_name}'")
-    # print("_"*40)
-
-     
+  print(f"\n index  : {index }\n")
 #this game questions
-  questions=questions_2games[:5]
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+5]
+  print(f"\n questions  : {questions}\n")
 
   CurrentGame.gamesnumber+=1
   game[current_user.id] = CurrentGame
@@ -217,6 +194,14 @@ def MakeContribution(request):
     anime = animes_dict[int(request.data["anime"])]
   except: 
     return  JsonResponse({"anime_id doesn't exist! or it's not an int"})
+  
+  def CheckDuplicatChoices(choices): 
+    choies_set = set()
+    for choice in choices:
+      choies_set.add(choice.strip())
+    if len(choies_set) != len(choices):
+      return True 
+    return False 
 
   ContributedQ=request.data["question"]
 
@@ -227,6 +212,10 @@ def MakeContribution(request):
   c2=ContributedQ["choice2"]
   c3=ContributedQ["choice3"]
   c4=right_answer
+  
+  if CheckDuplicatChoices([c1,c2,c3,c4]):
+    return JsonResponse({"message": f"choices can't have duplicates"})
+
 
   random_number = Random()
 
@@ -273,19 +262,26 @@ def MakeContribution(request):
 @api_view(["POST"])
 def ReviewContribution(request):
   state = request.data["state"]
-  q_id = request.data["question"]
-  question = Question.objects.get(pk=q_id)
+  q_id = int(request.data["question"])
+  question = Question.objects.filter(pk=q_id)
+  
+  if not question.exists():
+    return Response({"sorry this question doesn't exist"},status=status.HTTP_404_NOT_FOUND)
+
+  question = question[0]
 
   if state =="approve":
     question.approved=True
     question.save()
+    return Response({"question got approved successfully"},status=status.HTTP_200_OK)
+
 
   if state =="decline":
-     question.delete()
-  
-  sleep(1)
+    question.delete()
+    return Response({"question got declined and delted successfully"},status=status.HTTP_200_OK)
 
-  return Response({"ok"},status=status.HTTP_201_CREATED)
+  
+  return Response({"not expected response"},status=status.HTTP_200_OK)
 
 
 #@login_required
@@ -326,5 +322,6 @@ def UpdateNotificationsState(request):
 # str_repr = repr()
 # connection.queries:
 
-#Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=4)
+animes=Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=4)
 
+#animes=Anime.objects.annotate(approved_count = Count("anime_questions",filter =Q(anime_questions__approved=True)))

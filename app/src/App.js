@@ -94,7 +94,6 @@ function App() {
     
     setUserData(data.user_data)
     setunseen_notifications(data.unseencount)
-
     setnotifications(data.notifications)
   
   }
@@ -104,7 +103,6 @@ function App() {
   {
     if (!GameMode)
     {
-
       if(View==="home"){
         setHomeView(true);setAnimesChoicesView(false); setContributionView(false); setProfileView(false)
         setNotificationsView(false) 

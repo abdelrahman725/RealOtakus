@@ -4,7 +4,6 @@ import { ServerContext } from "../App"
 import getCookie from "../GetCookie"
 import Select from 'react-select'
 
-
 const Contripution = () => {
 
   const {server} = useContext(ServerContext)  
@@ -26,7 +25,6 @@ const Contripution = () => {
 
      setanimesoptions(anime_array)
    }
-
   
   const [Question,setQuestion] = useState({
     question:"",
@@ -54,11 +52,11 @@ const Contripution = () => {
 
     if (value[value.length-1]==="\n")
     {
-      name==="question"&&input_2.current.focus()
-      name==="rightanswer"&&input_3.current.focus()
-      name==="choice1"&&input_4.current.focus()
-      name==="choice2"&&input_5.current.focus()
-      name==="choice3"&&submit_btn.current.focus()
+      name === "question"&&input_2.current.focus()
+      name === "rightanswer"&&input_3.current.focus()
+      name === "choice1"&&input_4.current.focus()
+      name === "choice2"&&input_5.current.focus()
+      name === "choice3"&&submit_btn.current.focus()
       return 
     }
       // e.nativeEvent.inputType === "insertLineBreak" 
