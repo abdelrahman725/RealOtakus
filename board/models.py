@@ -26,7 +26,6 @@ def NewApprovedQuestion(excluded_user,anime,questions_count):
     for user in users:
       user_anime_game = Game.objects.filter(game_owner=user,anime=anime)
       if user_anime_game.exists():
-
         if questions_count == (user_anime_game[0].gamesnumber*5)+5:
           CreateNotification(user,f"new quiz available for {anime}")
 

@@ -21,12 +21,20 @@ class DashBoardSerializer(serializers.ModelSerializer):
 
 
 
-class AnimeSerializer(serializers.ModelSerializer):
+class AnimeQuizSerializer(serializers.ModelSerializer):
   approved_questions=serializers.IntegerField()
   class Meta:
     model = Anime
     fields = ("id","anime_name","approved_questions")
     
+
+
+class AnimeSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Anime
+    fields = ("id","anime_name")
+
+
 
 
 class AnimeNameSerializer(serializers.ModelSerializer):

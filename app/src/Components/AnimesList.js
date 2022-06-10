@@ -19,20 +19,32 @@ const Animes = () => {
   const [startquiz,setquizstart] = useState()
 
 
-//animes that have questions only
+  
+// function to compare the passed anime_approved_questions with the number of games 
+//that the user had for that anime
+
+  const ShowAnime = (NumberOfGames,anime_questions)=>{
+      if ( anime_questions  >= (NumberOfGames * 5) + 5 ){
+        return true
+      }
+      return false
+  }
+
+// get animes with approved questions
   const GetAnimes = async()=>
   {
+    console.log("requesting animes again !!!!")
     const res = await fetch(animesurl)
     const data  = await res.json()
-    
-    console.log(data.animes)
-    console.log(data.games)
+
+    const games_dict = data.games
     const anime_array = []
-    data.animes.map((anime) => 
-    anime_array.push({value:anime.id,label:anime.anime_name})
-    )
     
-   setuser_previous_games(data.games)
+    data.animes.map((anime) => 
+    games_dict[anime.id] ?
+    ShowAnime(games_dict[anime.id],anime.approved_questions)&&anime_array.push({value:anime.id,label:anime.anime_name}):
+    anime_array.push({value:anime.id,label:anime.anime_name}))
+    
    setanimesoptions(anime_array)
   }
 
@@ -56,8 +68,8 @@ const Animes = () => {
   const handleselect=(e)=> {setselected_anime(e.value)}
 
   useEffect(()=>{
-    !GameMode&& GetAnimes()
-  },[GameMode])
+    !startquiz&& GetAnimes()
+  },[startquiz])
 
 
 

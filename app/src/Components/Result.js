@@ -1,8 +1,8 @@
-//import { GamdeModeContext } from "../App"
-//import { useContext,useEffect } from "react"
+import { GamdeModeContext } from "../App"
+import { useContext } from "react"
 const Result = ({results,score,setquizstart,questions,useranswers}) => {
 
-//  const {setGameMode} = useContext(GamdeModeContext)
+  const {setGameMode} = useContext(GamdeModeContext)
 
 
 const get_choice_class=(right_answer,user_answer,choice)=>
@@ -52,6 +52,7 @@ const get_choice_class=(right_answer,user_answer,choice)=>
       ))}
 
     </div> 
+    <button onClick={()=>{setquizstart(false);setGameMode(false)}}>take another quiz</button>
   
       </div>
   )
