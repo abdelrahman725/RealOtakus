@@ -22,9 +22,10 @@ class DashBoardSerializer(serializers.ModelSerializer):
 
 
 class AnimeSerializer(serializers.ModelSerializer):
+  approved_questions=serializers.IntegerField()
   class Meta:
     model = Anime
-    fields = '__all__'
+    fields = ("id","anime_name","approved_questions")
     
 
 
@@ -53,7 +54,7 @@ class PendingQuestionsSerializer(serializers.ModelSerializer):
 class GameSerializer(serializers.ModelSerializer):
   class Meta:
     model = Game
-    fields = '__all__'
+    fields = ("anime","gamesnumber")
 
 
 

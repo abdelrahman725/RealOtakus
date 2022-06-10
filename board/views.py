@@ -82,10 +82,16 @@ def GetDashBoard(request):
 def GetAvailableAnimes(request):
   user = GetWantedUser(request)
   animes_with_questions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(approved_questions__gte=5)
+  user_games = Game.objects.filter(game_owner=user)
+  serialized_animes = AnimeSerializer(animes_with_questions,many=True)
+  serialized_gmaes = GameSerializer(user_games,many=True)
 
-  serialized_data = AnimeSerializer(animes_with_questions,many=True)
 
-  return Response(serialized_data.data)
+  return Response({
+    "animes":serialized_animes.data,
+    "games":serialized_gmaes.data
+    })
+
 
 
 #@login_required
@@ -99,10 +105,9 @@ def GetTest(request,game_anime):
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
 
   index = CurrentGame.gamesnumber * 5
-  print(f"\n index  : {index }\n")
+
 #this game questions
   questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+5]
-  print(f"\n questions  : {questions}\n")
 
   CurrentGame.gamesnumber+=1
   game[current_user.id] = CurrentGame
@@ -198,7 +203,7 @@ def MakeContribution(request):
   def CheckDuplicatChoices(choices): 
     choies_set = set()
     for choice in choices:
-      choies_set.add(choice.strip())
+      choies_set.add(choice)
     if len(choies_set) != len(choices):
       return True 
     return False 
@@ -208,10 +213,10 @@ def MakeContribution(request):
   right_answer=ContributedQ["rightanswer"]
   actualquestion = ContributedQ["question"]
 
-  c1=ContributedQ["choice1"]
-  c2=ContributedQ["choice2"]
-  c3=ContributedQ["choice3"]
-  c4=right_answer
+  c1=ContributedQ["choice1"].strip()
+  c2=ContributedQ["choice2"].strip()
+  c3=ContributedQ["choice3"].strip()
+  c4=right_answer.strip()
   
   if CheckDuplicatChoices([c1,c2,c3,c4]):
     return JsonResponse({"message": f"choices can't have duplicates"})
@@ -321,7 +326,3 @@ def UpdateNotificationsState(request):
 
 # str_repr = repr()
 # connection.queries:
-
-animes=Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True))).filter(approved_questions__gte=4)
-
-#animes=Anime.objects.annotate(approved_count = Count("anime_questions",filter =Q(anime_questions__approved=True)))

@@ -13,6 +13,7 @@ const Animes = () => {
   const  animesurl = `${server}/home/animes`
 
   const [animesoptions,setanimesoptions] = useState()
+  const [user_previous_games,setuser_previous_games] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
   const [startquiz,setquizstart] = useState()
@@ -22,15 +23,17 @@ const Animes = () => {
   const GetAnimes = async()=>
   {
     const res = await fetch(animesurl)
-    const animes = await res.json()
-
+    const data  = await res.json()
+    
+    console.log(data.animes)
+    console.log(data.games)
     const anime_array = []
-    animes.map((anime) => 
+    data.animes.map((anime) => 
     anime_array.push({value:anime.id,label:anime.anime_name})
     )
-
+    
+   setuser_previous_games(data.games)
    setanimesoptions(anime_array)
-
   }
 
 

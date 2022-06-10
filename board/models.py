@@ -16,8 +16,19 @@ def NotifyReviewrs(anime):
     CreateNotification(reviewer,msg)
 
 
-def NewApprovedQuestion(excluded_user,anime,count):
-  pass
+def NewApprovedQuestion(excluded_user,anime,questions_count):
+  questions_count+=1
+  print("\n questions count : \n ",questions_count)
+  if questions_count % 5 == 0:
+    
+    excludes = [excluded_user.pk,1]
+    users = User.objects.exclude(pk__in=excludes)
+    for user in users:
+      user_anime_game = Game.objects.filter(game_owner=user,anime=anime)
+      if user_anime_game.exists():
+
+        if questions_count == (user_anime_game[0].gamesnumber*5)+5:
+          CreateNotification(user,f"new quiz available for {anime}")
 
   
 class Anime(models.Model):
@@ -91,6 +102,7 @@ class Question(models.Model):
   def save(self, *args, **kwargs):
     new_approved_question =False 
     previous_count=0
+
   
     if not self.contributor.is_superuser:
       user = self.contributor
@@ -134,14 +146,13 @@ class Question(models.Model):
         async_notification.start()
 
     if new_approved_question:
-      previous_count = self.anime.anime_questions.count()
+      previous_count = self.anime.anime_questions.filter(approved=True).count()
 
     super(Question, self).save(*args, **kwargs)
 
     if new_approved_question:
       async_thread = threading.Thread(target=NewApprovedQuestion, args=(self.contributor,self.anime,previous_count))
       async_thread.start()
-
 
 
 
@@ -167,15 +178,7 @@ class Game(models.Model):
   score =models.IntegerField(default=0)
   gamesnumber = models.IntegerField(default=0)
   contributions = models.IntegerField(default=0)
-  review = models.TextField(null=True,blank=True)
-
-  def save(self, *args, **kwargs):
-    if self.gamesnumber > 0:
-      if (self.gamesnumber * 5) + 5 >  self.anime.anime_questions.count():
-        self.game_owner.animes_for_quiz.remove(self.anime)
-    super(Game, self).save(*args, **kwargs)
-
-    
+  review = models.TextField(null=True,blank=True)    
   def __str__(self):
     return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
 
