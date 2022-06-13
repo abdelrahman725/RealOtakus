@@ -1,5 +1,5 @@
 import Message from "./Message"
-import { useContext, useState, useEffect,useRef } from "react"
+import { useContext, useState, useEffect, useRef } from "react"
 import { ServerContext } from "../App"
 import getCookie from "../GetCookie"
 import Select from 'react-select'
@@ -11,7 +11,23 @@ const Contripution = () => {
   const [animesoptions,setanimesoptions] = useState()
   const [msg,setmsg] = useState()
   const [contributionGuide,setcontributionGuide] = useState()
+
+  const [Question,setQuestion] = useState({
+    question:"",
+    rightanswer:"",
+    choice1:"",
+    choice2:"",
+    choice3:"",
+  })
   
+  const[anime,setanime]= useState()
+  
+  const input_2 = useRef(null)
+  const input_3 = useRef(null)
+  const input_4 = useRef(null)
+  const input_5 = useRef(null)
+  const submit_btn = useRef(null)
+  const select_animes = useRef(null)
 
 
    const GetAllAnimes =async ()=>
@@ -26,23 +42,8 @@ const Contripution = () => {
      setanimesoptions(anime_array)
    }
   
-  const [Question,setQuestion] = useState({
-    question:"",
-    rightanswer:"",
-    choice1:"",
-    choice2:"",
-    choice3:"",
-  })
 
-  const[anime,setanime]= useState()
-  
-  const input_2 = useRef(null)
-  const input_3 = useRef(null)
-  const input_4 = useRef(null)
-  const input_5 = useRef(null)
-  const submit_btn = useRef(null)
-  const select_animes = useRef(null)
-  
+
   const handleselect=(e)=> {setanime(e.value)}
 
   const handlechange = (e)=>
@@ -96,19 +97,42 @@ const Contripution = () => {
         setmsg(res.message)
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
+      
 
-      if (anime!==undefined){        
-        document.activeElement.blur() 
+      const Validate_and_SubmitForm =()=>{
+    
+        if (anime ===undefined || anime==="")
+        {
+          select_animes.current.focus(); 
+          return false;
+        }
+
+
+    // making sure that all choices are different from each other
+    
+        const unique_choices = new Set()        
+        for (const key in Question)
+        {
+          key!=="question"&& unique_choices.add(Question[key].trim())
+        }
+
+        if (unique_choices.size !==4)
+        {
+          console.log("each choice must be unique")
+          return false
+        }  
+
+        document.activeElement.blur()
         SendContribution()
       }
 
-      else{
-        select_animes.current.focus()  
-      }
+
+      // checking first if the contribution form is valid before submit
+      Validate_and_SubmitForm()
+
   }
 
  
-
   useEffect(()=>{ 
     GetAllAnimes()
   },[])
@@ -118,11 +142,9 @@ const Contripution = () => {
   return (
     <div className="container contribution">
       <h1>contribute a quesion </h1>
-        <h3>please read instructions below, to avoid your questions getting rejected</h3>
-      
-   
+         
       <br />
-      {msg&&<Message msg={msg}/>}
+      {msg && <Message msg={msg}/>}
       <form onSubmit={HandleSubmision} >
         
         <div className="form_elements">

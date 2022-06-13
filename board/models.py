@@ -99,12 +99,12 @@ class Question(models.Model):
 
      
   def save(self, *args, **kwargs):
+    user = self.contributor
     new_approved_question =False 
     previous_count=0
 
   
     if not self.contributor.is_superuser:
-      user = self.contributor
      # check if it wasn't approved (which is the default) and now it's approved 
       if self.previous_status == False and self.approved==True:
         new_approved_question = True
@@ -145,7 +145,7 @@ class Question(models.Model):
         async_notification.start()
 
     if new_approved_question:
-      previous_count = self.anime.anime_questions.filter(approved=True).count()
+      previous_count = self.anime.anime_questions.filter(approved=True).exclude(contributor=user).count()
 
     super(Question, self).save(*args, **kwargs)
 

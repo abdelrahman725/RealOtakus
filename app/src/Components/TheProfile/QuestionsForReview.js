@@ -7,16 +7,8 @@ import Select from 'react-select'
 const QuestionsForReview = ({questions,animesoptions}) => {
   
   const [filteredanime,setfilteredanime]= useState(1)
-
-
   const [reviewstates,setreviewstates]= useState({})
 
-  useEffect(()=>{
-  questions.map((q)=>(
-    reviewstates[q.id] = "reviewstate"
-  ))
-
-  },[])
 
   
   const handlefilter=(e)=> {setfilteredanime(e.value)}
@@ -35,12 +27,12 @@ const QuestionsForReview = ({questions,animesoptions}) => {
         
         filteredanime===1? 
         <EachQuestion setreviewstate={setreviewstates}
-        reviewstate={reviewstates[q.id]} 
+        reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
         anime={q.anime.anime_name} question={q} key={index}/>
         :
         filteredanime===q.anime.anime_name&&
         <EachQuestion setreviewstate={setreviewstates}
-        reviewstate={reviewstates[q.id]} 
+        reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
         anime={q.anime.anime_name} question={q} key={index}/>      
           
      ))}

@@ -32,7 +32,6 @@ const ReviewContribution = async(state,question)=>{
     console.log(res)
     setreviewstate(prev => ({...prev,[question]:`${state}state`}))
     setloading(false)
-
     }
 
  
