@@ -55,11 +55,11 @@ class Anime(models.Model):
 
 class User(AbstractUser):
   points = models.IntegerField(default=0)
-  tests_completed = models.IntegerField(default=0)
-  tests_started = models.IntegerField(default=0)
+  tests_completed = models.PositiveIntegerField(default=0)
+  tests_started = models.PositiveIntegerField(default=0)
   country = models.CharField(null=True,max_length=60,blank=True)
   contributor =  models.BooleanField(default=False)
-  contributions_count = models.IntegerField(default=0)
+  contributions_count = models.PositiveIntegerField(default=0)
   animes_to_review = models.ManyToManyField(Anime,related_name="reviewers",blank=True)
 
   level_options = [
@@ -88,8 +88,8 @@ class Question(models.Model):
   choice4  =  models.TextField(blank=False,null=True,max_length=150)
   right_answer = models.TextField(blank=False,null=True,max_length=150)
   approved = models.BooleanField(default=True)
-  correct_answers= models.IntegerField(default=0)
-  wrong_answers= models.IntegerField(default=0)
+  correct_answers= models.PositiveIntegerField(default=0)
+  wrong_answers= models.PositiveIntegerField(default=0)
   
   previous_status = None
 
@@ -174,9 +174,9 @@ class Question(models.Model):
 class Game(models.Model):
   game_owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name="get_games")
   anime =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_game")
-  score =models.IntegerField(default=0)
-  gamesnumber = models.IntegerField(default=0)
-  contributions = models.IntegerField(default=0)
+  score =models.PositiveIntegerField(default=0)
+  gamesnumber = models.PositiveIntegerField(default=0)
+  contributions = models.PositiveIntegerField(default=0)
   review = models.TextField(null=True,blank=True)    
   def __str__(self):
     return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
