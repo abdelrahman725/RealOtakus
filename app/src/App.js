@@ -19,7 +19,6 @@ function App() {
   
   const [NotificationsView,setNotificationsView]= useState()
   const [notifications,setnotifications] = useState()
-  const [newnotification,setnewnotification]= useState()
   const [unseen_notifications,setunseen_notifications] = useState()
   
   const [HomeView,setHomeView] = useState(true)
@@ -40,13 +39,14 @@ function App() {
     const socket_connection = new WebSocket(socket_server)
     socket_connection.onmessage = (e)=>{
       const data = JSON.parse(e.data)
-      const notification_received = data.payload.notification
-      
-      setnewnotification(notification_received)
-
-      notification_received&&(setnotifications(previousnotifications => [...previousnotifications, notification_received]))
-      
-
+      if (data.payload) 
+      {
+        const notification_received = data.payload  
+        notification_received&&(setnotifications([...notifications, notification_received]))
+        
+        setunseen_notifications(unseen_notifications?unseen_notifications+1:1)
+        console.log(data.payload)
+      }
       console.log(data)
     }
   }
@@ -95,7 +95,6 @@ function App() {
     setUserData(data.user_data)
     setunseen_notifications(data.unseencount)
     setnotifications(data.notifications)
-  
   }
 
   
@@ -137,7 +136,7 @@ function App() {
 
   useEffect(()=>{
     GetUserData()
-    //mysocket()
+    mysocket()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
@@ -148,6 +147,7 @@ return (
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
     
+
       <div className="upperbuttons">
 
         <div>{!GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}</div>
@@ -157,7 +157,7 @@ return (
         { HomeView&& <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
 
       </div>
-
+  
       { HomeView&& <TheDashBoard/>}
       
       { ProfileView && <UserProfile/>}
@@ -168,7 +168,6 @@ return (
 
       { AnimesChoicesView&& <Animes/>}
 
-    
   
   </GamdeModeContext.Provider>
   </ServerContext.Provider>

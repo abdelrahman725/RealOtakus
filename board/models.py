@@ -193,6 +193,6 @@ class Notification(models.Model):
     async_to_sync(channel_layer.group_send)(
       f'notifications_group_{self.owner.id}',{
         'type':'send_notifications',
-        'value':{ "notification": self.notification}
+        'value':{ "notification": self.notification,"seen":self.seen}
       })
     super(Notification, self).save(*args, **kwargs)
