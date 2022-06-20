@@ -7,8 +7,10 @@ from asgiref.sync import async_to_sync
 from time import sleep
 import threading
 
+
 def CreateNotification(user,content):
-  Notification.objects.create(owner=user,notification=content,time=datetime.now())
+  if user:
+    Notification.objects.create(owner=user,notification=content,time=datetime.now())
 
 def NotifyReviewrs(anime):
   msg = f"new question for {anime.anime_name} and needs review, check your profile"
@@ -79,7 +81,7 @@ class User(AbstractUser):
 
 class Question(models.Model):
   anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions",null=True)
-  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,default=1)
+  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,blank=True,default=1)
   advanced =  models.BooleanField(default=False)
   question =  models.TextField(blank=False,unique=True,max_length=300)
   choice1  =  models.TextField(blank=False,null=True,max_length=150)
@@ -98,13 +100,13 @@ class Question(models.Model):
     self.previous_status  = self.approved
 
      
-  def save(self, *args, **kwargs):
+  def save(self, *args, **kwargs):    
     user = self.contributor
     new_approved_question =False 
     previous_count=0
 
-  
-    if not self.contributor.is_superuser:
+
+    if user and not self.contributor.is_superuser:
      # check if it wasn't approved (which is the default) and now it's approved 
       if self.previous_status == False and self.approved==True:
         new_approved_question = True
@@ -131,12 +133,10 @@ class Question(models.Model):
             CreateNotification(user,f"now you can review {self.anime} questions!")
 
         CurrentGame.save()
-
         user.contributions_count +=1
         user.points+=10
         user.save()
   
-      
     if self.pk==None:
       if self.approved==True:
         new_approved_question=True 
@@ -157,7 +157,7 @@ class Question(models.Model):
 
 
   def delete(self, *args, **kwargs):
-    if not self.contributor.is_superuser:
+    if self.contributor and not self.contributor.is_superuser:
       if not self.approved:
         msg = f"sorry your last question on {self.anime} has been declined as it didn't meet the required criteria"
         CreateNotification(self.contributor,msg)

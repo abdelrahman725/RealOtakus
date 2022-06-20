@@ -31,5 +31,4 @@ for q in questions:
 
 
 
-
 print(f"\n\ data created through manual testing of the app has been deleted sucessfully !\n")

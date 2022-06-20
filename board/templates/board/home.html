@@ -63,7 +63,7 @@
           <h2>Login</h2>
             <form action="{%url 'login_url' %}" method="post" >
               {% csrf_token %}
-                <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required >
+                <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus>
                 
                 <input type="password" name="password" placeholder=" passsword" autocomplete="off" required>
                 <input type="submit" value="Sign in" class="formbtn">
