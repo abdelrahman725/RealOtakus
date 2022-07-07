@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from datetime import datetime
+from board import base_models
+
 from .consumer import NotificationConsumer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -8,9 +8,10 @@ from time import sleep
 import threading
 
 
+
 def CreateNotification(user,content):
   if user:
-    Notification.objects.create(owner=user,notification=content,time=datetime.now())
+    Notification.objects.create(owner=user,notification=content)
 
 def NotifyReviewrs(anime):
   msg = f"new question for {anime.anime_name} and needs review, check your profile"
@@ -32,11 +33,10 @@ def NewApprovedQuestion(excluded_user,anime,questions_count):
           CreateNotification(user,f"new quiz available for {anime}")
 
   
-class Anime(models.Model):
-  anime_name = models.CharField(max_length=40,unique=True)
-  url= models.CharField(max_length=300,default="/")
+class Anime(base_models.Anime):
   class Meta:
     ordering=["id"]
+    
   def save(self, *args, **kwargs):
     new = False
     if not self.id:
@@ -55,44 +55,15 @@ class Anime(models.Model):
   def __str__(self): return f"{self.anime_name}"
 
 
-class User(AbstractUser):
-  points = models.IntegerField(default=0)
-  tests_completed = models.PositiveIntegerField(default=0)
-  tests_started = models.PositiveIntegerField(default=0)
-  country = models.CharField(null=True,max_length=60,blank=True)
-  contributor =  models.BooleanField(default=False)
-  contributions_count = models.PositiveIntegerField(default=0)
-  animes_to_review = models.ManyToManyField(Anime,related_name="reviewers",blank=True)
-
-  level_options = [
-    ('beginner', 'beginner'),
-    ('intermediate', 'intermediate'),
-    ('advanced', 'advanced'),
-    ('realOtaku', 'realOtaku'),]
-
-  level = models.CharField(
-    choices=level_options,max_length=12,default="beginner")
+class User(base_models.User):
 
   class Meta:
-    ordering= ["-points"]
+    ordering = ["-points"]
   def __str__(self):
     return self.username
 
 
-class Question(models.Model):
-  anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions",null=True)
-  contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,blank=True,default=1)
-  advanced =  models.BooleanField(default=False)
-  question =  models.TextField(blank=False,unique=True,max_length=300)
-  choice1  =  models.TextField(blank=False,null=True,max_length=150)
-  choice2  =  models.TextField(blank=False,null=True,max_length=150)
-  choice3  =  models.TextField(blank=False,null=True,max_length=150)
-  choice4  =  models.TextField(blank=False,null=True,max_length=150)
-  right_answer = models.TextField(blank=False,null=True,max_length=150)
-  approved = models.BooleanField(default=True)
-  correct_answers= models.PositiveIntegerField(default=0)
-  wrong_answers= models.PositiveIntegerField(default=0)
-  
+class Question(base_models.Question):
   previous_status = None
 
   def __init__(self,*args, **kwargs):
@@ -155,7 +126,6 @@ class Question(models.Model):
 
 
 
-
   def delete(self, *args, **kwargs):
     if self.contributor and not self.contributor.is_superuser:
       if not self.approved:
@@ -171,22 +141,16 @@ class Question(models.Model):
     return f"{self.question}"
 
 
-class Game(models.Model):
-  game_owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name="get_games")
-  anime =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_game")
-  score =models.PositiveIntegerField(default=0)
-  gamesnumber = models.PositiveIntegerField(default=0)
-  contributions = models.PositiveIntegerField(default=0)
-  review = models.TextField(null=True,blank=True)    
+class Game(base_models.Game):
+
   def __str__(self):
     return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
 
 
-class Notification(models.Model):
-  owner =  models.ForeignKey(User,on_delete=models.CASCADE,related_name="getnotifications")
-  notification = models.CharField(max_length=250)
-  time = models.DateTimeField(default=None,null=True)
-  seen = models.BooleanField(default=False)
+class Notification(base_models.Notification):
+  def __str__(self):
+    return f"{self.notification}"
+
 
   def save(self, *args, **kwargs):
     channel_layer = get_channel_layer()

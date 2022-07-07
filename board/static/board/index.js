@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded",()=>
 {
    RegisterPage = document.querySelector(".RegisterPage");
    LoginPage = document.querySelector(".LoginPage");
-   CheckPasswords();
+   //CheckPasswords();
    FocusConfirmPassword();
 
 });

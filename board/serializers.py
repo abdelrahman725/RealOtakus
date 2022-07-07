@@ -75,6 +75,6 @@ class AnimeContributionsSerializer(serializers.ModelSerializer):
     
 
 class NotificationsSerializer(serializers.ModelSerializer):
-  class Meta:
+  class Meta: 
     model = Notification
     fields = ("id","notification","time","seen")

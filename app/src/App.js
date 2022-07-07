@@ -94,6 +94,9 @@ function App() {
     
     setUserData(data.user_data)
     setunseen_notifications(data.unseencount)
+    const notification = data.notifications[0]
+     
+
     setnotifications(data.notifications)
   }
 
@@ -136,7 +139,7 @@ function App() {
 
   useEffect(()=>{
     GetUserData()
-    mysocket()
+    //mysocket()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 

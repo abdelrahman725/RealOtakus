@@ -41,7 +41,7 @@ useEffect(()=>{
     })
 
     const res  = await send.json()
-    console.log(res)
+    //console.log(res)
 
     }
 
@@ -53,12 +53,13 @@ useEffect(()=>{
   
 
   return (
-    <div>
+    <div className="notifications">
         {notifications.length>0?notifications.map((noti,index)=>(
+
           <EachNoti key={index} noti={noti.notification} time={noti.time}/>
           )): 
           <p>no activity yet</p>
-          } 
+        } 
     </div>
   )
 }

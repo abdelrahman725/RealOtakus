@@ -27,9 +27,9 @@ for anime in Anime.objects.all():
 
 
 def GetWantedUser(request):
-  return request.user
-  #username = "laura"
-  #return User.objects.get(username=username)
+  #return request.user
+  username = "laura"
+  return User.objects.get(username=username)
 
 
 def Random():
@@ -37,12 +37,12 @@ def Random():
 
 
 
-@login_required
+#@login_required
 def ReactApp(request):
   #return redirect("http://localhost:3000/home")
   return render(request, "index.html")
 
-@login_required
+#@login_required
 @api_view(["GET","POST"])
 def GetUserData(request):
   user =  GetWantedUser(request)
@@ -54,6 +54,7 @@ def GetUserData(request):
     return Response({"countrycreated"},status=status.HTTP_201_CREATED)
   
   serialized_basic_data = BasicUserSerializer(user,many=False)
+
   serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=user).order_by('-id') ,many=True)
   unread_notifications = Notification.objects.filter(owner=user,seen=False).count()
 
@@ -65,7 +66,7 @@ def GetUserData(request):
 
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 #Note :  we still have to figure out how many users will be shown in the dashboard
@@ -76,7 +77,7 @@ def GetDashBoard(request):
 
 # -------------------------------------- Test Handling functions ----------------------------------------
 
-@login_required 
+#@login_required 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   print("\n endpoint hit \n")
@@ -98,7 +99,7 @@ def GetAvailableAnimes(request):
 
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request,game_anime):
   current_user =  GetWantedUser(request)
@@ -127,7 +128,7 @@ def GetTest(request,game_anime):
 
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitTest(request):
   user =  GetWantedUser(request)
@@ -149,21 +150,25 @@ def SubmitTest(request):
     Q.save()
   
 
-  previous_level = user.level
 
-  if user.points >=5000:
-    user.level = "realOtaku" 
+  def CheckLevel(user,user_points):
+    
+    previous_level = user.level
+    if user_points >=5000:
+      user.level = "realOtaku" 
 
-  elif user.points >= 3000:
-    user.level  = "advanced"
-  elif user.points >= 1000:
-    user.level = "intermediate"
+    elif user_points >= 3000:
+      user.level  = "advanced"
+    elif user_points >= 1000:
+      user.level = "intermediate"
 
-  # level up the user by pushing a notfication 
-  if previous_level != user.level :
-    Notification.objects.create(owner=user,notification=f"Level up to {user.level}! good work")
+    # level up the user by pushing a notfication 
+    if previous_level != user.level :
+      Notification.objects.create(owner=user,notification=f"Level up to {user.level}! good work")
 
 
+  CheckLevel(user,user.points)
+  
   user.tests_completed+=1
   CurrentGame= game[user.id]
   CurrentGame.score += test_score
@@ -187,14 +192,14 @@ def SubmitTest(request):
 
 # ------------------------------------------------------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
   serialized_data = AnimeSerializer(animes_dict.values(),many=True)
   return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def MakeContribution(request):
   user = GetWantedUser(request)
@@ -267,7 +272,7 @@ def MakeContribution(request):
 
 
 # endpoint for a reviewr to approve/decline a question contributed by other user/s
-@login_required
+#@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
   state = request.data["state"]
@@ -293,7 +298,7 @@ def ReviewContribution(request):
   return Response({"not expected response"},status=status.HTTP_200_OK)
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
   user = GetWantedUser(request)
@@ -317,7 +322,7 @@ def GetMyProfile(request):
       })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
   notifications=request.data["notifications"]
