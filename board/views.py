@@ -27,8 +27,8 @@ for anime in Anime.objects.all():
 
 
 def GetWantedUser(request):
-  #return request.user
-  username = "laura"
+  return request.user
+  username = "yara"
   return User.objects.get(username=username)
 
 
@@ -37,12 +37,12 @@ def Random():
 
 
 
-#@login_required
+@login_required
 def ReactApp(request):
   #return redirect("http://localhost:3000/home")
   return render(request, "index.html")
 
-#@login_required
+@login_required
 @api_view(["GET","POST"])
 def GetUserData(request):
   user =  GetWantedUser(request)
@@ -66,7 +66,7 @@ def GetUserData(request):
 
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 #Note :  we still have to figure out how many users will be shown in the dashboard
@@ -77,7 +77,7 @@ def GetDashBoard(request):
 
 # -------------------------------------- Test Handling functions ----------------------------------------
 
-#@login_required 
+@login_required 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
   print("\n endpoint hit \n")
@@ -99,7 +99,7 @@ def GetAvailableAnimes(request):
 
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetTest(request,game_anime):
   current_user =  GetWantedUser(request)
@@ -128,7 +128,7 @@ def GetTest(request,game_anime):
 
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def SubmitTest(request):
   user =  GetWantedUser(request)
@@ -192,14 +192,14 @@ def SubmitTest(request):
 
 # ------------------------------------------------------------------------------------
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
   serialized_data = AnimeSerializer(animes_dict.values(),many=True)
   return Response(serialized_data.data)
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def MakeContribution(request):
   user = GetWantedUser(request)
@@ -217,15 +217,15 @@ def MakeContribution(request):
       return True 
     return False 
 
-  ContributedQ=request.data["question"]
+  QuestionOBject = request.data["question"]
 
-  right_answer=ContributedQ["rightanswer"]
-  actualquestion = ContributedQ["question"].strip()
+  right_answer = QuestionOBject["rightanswer"].strip()
+  actualquestion = QuestionOBject["question"].strip()
 
-  c1=ContributedQ["choice1"].strip()
-  c2=ContributedQ["choice2"].strip()
-  c3=ContributedQ["choice3"].strip()
-  c4=right_answer.strip()
+  c1=QuestionOBject["choice1"].strip()
+  c2=QuestionOBject["choice2"].strip()
+  c3=QuestionOBject["choice3"].strip()
+  c4=right_answer
   
   # if CheckDuplicatChoices([c1,c2,c3,c4]):
   #   return JsonResponse({"message": f"choices can't have duplicates"})
@@ -272,7 +272,7 @@ def MakeContribution(request):
 
 
 # endpoint for a reviewr to approve/decline a question contributed by other user/s
-#@login_required
+@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
   state = request.data["state"]
@@ -298,7 +298,7 @@ def ReviewContribution(request):
   return Response({"not expected response"},status=status.HTTP_200_OK)
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
   user = GetWantedUser(request)
@@ -322,7 +322,7 @@ def GetMyProfile(request):
       })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
   notifications=request.data["notifications"]

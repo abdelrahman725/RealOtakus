@@ -285,6 +285,26 @@ button {
   width: 90%;
 }
 
+.notifications .notification {
+  border-radius: 3px;
+  text-align: left;
+  margin-bottom: 30px;
+  width: 60%;
+  color: black;
+  padding: 0px 10px;
+  padding-top: 10px;
+  padding-bottom: 25px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  position: relative;
+}
+
+.notifications .notification .notification_time {
+  position: absolute;
+  bottom: 0px;
+  font-size: small;
+}
+
 .pendingquestionscontainer .eachquestion, .reviewquestions .eachquestion {
   border-left: solid 20px;
   border-radius: 3px;

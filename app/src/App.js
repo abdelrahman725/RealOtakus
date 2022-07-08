@@ -32,23 +32,49 @@ function App() {
   const  socket_server = "ws://127.0.0.1:8000/ws/socket-server/"
   const  userdataurl = `${server}/home/data`
 
+
   // connect to django via web socket to recieve notifications once they are creaetd
 
   const mysocket = ()=>
   {
+    
     const socket_connection = new WebSocket(socket_server)
     socket_connection.onmessage = (e)=>{
       const data = JSON.parse(e.data)
+      
       if (data.payload) 
       {
-        const notification_received = data.payload  
-        notification_received&&(setnotifications([...notifications, notification_received]))
-        
-        setunseen_notifications(unseen_notifications?unseen_notifications+1:1)
         console.log(data.payload)
+        setunseen_notifications(data.unread)
+        
+        const notification_object_received = data.payload  
+        setnotifications(prev_notifications => [ notification_object_received,...prev_notifications])
+
       }
-      console.log(data)
+      else{
+        console.log(data)
+      }
     }
+  }
+
+
+
+  const GetUserData = async()=>
+  {
+    const res  = await fetch(userdataurl)
+    const data = await res.json()
+
+    if (!data.user_data.country)
+    {
+      getUserCountryViaApiServiceThenSaveCountry()
+    } 
+    
+    setUserData(data.user_data)
+    setunseen_notifications(data.unseencount)     
+
+    setnotifications(data.notifications)
+
+
   }
 
 
@@ -81,24 +107,6 @@ function App() {
   
   }
 
-
-  const GetUserData = async()=>
-  {
-    const res = await fetch(userdataurl)
-    const data= await res.json()
-
-    if (!data.user_data.country)
-    {
-      getUserCountryViaApiServiceThenSaveCountry()
-    } 
-    
-    setUserData(data.user_data)
-    setunseen_notifications(data.unseencount)
-    const notification = data.notifications[0]
-     
-
-    setnotifications(data.notifications)
-  }
 
   
   const ManageViews = (View)=>
@@ -139,14 +147,15 @@ function App() {
 
   useEffect(()=>{
     GetUserData()
-    //mysocket()
+    mysocket()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
 return (
  <div className="App">  
+ 
   {UserData&& <Bar data={UserData} show={ManageViews} notifications_count={unseen_notifications}/>}
-     
+   
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
     
@@ -164,8 +173,8 @@ return (
       { HomeView&& <TheDashBoard/>}
       
       { ProfileView && <UserProfile/>}
-      { NotificationsView && <Notifications notifications={notifications} setunseen_notifications={setunseen_notifications}/>}
 
+      { NotificationsView && <Notifications notifications={notifications} setunseen_notifications={setunseen_notifications}/>}
 
       { ContributionView && <Contripution />}
 

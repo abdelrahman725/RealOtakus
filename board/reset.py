@@ -1,5 +1,5 @@
 from board.models import *
-from time import sleep
+#from time import sleep
 
 # script for reseting state of the database by deleting any data used in testing
 
@@ -31,4 +31,4 @@ for q in questions:
 
 
 
-print(f"\n\ data created through manual testing of the app has been deleted sucessfully !\n")
+print(f"\n data created through manual testing of the app has been deleted sucessfully !\n")

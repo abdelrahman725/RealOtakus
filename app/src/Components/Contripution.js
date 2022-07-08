@@ -106,16 +106,13 @@ const Contripution = () => {
           select_animes.current.focus(); 
           return false;
         }
-
-
-    // making sure that all choices are different from each other
     
-        const unique_choices = new Set()        
-        for (const key in Question)
-        {
+    // removes leading and trailing spaces (before checking for duplicates)
+       const unique_choices = new Set()  
+       for (const key in Question)
           key!=="question"&& unique_choices.add(Question[key].trim())
-        }
-
+        
+  
         if (unique_choices.size !==4)
         {
           console.log("each choice must be unique")

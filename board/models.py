@@ -1,12 +1,10 @@
 from django.db import models
 from board import base_models
 
-from .consumer import NotificationConsumer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from time import sleep
 import threading
-
 
 
 def CreateNotification(user,content):
@@ -21,7 +19,6 @@ def NotifyReviewrs(anime):
 
 def NewApprovedQuestion(excluded_user,anime,questions_count):
   questions_count+=1
-  print("\n questions count : \n ",questions_count)
   if questions_count % 5 == 0:
     
     excludes = [excluded_user.pk,1]
@@ -147,16 +144,17 @@ class Game(base_models.Game):
     return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
 
 
+
 class Notification(base_models.Notification):
   def __str__(self):
     return f"{self.notification}"
 
 
   def save(self, *args, **kwargs):
+    super(Notification, self).save(*args, **kwargs)
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
       f'notifications_group_{self.owner.id}',{
         'type':'send_notifications',
-        'value':{ "notification": self.notification,"seen":self.seen}
+        'value':self
       })
-    super(Notification, self).save(*args, **kwargs)

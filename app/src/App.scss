@@ -286,14 +286,36 @@ margin-bottom: 50px;
 
 
 
-
-
-
 .userprofile{
   hr{
     margin-top: 60px;
     margin-bottom: 60px;
     width: 90%;
+  }
+}
+
+.notifications
+{
+
+  .notification
+  {
+
+    border-radius: 3px;
+    text-align: left;
+    margin-bottom: 30px;
+    width: 60%;
+    color:black;
+    padding:0px 10px;
+    padding-top: 10px;
+    padding-bottom: 25px;
+    box-shadow: $base-shadow ;
+    position: relative;
+    .notification_time
+    {
+      position: absolute;
+      bottom: 0px;
+      font-size: small;
+    }
   }
 }
 
