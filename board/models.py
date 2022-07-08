@@ -141,7 +141,7 @@ class Question(base_models.Question):
 class Game(base_models.Game):
 
   def __str__(self):
-    return f"{self.game_owner} has {self.gamesnumber} tests for {self.anime}"
+    return f"{self.game_owner} had {self.gamesnumber} gamees for {self.anime}"
 
 
 

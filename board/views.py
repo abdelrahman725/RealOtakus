@@ -9,7 +9,6 @@ from rest_framework import status
 
 import json
 import random
-from datetime import datetime
 from time import sleep
 
 from .models import *
@@ -225,25 +224,14 @@ def MakeContribution(request):
   c1=QuestionOBject["choice1"].strip()
   c2=QuestionOBject["choice2"].strip()
   c3=QuestionOBject["choice3"].strip()
-  c4=right_answer
+  
+  choices = [c1,right_answer,c2,c3]
+  random.shuffle(choices)
+
   
   # if CheckDuplicatChoices([c1,c2,c3,c4]):
   #   return JsonResponse({"message": f"choices can't have duplicates"})
 
-
-  random_number = Random()
-
-  if random_number == 1:
-    c4=c3
-    c3=right_answer
-  
-  if random_number == 2:
-    c4=c2
-    c2=right_answer
-
-  if random_number == 3:
-    c4=c1
-    c1=right_answer
 
 
   # check if the contributer user is already a reviewer of the anime associated with the question 
@@ -255,7 +243,7 @@ def MakeContribution(request):
 
   try:
     Question.objects.create(anime=anime,contributor= user,approved=is_anime_reviewr,
-    question=actualquestion,right_answer=right_answer,choice1=c1,choice2=c2,choice3=c3,choice4=c4)
+    question=actualquestion,right_answer=right_answer,choice1=choices[0],choice2=choices[1],choice3=choices[2],choice4=choices[3])
     if is_anime_reviewr:
       return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
@@ -280,7 +268,7 @@ def ReviewContribution(request):
   question = Question.objects.filter(pk=q_id)
   
   if not question.exists():
-    return Response({"sorry this question doesn't exist"},status=status.HTTP_404_NOT_FOUND)
+    return Response({"sorry this question doesn't exist anymore"},status=status.HTTP_404_NOT_FOUND)
 
   question = question[0]
 
@@ -292,7 +280,7 @@ def ReviewContribution(request):
 
   if state =="decline":
     question.delete()
-    return Response({"question got declined and delted successfully"},status=status.HTTP_200_OK)
+    return Response({"question got declined and deleted successfully"},status=status.HTTP_200_OK)
 
   
   return Response({"not expected response"},status=status.HTTP_200_OK)
@@ -325,10 +313,10 @@ def GetMyProfile(request):
 @login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
-  notifications=request.data["notifications"]
 
-  for notification_id in notifications:
-    Notification.objects.filter(pk=notification_id).update(seen=True)
+  unseen_notifications=request.data["notifications"]
+
+  Notification.objects.filter(pk__in=unseen_notifications).update(seen=True)
 
   return Response({"notifications state updated successfully"},status=status.HTTP_201_CREATED)
 

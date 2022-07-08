@@ -8,17 +8,14 @@ const Notifications = ({notifications,setunseen_notifications}) => {
   
   const {server} = useContext(ServerContext)  
   const CsrfToken = getCookie('csrftoken')
-  const [loading,setloading]= useState()
+  //const [loading,setloading]= useState()
+
 
 useEffect(()=>{
 
-
   setunseen_notifications(0)
-
 //updating the loaded notifications in the backend(seen by the user in the  UI) from unseen to seen 
- 
 
-  // array of the unseen (new) notifications
   const new_notifications=[]
   
   notifications.map((n)=>(
