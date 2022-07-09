@@ -19,7 +19,6 @@ function App() {
   
   const [NotificationsView,setNotificationsView]= useState()
   const [notifications,setnotifications] = useState()
-  const [unseen_notifications,setunseen_notifications] = useState()
   
   const [HomeView,setHomeView] = useState(true)
   const [ContributionView,setContributionView]= useState(false)
@@ -32,6 +31,7 @@ function App() {
   const  socket_server = "ws://127.0.0.1:8000/ws/socket-server/"
   const  userdataurl = `${server}/home/data`
 
+  
 
   // connect to django via web socket to recieve notifications once they are creaetd
 
@@ -45,8 +45,19 @@ function App() {
       if (data.payload) 
       {
         console.log(data.payload)
-        setunseen_notifications(data.unread)
-        
+        const increment_notifications=()=>{
+  
+          let notification_counter = document.getElementById("notifications_count")
+          if (notification_counter.innerHTML ==="")
+          {
+            notification_counter.innerHTML = 1
+          }
+          else{
+            notification_counter.innerHTML = parseInt(notification_counter.innerHTML) +1
+          }
+        }
+
+        increment_notifications()       
         const notification_object_received = data.payload  
         setnotifications(prev_notifications => [ notification_object_received,...prev_notifications])
 
@@ -70,13 +81,14 @@ function App() {
     } 
     
     setUserData(data.user_data)
-    setunseen_notifications(data.unseencount)     
-
     setnotifications(data.notifications)
-
+    
+    if (data.unseencount > 0)
+    {
+      document.getElementById("notifications_count").innerHTML = data.unseencount
+    }
 
   }
-
 
   // called if the user doesn't have a saved country (which is always the case initially for the first logged)
   const getUserCountryViaApiServiceThenSaveCountry = async()=>
@@ -106,7 +118,6 @@ function App() {
 
   
   }
-
 
   
   const ManageViews = (View)=>
@@ -148,17 +159,19 @@ function App() {
   useEffect(()=>{
     GetUserData()
     mysocket()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps    
   },[])
+
+
 
 return (
  <div className="App">  
  
-  {UserData&& <Bar data={UserData} show={ManageViews} notifications_count={unseen_notifications}/>}
+  {UserData&& <Bar data={UserData} show={ManageViews} />}
    
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
-    
+    <h1 id="id"></h1>
 
       <div className="upperbuttons">
 
@@ -174,7 +187,7 @@ return (
       
       { ProfileView && <UserProfile/>}
 
-      { NotificationsView && <Notifications notifications={notifications} setunseen_notifications={setunseen_notifications}/>}
+      { NotificationsView && <Notifications notifications={notifications}/>}
 
       { ContributionView && <Contripution />}
 

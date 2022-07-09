@@ -4,7 +4,7 @@ import getCookie from "../GetCookie"
 import { ServerContext } from "../App"
 
 
-const Notifications = ({notifications,setunseen_notifications}) => {
+const Notifications = ({notifications}) => {
   
   const {server} = useContext(ServerContext)  
   const CsrfToken = getCookie('csrftoken')
@@ -13,9 +13,11 @@ const Notifications = ({notifications,setunseen_notifications}) => {
 
 useEffect(()=>{
 
-  setunseen_notifications(0)
-//updating the loaded notifications in the backend(seen by the user in the  UI) from unseen to seen 
+// clears unseen_notifcations count after user view them
+  document.getElementById("notifications_count").innerHTML =""
 
+  
+//updating the loaded notifications in the backend(seen by the user in the  UI) from unseen to seen 
   const new_notifications=[]
   
   notifications.map((n)=>(

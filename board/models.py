@@ -82,7 +82,7 @@ class Question(base_models.Question):
         # then it's his first approved contribution
         if user.contributions_count == 0 and user.contributor ==False:
           user.contributor = True
-          msg = f"congratulations your question for {self.anime} ({self.question[:30]}) got  approved,you are an official Otaku contributor now ! "
+          msg = f"congratulations your question for {self.anime} ({self.question[:30]}) got  approved,you are an official Otaku contributor now !"
           CreateNotification(user,msg)
 
         # subsequent approved contributions 
@@ -149,8 +149,8 @@ class Notification(base_models.Notification):
   def __str__(self):
     return f"{self.notification}"
 
-
   def save(self, *args, **kwargs):
+    
     super(Notification, self).save(*args, **kwargs)
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(

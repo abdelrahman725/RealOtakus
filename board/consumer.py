@@ -26,7 +26,7 @@ class NotificationConsumer(WebsocketConsumer):
     
   def send_notifications(self,event):
     notification_object = NotificationsSerializer(event.get("value"))
-    unread_notifications = Notification.objects.filter(owner=self.scope["user"],seen=False).count()
-    self.send(text_data=json.dumps({"payload": notification_object.data ,"unread":unread_notifications}))
+    #unread_notifications = Notification.objects.filter(owner=self.scope["user"],seen=False).count()
+    self.send(text_data=json.dumps({"payload": notification_object.data}))
 
     

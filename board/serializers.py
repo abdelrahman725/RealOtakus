@@ -14,19 +14,11 @@ class AllUserInfo_Serializer(serializers.ModelSerializer):
     fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count')
 
 
-class DashBoardSerializer(serializers.ModelSerializer):
+class LeaderBoradSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ('username','points','level','country','contributions_count')
 
-
-
-class AnimeQuizSerializer(serializers.ModelSerializer):
-  approved_questions=serializers.IntegerField()
-  class Meta:
-    model = Anime
-    fields = ("id","anime_name","approved_questions")
-    
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -35,12 +27,26 @@ class AnimeSerializer(serializers.ModelSerializer):
     fields = ("id","anime_name")
 
 
+  
+class AnimeQuestionsSerializer(serializers.ModelSerializer):
+  approved_questions = serializers.IntegerField()
+  class Meta:
+    model = Anime
+    fields = ("id","anime_name","approved_questions")
+    
 
 
 class AnimeNameSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime 
     fields = ("anime_name",)
+
+
+class AnimeContributionsSerializer(serializers.ModelSerializer):
+  anime = AnimeNameSerializer() 
+  class Meta:
+    model = Game
+    fields = ("contributions","anime")
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -60,21 +66,15 @@ class PendingQuestionsSerializer(serializers.ModelSerializer):
 
 
 class GameSerializer(serializers.ModelSerializer):
+  anime = AnimeNameSerializer() 
   class Meta:
     model = Game
     fields = ("anime","gamesnumber")
 
 
-
-
-class AnimeContributionsSerializer(serializers.ModelSerializer):
-  anime = AnimeNameSerializer() 
-  class Meta:
-    model = Game
-    fields = ("contributions","anime")
     
-
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta: 
     model = Notification
     fields = ("id","notification","time","seen")
+    

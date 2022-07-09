@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import *
 
 @admin.register(User)
-class User_info(admin.ModelAdmin):
+class User_admin(admin.ModelAdmin):
   list_display = ("id","username","points","country","contributor","contributions_count")
   list_filter  =  ("level","contributor","country")
   filter_horizontal = ("animes_to_review",)
@@ -10,20 +10,24 @@ class User_info(admin.ModelAdmin):
   
 
 @admin.register(Question)
-class QuestionInfo(admin.ModelAdmin):
-  list_display  =  ("anime","question","contributor","approved")
-  list_filter   =  ("anime","contributor","approved",)
-  search_fields =  ("question",)
+class Question_admin(admin.ModelAdmin):
+  readonly_fields =  ("correct_answers","wrong_answers")
+  list_display    =  ("anime","question","contributor","approved")
+  list_filter     =  ("anime","contributor","approved",)
+  search_fields   =  ("question",)
 
 
 @admin.register(Anime)
-class AnimeInfo(admin.ModelAdmin):
-  list_display = ("anime_name","id")
+class Anime_admin(admin.ModelAdmin):
+  def has_change_permission(self, request, obj=None):
+      return False
+
+  list_display = ("anime_name","id") 
   search_fields = ("anime_name",)
 
 
 @admin.register(Game)
-class GameInfo(admin.ModelAdmin):
+class Game_admin(admin.ModelAdmin):
   def has_change_permission(self, request, obj=None):
         return False
 
@@ -32,7 +36,7 @@ class GameInfo(admin.ModelAdmin):
 
 
 @admin.register(Notification)
-class Notifications(admin.ModelAdmin):
+class Notification_admin(admin.ModelAdmin):
   def has_change_permission(self, request, obj=None):
         return False
       

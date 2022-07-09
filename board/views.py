@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
-from django.http import  JsonResponse
 from django.db import connection, IntegrityError
 from django.db.models import Count,Q
+from django.shortcuts import render, redirect
+from django.http import  JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -69,9 +69,16 @@ def GetUserData(request):
 @api_view(["GET"])
 def GetDashBoard(request):
 #Note :  we still have to figure out how many users will be shown in the dashboard
+
   otakus = User.objects.exclude(pk=1).order_by('-points')
-  serialized_data = DashBoardSerializer(otakus,many=True)
-  return Response(serialized_data.data)
+  animes_with_questions_count = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True)))
+  
+  LeaderBorad  = LeaderBoradSerializer(otakus,many=True)
+  AnimesQuestionsINfo  = AnimeQuestionsSerializer(animes_with_questions_count,many=True)
+  
+  return Response({
+    "leaderboard":LeaderBorad.data,
+    "animes":AnimesQuestionsINfo.data})
 
 
 # -------------------------------------- Test Handling functions ----------------------------------------
@@ -79,7 +86,7 @@ def GetDashBoard(request):
 @login_required 
 @api_view(["GET"])
 def GetAvailableAnimes(request):
-  print("\n endpoint hit \n")
+
   user = GetWantedUser(request)
   animes_with_questions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(approved_questions__gte=5)
   
@@ -87,7 +94,7 @@ def GetAvailableAnimes(request):
   for game in Game.objects.filter(game_owner=user):
     user_games_dict[game.anime.id] = game.gamesnumber
 
-  serialized_animes = AnimeQuizSerializer(animes_with_questions,many=True)
+  serialized_animes = AnimeQuestionsSerializer(animes_with_questions,many=True)
 
 
 
@@ -323,4 +330,3 @@ def UpdateNotificationsState(request):
 
 # str_repr = repr()
 # connection.queries:
-

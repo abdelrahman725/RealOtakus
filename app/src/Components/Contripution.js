@@ -129,11 +129,11 @@ const Contripution = () => {
 
   }
 
- 
+
+  
   useEffect(()=>{ 
     GetAllAnimes()
   },[])
-
 
 
   return (
@@ -152,42 +152,36 @@ const Contripution = () => {
         <br /><br />
 
 
-     <textarea name="question" cols="30" rows="3" typeof="text" maxLength="300"
-     value={Question.question}
-       onChange={handlechange}  
-        required placeholder="what is the question?" >
+       <textarea name="question" cols="30" rows="3" typeof="text" maxLength="300"
+        value={Question.question}
+        onChange={handlechange} required placeholder="what is the question?" >
        </textarea><br />
 
-     <textarea name="rightanswer" cols="30" rows="3" typeof="text" maxLength="150"
-     value={Question.rightanswer} ref={input_2} 
-     onChange={handlechange} required placeholder="right answer">
+       <textarea name="rightanswer" cols="30" rows="3" typeof="text" maxLength="150"
+        value={Question.rightanswer} ref={input_2} 
+        onChange={handlechange} required placeholder="right answer">
        </textarea><br />
   
 
      <h3>choices<span> (wrong answers)</span></h3>
-
    
-
        <textarea name="choice1" cols="30" rows="3" typeof="text" maxLength="150"
         value={Question.choice1} ref={input_3}
-        onChange={handlechange} 
-        required placeholder="choice 1">
+        onChange={handlechange}  required placeholder="choice 1">
        </textarea><br />
     
        <textarea name="choice2" cols="30" rows="3" typeof="text" maxLength="150"
-        value={Question.choice2}  ref={input_4}
-        onChange={handlechange} 
-       required placeholder="choice 2">
+        value={Question.choice2} ref={input_4}
+        onChange={handlechange}  required placeholder="choice 2">
        </textarea><br />
     
        <textarea name="choice3" cols="30" rows="3" typeof="text" maxLength="150"
-       value={Question.choice3}  ref={input_5}
-        onChange={handlechange} 
-       required placeholder="choice 3">
+        value={Question.choice3} ref={input_5}
+        onChange={handlechange}  required placeholder="choice 3">
        </textarea><br />
 
       <br />
-      <button type="submit" ref={submit_btn}>submit question </button>
+      <button type="submit" ref={submit_btn}>submit question</button>
 
 
       </div>

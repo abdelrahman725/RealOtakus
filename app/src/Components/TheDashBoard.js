@@ -1,27 +1,32 @@
 import Competitor from "./Competitor"
 import { useEffect,useState,useContext } from "react"
 import { ServerContext } from "../App"
+
 const TheDashBoard = () => {
 
   const {server} = useContext(ServerContext)
   const dashboardurl = `${server}/home/dashboard`
 
   const[otakus,setotakus] = useState()
+  const[animes_questions_info,setanimes_questions_info] = useState()
+
 
   const GetDashbBoard = async()=>
   {
     const res = await fetch(dashboardurl)
-    const otakus= await res.json()
-    setotakus(otakus)
+    const dashboard = await res.json()
+    setotakus(dashboard.leaderboard)
+    setanimes_questions_info(dashboard.animes)
+    //console.log(dashboard.animes)
     
     //setTimeout(()=>{
     //},1000)
   }
 
-
   useEffect(()=>{
     GetDashbBoard()
   },[])
+
 return (
   <div className="container">
   

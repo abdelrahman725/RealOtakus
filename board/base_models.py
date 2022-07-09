@@ -26,8 +26,9 @@ class User(AbstractUser):
     ('advanced', 'advanced'),
     ('realOtaku', 'realOtaku'),]
 
-  level = models.CharField(
-    choices=level_options,max_length=12,default="beginner")
+  max_level_length = max([len(level[0]) for level in level_options])
+
+  level = models.CharField(choices=level_options,max_length = max_level_length, default=level_options[0])
 
   class Meta:
     abstract = True
@@ -57,7 +58,7 @@ class Game(models.Model):
   score =models.PositiveIntegerField(default=0)
   gamesnumber = models.PositiveIntegerField(default=0)
   contributions = models.PositiveIntegerField(default=0)
-  review = models.TextField(null=True,blank=True)    
+ 
   class Meta:
       abstract = True
 
