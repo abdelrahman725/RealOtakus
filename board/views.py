@@ -7,7 +7,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-import json
 import random
 from time import sleep
 
@@ -31,10 +30,6 @@ def GetWantedUser(request):
   return User.objects.get(username=username)
 
 
-def Random():
-  return random.randint(1, 4)
-
-
 
 @login_required
 def ReactApp(request):
@@ -46,16 +41,17 @@ def ReactApp(request):
 def GetUserData(request):
   user =  GetWantedUser(request)
 
-  
   if request.method == "POST":
     user.country = request.data["country"]
     user.save()
     return Response({"countrycreated"},status=status.HTTP_201_CREATED)
-  
-  serialized_basic_data = BasicUserSerializer(user,many=False)
 
-  serialized_notifications= NotificationsSerializer(Notification.objects.filter(owner=user).order_by('-id') ,many=True)
-  unread_notifications = Notification.objects.filter(owner=user,seen=False).count()
+
+  serialized_basic_data = BasicUserSerializer(user,many=False)
+  user_notifications = user.getnotifications.all().order_by('-id')
+
+  serialized_notifications= NotificationsSerializer(user_notifications ,many=True)
+  unread_notifications = len([notification  for notification in user_notifications if not notification.seen])
 
   return Response({
      "user_data": serialized_basic_data.data,
@@ -68,10 +64,12 @@ def GetUserData(request):
 @login_required
 @api_view(["GET"])
 def GetDashBoard(request):
-#Note :  we still have to figure out how many users will be shown in the dashboard
 
+#Note :  we still have to figure out how many users will be shown in the dashboard
   otakus = User.objects.exclude(pk=1).order_by('-points')
-  animes_with_questions_count = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=Q(anime_questions__approved=True)))
+
+  animes_with_questions_count = Anime.objects.annotate(approved_questions=Count("anime_questions",
+  filter=Q(anime_questions__approved=True))).order_by("-anime_questions")
   
   LeaderBorad  = LeaderBoradSerializer(otakus,many=True)
   AnimesQuestionsINfo  = AnimeQuestionsSerializer(animes_with_questions_count,many=True)
@@ -79,6 +77,8 @@ def GetDashBoard(request):
   return Response({
     "leaderboard":LeaderBorad.data,
     "animes":AnimesQuestionsINfo.data})
+
+
 
 
 # -------------------------------------- Test Handling functions ----------------------------------------
@@ -198,6 +198,9 @@ def SubmitTest(request):
 
 # ------------------------------------------------------------------------------------
 
+
+
+
 @login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
@@ -249,8 +252,13 @@ def MakeContribution(request):
 
 
   try:
-    Question.objects.create(anime=anime,contributor= user,approved=is_anime_reviewr,
-    question=actualquestion,right_answer=right_answer,choice1=choices[0],choice2=choices[1],choice3=choices[2],choice4=choices[3])
+    Question.objects.create(
+      anime=anime,contributor= user,
+      approved=is_anime_reviewr,
+      question=actualquestion,right_answer=right_answer,
+      choice1=choices[0],choice2=choices[1],
+      choice3=choices[2],choice4=choices[3])
+    
     if is_anime_reviewr:
       return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
@@ -325,7 +333,7 @@ def UpdateNotificationsState(request):
 
   Notification.objects.filter(pk__in=unseen_notifications).update(seen=True)
 
-  return Response({"notifications state updated successfully"},status=status.HTTP_201_CREATED)
+  return Response({f"notifications state of {request.user.username} are updated successfully"},status=status.HTTP_201_CREATED)
 
 
 # str_repr = repr()

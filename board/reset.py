@@ -3,14 +3,14 @@ from board.models import *
 
 # script for reseting state of the database by deleting any data used in testing
 
-
-users = User.objects.exclude(pk=1)
+admin = User.objects.get(username="admin",is_superuser=True)
+users = User.objects.exclude(pk=admin.pk)
 questions = Question.objects.all()
 Game.objects.all().delete()
 
 Notification.objects.all().delete()
 
-Question.objects.exclude(contributor=User.objects.get(username="admin",pk=1,is_superuser=True)).delete()
+Question.objects.exclude(contributor=admin).delete()
 
 for user in users:
   user.points=0

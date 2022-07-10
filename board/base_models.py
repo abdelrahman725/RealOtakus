@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
-  
+
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
   url = models.CharField(max_length=300,default="/")
@@ -35,18 +35,21 @@ class User(AbstractUser):
 
 
 class Question(models.Model):
-  anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions",null=True)
+  anime  = models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_questions")
   contributor = models.ForeignKey(User,on_delete=models.SET_NULL,related_name="contributions",null=True,blank=True,default=1)
-  advanced =  models.BooleanField(default=False)
-  question =  models.TextField(blank=False,unique=True,max_length=300)
-  choice1  =  models.TextField(blank=False,null=True,max_length=150)
-  choice2  =  models.TextField(blank=False,null=True,max_length=150)
-  choice3  =  models.TextField(blank=False,null=True,max_length=150)
-  choice4  =  models.TextField(blank=False,null=True,max_length=150)
-  right_answer = models.TextField(blank=False,null=True,max_length=150)
+
+  question =  models.TextField(max_length=300,unique=True)
+  choice1  =  models.TextField(max_length=150)
+  choice2  =  models.TextField(max_length=150)
+  choice3  =  models.TextField(max_length=150)
+  choice4  =  models.TextField(max_length=150)
+  right_answer = models.TextField(max_length=150)
+
   approved = models.BooleanField(default=True)
+
   correct_answers= models.PositiveIntegerField(default=0)
   wrong_answers= models.PositiveIntegerField(default=0)  
+  advanced =  models.BooleanField(default=False)
   
   class Meta:
       abstract = True
@@ -54,8 +57,8 @@ class Question(models.Model):
 
 class Game(models.Model):
   game_owner = models.ForeignKey(User,on_delete=models.CASCADE,related_name="get_games")
-  anime =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_game")
-  score =models.PositiveIntegerField(default=0)
+  anime =  models.ForeignKey(Anime,on_delete=models.CASCADE,related_name="anime_games")
+  score = models.PositiveIntegerField(default=0)
   gamesnumber = models.PositiveIntegerField(default=0)
   contributions = models.PositiveIntegerField(default=0)
  
