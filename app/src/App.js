@@ -82,18 +82,19 @@ function App() {
     
     setUserData(data.user_data)
     setnotifications(data.notifications)
+  
+    const unseen_count = data.notifications.filter(n => !n.seen).length
     
-    if (data.unseencount > 0)
-    {
-      document.getElementById("notifications_count").innerHTML = data.unseencount
+    if (unseen_count > 0){
+      document.getElementById("notifications_count").innerHTML = unseen_count
     }
 
   }
 
-  // called if the user doesn't have a saved country (which is always the case initially for the first logged)
+  // called if the user doesn't have a saved country (which will always be the case initially for the first login)
   const getUserCountryViaApiServiceThenSaveCountry = async()=>
   {
-    // after we got the country successfully we save it to the database so subsequent requests for the same user don't have to query the country from the api service again
+    // after we get the country successfully we save it to the database so subsequent requests for the same user don't have to query the country from the api service again
 
     const res = await fetch("http://ip-api.com/json")
     const data = await res.json()
@@ -171,7 +172,7 @@ return (
    
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
-    <h1 id="id"></h1>
+
 
       <div className="upperbuttons">
 

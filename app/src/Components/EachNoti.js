@@ -1,8 +1,8 @@
 const EachNoti = ({noti,time}) => {
 
 //this function does the following
-// convert utc time (fetched from the server) to browswer local time
-// convert the 24 hours to am/pm format
+// convert utc time (fetched from the server) to browser local time
+// convert the 24 hours format to am/pm format
 // uses the same format as youtube and other popular social media
 
 const UTCToLocalTime = (utc_time)=>{

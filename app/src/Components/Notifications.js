@@ -17,14 +17,13 @@ useEffect(()=>{
   document.getElementById("notifications_count").innerHTML =""
 
   
-//updating the loaded notifications in the backend(seen by the user in the  UI) from unseen to seen 
+//update notifications state in the backend (which are seen by the user in the  UI) from unseen to seen 
   const new_notifications=[]
   
   notifications.map((n)=>(
     !n.seen&&new_notifications.push(n.id) 
   ))
   
-
 
   const UpdateNotificationsState = async(notifications)=>{
 
@@ -40,7 +39,7 @@ useEffect(()=>{
     })
 
     const res  = await send.json()
-    //console.log(res)
+    console.log(res)
 
     }
 

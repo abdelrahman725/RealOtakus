@@ -48,17 +48,13 @@ def GetUserData(request):
 
 
   serialized_basic_data = BasicUserSerializer(user,many=False)
-  user_notifications = user.getnotifications.all().order_by('-id')
 
-  serialized_notifications= NotificationsSerializer(user_notifications ,many=True)
-  unread_notifications = len([notification  for notification in user_notifications if not notification.seen])
+  serialized_notifications= NotificationsSerializer(user.getnotifications.all().order_by('-id') ,many=True)
 
   return Response({
      "user_data": serialized_basic_data.data,
-     "notifications": serialized_notifications.data,
-     "unseencount" :unread_notifications
+     "notifications": serialized_notifications.data
     })
-
 
 
 @login_required
@@ -77,7 +73,6 @@ def GetDashBoard(request):
   return Response({
     "leaderboard":LeaderBorad.data,
     "animes":AnimesQuestionsINfo.data})
-
 
 
 

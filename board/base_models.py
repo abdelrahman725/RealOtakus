@@ -47,8 +47,8 @@ class Question(models.Model):
 
   approved = models.BooleanField(default=True)
 
-  correct_answers= models.PositiveIntegerField(default=0)
-  wrong_answers= models.PositiveIntegerField(default=0)  
+  correct_answers = models.PositiveIntegerField(default=0)
+  wrong_answers = models.PositiveIntegerField(default=0)  
   advanced =  models.BooleanField(default=False)
   
   class Meta:
