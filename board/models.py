@@ -31,6 +31,7 @@ def NewApprovedQuestion(excluded_user,anime,questions_count):
 
   
 class Anime(base_models.Anime):
+
   class Meta:
     ordering=["id"]
     
@@ -56,11 +57,16 @@ class User(base_models.User):
 
   class Meta:
     ordering = ["-points"]
+  
   def __str__(self):
     return self.username
 
 
 class Question(base_models.Question):
+  
+  class Meta:
+    ordering=["-id"]
+  
   previous_status = None
 
   def __init__(self,*args, **kwargs):
@@ -139,13 +145,16 @@ class Question(base_models.Question):
 
 
 class Game(base_models.Game):
+  
+  class Meta:
+    ordering=["-id"]
 
   def __str__(self):
     return f"{self.game_owner} had {self.gamesnumber} gamees for {self.anime}"
 
 
-
 class Notification(base_models.Notification):
+
   def __str__(self):
     return f"{self.notification}"
 

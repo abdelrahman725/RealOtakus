@@ -7,12 +7,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-import random
 from time import sleep
+import random
 
 from .models import *
 from .serializers import *
 from .helpers import login_required 
+from .constants import QUESTIONSCOUNT,INTERMEDIATE_POINTS,ADVANCED_POINTS,REALOTAKU_POINTS
 
 animes_dict = {}
 
@@ -49,7 +50,7 @@ def GetUserData(request):
 
   serialized_basic_data = BasicUserSerializer(user,many=False)
 
-  serialized_notifications= NotificationsSerializer(user.getnotifications.all().order_by('-id') ,many=True)
+  serialized_notifications= NotificationsSerializer(user.getnotifications.all() ,many=True)
 
   return Response({
      "user_data": serialized_basic_data.data,
@@ -83,7 +84,7 @@ def GetDashBoard(request):
 def GetAvailableAnimes(request):
 
   user = GetWantedUser(request)
-  animes_with_questions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(approved_questions__gte=5)
+  animes_with_questions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(approved_questions__gte=QUESTIONSCOUNT)
   
   user_games_dict={}
   for game in Game.objects.filter(game_owner=user):
@@ -110,10 +111,10 @@ def GetTest(request,game_anime):
 
   CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
 
-  index = CurrentGame.gamesnumber * 5
+  index = CurrentGame.gamesnumber * QUESTIONSCOUNT
 
 #this game questions
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+5]
+  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+QUESTIONSCOUNT]
 
   CurrentGame.gamesnumber+=1
   game[current_user.id] = CurrentGame
@@ -151,25 +152,31 @@ def SubmitTest(request):
     Q.save()
   
 
-
-  def CheckLevel(user,user_points):
-    
-    previous_level = user.level
-    if user_points >=5000:
-      user.level = "realOtaku" 
-
-    elif user_points >= 3000:
-      user.level  = "advanced"
-    elif user_points >= 1000:
-      user.level = "intermediate"
-
-    # level up the user by pushing a notfication 
-    if previous_level != user.level :
-      Notification.objects.create(owner=user,notification=f"Level up to {user.level}! good work")
-
-
-  CheckLevel(user,user.points)
   
+  
+  def CheckLevel():
+        
+    if user.points >= REALOTAKU_POINTS:
+      user.level = "realOtaku" 
+       
+
+    elif user.points >= ADVANCED_POINTS:
+      user.level  = "advanced"
+       
+    
+    elif user.points >= INTERMEDIATE_POINTS:
+      user.level = "intermediate"
+      
+    else:
+      return 
+
+  # notify the user only if there's a level up 
+    Notification.objects.create(owner=user,notification=f"Level up to {user.level}! good work")
+  
+
+  CheckLevel()
+
+
   user.tests_completed+=1
   CurrentGame= game[user.id]
   CurrentGame.score += test_score
@@ -192,7 +199,6 @@ def SubmitTest(request):
 
 
 # ------------------------------------------------------------------------------------
-
 
 
 
@@ -302,10 +308,10 @@ def GetMyProfile(request):
   user = GetWantedUser(request)
 
   my_data = AllUserInfo_Serializer(user,many=False)
-  pending_contributions = PendingQuestionsSerializer(user.contributions.filter(approved=False).order_by("-id"),many=True)
+  pending_contributions = PendingQuestionsSerializer(user.contributions.filter(approved=False),many=True)
 
 #contributed questions by other users for the current user to review and approve if any  
-  questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=user.animes_to_review.all()).order_by("-id"),many=True)
+  questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=user.animes_to_review.all()),many=True)
   
 # animes with contributed questions made by current user : 
   contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
