@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from .constants import *
 
 
 class Anime(models.Model):
@@ -20,15 +21,10 @@ class User(AbstractUser):
   contributions_count = models.PositiveIntegerField(default=0)
   animes_to_review = models.ManyToManyField(Anime,related_name="reviewers",blank=True)
 
-  level_options = [
-    ('beginner', 'beginner'),
-    ('intermediate', 'intermediate'),
-    ('advanced', 'advanced'),
-    ('realOtaku', 'realOtaku'),]
 
-  max_level_length = max([len(level[0]) for level in level_options])
-
-  level = models.CharField(choices=level_options,max_length = max_level_length, default=level_options[0])
+  level = models.CharField(choices = LEVELS_OPTIONS,
+  max_length = MAX_LEVEL_LENGTH,
+  default = LEVELS[0])
 
   class Meta:
     abstract = True

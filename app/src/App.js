@@ -27,6 +27,9 @@ function App() {
 
   const [GameMode,setGameMode] = useState(false)
   
+  const NUMBER_OF_QUIZ_QUESTIONS = 5 
+
+  
   const  server  = "http://127.0.0.1:8000"
   const  socket_server = "ws://127.0.0.1:8000/ws/socket-server/"
   const  userdataurl = `${server}/home/data`
@@ -171,7 +174,7 @@ return (
   {UserData&& <Bar data={UserData} show={ManageViews} />}
    
   <ServerContext.Provider value={{server}}>
-  <GamdeModeContext.Provider value={{GameMode, setGameMode, setUserData}}>
+  <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData,}}>
 
 
       <div className="upperbuttons">
@@ -194,7 +197,6 @@ return (
 
       { AnimesChoicesView&& <Animes/>}
 
-  
   </GamdeModeContext.Provider>
   </ServerContext.Provider>
   </div>

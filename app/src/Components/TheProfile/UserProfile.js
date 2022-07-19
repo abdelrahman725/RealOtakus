@@ -11,6 +11,8 @@ export const UserProfile = () => {
   const profileurl  = `${server}/home/profile`
 
   const[mydata,setmydata]= useState()
+  const[UserContributions,setUserContributions]= useState()
+
   const[pendingContributions,setpendingcontributions]= useState()
   const[questionsForReview,setquestionsForReview]= useState()
   const[animes,setanimes]= useState()
@@ -39,9 +41,11 @@ export const UserProfile = () => {
 
       setanimes(data.animes_with_contributions)
       setpendingcontributions(data.PendingContributions)
+      setUserContributions(data.UserContributions)
       setquestionsForReview(data.questionsForReview)
-        
+      
       setloading(false)
+      console.log(data.PendingContributions)
 
   }
 

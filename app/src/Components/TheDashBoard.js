@@ -17,7 +17,7 @@ const TheDashBoard = () => {
     const dashboard = await res.json()
     setotakus(dashboard.leaderboard)
     setanimes_questions_info(dashboard.animes)
-    //console.log(dashboard.animes)
+    console.log(dashboard.animes)
     
     //setTimeout(()=>{
     //},1000)

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.html import format_html
+from django.db.models import Count
 
 from .models import *
 from .constants import QUESTIONSCOUNT
@@ -15,8 +16,8 @@ class User_admin(admin.ModelAdmin):
   list_display = ("id","username","points","contributor","contributions_count","score")
   list_filter  =  ("level","contributor","country")
   filter_horizontal = ("animes_to_review",)
-  search_fields = ("username",)
-
+  search_fields = ("username__startswith",)
+  
   def score(self, obj):
     from django.db.models import Sum
     games = Game.objects.filter(game_owner=obj).aggregate(Sum("score"),Sum("gamesnumber"))
@@ -28,18 +29,15 @@ class User_admin(admin.ModelAdmin):
 
 @admin.register(Anime)
 class Anime_admin(admin.ModelAdmin):
-  list_display = ("anime_name","pending_questions","approved_questions") 
-  search_fields = ("anime_name",)
+  list_display = ("anime_name","total_questions","approved_questions","pending_questions") 
+
+  search_fields = ("anime_name__startswith",)
+
+
 
   def has_change_permission(self, request, obj=None):
       return False
   
-  def approved_questions(self, obj):
-    return obj.anime_questions.filter(approved=True).count()
-
-  def pending_questions(self, obj):
-    return obj.anime_questions.filter(approved=False).count()
-    
 
 @admin.register(Question)
 class Question_admin(admin.ModelAdmin):
@@ -62,7 +60,6 @@ class Question_admin(admin.ModelAdmin):
   view_anime_link.short_description = "anime"
 
     
-
 @admin.register(Game)
 class Game_admin(admin.ModelAdmin):
   list_display = ("anime","game_owner_link","gamesnumber","score","contributions")

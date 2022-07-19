@@ -34,7 +34,20 @@ class Anime(base_models.Anime):
 
   class Meta:
     ordering=["id"]
+  
+  @property
+  def approved_questions(self):
+    return self.anime_questions.filter(approved=True).count()
+ 
+  @property
+  def pending_questions(self):
+    return self.anime_questions.filter(approved=False).count()
+  
+  @property
+  def total_questions(self):
+    return self.anime_questions.all().count()
     
+
   def save(self, *args, **kwargs):
     new = False
     if not self.id:

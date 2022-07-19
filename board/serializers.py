@@ -27,12 +27,19 @@ class AnimeSerializer(serializers.ModelSerializer):
     fields = ("id","anime_name")
 
 
-  
-class AnimeQuestionsSerializer(serializers.ModelSerializer):
-  approved_questions = serializers.IntegerField()
+# used for each anime and its corresponding number of questions 
+class Animes_with_Questions_Count_serializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
     fields = ("id","anime_name","approved_questions")
+    
+
+
+class QuizAnimesSerializer(serializers.ModelSerializer):
+  quiz_questions_count = serializers.IntegerField()
+  class Meta:
+    model = Anime
+    fields = ("id","anime_name","quiz_questions_count")
     
 
 
@@ -57,11 +64,11 @@ class QuestionSerializer(serializers.ModelSerializer):
     fields = ("id","anime","question","choice1","choice2","choice3","choice4")
 
 
-class PendingQuestionsSerializer(serializers.ModelSerializer):
+class QuestionsWithAnimesSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer() 
   class Meta:
     model = Question
-    fields = ("anime","question")
+    fields = ("anime","question","approved")
 
 
 

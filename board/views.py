@@ -13,7 +13,7 @@ import random
 from .models import *
 from .serializers import *
 from .helpers import login_required 
-from .constants import QUESTIONSCOUNT,INTERMEDIATE_POINTS,ADVANCED_POINTS,REALOTAKU_POINTS
+from .constants import *
 
 animes_dict = {}
 
@@ -64,16 +64,13 @@ def GetDashBoard(request):
 
 #Note :  we still have to figure out how many users will be shown in the dashboard
   otakus = User.objects.exclude(pk=1).order_by('-points')
-
-  animes_with_questions_count = Anime.objects.annotate(approved_questions=Count("anime_questions",
-  filter=Q(anime_questions__approved=True))).order_by("-anime_questions")
-  
   LeaderBorad  = LeaderBoradSerializer(otakus,many=True)
-  AnimesQuestionsINfo  = AnimeQuestionsSerializer(animes_with_questions_count,many=True)
+
+  Animes  = Animes_with_Questions_Count_serializer(Anime.objects.all(),many=True)
   
   return Response({
     "leaderboard":LeaderBorad.data,
-    "animes":AnimesQuestionsINfo.data})
+    "animes":Animes.data})
 
 
 
@@ -81,16 +78,17 @@ def GetDashBoard(request):
 
 @login_required 
 @api_view(["GET"])
-def GetAvailableAnimes(request):
+def GetQuizeAnimes(request):
 
   user = GetWantedUser(request)
-  animes_with_questions = Anime.objects.annotate(approved_questions=Count("anime_questions",filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(approved_questions__gte=QUESTIONSCOUNT)
+  animes_with_questions = Anime.objects.annotate(quiz_questions_count=Count("anime_questions",
+  filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(quiz_questions_count__gte=QUESTIONSCOUNT)
   
   user_games_dict={}
   for game in Game.objects.filter(game_owner=user):
     user_games_dict[game.anime.id] = game.gamesnumber
 
-  serialized_animes = AnimeQuestionsSerializer(animes_with_questions,many=True)
+  serialized_animes = QuizAnimesSerializer(animes_with_questions,many=True)
 
 
 
@@ -157,15 +155,14 @@ def SubmitTest(request):
   def CheckLevel():
         
     if user.points >= REALOTAKU_POINTS:
-      user.level = "realOtaku" 
-       
+      user.level = LEVELS[MAX_LEVEL_LENGTH-1]
 
     elif user.points >= ADVANCED_POINTS:
-      user.level  = "advanced"
+      user.level  = LEVELS[MAX_LEVEL_LENGTH-2]
        
     
     elif user.points >= INTERMEDIATE_POINTS:
-      user.level = "intermediate"
+      user.level = LEVELS[MAX_LEVEL_LENGTH-3]
       
     else:
       return 
@@ -308,7 +305,6 @@ def GetMyProfile(request):
   user = GetWantedUser(request)
 
   my_data = AllUserInfo_Serializer(user,many=False)
-  pending_contributions = PendingQuestionsSerializer(user.contributions.filter(approved=False),many=True)
 
 #contributed questions by other users for the current user to review and approve if any  
   questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=user.animes_to_review.all()),many=True)
@@ -317,12 +313,21 @@ def GetMyProfile(request):
   contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
    ,many=True)
 
+
+# pending (not approved) questions  
+  pending_contributions = QuestionsWithAnimesSerializer(user.contributions.filter(approved=False),many=True)
+
+
+# this is better to user (please use it, less db hits just one query and filter approved vs not-apprved in the ui )
+  user_contributions = QuestionsWithAnimesSerializer(user.contributions.all(),many=True)
+
   #sleep(2)
   return Response({
      "data": my_data.data,
      "PendingContributions": pending_contributions.data,
      "questionsForReview":questionsForReview.data,
-     "animes_with_contributions":contributed_animes.data   
+     "animes_with_contributions":contributed_animes.data,
+     "UserContributions":user_contributions.data
       })
 
 

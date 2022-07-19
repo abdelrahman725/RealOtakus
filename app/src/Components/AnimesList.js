@@ -1,30 +1,28 @@
-import Anime from "./Anime"
 import Game from "./Game"
 import {useState,useContext,useEffect} from 'react'
 import Select from 'react-select'
 import { GamdeModeContext ,ServerContext} from "../App"
 
-
 const Animes = () => {
 
   const {server} = useContext(ServerContext)
-  const {setGameMode,GameMode} = useContext(GamdeModeContext)
+  const {setGameMode,GameMode,NUMBER_OF_QUIZ_QUESTIONS} = useContext(GamdeModeContext)
+
+
   const  animegameurl = `${server}/home/getgame`
-  const  animesurl = `${server}/home/animes`
+  const  animesurl = `${server}/home/quizanimes`
 
   const [animesoptions,setanimesoptions] = useState()
-  const [user_previous_games,setuser_previous_games] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
   const [startquiz,setquizstart] = useState()
-
 
   
 // function to compare the passed anime_approved_questions with the number of games 
 //that the user had for that anime
 
   const ShowAnime = (NumberOfGames,anime_questions)=>{
-      if ( anime_questions  >= (NumberOfGames * 5) + 5 ){
+      if ( anime_questions  >= (NumberOfGames * NUMBER_OF_QUIZ_QUESTIONS) + NUMBER_OF_QUIZ_QUESTIONS ){
         return true
       }
       return false
@@ -42,7 +40,7 @@ const Animes = () => {
     
     data.animes.map((anime) => 
     games_dict[anime.id] ?
-    ShowAnime(games_dict[anime.id],anime.approved_questions)&&anime_array.push({value:anime.id,label:anime.anime_name}):
+    ShowAnime(games_dict[anime.id],anime.quiz_questions_count)&&anime_array.push({value:anime.id,label:anime.anime_name}):
     anime_array.push({value:anime.id,label:anime.anime_name}))
     
    setanimesoptions(anime_array)

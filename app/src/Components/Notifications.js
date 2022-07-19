@@ -44,7 +44,7 @@ useEffect(()=>{
     }
 
 
-    UpdateNotificationsState(new_notifications)
+    new_notifications.length > 0 && UpdateNotificationsState(new_notifications)
   
  
 },[])

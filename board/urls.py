@@ -7,7 +7,7 @@ urlpatterns = [
     
     path("",ReactApp),
     path('data',GetUserData,name="userdata"),
-    path('animes',GetAvailableAnimes,name="animes"),
+    path('quizanimes',GetQuizeAnimes,name="animes"),
     path('dashboard',GetDashBoard),
 
     path('getgame/<int:game_anime>',GetTest,name="getgame"),
