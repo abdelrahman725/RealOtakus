@@ -314,17 +314,11 @@ def GetMyProfile(request):
    ,many=True)
 
 
-# pending (not approved) questions  
-  pending_contributions = QuestionsWithAnimesSerializer(user.contributions.filter(approved=False),many=True)
-
-
-# this is better to user (please use it, less db hits just one query and filter approved vs not-apprved in the ui )
   user_contributions = QuestionsWithAnimesSerializer(user.contributions.all(),many=True)
 
   #sleep(2)
   return Response({
      "data": my_data.data,
-     "PendingContributions": pending_contributions.data,
      "questionsForReview":questionsForReview.data,
      "animes_with_contributions":contributed_animes.data,
      "UserContributions":user_contributions.data

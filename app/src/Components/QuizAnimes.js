@@ -3,7 +3,7 @@ import {useState,useContext,useEffect} from 'react'
 import Select from 'react-select'
 import { GamdeModeContext ,ServerContext} from "../App"
 
-const Animes = () => {
+const QuizAnimes = () => {
 
   const {server} = useContext(ServerContext)
   const {setGameMode,GameMode,NUMBER_OF_QUIZ_QUESTIONS} = useContext(GamdeModeContext)
@@ -95,4 +95,4 @@ return (
   </>
  )}
 
-export default Animes
+export default QuizAnimes

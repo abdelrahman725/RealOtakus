@@ -30,9 +30,7 @@ class User_admin(admin.ModelAdmin):
 @admin.register(Anime)
 class Anime_admin(admin.ModelAdmin):
   list_display = ("anime_name","total_questions","approved_questions","pending_questions") 
-
   search_fields = ("anime_name__startswith",)
-
 
 
   def has_change_permission(self, request, obj=None):

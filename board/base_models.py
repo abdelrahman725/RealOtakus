@@ -3,10 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from .constants import *
 
-
 class Anime(models.Model):
   anime_name = models.CharField(max_length=40,unique=True)
-  url = models.CharField(max_length=300,default="/")
+  url = models.CharField(max_length=300,default="/",blank=True)
   
   class Meta:
     abstract = True 

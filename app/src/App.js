@@ -3,7 +3,7 @@ import Bar from './Components/Bar'
 import { UserProfile } from './Components/TheProfile/UserProfile';
 import Notifications from './Components/Notifications';
 import Contripution from './Components/Contripution'
-import Animes from './Components/AnimesList'
+import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
 
 import React, {useState,useEffect,createContext} from 'react'
@@ -195,7 +195,7 @@ return (
 
       { ContributionView && <Contripution />}
 
-      { AnimesChoicesView&& <Animes/>}
+      { AnimesChoicesView&& <QuizAnimes/>}
 
   </GamdeModeContext.Provider>
   </ServerContext.Provider>
