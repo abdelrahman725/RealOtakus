@@ -5,29 +5,24 @@ MENTORS = ()
 # number of questions in each quiz users take
 QUESTIONSCOUNT = 5
 
-# points users should gain to reach each level
- 
-INTERMEDIATE_POINTS = 1000
-ADVANCED_POINTS     = 3000
-REALOTAKU_POINTS    = 5000
+
+#  levels to points mapper
+# shows points users should get to reach each level
+LEVELS = {
+    "beginner": 0,
+    "intermediate": 1000,
+    "advanced": 3000,
+    "realOtaku": 5000
+}
 
 
-# Available levels for a user
-LEVELS = (
-    "beginner",
-    "intermediate",
-    "advanced",
-    "realOtaku"
-)
-
-LEVELS_OPTIONS = []
+LEVELS_CHOICES = []
 
 for level in LEVELS:
-    LEVELS_OPTIONS.append((level,level))
-
+    LEVELS_CHOICES.append((level, level))
 
 
 NUMBER_OF_LEVELS = len(LEVELS)
 
-# for 'max_length' parameter of the User model definition 
-MAX_LEVEL_LENGTH = len(max(LEVELS,key=len))
+# for 'max_length' parameter of the User model definition
+MAX_LEVEL_LENGTH = len(max(LEVELS, key=len))

@@ -1,7 +1,7 @@
 from django.db import connection, IntegrityError
-from django.db.models import Count,Q
+from django.db.models import Count, Q
 from django.shortcuts import render, redirect
-from django.http import  JsonResponse
+from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,49 +12,50 @@ import random
 
 from .models import *
 from .serializers import *
-from .helpers import login_required 
+from .helpers import login_required
 from .constants import *
 
 animes_dict = {}
 
 game = {}
+
 game_questions = {}
 
 
 for anime in Anime.objects.all():
-  animes_dict[anime.pk] = anime
+    animes_dict[anime.pk] = anime
 
 
 def GetWantedUser(request):
-  return request.user
-  username = "yara"
-  return User.objects.get(username=username)
-
+    return request.user
+    username = "yara"
+    return User.objects.get(username=username)
 
 
 @login_required
 def ReactApp(request):
-  #return redirect("http://localhost:3000/home")
-  return render(request, "index.html")
+    # return redirect("http://localhost:3000/home")
+    return render(request, "index.html")
+
 
 @login_required
-@api_view(["GET","POST"])
+@api_view(["GET", "POST"])
 def GetUserData(request):
-  user =  GetWantedUser(request)
+    user = GetWantedUser(request)
 
-  if request.method == "POST":
-    user.country = request.data["country"]
-    user.save()
-    return Response({"countrycreated"},status=status.HTTP_201_CREATED)
+    if request.method == "POST":
+        user.country = request.data["country"]
+        user.save()
+        return Response({"countrycreated"}, status=status.HTTP_201_CREATED)
 
+    serialized_basic_data = BasicUserSerializer(user, many=False)
 
-  serialized_basic_data = BasicUserSerializer(user,many=False)
+    serialized_notifications = NotificationsSerializer(
+        user.getnotifications.all(), many=True)
 
-  serialized_notifications= NotificationsSerializer(user.getnotifications.all() ,many=True)
-
-  return Response({
-     "user_data": serialized_basic_data.data,
-     "notifications": serialized_notifications.data
+    return Response({
+        "user_data": serialized_basic_data.data,
+        "notifications": serialized_notifications.data
     })
 
 
@@ -62,278 +63,257 @@ def GetUserData(request):
 @api_view(["GET"])
 def GetDashBoard(request):
 
-#Note :  we still have to figure out how many users will be shown in the dashboard
-  otakus = User.objects.exclude(pk=1).order_by('-points')
-  LeaderBorad  = LeaderBoradSerializer(otakus,many=True)
+    # Note :  we still have to figure out how many users will be shown in the dashboard
+    otakus = User.objects.exclude(pk=1)
+    LeaderBorad = LeaderBoradSerializer(otakus, many=True)
 
-  Animes  = Animes_with_Questions_Count_serializer(Anime.objects.all(),many=True)
-  
-  return Response({
-    "leaderboard":LeaderBorad.data,
-    "animes":Animes.data})
+    Animes = Animes_with_Questions_Count_serializer(
+        Anime.objects.all(), many=True)
 
+    return Response({
+        "leaderboard": LeaderBorad.data,
+        "animes": Animes.data})
 
 
 # -------------------------------------- Test Handling functions ----------------------------------------
 
-@login_required 
+@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
 
-  user = GetWantedUser(request)
-  animes_with_questions = Anime.objects.annotate(quiz_questions_count=Count("anime_questions",
-  filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(quiz_questions_count__gte=QUESTIONSCOUNT)
-  
-  user_games_dict={}
-  for game in Game.objects.filter(game_owner=user):
-    user_games_dict[game.anime.id] = game.gamesnumber
+    user = GetWantedUser(request)
+    animes_with_questions = Anime.objects.annotate(quiz_questions_count=Count("anime_questions",
+                                                                              filter=(Q(anime_questions__approved=True) & ~Q(anime_questions__contributor=user)))).filter(quiz_questions_count__gte=QUESTIONSCOUNT)
 
-  serialized_animes = QuizAnimesSerializer(animes_with_questions,many=True)
+    user_games_dict = {}
+    for game in Game.objects.filter(game_owner=user):
+        user_games_dict[game.anime.id] = game.gamesnumber
 
+    serialized_animes = QuizAnimesSerializer(animes_with_questions, many=True)
 
-
-  return Response({
-    "animes":serialized_animes.data,
-    "games":user_games_dict 
+    return Response({
+        "animes": serialized_animes.data,
+        "games": user_games_dict
     })
-
 
 
 @login_required
 @api_view(["GET"])
-def GetTest(request,game_anime):
-  current_user =  GetWantedUser(request)
-  selected_anime = animes_dict[game_anime]
-  current_user.tests_started+=1
-  current_user.save()
+def GetTest(request, game_anime):
+    current_user = GetWantedUser(request)
+    selected_anime = animes_dict[game_anime]
+    current_user.tests_started += 1
+    current_user.save()
 
-  CurrentGame, created = Game.objects.get_or_create(game_owner=current_user,anime=selected_anime)
+    CurrentGame, created = Game.objects.get_or_create(
+        game_owner=current_user, anime=selected_anime)
 
-  index = CurrentGame.gamesnumber * QUESTIONSCOUNT
+    index = CurrentGame.gamesnumber * QUESTIONSCOUNT
 
-#this game questions
-  questions=selected_anime.anime_questions.filter(approved=True).exclude(contributor=current_user)[index:index+QUESTIONSCOUNT]
+# this game questions
+    questions = selected_anime.anime_questions.filter(approved=True).exclude(
+        contributor=current_user)[index:index+QUESTIONSCOUNT]
 
-  CurrentGame.gamesnumber+=1
-  game[current_user.id] = CurrentGame
-  CurrentGame.save() 
-  
-  game_questions[current_user.id] ={}
+    CurrentGame.gamesnumber += 1
+    game[current_user.id] = CurrentGame
+    CurrentGame.save()
 
-  for q in questions:
-    game_questions[current_user.id][q.id] = q
+    game_questions[current_user.id] = {}
 
-  serialized_data = QuestionSerializer(questions,many=True)
-  return Response(serialized_data.data)
+    for q in questions:
+        game_questions[current_user.id][q.id] = q
 
+    serialized_data = QuestionSerializer(questions, many=True)
+    return Response(serialized_data.data)
 
 
 @login_required
 @api_view(["POST"])
 def SubmitTest(request):
-  user =  GetWantedUser(request)
-  test_score = 0
-  test_results = request.data["results"]
-  
-  questions =game_questions[user.id]
+    user = GetWantedUser(request)
+    test_score = 0
+    test_results = request.data["results"]
 
-  for q in test_results:
-    Q=questions[int(q)]
-    
-    if test_results[q] == Q.right_answer:
-      Q.correct_answers+=1
-      user.points+=1
-      test_score+=1
+    questions = game_questions[user.id]
 
-    else:
-      Q.wrong_answers+=1
-    Q.save()
-  
+    for q in test_results:
+        Q = questions[int(q)]
 
-  
-  
-  def CheckLevel():
-        
-    if user.points >= REALOTAKU_POINTS:
-      user.level = LEVELS[MAX_LEVEL_LENGTH-1]
+        if test_results[q] == Q.right_answer:
+            Q.correct_answers += 1
+            user.points += 1
+            test_score += 1
 
-    elif user.points >= ADVANCED_POINTS:
-      user.level  = LEVELS[MAX_LEVEL_LENGTH-2]
-       
-    
-    elif user.points >= INTERMEDIATE_POINTS:
-      user.level = LEVELS[MAX_LEVEL_LENGTH-3]
-      
-    else:
-      return 
+        else:
+            Q.wrong_answers += 1
+        Q.save()
 
-  # notify the user only if there's a level up 
-    Notification.objects.create(owner=user,notification=f"Level up to {user.level}! good work")
-  
+    def CheckLevel():
+        for level in reversed(LEVELS):
 
-  CheckLevel()
+            if user.points >= LEVELS[level] and LEVELS[level] != 0:
+                user.level = level
 
+                Notification.objects.create(
+                    owner=user,
+                    notification=f"Level up to {user.level}! good work")
 
-  user.tests_completed+=1
-  CurrentGame= game[user.id]
-  CurrentGame.score += test_score
+                return
 
-  CurrentGame.save()
-  user.save()
+    CheckLevel()
 
-  answers_dict = {}
+    user.tests_completed += 1
+    CurrentGame = game[user.id]
+    CurrentGame.score += test_score
 
-  for key in game_questions[user.id]:
-    answers_dict[key]= game_questions[user.id][key].right_answer
+    CurrentGame.save()
+    user.save()
 
+    answers_dict = {}
 
-  # deleteing used cache from memory : 
-  del game_questions[user.id]
-  del game[user.id]
-  
+    for key in game_questions[user.id]:
+        answers_dict[key] = game_questions[user.id][key].right_answer
 
-  return JsonResponse({"message": "test submitted successfully","score":test_score,"answers":answers_dict, "level":user.level})
+    # deleteing used cache from memory :
+    del game_questions[user.id]
+    del game[user.id]
+
+    return JsonResponse({"message": "test submitted successfully", "score": test_score, "answers": answers_dict, "level": user.level})
 
 
 # ------------------------------------------------------------------------------------
 
 
-
 @login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
-  serialized_data = AnimeSerializer(animes_dict.values(),many=True)
-  return Response(serialized_data.data)
+    serialized_data = AnimeSerializer(animes_dict.values(), many=True)
+    return Response(serialized_data.data)
 
 
 @login_required
 @api_view(["POST"])
 def MakeContribution(request):
-  user = GetWantedUser(request)
-  
-  try:
-    anime = animes_dict[int(request.data["anime"])]
-  except: 
-    return  JsonResponse({"anime_id doesn't exist! or it's not an int"})
-  
-  def CheckDuplicatChoices(choices): 
-    choies_set = set()
-    for choice in choices:
-      choies_set.add(choice)
-    if len(choies_set) != len(choices):
-      return True 
-    return False 
+    user = GetWantedUser(request)
 
-  QuestionOBject = request.data["question"]
+    try:
+        anime = animes_dict[int(request.data["anime"])]
+    except:
+        return JsonResponse({"anime_id doesn't exist! or it's not an int"})
 
-  right_answer = QuestionOBject["rightanswer"].strip()
-  actualquestion = QuestionOBject["question"].strip()
+    def CheckDuplicatChoices(choices):
+        choies_set = set()
+        for choice in choices:
+            choies_set.add(choice)
+        if len(choies_set) != len(choices):
+            return True
+        return False
 
-  c1=QuestionOBject["choice1"].strip()
-  c2=QuestionOBject["choice2"].strip()
-  c3=QuestionOBject["choice3"].strip()
-  
-  choices = [c1,right_answer,c2,c3]
-  random.shuffle(choices)
+    QuestionOBject = request.data["question"]
 
-  
-  # if CheckDuplicatChoices([c1,c2,c3,c4]):
-  #   return JsonResponse({"message": f"choices can't have duplicates"})
+    right_answer = QuestionOBject["rightanswer"].strip()
+    actualquestion = QuestionOBject["question"].strip()
 
+    c1 = QuestionOBject["choice1"].strip()
+    c2 = QuestionOBject["choice2"].strip()
+    c3 = QuestionOBject["choice3"].strip()
 
+    choices = [c1, right_answer, c2, c3]
+    random.shuffle(choices)
 
-  # check if the contributer user is already a reviewer of the anime associated with the question 
+    # if CheckDuplicatChoices([c1,c2,c3,c4]):
+    #   return JsonResponse({"message": f"choices can't have duplicates"})
 
-  is_anime_reviewr = False
-  if anime in user.animes_to_review.all():
-    is_anime_reviewr=True
+    # check if the contributer user is already a reviewer of the anime associated with the question
 
+    is_anime_reviewr = False
+    if anime in user.animes_to_review.all():
+        is_anime_reviewr = True
 
-  try:
-    Question.objects.create(
-      anime=anime,contributor= user,
-      approved=is_anime_reviewr,
-      question=actualquestion,right_answer=right_answer,
-      choice1=choices[0],choice2=choices[1],
-      choice3=choices[2],choice4=choices[3])
-    
-    if is_anime_reviewr:
-      return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
+    try:
+        Question.objects.create(
+            anime=anime, contributor=user,
+            approved=is_anime_reviewr,
+            question=actualquestion, right_answer=right_answer,
+            choice1=choices[0], choice2=choices[1],
+            choice3=choices[2], choice4=choices[3])
 
+        if is_anime_reviewr:
+            return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})
 
-    #sleep(1)
-    return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval"})
+        # sleep(1)
+        return JsonResponse({"message": f"your question submission for {anime} has been received and waits approval"})
 
-  except  IntegrityError as e:
-    if 'UNIQUE constraint' in str(e.args):
-      return JsonResponse({"message": "sorry this question already exist"})
+    except IntegrityError as e:
+        if 'UNIQUE constraint' in str(e.args):
+            return JsonResponse({"message": "sorry this question already exist"})
 
-    return JsonResponse({"message": "error occurred, but stil IntegrityError"})
-
+        return JsonResponse({"message": "error occurred, but stil IntegrityError"})
 
 
 # endpoint for a reviewr to approve/decline a question contributed by other user/s
 @login_required
 @api_view(["POST"])
 def ReviewContribution(request):
-  state = request.data["state"]
-  q_id = int(request.data["question"])
-  question = Question.objects.filter(pk=q_id)
-  
-  if not question.exists():
-    return Response({"sorry this question doesn't exist anymore"},status=status.HTTP_404_NOT_FOUND)
+    state = request.data["state"]
+    q_id = int(request.data["question"])
+    question = Question.objects.filter(pk=q_id)
 
-  question = question[0]
+    if not question.exists():
+        return Response({"sorry this question doesn't exist anymore"}, status=status.HTTP_404_NOT_FOUND)
 
-  if state =="approve":
-    question.approved=True
-    question.save()
-    return Response({"question got approved successfully"},status=status.HTTP_200_OK)
+    question = question[0]
 
+    if state == "approve":
+        question.approved = True
+        question.save()
+        return Response({"question got approved successfully"}, status=status.HTTP_200_OK)
 
-  if state =="decline":
-    question.delete()
-    return Response({"question got declined and deleted successfully"},status=status.HTTP_200_OK)
+    if state == "decline":
+        question.delete()
+        return Response({"question got declined and deleted successfully"}, status=status.HTTP_200_OK)
 
-  
-  return Response({"not expected response"},status=status.HTTP_200_OK)
+    return Response({"not expected response"}, status=status.HTTP_200_OK)
 
 
 @login_required
 @api_view(["GET"])
 def GetMyProfile(request):
-  user = GetWantedUser(request)
+    user = GetWantedUser(request)
 
-  my_data = AllUserInfo_Serializer(user,many=False)
+    my_data = AllUserInfo_Serializer(user, many=False)
 
-#contributed questions by other users for the current user to review and approve if any  
-  questionsForReview = QuestionSerializer(Question.objects.filter(approved=False,anime__in=user.animes_to_review.all()),many=True)
-  
-# animes with contributed questions made by current user : 
-  contributed_animes = AnimeContributionsSerializer(Game.objects.filter(game_owner=user,contributions__gt=0) 
-   ,many=True)
+# contributed questions by other users for the current user to review and approve if any
+    questionsForReview = QuestionSerializer(Question.objects.filter(
+        approved=False, anime__in=user.animes_to_review.all()), many=True)
 
+# animes with contributed questions made by current user :
+    contributed_animes = AnimeContributionsSerializer(
+        Game.objects.filter(game_owner=user, contributions__gt=0), many=True)
 
-  user_contributions = QuestionsWithAnimesSerializer(user.contributions.all(),many=True)
+    user_contributions = QuestionsWithAnimesSerializer(
+        user.contributions.all(), many=True)
 
-  #sleep(2)
-  return Response({
-     "data": my_data.data,
-     "questionsForReview":questionsForReview.data,
-     "animes_with_contributions":contributed_animes.data,
-     "UserContributions":user_contributions.data
-      })
+    # sleep(2)
+    return Response({
+        "data": my_data.data,
+        "questionsForReview": questionsForReview.data,
+        "animes_with_contributions": contributed_animes.data,
+        "UserContributions": user_contributions.data
+    })
 
 
 @login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
 
-  unseen_notifications=request.data["notifications"]
+    unseen_notifications = request.data["notifications"]
 
-  Notification.objects.filter(pk__in=unseen_notifications).update(seen=True)
+    Notification.objects.filter(pk__in=unseen_notifications).update(seen=True)
 
-  return Response({f"notifications state of {request.user.username} are updated successfully"},status=status.HTTP_201_CREATED)
+    return Response({
+        f"notifications state of {request.user.username} are updated successfully"},
+        status=status.HTTP_201_CREATED)
 
 
 # str_repr = repr()
