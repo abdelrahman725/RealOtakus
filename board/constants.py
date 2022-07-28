@@ -5,14 +5,12 @@ MENTORS = ()
 # number of questions in each quiz users take
 QUESTIONSCOUNT = 5
 
-
-#  levels to points mapper
-# shows points users should get to reach each level
 BEGINNER = "beginner"
-INTERMEDIATE= "intermediate"
+INTERMEDIATE = "intermediate"
 ADVANCED= "advanced"
 REALOTAKU= "realOtaku"
 
+#  levels_to_points mapper, shows points users should get to reach each level
 LEVELS = {
     BEGINNER: 0,
     INTERMEDIATE: 1000,

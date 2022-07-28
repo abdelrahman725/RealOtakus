@@ -2,12 +2,9 @@ from board import base_models
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from .helpers import CreateNotification, CheckLevel
+from .constants import LEVELS
 import threading
-
-
-def CreateNotification(user, content):
-    if user:
-        Notification.objects.create(owner=user, notification=content)
 
 
 def NotifyReviewrs(anime):
@@ -124,6 +121,7 @@ class Question(base_models.Question):
                 CurrentGame.save()
                 user.contributions_count += 1
                 user.points += 10
+                CheckLevel(user)
                 user.save()
 
         if self.pk == None:

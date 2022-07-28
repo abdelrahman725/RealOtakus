@@ -12,7 +12,7 @@ import random
 
 from .models import *
 from .serializers import *
-from .helpers import login_required
+from .helpers import login_required, CheckLevel
 from .constants import *
 
 animes_dict = {}
@@ -106,14 +106,14 @@ def GetTest(request, game_anime):
     current_user.save()
 
     CurrentGame, created = Game.objects.get_or_create(
-    game_owner=current_user,
-    anime=selected_anime)
+        game_owner=current_user,
+        anime=selected_anime)
 
     index = CurrentGame.gamesnumber * QUESTIONSCOUNT
 
 # this game questions
     questions = selected_anime.anime_questions.filter(approved=True).exclude(
-        contributor=current_user).order_by("id") [index:index+QUESTIONSCOUNT]
+        contributor=current_user).order_by("id")[index:index+QUESTIONSCOUNT]
 
     CurrentGame.gamesnumber += 1
     game[current_user.id] = CurrentGame
@@ -142,38 +142,23 @@ def SubmitTest(request):
 
         if test_results[q] == Q.right_answer:
             Q.correct_answers += 1
-            test_score +=1 
+            test_score += 1
 
         else:
             Q.wrong_answers += 1
         Q.save()
 
-    
-    
-    def CheckLevel():
 
-        for level in reversed(LEVELS):
 
-            if user.points >= LEVELS[level] and LEVELS[level] != 0:
-                user.level = level
-
-                Notification.objects.create(
-                    owner=user,
-                    notification=f"Level up to {user.level}! good work")
-
-                return
-
-    
     user.points += test_score
     # after that increase in points now check user level
-    CheckLevel()
+    CheckLevel(user)
     user.tests_completed += 1
     user.save()
 
     CurrentGame = game[user.id]
     CurrentGame.score += test_score
     CurrentGame.save()
-
 
     answers_dict = {}
 
@@ -226,7 +211,6 @@ def MakeContribution(request):
 
     choices = [c1, right_answer, c2, c3]
     random.shuffle(choices)
-
 
     # check if the contributer user is already a reviewer of the anime associated with the question
 
@@ -289,8 +273,9 @@ def GetMyProfile(request):
 
 # contributed questions by other users for the current user to review and approve if any
     questionsForReview = QuestionSerializer(
-    Question.objects.filter(~Q(contributor=user),approved=False,anime__in=user.animes_to_review.all()),
-    many=True)
+        Question.objects.filter(
+            ~Q(contributor=user), approved=False, anime__in=user.animes_to_review.all()),
+        many=True)
 
 # animes with contributed questions made by current user :
     contributed_animes = AnimeContributionsSerializer(
@@ -298,7 +283,7 @@ def GetMyProfile(request):
 
     user_contributions = QuestionsWithAnimesSerializer(
         user.contributions.all(), many=True)
-        
+
     print(user_contributions.data)
     # sleep(2)
     return Response({
