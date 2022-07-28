@@ -1,9 +1,7 @@
-from django.db import models
 from board import base_models
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from time import sleep
 import threading
 
 
@@ -33,8 +31,6 @@ def NewApprovedQuestion(excluded_user, anime, questions_count):
 
 class Anime(base_models.Anime):
 
-    class Meta:
-        ordering = ["id"]
 
     @property
     def approved_questions(self):
@@ -66,18 +62,25 @@ class Anime(base_models.Anime):
 
 
 class User(base_models.User):
-
-    class Meta:
-        ordering = ["-points"]
-
     def __str__(self):
         return self.username
 
 
 class Question(base_models.Question):
+    """
+    to do : prevent question from getting deleted whether by 
+    
+    DONE :
+    1. Calling delete() on Model instance: question.delete()
 
-    class Meta:
-        ordering = ["-id"]
+    or
+
+    NOT DONE yet :
+    2. Calling delete() on QuerySet instance: question.objects.all().delete() 
+
+    if this question's contributor is admin and it's approved (default)
+    
+    """
 
     previous_status = None
 
@@ -143,6 +146,9 @@ class Question(base_models.Question):
             async_thread.start()
 
     def delete(self, *args, **kwargs):
+        if self.contributor.is_superuser and self.approved==True:
+            print("\n this question can't be deleted \n")        
+            return
         if self.contributor and not self.contributor.is_superuser:
             if not self.approved:
                 msg = f"sorry your last question on {self.anime} has been declined as it didn't meet the required criteria"
@@ -157,12 +163,8 @@ class Question(base_models.Question):
 
 
 class Game(base_models.Game):
-
-    class Meta:
-        ordering = ["-id"]
-
     def __str__(self):
-        return f"{self.game_owner} had {self.gamesnumber} gamees for {self.anime}"
+        return f"{self.game_owner} had {self.gamesnumber} games for {self.anime}"
 
 
 class Notification(base_models.Notification):

@@ -8,11 +8,16 @@ QUESTIONSCOUNT = 5
 
 #  levels to points mapper
 # shows points users should get to reach each level
+BEGINNER = "beginner"
+INTERMEDIATE= "intermediate"
+ADVANCED= "advanced"
+REALOTAKU= "realOtaku"
+
 LEVELS = {
-    "beginner": 0,
-    "intermediate": 1000,
-    "advanced": 3000,
-    "realOtaku": 5000
+    BEGINNER: 0,
+    INTERMEDIATE: 1000,
+    ADVANCED: 3000,
+    REALOTAKU: 5000
 }
 
 

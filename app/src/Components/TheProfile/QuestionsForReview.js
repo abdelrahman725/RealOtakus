@@ -15,7 +15,7 @@ const QuestionsForReview = ({questions,animesoptions}) => {
 
 
   return (
-    <div className="reviewquestions">
+    <div className="questionscontainer">
       <h2>questions for review</h2><br />
       <Select options={animesoptions} className="select_animes"  placeholder="filter questions" 
         onChange={handlefilter} />

@@ -4,12 +4,12 @@ const ApprovedQuestions = ({questions}) => {
     return (
       <div>
         <h2>approved  Contributions</h2><br />
-        <div className="pendingquestionscontainer">
-        {
+        <div className="questionscontainer">
+        { 
   
         questions.length>0?
         questions.map((q,index)=>(
-          <div  className="eachquestion approvedstate" key={index}>
+          <div  className="eachquestion approvestate" key={index}>
              <p>
                 <span><strong>{q.anime.anime_name}</strong></span><br />
                  {q.question}
@@ -19,7 +19,7 @@ const ApprovedQuestions = ({questions}) => {
         ))
         :
         
-        "you don't have any  approved contributions "
+        "no approved contributions "
       }
       </div>
         <br />

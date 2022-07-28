@@ -28,7 +28,7 @@ for anime in Anime.objects.all():
 
 def GetWantedUser(request):
     return request.user
-    username = "yara"
+    username = "linus"
     return User.objects.get(username=username)
 
 
@@ -106,13 +106,14 @@ def GetTest(request, game_anime):
     current_user.save()
 
     CurrentGame, created = Game.objects.get_or_create(
-        game_owner=current_user, anime=selected_anime)
+    game_owner=current_user,
+    anime=selected_anime)
 
     index = CurrentGame.gamesnumber * QUESTIONSCOUNT
 
 # this game questions
     questions = selected_anime.anime_questions.filter(approved=True).exclude(
-        contributor=current_user)[index:index+QUESTIONSCOUNT]
+        contributor=current_user).order_by("id") [index:index+QUESTIONSCOUNT]
 
     CurrentGame.gamesnumber += 1
     game[current_user.id] = CurrentGame
@@ -133,22 +134,24 @@ def SubmitTest(request):
     user = GetWantedUser(request)
     test_score = 0
     test_results = request.data["results"]
-
     questions = game_questions[user.id]
 
+    # check test results
     for q in test_results:
         Q = questions[int(q)]
 
         if test_results[q] == Q.right_answer:
             Q.correct_answers += 1
-            user.points += 1
-            test_score += 1
+            test_score +=1 
 
         else:
             Q.wrong_answers += 1
         Q.save()
 
+    
+    
     def CheckLevel():
+
         for level in reversed(LEVELS):
 
             if user.points >= LEVELS[level] and LEVELS[level] != 0:
@@ -160,14 +163,17 @@ def SubmitTest(request):
 
                 return
 
+    
+    user.points += test_score
+    # after that increase in points now check user level
     CheckLevel()
-
     user.tests_completed += 1
+    user.save()
+
     CurrentGame = game[user.id]
     CurrentGame.score += test_score
-
     CurrentGame.save()
-    user.save()
+
 
     answers_dict = {}
 
@@ -221,8 +227,6 @@ def MakeContribution(request):
     choices = [c1, right_answer, c2, c3]
     random.shuffle(choices)
 
-    # if CheckDuplicatChoices([c1,c2,c3,c4]):
-    #   return JsonResponse({"message": f"choices can't have duplicates"})
 
     # check if the contributer user is already a reviewer of the anime associated with the question
 
@@ -284,8 +288,9 @@ def GetMyProfile(request):
     my_data = AllUserInfo_Serializer(user, many=False)
 
 # contributed questions by other users for the current user to review and approve if any
-    questionsForReview = QuestionSerializer(Question.objects.filter(
-        approved=False, anime__in=user.animes_to_review.all()), many=True)
+    questionsForReview = QuestionSerializer(
+    Question.objects.filter(~Q(contributor=user),approved=False,anime__in=user.animes_to_review.all()),
+    many=True)
 
 # animes with contributed questions made by current user :
     contributed_animes = AnimeContributionsSerializer(
@@ -293,7 +298,8 @@ def GetMyProfile(request):
 
     user_contributions = QuestionsWithAnimesSerializer(
         user.contributions.all(), many=True)
-
+        
+    print(user_contributions.data)
     # sleep(2)
     return Response({
         "data": my_data.data,

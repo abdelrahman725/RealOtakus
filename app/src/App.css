@@ -305,7 +305,7 @@ button {
   font-size: small;
 }
 
-.pendingquestionscontainer .eachquestion, .reviewquestions .eachquestion {
+.questionscontainer .eachquestion {
   border-left: solid 20px;
   border-radius: 3px;
   text-align: left;
@@ -317,32 +317,32 @@ button {
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
-.pendingquestionscontainer .eachquestion p, .reviewquestions .eachquestion p {
+.questionscontainer .eachquestion p {
   line-height: 2;
 }
 
-.pendingquestionscontainer .reviewstate, .reviewquestions .reviewstate {
+.questionscontainer .reviewstate {
   border-color: #5bc0de;
 }
 
-.pendingquestionscontainer .approvestate, .reviewquestions .approvestate {
+.questionscontainer .approvestate {
   border-color: #4ecd91;
 }
 
-.pendingquestionscontainer .declinestate, .reviewquestions .declinestate {
+.questionscontainer .declinestate {
   border-color: #E76450;
 }
 
-.pendingquestionscontainer .declinestate button, .pendingquestionscontainer .approvestate button, .reviewquestions .declinestate button, .reviewquestions .approvestate button {
+.questionscontainer .declinestate button, .questionscontainer .approvestate button {
   cursor: default;
 }
 
-.pendingquestionscontainer .pendingstate, .reviewquestions .pendingstate {
+.questionscontainer .pendingstate {
   border-color: #e6ab3f;
 }
 
 @media screen and (max-width: 800px) {
-  .pendingquestionscontainer .eachquestion, .reviewquestions .eachquestion {
+  .questionscontainer .eachquestion {
     width: 90%;
   }
 }

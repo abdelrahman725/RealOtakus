@@ -12,12 +12,12 @@ export const UserProfile = () => {
   const profileurl  = `${server}/home/profile`
 
   const[mydata,setmydata]= useState()
-  const[approved_contributions,setapproved_contributions]= useState()
+  const[approved_contributions,setapproved_contributions]= useState([])
 
-  const[pending_contributions,setpending_contributions]= useState()
-  const[questionsForReview,setquestionsForReview]= useState()
-  const[animes,setanimes]= useState()
-  const[animesToReview,setanimesToReview] = useState()
+  const[pending_contributions,setpending_contributions]= useState([])
+  const[questionsForReview,setquestionsForReview]= useState([])
+  const[animes,setanimes]= useState([])
+  const[animesToReview,setanimesToReview] = useState([])
 
   const[loading,setloading]= useState(true)
 
@@ -38,11 +38,14 @@ export const UserProfile = () => {
       anime_options.push({value:a,label:a})
       )
 
+      //console.log(data.UserContributions)
 
-      data.UserContributions.map((question) =>
-      question.approved===true ?
-      setapproved_contributions(prev_approved => [...prev_approved,question]):
-      setpending_contributions(prev_pending => [...prev_pending,question])
+      data.UserContributions.map((q) =>
+    
+      q.approved===true ?
+    
+      setapproved_contributions(prev_approved => [...prev_approved,q]):  
+      setpending_contributions(prev_pending => [...prev_pending,q])
       )
 
       setanimesToReview(anime_options)
@@ -66,11 +69,12 @@ export const UserProfile = () => {
         {questionsForReview.length >0&& <QuestionsForReview questions={questionsForReview} 
         animesoptions={animesToReview}/>}
         <br />
-        <Animes animes={animes} N_Contributions={mydata.contributions_count}/> 
-        <hr />
-        <PendingQuestions questions={pending_contributions}/><br /><br />
-        <ApprovedQuestions questions={approved_contributions}/><br /><br />
 
+        <PendingQuestions questions={pending_contributions}/>
+        <hr />
+        <ApprovedQuestions questions={approved_contributions}/>
+
+        {/* <Animes animes={animes} N_Contributions={mydata.contributions_count}/>  */}
        </>  
        
        :<strong>loading</strong>

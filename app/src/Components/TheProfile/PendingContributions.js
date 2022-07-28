@@ -4,7 +4,7 @@ const PendingQuestions = ({questions}) => {
   return (
     <div>
       <h2>Pending Contributions</h2><br />
-      <div className="pendingquestionscontainer">
+      <div className="questionscontainer">
       {
 
       questions.length>0?
@@ -19,7 +19,7 @@ const PendingQuestions = ({questions}) => {
       ))
       :
       
-      "you don't have any  pending contributions "
+      "no pending contributions "
     }
     </div>
       <br />

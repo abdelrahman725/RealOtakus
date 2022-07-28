@@ -10,7 +10,7 @@ const Contripution = () => {
   const CsrfToken = getCookie('csrftoken')
   const [animesoptions,setanimesoptions] = useState()
   const [msg,setmsg] = useState()
-  const [contributionGuide,setcontributionGuide] = useState()
+  //const [contributionGuide,setcontributionGuide] = useState()
 
   const [Question,setQuestion] = useState({
     question:"",
@@ -152,7 +152,7 @@ const Contripution = () => {
         <br /><br />
 
 
-       <textarea name="question" cols="30" rows="3" typeof="text" maxLength="300"
+       <textarea name="question" cols="30" rows="3" typeof="text" maxLength="350"
         value={Question.question}
         onChange={handlechange} required placeholder="what is the question?" >
        </textarea><br />
