@@ -86,6 +86,7 @@ class Question(base_models.Question):
         self.previous_status = self.approved
 
     def save(self, *args, **kwargs):
+ 
         user = self.contributor
         new_approved_question = False
         previous_count = 0
@@ -142,6 +143,8 @@ class Question(base_models.Question):
             async_thread = threading.Thread(target=NewApprovedQuestion, args=(
                 self.contributor, self.anime, previous_count))
             async_thread.start()
+
+
 
     def delete(self, *args, **kwargs):
         if self.contributor.is_superuser and self.approved==True:

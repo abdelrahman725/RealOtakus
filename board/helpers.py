@@ -19,15 +19,13 @@ def CreateNotification(user, content):
 
 
 def CheckLevel(user):
-    print(f"\n points after quiz : {user.points}\n")
+    print(f"\n points after quiz : {user.points} \n")
     for level in reversed(LEVELS):    
         if user.points >= LEVELS[level] and LEVELS[level] != 0:
             user.level = level            
             CreateNotification(user,f"Level up to {level}, good job")
             
             return
-
-
 
 
 def ValidatePassword(password):

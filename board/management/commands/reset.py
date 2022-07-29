@@ -24,15 +24,12 @@ class Command(BaseCommand):
         users = User.objects.exclude(pk=admin.pk)
         
 
-
         Game.objects.all().delete()
         print("\n deleting all games.. \n")
 
         Notification.objects.all().delete()
         print("\n deleting all notifications.. \n")
 
-        Question.objects.exclude(contributor=admin).delete()
-        print("\n deleting certain questions.. \n")
 
         for user in users:
             user.points = 0
@@ -44,13 +41,16 @@ class Command(BaseCommand):
             user.animes_to_review.clear()
             user.save()
         print("\n reseting users data.. \n")
-
-        for q in questions:
-            q.correct_answers = 0
-            q.wrong_answers = 0
-            q.save()
         
-        print("\n reseting existing questions  state.. \n")
+        # Warning : don't use this when there are Real moderators
+        for q in questions:
+            if q.contributor == admin and q.approved == True:
+                q.correct_answers = 0
+                q.wrong_answers = 0
+                q.save()
+            else:
+                q.delete()
+        print("\n clearing unwated questions .. \n")
     
 
         print("\n--- data has been cleard successfully !---\n")
