@@ -8,7 +8,6 @@ class Anime(models.Model):
     url = models.CharField(max_length=300, default="/", blank=True)
 
     class Meta:
-        ordering = ["id"]
         abstract = True
 
 
