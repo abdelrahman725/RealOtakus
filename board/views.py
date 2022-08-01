@@ -27,18 +27,18 @@ for anime in Anime.objects.all():
 
 
 def GetWantedUser(request):
-    return request.user
+    #return request.user
     username = "linus"
     return User.objects.get(username=username)
 
 
-@login_required
+#@login_required
 def ReactApp(request):
     # return redirect("http://localhost:3000/home")
     return render(request, "index.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -48,7 +48,7 @@ def GetUserData(request):
         user.save()
         return Response({"countrycreated"}, status=status.HTTP_201_CREATED)
 
-    serialized_basic_data = BasicUserSerializer(user, many=False)
+    serialized_basic_data = SimpleUserDataSerializer(user, many=False)
 
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(), many=True)
@@ -59,7 +59,7 @@ def GetUserData(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
@@ -77,7 +77,7 @@ def GetDashBoard(request):
 
 # -------------------------------------- Test Handling functions ----------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
 
@@ -97,7 +97,7 @@ def GetQuizeAnimes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -128,7 +128,7 @@ def GetTest(request, game_anime):
     return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitTest(request):
     user = GetWantedUser(request)
@@ -175,14 +175,14 @@ def SubmitTest(request):
 # ------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
     serialized_data = AnimeSerializer(animes_dict.values(), many=True)
     return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def MakeContribution(request):
     user = GetWantedUser(request)
@@ -240,7 +240,7 @@ def MakeContribution(request):
 
 
 # endpoint for a reviewr to approve/decline a question contributed by other user/s
-@login_required
+#@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
     state = request.data["state"]
@@ -264,22 +264,18 @@ def ReviewContribution(request):
     return Response({"not expected response"}, status=status.HTTP_200_OK)
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
 
-    my_data = AllUserInfo_Serializer(user, many=False)
+    my_data = AllUserDataSerializer(user, many=False)
 
 # contributed questions by other users for the current user to review and approve if any
     questionsForReview = QuestionSerializer(
         Question.objects.filter(
             ~Q(contributor=user), approved=False, anime__in=user.animes_to_review.all()),
         many=True)
-
-# animes with contributed questions made by current user :
-    contributed_animes = AnimeContributionsSerializer(
-        Game.objects.filter(game_owner=user, contributions__gt=0), many=True)
 
     user_contributions = QuestionsWithAnimesSerializer(
         user.contributions.all(), many=True)
@@ -289,12 +285,11 @@ def GetMyProfile(request):
     return Response({
         "data": my_data.data,
         "questionsForReview": questionsForReview.data,
-        "animes_with_contributions": contributed_animes.data,
         "UserContributions": user_contributions.data
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
 

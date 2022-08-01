@@ -8,7 +8,6 @@ const QuizAnimes = () => {
   const {server} = useContext(ServerContext)
   const {setGameMode,GameMode,NUMBER_OF_QUIZ_QUESTIONS} = useContext(GamdeModeContext)
 
-
   const  animegameurl = `${server}/home/getgame`
   const  animesurl = `${server}/home/quizanimes`
 

@@ -1,13 +1,14 @@
-import './App.css';
+import './App.css'
 import Bar from './Components/Bar' 
-import { UserProfile } from './Components/TheProfile/UserProfile';
-import Notifications from './Components/Notifications';
+import Notifications from './Components/Notifications'
 import Contripution from './Components/Contripution'
 import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
-
-import React, {useState,useEffect,createContext} from 'react'
 import getCookie from './GetCookie'
+import { UserProfile } from './Components/TheProfile/UserProfile'
+
+import {useState,useEffect,createContext} from 'react'
+
 export const GamdeModeContext  = createContext()
 export const ServerContext  = createContext()
 
@@ -15,37 +16,30 @@ function App() {
   
   const CsrfToken = getCookie('csrftoken')
   
-  const[UserData,setUserData] = useState({})
-  
-  const [NotificationsView,setNotificationsView]= useState()
+  const [UserData,setUserData] = useState({})
   const [notifications,setnotifications] = useState()
-  
+  const [GameMode,setGameMode] = useState(false)
+  // views :
   const [HomeView,setHomeView] = useState(true)
+  const [NotificationsView,setNotificationsView]= useState(false)
   const [ContributionView,setContributionView]= useState(false)
   const [AnimesChoicesView,setAnimesChoicesView] = useState(false)
   const [ProfileView,setProfileView] = useState(false)
-
-  const [GameMode,setGameMode] = useState(false)
   
   const NUMBER_OF_QUIZ_QUESTIONS = 5 
-
   
   const  server  = "http://127.0.0.1:8000"
   const  socket_server = "ws://127.0.0.1:8000/ws/socket-server/"
   const  userdataurl = `${server}/home/data`
 
-  
-
-  // connect to django via web socket to recieve notifications once they are creaetd
-
+  // connect to django via web socket to recieve realtime notifications 
   const mysocket = ()=>
   {
-    
     const socket_connection = new WebSocket(socket_server)
     socket_connection.onmessage = (e)=>{
-      const data = JSON.parse(e.data)
+    const data = JSON.parse(e.data)
       
-      if (data.payload) 
+    if (data.payload) 
       {
         console.log(data.payload)
         const increment_notifications=()=>{
@@ -65,13 +59,11 @@ function App() {
         setnotifications(prev_notifications => [ notification_object_received,...prev_notifications])
 
       }
-      else{
+    else{
         console.log(data)
       }
     }
   }
-
-
 
   const GetUserData = async()=>
   {
@@ -122,29 +114,36 @@ function App() {
 
   
   }
-
   
   const ManageViews = (View)=>
   {
-    if (!GameMode)
-    {
+    if (GameMode)
+        return
+    
       if(View==="home"){
-        setHomeView(true);setAnimesChoicesView(false); setContributionView(false); setProfileView(false)
+        setHomeView(true)
+        setAnimesChoicesView(false) 
+        setContributionView(false)
+        setProfileView(false)
         setNotificationsView(false) 
       } 
 
       if(View==="profile"){
-        setProfileView(true); setHomeView(false) ;
-        ;setAnimesChoicesView(false); setContributionView(false);
+        setProfileView(true) 
+        setHomeView(false) 
+        setAnimesChoicesView(false)
+        setContributionView(false)
         setNotificationsView(false) 
       } 
       
       if(View==="contribution"){
-        setContributionView(true); setHomeView(false) ;
+        setContributionView(true)
+        setHomeView(false)
       } 
       
       if(View==="quiz"){
-        setAnimesChoicesView(true); setHomeView(false) ;
+        setAnimesChoicesView(true)
+        setHomeView(false)
       } 
 
       if(View==="notifications"){
@@ -154,11 +153,9 @@ function App() {
         setContributionView(false)
         setProfileView(false)
         
-      } 
-      
-    }
+      }       
+    
   }
-
 
   useEffect(()=>{
     GetUserData()
@@ -167,23 +164,20 @@ function App() {
   },[])
 
 
-
 return (
- <div className="App">  
- 
-  {UserData&& <Bar data={UserData} show={ManageViews} />}
-   
+ <div className="App"> 
   <ServerContext.Provider value={{server}}>
-  <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData,}}>
+  <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
 
+      { UserData&& <Bar data={UserData} show={ManageViews} /> }
 
       <div className="upperbuttons">
 
         <div>{!GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}</div>
 
-        { HomeView&&<button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
+        { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
-        { HomeView&& <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
+        { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
 
       </div>
   

@@ -1,7 +1,6 @@
 import PendingQuestions from './PendingContributions'
 import QuestionsForReview from './QuestionsForReview'
 import ApprovedQuestions from './ApprovedContributions'
-import Animes from './Animes'
 
 import { useContext, useState, useEffect } from "react"
 import { ServerContext } from '../../App'
@@ -9,23 +8,19 @@ import { ServerContext } from '../../App'
 export const UserProfile = () => {
   
   const {server} = useContext(ServerContext)
-  const profileurl  = `${server}/home/profile`
+  const profile_url  = `${server}/home/profile`
 
-  const[mydata,setmydata]= useState()
   const[approved_contributions,setapproved_contributions]= useState([])
-
   const[pending_contributions,setpending_contributions]= useState([])
   const[questionsForReview,setquestionsForReview]= useState([])
-  const[animes,setanimes]= useState([])
   const[animesToReview,setanimesToReview] = useState([])
 
   const[loading,setloading]= useState(true)
 
   const LoadData =async()=>
   {
-    const res = await fetch(profileurl)
+    const res = await fetch(profile_url)
     const data  = await res.json()
-      setmydata(data.data)
       
       const anime_options = [{value:1,label:"all animes"}]
       
@@ -40,16 +35,14 @@ export const UserProfile = () => {
 
       //console.log(data.UserContributions)
 
-      data.UserContributions.map((q) =>
-    
+      data.UserContributions.map((q) =>  
       q.approved===true ?
-    
       setapproved_contributions(prev_approved => [...prev_approved,q]):  
       setpending_contributions(prev_pending => [...prev_pending,q])
       )
 
       setanimesToReview(anime_options)
-      setanimes(data.animes_with_contributions)
+
 
       setquestionsForReview(data.questionsForReview)
       
@@ -73,8 +66,6 @@ export const UserProfile = () => {
         <PendingQuestions questions={pending_contributions}/>
         <hr />
         <ApprovedQuestions questions={approved_contributions}/>
-
-        {/* <Animes animes={animes} N_Contributions={mydata.contributions_count}/>  */}
        </>  
        
        :<strong>loading</strong>

@@ -1,14 +1,14 @@
 from rest_framework import serializers
-
 from .models import *
 
-class BasicUserSerializer(serializers.ModelSerializer):
+
+class SimpleUserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ('id','username','points','level','country')
 
 
-class AllUserInfo_Serializer(serializers.ModelSerializer):
+class AllUserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count')
@@ -27,19 +27,20 @@ class AnimeSerializer(serializers.ModelSerializer):
     fields = ("id","anime_name")
 
 
-# used for each anime and its corresponding number of questions 
-class Animes_with_Questions_Count_serializer(serializers.ModelSerializer):
-  class Meta:
-    model = Anime
-    fields = ("id","anime_name","approved_questions")
-    
-
-
+# animes that have questions
 class QuizAnimesSerializer(serializers.ModelSerializer):
   quiz_questions_count = serializers.IntegerField()
   class Meta:
     model = Anime
     fields = ("id","anime_name","quiz_questions_count")
+    
+
+
+# used for each anime and its corresponding number of questions 
+class Animes_with_Questions_Count_serializer(serializers.ModelSerializer):
+  class Meta:
+    model = Anime
+    fields = ("id","anime_name","approved_questions")
     
 
 

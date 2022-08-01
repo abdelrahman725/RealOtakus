@@ -1,16 +1,18 @@
-from board import base_models
-
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from .helpers import CreateNotification, CheckLevel
-from .constants import LEVELS
 import threading
 
+from board import base_models
 
-def NotifyReviewrs(anime):
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from .helpers import CreateNotification, CheckLevel
+from .constants import LEVELS
+
+
+def NotifyReviewrs(anime,contributor):
     msg = f"new question for {anime.anime_name} and needs review, check your profile"
     for reviewer in anime.reviewers.all():
-        CreateNotification(reviewer, msg)
+        if reviewer != contributor:
+            CreateNotification(reviewer, msg)
 
 
 def NewApprovedQuestion(excluded_user, anime, questions_count):
@@ -27,7 +29,6 @@ def NewApprovedQuestion(excluded_user, anime, questions_count):
 
 
 class Anime(base_models.Anime):
-
 
     @property
     def approved_questions(self):
@@ -130,7 +131,7 @@ class Question(base_models.Question):
                 new_approved_question = True
             else:
                 async_notification = threading.Thread(
-                    target=NotifyReviewrs, args=(self.anime,))
+                    target=NotifyReviewrs, args=(self.anime,self.contributor))
                 async_notification.start()
 
         if new_approved_question:
@@ -178,7 +179,7 @@ class Notification(base_models.Notification):
         super(Notification, self).save(*args, **kwargs)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_group_{self.owner.id}', {
+            f'notifications_group_54', {
                 'type': 'send_notifications',
                 'value': self
             })
