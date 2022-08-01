@@ -1,4 +1,4 @@
-const Bar = ({data,show}) => {
+const NavBar = ({data,show}) => {
 
   return (
     <div className="bar">
@@ -14,4 +14,4 @@ const Bar = ({data,show}) => {
   )
 }
 
-export default Bar
+export default NavBar

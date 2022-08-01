@@ -139,26 +139,21 @@ margin-bottom: 50px;
 
 .select_animes
 {
-  width:300px;
-}
-.select_animes::placeholder
-{
-  font-weight: bold;
-  color: #00AD83;
+  width:250px;
 }
 
 .animeslist
 {
 
 .startgame{
-  padding: 15px 30px;
+  padding: 10px 20px;
   font-weight: bold;
-  letter-spacing: 2px;
-  font-size: x-large;
+  letter-spacing: 3px;
+  font-size: large;
   color: white;
-  border-radius: 30px;
+  border-radius: 5px;
   border: none;
-  background-color: #00AD83;
+  background-color: green;
 }
 
 

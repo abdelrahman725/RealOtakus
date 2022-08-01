@@ -1,5 +1,5 @@
 import './App.css'
-import Bar from './Components/Bar' 
+import NavBar from './Components/NavBar'
 import Notifications from './Components/Notifications'
 import Contripution from './Components/Contripution'
 import QuizAnimes from './Components/QuizAnimes'
@@ -23,9 +23,9 @@ function App() {
   const [HomeView,setHomeView] = useState(true)
   const [NotificationsView,setNotificationsView]= useState(false)
   const [ContributionView,setContributionView]= useState(false)
-  const [AnimesChoicesView,setAnimesChoicesView] = useState(false)
+  const [QuizAnimesView,setQuizAnimesView] = useState(false)
   const [ProfileView,setProfileView] = useState(false)
-  
+  const [test,settest] = useState(0)
   const NUMBER_OF_QUIZ_QUESTIONS = 5 
   
   const  server  = "http://127.0.0.1:8000"
@@ -41,6 +41,7 @@ function App() {
       
     if (data.payload) 
       {
+        settest(test+1)
         console.log(data.payload)
         const increment_notifications=()=>{
   
@@ -89,40 +90,36 @@ function App() {
   // called if the user doesn't have a saved country (which will always be the case initially for the first login)
   const getUserCountryViaApiServiceThenSaveCountry = async()=>
   {
-    // after we get the country successfully we save it to the database so subsequent requests for the same user don't have to query the country from the api service again
-
-    const res = await fetch("http://ip-api.com/json")
-    const data = await res.json()
-
-    const postcountry = async (country)=>
-      {
-        const sendcountry = await fetch(userdataurl,{
-        
-          method : 'POST',
-          headers : {
-            'Content-type': 'application/json',
-            'X-CSRFToken': CsrfToken,
-          },
-          body: JSON.stringify({
-            country:country
-          })
-        })
-        const res  = await sendcountry.json()
-      }
     
-   postcountry(data.countryCode.toLowerCase())
+    const res = await fetch("http://ip-api.com/json")
+    const fetched_country = await res.json()
 
-  
+  // after we get the country successfully we save it to the database so subsequent requests for the same user don't have to query the country from the api service again
+    const save_country = await fetch(userdataurl,{
+    
+      method : 'POST',
+      headers : {
+        'Content-type': 'application/json',
+        'X-CSRFToken': CsrfToken,
+      },
+      body: JSON.stringify({
+        country : fetched_country.countryCode.toLowerCase()
+      })
+    })
+    const counry_res  = await save_country.json()
+    console.log(counry_res)
+        
   }
   
   const ManageViews = (View)=>
   {
+
     if (GameMode)
         return
     
       if(View==="home"){
         setHomeView(true)
-        setAnimesChoicesView(false) 
+        setQuizAnimesView(false) 
         setContributionView(false)
         setProfileView(false)
         setNotificationsView(false) 
@@ -131,7 +128,7 @@ function App() {
       if(View==="profile"){
         setProfileView(true) 
         setHomeView(false) 
-        setAnimesChoicesView(false)
+        setQuizAnimesView(false)
         setContributionView(false)
         setNotificationsView(false) 
       } 
@@ -142,18 +139,19 @@ function App() {
       } 
       
       if(View==="quiz"){
-        setAnimesChoicesView(true)
+        setQuizAnimesView(true)
         setHomeView(false)
       } 
 
       if(View==="notifications"){
         setNotificationsView(true) 
-        setAnimesChoicesView(false)
+        setQuizAnimesView(false)
         setHomeView(false)
         setContributionView(false)
         setProfileView(false)
         
-      }       
+      } 
+      
     
   }
 
@@ -169,7 +167,7 @@ return (
   <ServerContext.Provider value={{server}}>
   <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
 
-      { UserData&& <Bar data={UserData} show={ManageViews} /> }
+      { UserData&& <NavBar data={UserData} show={ManageViews} /> }
 
       <div className="upperbuttons">
 
@@ -180,8 +178,8 @@ return (
         { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
 
       </div>
-  
-      { HomeView&& <TheDashBoard/>}
+  <h1>{test}</h1>
+      { HomeView && <TheDashBoard/>}
       
       { ProfileView && <UserProfile/>}
 
@@ -189,7 +187,7 @@ return (
 
       { ContributionView && <Contripution />}
 
-      { AnimesChoicesView&& <QuizAnimes/>}
+      { QuizAnimesView && <QuizAnimes/>}
 
   </GamdeModeContext.Provider>
   </ServerContext.Provider>

@@ -3,19 +3,15 @@ import { useEffect,useContext, useState } from "react"
 import getCookie from "../GetCookie"
 import { ServerContext } from "../App"
 
-
 const Notifications = ({notifications}) => {
   
   const {server} = useContext(ServerContext)  
   const CsrfToken = getCookie('csrftoken')
-  //const [loading,setloading]= useState()
-
 
 useEffect(()=>{
 
 // clears unseen_notifcations count after user view them
   document.getElementById("notifications_count").innerHTML =""
-
   
 //update notifications state in the backend (which are seen by the user in the  UI) from unseen to seen 
   const new_notifications=[]
@@ -43,8 +39,7 @@ useEffect(()=>{
 
     }
 
-
-    new_notifications.length > 0 && UpdateNotificationsState(new_notifications)
+  new_notifications.length > 0 && UpdateNotificationsState(new_notifications)
   
  
 },[])

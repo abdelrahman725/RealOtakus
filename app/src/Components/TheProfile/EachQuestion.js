@@ -1,4 +1,3 @@
-import React from 'react'
 import getCookie from "../../GetCookie"
 import { ServerContext } from "../../App"
 import { useContext, useState } from "react"
@@ -9,7 +8,6 @@ const {server} = useContext(ServerContext)
 const CsrfToken = getCookie('csrftoken')
 
 const [loading,setloading] = useState(false) 
-
 
 const ReviewContribution = async(state,question)=>{
 

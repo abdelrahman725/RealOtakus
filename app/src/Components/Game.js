@@ -1,44 +1,115 @@
-import Quiz from "./Quiz"
+import Question from "./Question"
 import Result from "./Result"
-import Loading from "./Loading"
+//import Loading from "./Loading"
 
-import {useState,useContext} from "react"
-import { GamdeModeContext} from "../App"
+import getCookie from "../GetCookie"
 
-const Game = ({questions,setquizstart}) => {
+import { GamdeModeContext,ServerContext } from "../App"
+import { useContext, useState, useEffect } from "react"
 
-  const {setGameMode,GameMode} = useContext(GamdeModeContext)
+const Game = ({questions,setgamestarted}) => {
 
-  const [quizresults,setquizresults] = useState({}) 
-  const [score,setscore] = useState()
-  const {setUserData} = useContext(GamdeModeContext)
-  const [useranswers,setuseranswers] = useState()
-  const [resultview,setresultview] = useState(false)
+  const CsrfToken = getCookie('csrftoken')
+  const {server} = useContext(ServerContext)
+  const {setGameMode,setUserData,GameMode} = useContext(GamdeModeContext)
   
-  const makeresults = (results,score,level,answers)=>
+  const [useranswers,setuseranswers] = useState({})
+  const [index,setindex] = useState(0)
+  const questions_length = questions.length
+  
+  const [quizresults,setquizresults] = useState({}) 
+  const [gamescore,setgamescore] = useState()
+  
+  
+  useEffect(()=>{
+  if (GameMode)
   {
-    setquizresults(results)
-    setscore(score)
-    setUserData(prev => ({...prev, points :prev.points + score }))
-    setuseranswers(answers)
+    window.addEventListener('beforeunload', alertUserbeforeleaving)
+    return () => {
+      window.removeEventListener('beforeunload', alertUserbeforeleaving)
+    }
+  } 
+},[GameMode])
 
-    setresultview(true)
-    
-    // console.log("results loaded successfully !")
+  const alertUserbeforeleaving = e => {
+    e.preventDefault()
+    e.returnValue = ''
   }
+      
+
+  const nextquestion = ()=>index < questions_length-1 && setindex(index+1)
+
+  const onAnswer = (id,each_new_answer)=>
+  {
+    const new_answers = useranswers
+    new_answers[id] = each_new_answer
+    setuseranswers(new_answers)
+  }
+
+  const SubmitGame = async()=>
+  {
+    const send = await fetch(`${server}/home/sendgame`,{
+      
+      method : 'POST',
+      headers : {
+        'Content-type': 'application/json',
+        'X-CSRFToken': CsrfToken,
+      },
+      body: JSON.stringify({
+        results:useranswers
+      })
+    })
+    const results  = await send.json()
     
+    setquizresults(results.rightanswers)
+    console.log(results.rightanswers)
+    setgamescore(results.newscore)
+    setUserData(prev => ({...prev, points : prev.points + results.newscore }))    
+    setGameMode(false)
+  }
 
   return (
     <>
-    {!resultview && !GameMode &&<Loading/>}
-    
-    {resultview&& <Result setquizstart={setquizstart} results={quizresults} score={score}  questions={questions}
-    useranswers={useranswers}/> }
-
-
-    {GameMode&&<Quiz questions={questions} setgameresults= {makeresults}  setquizstart={setquizstart} />}
-    
-    </>
+    {GameMode ?
+    <div className="Quiz">   
+        <Question
+        each_question={questions[index]}
+        Q_no={index}
+        onselect={onAnswer}
+        questions_length={questions_length}
+        nextquestion={nextquestion}/>
+        
+        <br /> 
+        
+        <div className="buttoncontainer">
+            <button onClick={()=>{
+              setgamestarted(false)
+              setGameMode(false)
+              }}>
+            exit
+            </button>
+            
+            {index===questions_length-1&& 
+            <button onClick={SubmitGame}>
+            submit
+            </button>}
+            
+            <button
+            onClick={nextquestion}
+            className={index===questions_length-1?"faded":""}
+            disabled={index===questions_length-1}>
+            next
+            </button>            
+        </div>
+    </div> 
+    :
+    <Result
+    results={quizresults}
+    useranswers={useranswers}
+    score={gamescore}
+    questions={questions}/> 
+  }
+  </>
   )
 }
 

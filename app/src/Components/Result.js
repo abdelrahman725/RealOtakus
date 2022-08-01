@@ -1,8 +1,4 @@
-import { GamdeModeContext } from "../App"
-import { useContext } from "react"
-const Result = ({results,score,setquizstart,questions,useranswers}) => {
-
-  const {setGameMode} = useContext(GamdeModeContext)
+const Result = ({results,useranswers,questions,score}) => {
 
 
 const get_choice_class=(right_answer,user_answer,choice)=>
@@ -22,8 +18,8 @@ const get_choice_class=(right_answer,user_answer,choice)=>
   return (
     <div className="Result">
     <h2>Resulsts</h2>
-    <h3>score    {score}/{questions.length} </h3> 
-    <br />    <br />
+    <h3>score  {score}/{questions.length} </h3> 
+    <br />  
     <div className="results">
     
       {questions.map((q,index)=>(
@@ -52,7 +48,6 @@ const get_choice_class=(right_answer,user_answer,choice)=>
       ))}
 
     </div> 
-    <button onClick={()=>{setquizstart(false);setGameMode(false)}}>take another quiz</button>
   
       </div>
   )

@@ -75,7 +75,10 @@ def GetDashBoard(request):
         "animes": Animes.data})
 
 
+
+
 # -------------------------------------- Test Handling functions ----------------------------------------
+
 
 #@login_required
 @api_view(["GET"])
@@ -110,8 +113,10 @@ def GetTest(request, game_anime):
         anime=selected_anime)
 
     index = CurrentGame.gamesnumber * QUESTIONSCOUNT
+    # to delete later : 
+    index = 0
 
-# this game questions
+    # this game questions
     questions = selected_anime.anime_questions.filter(approved=True).exclude(
         contributor=current_user).order_by("id")[index:index+QUESTIONSCOUNT]
 
@@ -136,7 +141,7 @@ def SubmitTest(request):
     test_results = request.data["results"]
     questions = game_questions[user.id]
 
-    # check test results
+    # record test results
     for q in test_results:
         Q = questions[int(q)]
 
@@ -147,7 +152,6 @@ def SubmitTest(request):
         else:
             Q.wrong_answers += 1
         Q.save()
-
 
 
     user.points += test_score
@@ -169,7 +173,9 @@ def SubmitTest(request):
     del game_questions[user.id]
     del game[user.id]
 
-    return JsonResponse({"message": "test submitted successfully", "score": test_score, "answers": answers_dict, "level": user.level})
+    return JsonResponse({"message": "test submitted successfully", "newscore": test_score, "rightanswers": answers_dict, "level": user.level})
+
+
 
 
 # ------------------------------------------------------------------------------------
@@ -278,9 +284,9 @@ def GetMyProfile(request):
         many=True)
 
     user_contributions = QuestionsWithAnimesSerializer(
-        user.contributions.all(), many=True)
+        user.contributions.all(),
+        many=True)
 
-    print(user_contributions.data)
     # sleep(2)
     return Response({
         "data": my_data.data,

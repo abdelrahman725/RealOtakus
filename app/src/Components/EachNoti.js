@@ -23,7 +23,6 @@ const UTCToLocalTime = (utc_time)=>{
     return `${date} at ${time}`
   }
 
-  
   return (
   
     <div className="notification">  

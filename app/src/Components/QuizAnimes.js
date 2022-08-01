@@ -1,7 +1,8 @@
 import Game from "./Game"
-import {useState,useContext,useEffect} from 'react'
 import Select from 'react-select'
 import { GamdeModeContext ,ServerContext} from "../App"
+
+import {useState,useContext,useEffect} from 'react'
 
 const QuizAnimes = () => {
 
@@ -14,20 +15,10 @@ const QuizAnimes = () => {
   const [animesoptions,setanimesoptions] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
-  const [startquiz,setquizstart] = useState()
+  const [gamestarted,setgamestarted] = useState(false)
 
-  
-// function to compare the passed anime_approved_questions with the number of games 
-//that the user had for that anime
 
-  const ShowAnime = (NumberOfGames,anime_questions)=>{
-      if ( anime_questions  >= (NumberOfGames * NUMBER_OF_QUIZ_QUESTIONS) + NUMBER_OF_QUIZ_QUESTIONS ){
-        return true
-      }
-      return false
-  }
-
-// get animes with approved questions
+// get game animes 
   const GetAnimes = async()=>
   {
     console.log("requesting animes again !!!!")
@@ -45,52 +36,56 @@ const QuizAnimes = () => {
    setanimesoptions(anime_array)
   }
 
-
+// get selected anime questions
   const GetGame = async(selectedanime)=>
   {
-
     const res = await fetch(`${animegameurl}/${selectedanime}`)
     const anime_questions  = await res.json()
-
-    if (anime_questions.length>=1)
-    {
-      setgamequestions(anime_questions)
-      setGameMode(true)
-      setquizstart(true)
-    }
-    setselected_anime()
-  }
   
+    setgamequestions(anime_questions)
+    setselected_anime()
+    setgamestarted(true)
+    setGameMode(true)    
+  }
 
-  const handleselect=(e)=> {setselected_anime(e.value)}
+// compare the passed anime_approved_questions with the number of games that the user had for that anime
+  const ShowAnime = (NumberOfGames,anime_questions)=>
+  {
+    // to delete later
+    return true
+    if ( anime_questions  >= (NumberOfGames * NUMBER_OF_QUIZ_QUESTIONS) + NUMBER_OF_QUIZ_QUESTIONS ){
+      return true
+    }
+    return false
+  }
+    
+  const handlesanimeselecttion=(e)=> {setselected_anime(e.value)}
 
   useEffect(()=>{
-    !startquiz&& GetAnimes()
-  },[startquiz])
-
-
+  GetAnimes()
+  },[])
 
 return (
   <>
-    {startquiz?<Game questions={gamequestions}  setquizstart={setquizstart}/>
-    
+   { gamestarted ? 
+    <Game questions={gamequestions} setgamestarted={setgamestarted}/>
     :
     <div className="animeslist">
-      <h2>which anime you want to take quiz in ?</h2>
-      <br />
+       <h2>which anime you want to take quiz in ?</h2><br />
       
-       <Select options={animesoptions} className="select_animes"  placeholder="select anime" 
-        onChange={handleselect}  />
-          <br /> <br />
-          
-          <h3>what about other animes ?</h3>
-    
-          <button className="startgame" onClick={()=>selected_anime&&GetGame(selected_anime)}>start the game !</button>
-
-     </div>
-     }
-
-
+       <Select 
+        className="select_animes"
+        placeholder="select anime"
+        options={animesoptions}
+        onChange={handlesanimeselecttion}  />
+        <br /> <br />
+      
+        <button className="startgame"
+        onClick={()=> selected_anime && GetGame (selected_anime)}>
+        Start Game 
+        </button>
+    </div>
+    }
   </>
  )}
 
