@@ -6,7 +6,7 @@ const Contributions = ({approved,pending}) => {
       <h2>Your Contributions</h2><br />
       <div className="questionscontainer">
    
-    { pending.length > 0 && approved.length > 0?
+    { pending.length > 0 || approved.length > 0 ?
     
     <div className="contributions">
         

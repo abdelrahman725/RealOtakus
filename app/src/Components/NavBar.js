@@ -1,12 +1,14 @@
-const NavBar = ({data,show}) => {
+const NavBar = ({data,show,new_notifications}) => {
 
   return (
     <div className="bar">
       <div>{data.level}</div>
       <div>{data.points}</div>
-      <div onClick={ ()=> show("notifications")} 
-      className="notifications">
-        activity <strong id="notifications_count"></strong>
+      
+      <div className="notifications"
+       onClick={ ()=> show("notifications")} >
+       activity &nbsp;
+      <strong>{new_notifications > 0 && new_notifications}</strong>
       </div>
 
       <div onClick={ ()=> show("profile") } className="profilename">{data.username}</div>

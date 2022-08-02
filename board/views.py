@@ -1,3 +1,4 @@
+import constantly
 from django.db import connection, IntegrityError
 from django.db.models import Count, Q
 from django.shortcuts import render, redirect
@@ -27,20 +28,21 @@ for anime in Anime.objects.all():
 
 
 def GetWantedUser(request):
-    #return request.user
+    return request.user
     username = "linus"
     return User.objects.get(username=username)
 
 
-#@login_required
+@login_required
 def ReactApp(request):
     # return redirect("http://localhost:3000/home")
     return render(request, "index.html")
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
+    print(f"\n\n ----hitting the server ! ----\n\n")
     user = GetWantedUser(request)
 
     if request.method == "POST":
@@ -59,7 +61,7 @@ def GetUserData(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
@@ -80,7 +82,7 @@ def GetDashBoard(request):
 # -------------------------------------- Test Handling functions ----------------------------------------
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
 
@@ -100,7 +102,7 @@ def GetQuizeAnimes(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -133,7 +135,7 @@ def GetTest(request, game_anime):
     return Response(serialized_data.data)
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def SubmitTest(request):
     user = GetWantedUser(request)
@@ -181,14 +183,14 @@ def SubmitTest(request):
 # ------------------------------------------------------------------------------------
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
     serialized_data = AnimeSerializer(animes_dict.values(), many=True)
     return Response(serialized_data.data)
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def MakeContribution(request):
     user = GetWantedUser(request)
@@ -246,7 +248,7 @@ def MakeContribution(request):
 
 
 # endpoint for a reviewr to approve/decline a question contributed by other user/s
-#@login_required
+@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
     state = request.data["state"]
@@ -270,7 +272,7 @@ def ReviewContribution(request):
     return Response({"not expected response"}, status=status.HTTP_200_OK)
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
@@ -287,6 +289,8 @@ def GetMyProfile(request):
         user.contributions.all(),
         many=True)
 
+    print(user_contributions.data)
+
     # sleep(2)
     return Response({
         "data": my_data.data,
@@ -295,7 +299,7 @@ def GetMyProfile(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
 

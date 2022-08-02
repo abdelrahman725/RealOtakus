@@ -34,16 +34,25 @@ const ReviewContribution = async(state,question)=>{
 
  
 return (
-    <div  className={`eachquestion ${reviewstate}`}>
+    <div className={`eachquestion ${reviewstate}`}>
         <p>
             <span><strong>{anime}</strong></span><br />
             {question.question}
-        </p>   
-        <button  onClick={()=>ReviewContribution("approve",question.id)}  disabled={reviewstate!=="reviewstate"} 
-         className="approve_btn">approve</button>&nbsp;   
-    
-        <button  onClick={()=>ReviewContribution("decline",question.id)}  disabled={reviewstate!=="reviewstate"}    
-        className="decline_btn">decline</button>   
+        </p> 
+
+        <button className="approve_btn"
+         onClick={()=>ReviewContribution("approve",question.id)}
+         disabled={reviewstate!=="reviewstate"} >
+         approve
+        </button>
+        
+         &nbsp;   
+        
+        <button className="decline_btn"
+         onClick={()=>ReviewContribution("decline",question.id)}  
+         disabled={reviewstate!=="reviewstate"} >
+         decline
+        </button>   
     </div>
   )
 }

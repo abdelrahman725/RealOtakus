@@ -179,7 +179,7 @@ class Notification(base_models.Notification):
         super(Notification, self).save(*args, **kwargs)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_group_54', {
+            f'notifications_group_{self.owner.id}', {
                 'type': 'send_notifications',
                 'value': self
             })

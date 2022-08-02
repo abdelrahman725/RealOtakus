@@ -31,7 +31,7 @@ export const UserProfile = () => {
     Array.from(anime_names).map((a) => 
     anime_options.push({value:a,label:a})
     )
-
+    
     data.UserContributions.map((q) =>  
     q.approved===true ?
     setapprovedcontributions(prev_approved => [...prev_approved,q]):  
