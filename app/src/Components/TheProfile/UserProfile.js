@@ -1,5 +1,6 @@
 import Contributions from './Contributions'
 import QuestionsForReview from './QuestionsForReview'
+import AnimesScores from './AnimesScores'
 
 import { ServerContext } from '../../App'
 import { useContext, useState, useEffect } from "react"
@@ -13,6 +14,7 @@ export const UserProfile = () => {
   const[pendingcontributions,setpendingcontributions]= useState([])
   const[questionsForReview,setquestionsForReview]= useState([])
   const[animesToReview,setanimesToReview] = useState([])
+  const[animes_scores,setanimes_scores] = useState([])
 
   const[loading,setloading]= useState(true)
 
@@ -20,6 +22,8 @@ export const UserProfile = () => {
   {
     const res = await fetch(profile_url)
     const data  = await res.json()
+    
+    console.log(data.UserAnimeScores)
       
     const anime_options = [{value:1,label:"all animes"}]
       
@@ -37,30 +41,32 @@ export const UserProfile = () => {
     setapprovedcontributions(prev_approved => [...prev_approved,q]):  
     setpendingcontributions(prev_pending => [...prev_pending,q])
     )
-      
     setanimesToReview(anime_options)
     setquestionsForReview(data.questionsForReview)
+    setanimes_scores(data.UserAnimeScores)
+    
     setloading(false)
   }
 
   useEffect(()=>{
-    loading && getProfileData()
+    getProfileData()
   },[])
 
   return (
     <div className="userprofile">
     {!loading?
        <>
-       <br />
+       <br/>
         {questionsForReview.length > 0 && 
           <QuestionsForReview
           questions={questionsForReview} 
           animesoptions={animesToReview}/>
-        }
-        
+        }    
         <br/>
-        
+    
           <Contributions approved={approvedcontributions} pending={pendingcontributions}/>
+          <AnimesScores animes={animes_scores} />
+
        </>  
        
        :

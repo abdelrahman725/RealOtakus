@@ -56,7 +56,6 @@ class ReadOnly(admin.ModelAdmin):
     return False
 
 
-
 @admin.register(User)
 class User_admin(admin.ModelAdmin):
   readonly_fields =  ("level","points","contributions_count","tests_started","tests_completed")

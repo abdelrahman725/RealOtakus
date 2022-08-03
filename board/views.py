@@ -1,6 +1,5 @@
-import constantly
 from django.db import connection, IntegrityError
-from django.db.models import Count, Q
+from django.db.models import Count, Q,F
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 
@@ -79,7 +78,7 @@ def GetDashBoard(request):
 
 
 
-# -------------------------------------- Test Handling functions ----------------------------------------
+# -------------------------------------- Quiz related endpoints ----------------------------------------
 
 
 @login_required
@@ -277,10 +276,9 @@ def ReviewContribution(request):
 def GetMyProfile(request):
     user = GetWantedUser(request)
 
-    my_data = AllUserDataSerializer(user, many=False)
+    all_user_data = AllUserDataSerializer(user, many=False)
 
-# contributed questions by other users for the current user to review and approve if any
-    questionsForReview = QuestionSerializer(
+    questions_for_review = QuestionSerializer(
         Question.objects.filter(
             ~Q(contributor=user), approved=False, anime__in=user.animes_to_review.all()),
         many=True)
@@ -289,20 +287,23 @@ def GetMyProfile(request):
         user.contributions.all(),
         many=True)
 
-    print(user_contributions.data)
-
-    # sleep(2)
+    user_anime_scores = GameSerializer(
+        Game.objects.filter(game_owner=user,gamesnumber__gt=0),
+        many=True
+    )
+    
     return Response({
-        "data": my_data.data,
-        "questionsForReview": questionsForReview.data,
-        "UserContributions": user_contributions.data
+        "data": all_user_data.data,
+        "questionsForReview": questions_for_review.data,
+        "UserContributions": user_contributions.data,
+        "UserAnimeScores":user_anime_scores.data
     })
 
 
 @login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
-
+    
     unseen_notifications = request.data["notifications"]
 
     Notification.objects.filter(pk__in=unseen_notifications).update(seen=True)

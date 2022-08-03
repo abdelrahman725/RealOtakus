@@ -35,14 +35,12 @@ class QuizAnimesSerializer(serializers.ModelSerializer):
     fields = ("id","anime_name","quiz_questions_count")
     
 
-
 # used for each anime and its corresponding number of questions 
 class Animes_with_Questions_Count_serializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
     fields = ("id","anime_name","approved_questions")
     
-
 
 class AnimeNameSerializer(serializers.ModelSerializer):
   class Meta:
@@ -72,13 +70,11 @@ class QuestionsWithAnimesSerializer(serializers.ModelSerializer):
     fields = ("anime","question","approved")
 
 
-
 class GameSerializer(serializers.ModelSerializer):
-  anime = AnimeNameSerializer() 
+  anime = AnimeNameSerializer()
   class Meta:
     model = Game
-    fields = ("anime","gamesnumber")
-
+    fields = ("anime","score","gamesnumber","contributions")
 
     
 class NotificationsSerializer(serializers.ModelSerializer):
