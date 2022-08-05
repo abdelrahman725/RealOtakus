@@ -177,8 +177,6 @@ def SubmitTest(request):
     return JsonResponse({"message": "test submitted successfully", "newscore": test_score, "rightanswers": answers_dict, "level": user.level})
 
 
-
-
 # ------------------------------------------------------------------------------------
 
 
@@ -209,17 +207,14 @@ def MakeContribution(request):
 
     QuestionOBject = request.data["question"]
 
-    right_answer = QuestionOBject["rightanswer"].strip()
     actualquestion = QuestionOBject["question"].strip()
 
     c1 = QuestionOBject["choice1"].strip()
     c2 = QuestionOBject["choice2"].strip()
     c3 = QuestionOBject["choice3"].strip()
+    right_answer = QuestionOBject["rightanswer"].strip()
 
-    choices = [c1, right_answer, c2, c3]
-    random.shuffle(choices)
-
-    # check if the contributer user is already a reviewer of the anime associated with the question
+# check if the contributer user is already a reviewer of the anime associated with the question
 
     is_anime_reviewr = False
     if anime in user.animes_to_review.all():
@@ -230,8 +225,8 @@ def MakeContribution(request):
             anime=anime, contributor=user,
             approved=is_anime_reviewr,
             question=actualquestion, right_answer=right_answer,
-            choice1=choices[0], choice2=choices[1],
-            choice3=choices[2], choice4=choices[3])
+            choice1=c1, choice2=c2,
+            choice3=c3)
 
         if is_anime_reviewr:
             return JsonResponse({"message": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"})

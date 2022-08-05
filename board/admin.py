@@ -119,11 +119,7 @@ class Question_admin(admin.ModelAdmin):
      "approved"
   )
   search_fields   =  ("question",)
-  # def get_queryset(self, request):
-  #   query = super(Question_admin, self).get_queryset(request)
-  #   if not request.user.is_superuser:
-  #     return query.exclude(contributor__username = "admin")
-  #   return query
+
 
 # prevent any deletion from anyone if this is one of my approved questions (main questions)  
   def has_delete_permission(self, request, obj=None):

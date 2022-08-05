@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import *
-
+import random
 
 class SimpleUserDataSerializer(serializers.ModelSerializer):
   class Meta:
@@ -57,10 +57,12 @@ class AnimeContributionsSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer()
-
+  
+  choice4 = serializers.CharField(source="right_answer")
+  
   class Meta:
     model = Question
-    fields = ("id","anime","question","choice1","choice2","choice3","choice4")
+    fields = ("anime","question","choice1","choice2","choice3","choice4","id")
 
 
 class QuestionsWithAnimesSerializer(serializers.ModelSerializer):

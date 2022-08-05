@@ -41,6 +41,7 @@ const QuizAnimes = () => {
   {
     const res = await fetch(`${animegameurl}/${selectedanime}`)
     const anime_questions  = await res.json()
+    console.log(anime_questions)
   
     setgamequestions(anime_questions)
     setselected_anime()

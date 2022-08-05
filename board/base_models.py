@@ -35,12 +35,11 @@ class Question(models.Model):
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL,related_name="contributions", null=True, blank=True, default=1)
 
     question = models.TextField(max_length=350)
-
+    right_answer = models.CharField(max_length=150)
+    
     choice1 = models.CharField(max_length=150)
     choice2 = models.CharField(max_length=150)
     choice3 = models.CharField(max_length=150)
-    choice4 = models.CharField(max_length=150)
-    right_answer = models.CharField(max_length=150)
 
     approved = models.BooleanField(default=True)
 
