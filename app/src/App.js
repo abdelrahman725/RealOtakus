@@ -15,9 +15,6 @@ export const GamdeModeContext  = createContext()
 export const ServerContext  = createContext()
 
 function App() {
-  
-  const CsrfToken = getCookie('csrftoken')
-  
   const [UserData,setUserData] = useState({})
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
@@ -30,11 +27,13 @@ function App() {
   const [ProfileView,setProfileView] = useState(false)
   const NUMBER_OF_QUIZ_QUESTIONS = 5 
   
+  const CsrfToken = getCookie('csrftoken')
+  
   const domain = "127.0.0.1:8000"
-
   const  server  = `http://${domain}`
   const  socket = `ws://${domain}/ws/socket-server/`
   const  userdataurl = `${server}/home/data`
+
   
   const { lastMessage,readyState } = useWebSocket(socket,{
 

@@ -1,5 +1,5 @@
 from django.db import connection, IntegrityError
-from django.db.models import Count, Q,F
+from django.db.models import Count, Q
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 

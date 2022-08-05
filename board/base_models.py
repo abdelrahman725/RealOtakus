@@ -12,10 +12,10 @@ class Anime(models.Model):
 
 
 class User(AbstractUser):
+    country = models.CharField(max_length=10, blank=True,null=True)
     points = models.IntegerField(default=0)
     tests_completed = models.PositiveIntegerField(default=0)
     tests_started = models.PositiveIntegerField(default=0)
-    country = models.CharField(null=True, max_length=60, blank=True)
     contributor = models.BooleanField(default=False)
     contributions_count = models.PositiveIntegerField(default=0)
     animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)

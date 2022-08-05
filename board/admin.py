@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from django.db.models import Count
 
 from .models import *
-from .constants import QUESTIONSCOUNT
+from .constants import QUESTIONSCOUNT,COUNTRIES
 
 
 class SocialAccountFilter(admin.SimpleListFilter):
@@ -12,39 +12,57 @@ class SocialAccountFilter(admin.SimpleListFilter):
     parameter_name = 'social'
 
     def lookups(self, request, model_admin):
-         return (
-            ('Yes', ('Yes')),
-            ('No', ('No')),
-        )
+        return (
+          ('Yes', ('Yes')),
+          ('No', ('No')),
+      )
 
-    def queryset(self, request, queryset):        
-        if self.value() == 'Yes':
-          return queryset.filter(socialaccount__isnull=False)
-        
-        if self.value() == 'No':
-          return queryset.filter(socialaccount=None)
-     
-        else:
-          return queryset.all()
+    def queryset(self, request, queryset):  
+          
+      if self.value() == 'Yes':
+        return queryset.filter(socialaccount__isnull=False)
+      
+      if self.value() == 'No':
+        return queryset.filter(socialaccount=None)
+    
+      else:
+        return queryset.all()
 
 class ActiveAnimeFilter(admin.SimpleListFilter):
     title = 'active (has questions)'
     parameter_name = 'active'
 
     def lookups(self, request, model_admin):
-         return (
-            ('Yes', ('Yes')),
-            ('No', ('No')),
-        )
+
+        return (
+          ('Yes', ('Yes')),
+          ('No', ('No')),
+      )
 
     def queryset(self, request, queryset):        
-        if self.value() == 'Yes':
-          return queryset.exclude(anime_questions=None)
-        
-        if self.value() == 'No':
-          return queryset.filter(anime_questions=None)
-        else:
-          return queryset.all()
+      if self.value() == 'Yes':
+        return queryset.exclude(anime_questions=None)
+      
+      if self.value() == 'No':
+        return queryset.filter(anime_questions=None)
+      else:
+        return queryset.all()
+
+class CountryFilter(admin.SimpleListFilter):
+    title = 'country'
+    parameter_name = 'country'
+
+    def lookups(self, request, model_admin):
+      countries_choices = set()
+
+      for c in User.objects.values_list('country',flat=True).distinct():
+        countries_choices.add((c,(COUNTRIES[c])))
+      return countries_choices
+    
+    def queryset(self, request, queryset): 
+      if self.value():
+        return queryset.filter(country=self.value())
+      return queryset.all()
 
 # admin mdoels inherit from this class can't be changed or deleted
 class ReadOnly(admin.ModelAdmin):
@@ -54,6 +72,7 @@ class ReadOnly(admin.ModelAdmin):
  
   def has_delete_permission(self, request, obj=None):
     return False
+
 
 
 @admin.register(User)
@@ -67,6 +86,7 @@ class User_admin(admin.ModelAdmin):
   SocialAccountFilter,
   "contributor",
   "level",
+  CountryFilter
   )
   
   def get_queryset(self, request):
@@ -122,7 +142,6 @@ class Question_admin(admin.ModelAdmin):
 
   view_contributor_link.short_description = "contributor"
   view_anime_link.short_description = "anime"
-
 
 
 @admin.register(Anime)
