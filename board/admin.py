@@ -57,6 +57,7 @@ class CountryFilter(admin.SimpleListFilter):
 
       for c in User.objects.values_list('country',flat=True).distinct():
         countries_choices.add((c,(COUNTRIES[c])))
+
       return countries_choices
     
     def queryset(self, request, queryset): 
@@ -71,14 +72,13 @@ class ReadOnly(admin.ModelAdmin):
     return False
  
   def has_delete_permission(self, request, obj=None):
-    return False
-
+    return True
 
 
 @admin.register(User)
 class User_admin(admin.ModelAdmin):
   readonly_fields =  ("level","points","contributions_count","tests_started","tests_completed")
-  list_display = ("username","id","points","contributor","contributions_count","quizes_score")
+  list_display = ("username","email","points","quizes_score","contributions_count","contributor","id")
   filter_horizontal = ("animes_to_review",)
   search_fields = ("username__startswith",)
   list_filter  =  (
@@ -89,15 +89,10 @@ class User_admin(admin.ModelAdmin):
   CountryFilter
   )
   
-  def get_queryset(self, request):
-    
+  def get_queryset(self, request):    
     query = super(User_admin, self).get_queryset(request)
     return query.exclude(is_superuser=True,username="admin")
 
-  def get_list_display(self, request):
-    return self.list_display
-
-  
   
   def quizes_score(self, obj):
     from django.db.models import Sum

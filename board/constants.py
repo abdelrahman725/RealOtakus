@@ -2,6 +2,9 @@
 # mentors that i will later assign them manually
 MENTORS = ()
 
+# get all model fields
+#[f.name for f in MyModel._meta.get_fields()]
+
 # number of questions in each quiz users take
 QUESTIONSCOUNT = 5
 
@@ -288,3 +291,4 @@ COUNTRIES = {
 "za":"South Africa",
 "zm":"Zambia",
 "zw":"Zimbabwe"}
+

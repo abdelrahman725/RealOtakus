@@ -31,7 +31,10 @@ ALLOWED_HOSTS = ["localhost","127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    
+    'authen',
     'board',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
+    
     'rest_framework',
     'corsheaders',    
     'channels',
@@ -50,9 +53,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google'
 
 ]
-
-
-
 
 
 CHANNEL_LAYERS = {
@@ -93,6 +93,7 @@ MIDDLEWARE = [
 ASGI_APPLICATION = "anime.asgi.application"
 
 ROOT_URLCONF = 'anime.urls'
+
 
 TEMPLATES = [
     {
@@ -182,10 +183,8 @@ STATICFILES_DIRS = [
 
 LOGIN_REDIRECT_URL ='/home'
 
+SOCIALACCOUNT_EMAIL_REQUIRED = True
 
-# INTERNAL_IPS = [
-#     "127.0.0.1",
-# ]
-# DEBUG_TOOLBAR_CONFIG = {
-#     "SHOW_TOOLBAR_CALLBACK": lambda request: True,
-# }
+SOCIALACCOUNT_QUERY_EMAIL = SOCIALACCOUNT_EMAIL_REQUIRED
+
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Django]"

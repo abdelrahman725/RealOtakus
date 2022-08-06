@@ -5,17 +5,17 @@ from .views import *
 
 urlpatterns = [
     
-    path("",ReactApp),
-    path('data',GetUserData,name="userdata"),
-    path('quizanimes',GetQuizeAnimes,name="animes"),
+    path('',ReactApp),
+    path('data',GetUserData),
     path('dashboard',GetDashBoard),
 
-    path('getgame/<int:game_anime>',GetTest,name="getgame"),
-    path('sendgame',SubmitTest,name="postgame"),
+    path('quizanimes',GetQuizeAnimes),
+    path('getgame/<int:game_anime>',GetTest),
+    path('sendgame',SubmitTest),
 
+    path('animesoptions',GetAllAnimes),
     path('contribute',MakeContribution),
     path('review',ReviewContribution),
-    path('animesoptions',GetAllAnimes),
 
     path('profile',GetMyProfile),
     path('update_notifications_state',UpdateNotificationsState)

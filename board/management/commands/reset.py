@@ -1,6 +1,6 @@
+from django.core.management.base import BaseCommand
 from ...models import *
 from ...constants import BEGINNER
-from django.core.management.base import BaseCommand
 
 # script for reseting state of the database by deleting any data used in testing (manual or automatic)
 # Note : don't use in production !
@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         approval = ""
         while approval != "yes" :
-            approval = input("\nWARNING ! please make sure you are not in production \n\nare sure you want to delete the data (yes/no): ")
+            approval = input("\n WARNING ! please make sure you are not in production \n\nare sure you want to delete the data (yes/no): ")
             if approval == "no":
                 print("\n command canceled \n")
                 exit()
@@ -40,6 +40,7 @@ class Command(BaseCommand):
             user.level = BEGINNER
             user.animes_to_review.clear()
             user.save()
+  
         print("\n reseting users data.. \n")
         
         # Warning : don't use this when there are Real moderators
@@ -50,6 +51,7 @@ class Command(BaseCommand):
                 q.save()
             else:
                 q.delete()
+  
         print("\n clearing unwated questions .. \n")
     
 

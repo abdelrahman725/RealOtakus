@@ -2,7 +2,7 @@ import Competitor from "./Competitor"
 import { useEffect,useState,useContext } from "react"
 import { ServerContext } from "../App"
 
-const TheDashBoard = () => {
+const TheDashBoard = ({logged_in_user}) => {
 
   const {server} = useContext(ServerContext)
   const dashboardurl = `${server}/home/dashboard`

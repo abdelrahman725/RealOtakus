@@ -183,3 +183,4 @@ class Notification(base_models.Notification):
                 'type': 'send_notifications',
                 'value': self
             })
+

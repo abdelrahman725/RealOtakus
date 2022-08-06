@@ -68,6 +68,7 @@
                 <input type="password" name="password" placeholder=" passsword" autocomplete="off" required>
                 <input type="submit" value="Sign in" class="formbtn">
                 <input disabled style="visibility:hidden">
+                <input disabled style="visibility:hidden">
                 
             </form>
           
@@ -81,10 +82,13 @@
             {% csrf_token %}
 
               <input id="register_name" type="text" name="registerusername" placeholder="username" autocomplete="off" > 
+              <input id="email" type="email" name="email" placeholder="email"  autocomplete="off" required >
+              
               <input id="register_password" type="password" name="registerpassword" placeholder="passsword"  autocomplete="off" required class="pass">
               
               <input id="confirm_password" type="password" name="confirmpassword" placeholder="confirm passsword"  autocomplete="off" required class="pass">
                
+
               <input type="submit" value="Sign Up" class="formbtn"
               id= "registerbtn">
             </form>

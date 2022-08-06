@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from time import sleep
-import random
 
 from .models import *
 from .serializers import *
@@ -34,14 +33,12 @@ def GetWantedUser(request):
 
 @login_required
 def ReactApp(request):
-    # return redirect("http://localhost:3000/home")
     return render(request, "index.html")
 
 
 @login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
-    print(f"\n\n ----hitting the server ! ----\n\n")
     user = GetWantedUser(request)
 
     if request.method == "POST":

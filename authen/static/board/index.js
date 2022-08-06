@@ -11,20 +11,6 @@ function formFocus()
 }
 
 
-function FocusConfirmPassword()
-{
-    document.getElementById("register_password").addEventListener("input",()=>{
-        
-        document.addEventListener("keydown",e=>{
-            if (e.key=="Enter")
-            {
-                document.getElementById("confirm_password").focus();
-            }
-        })
-
-    })
-}
-
 
 function ClearMessages()
 {
@@ -89,6 +75,5 @@ document.addEventListener("DOMContentLoaded",()=>
    RegisterPage = document.querySelector(".RegisterPage");
    LoginPage = document.querySelector(".LoginPage");
    //CheckPasswords();
-   FocusConfirmPassword();
 
 });

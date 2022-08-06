@@ -32,8 +32,9 @@ function App() {
   const domain = "127.0.0.1:8000"
   const  server  = `http://${domain}`
   const  socket = `ws://${domain}/ws/socket-server/`
+  
   const  userdataurl = `${server}/home/data`
-
+  const  logout_url = `${server}/logout`
   
   const { lastMessage,readyState } = useWebSocket(socket,{
 
@@ -66,12 +67,17 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps    
   },[])
 
+  const Logout = ()=>
+  {
+    window.location.href = logout_url
+  }
 
   const GetUserData = async()=>
   {
     const res  = await fetch(userdataurl)
     const data = await res.json()
 
+    console.log(data)
     if (!data.user_data.country)
     {
       getUserCountryViaApiServiceThenSaveCountry()
@@ -90,8 +96,12 @@ function App() {
     
     const res = await fetch("http://ip-api.com/json")
     const fetched_country = await res.json()
+  
+  // after we get the country successfully : 
+    const country_code = fetched_country.countryCode.toLowerCase()
 
-  // after we get the country successfully we save it to the database so subsequent requests for the same user don't have to query the country from the api service again
+    
+    // save it to the database so subsequent requests for the same user don't have to query the country from the api service again
     const save_country = await fetch(userdataurl,{
     
       method : 'POST',
@@ -100,11 +110,12 @@ function App() {
         'X-CSRFToken': CsrfToken,
       },
       body: JSON.stringify({
-        country : fetched_country.countryCode.toLowerCase()
+        country : country_code
       })
     })
-    const counry_res  = await save_country.json()
-    console.log(counry_res)
+    const saving_country_res  = await save_country.json()
+
+    console.log(saving_country_res)
         
   }
   
@@ -176,9 +187,12 @@ return (
 
         { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
 
+        { HomeView && <button onClick={Logout}>Sign Out</button> }
+
+
       </div>
       
-      { HomeView && <TheDashBoard/>}
+      { HomeView && <TheDashBoard logged_in_user={UserData.id}/>}
       
        { ProfileView && <UserProfile/>}
 
