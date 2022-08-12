@@ -8,7 +8,7 @@ const TheDashBoard = ({logged_in_user}) => {
   const dashboardurl = `${server}/home/dashboard`
 
   const[otakus,setotakus] = useState()
-  const[animes_questions_info,setanimes_questions_info] = useState()
+  const[information_about_animes,setinformation_about_animes] = useState()
 
 
   const GetDashbBoard = async()=>
@@ -16,7 +16,7 @@ const TheDashBoard = ({logged_in_user}) => {
     const res = await fetch(dashboardurl)
     const dashboard = await res.json()
     setotakus(dashboard.leaderboard)
-    setanimes_questions_info(dashboard.animes)
+    setinformation_about_animes(dashboard.animes)
     //console.log(dashboard.animes)
     
     //setTimeout(()=>{
@@ -45,6 +45,7 @@ return (
 <tbody>  
     {otakus?otakus.map((competitor,index)=> (    
       <Competitor
+      user_equal_logged_user={logged_in_user===competitor.id?true:false}
       key={index}
       name={competitor.username}
       points={competitor.points}

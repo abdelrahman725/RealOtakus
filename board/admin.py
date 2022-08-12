@@ -6,7 +6,6 @@ from django.db.models import Count
 from .models import *
 from .constants import QUESTIONSCOUNT,COUNTRIES
 
-
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social'
@@ -72,6 +71,7 @@ class ReadOnly(admin.ModelAdmin):
     return False
  
   def has_delete_permission(self, request, obj=None):
+    # should be False!
     return True
 
 
@@ -123,8 +123,10 @@ class Question_admin(admin.ModelAdmin):
     return True
 
   def view_contributor_link(self, obj):
-    url = reverse('admin:board_user_change', args=(obj.contributor.id,))
-    return format_html('<a href="{}">{}</a>',url, obj.contributor.username)
+    if obj.contributor:
+      url = reverse('admin:board_user_change', args=(obj.contributor.id,))
+      return format_html('<a href="{}">{}</a>',url, obj.contributor.username)
+    return "DELETED"
 
 # not used yet
   def view_anime_link(self, obj):
@@ -139,7 +141,19 @@ class Question_admin(admin.ModelAdmin):
 class Anime_admin(ReadOnly):
   list_display = ("anime_name","total_questions","approved_questions","pending_questions") 
   search_fields = ("anime_name__startswith",)
-  list_filter = (ActiveAnimeFilter,)
+  
+  def custom_titled_filter(title):
+    class Wrapper(admin.RelatedOnlyFieldListFilter):
+        def __new__(cls, *args, **kwargs):
+            instance = admin.RelatedOnlyFieldListFilter(*args, **kwargs)
+            instance.title = title
+            return instance
+    return Wrapper
+
+  list_filter = (
+    ActiveAnimeFilter,
+    ("reviewers", custom_titled_filter('reviewr'))
+  )
   
   def get_queryset(self, request):
     query = super(Anime_admin, self).get_queryset(request)

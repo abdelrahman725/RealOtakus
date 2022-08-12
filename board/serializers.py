@@ -57,12 +57,10 @@ class AnimeContributionsSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer()
-  
-  choice4 = serializers.CharField(source="right_answer")
-  
+    
   class Meta:
     model = Question
-    fields = ("anime","question","choice1","choice2","choice3","choice4","id")
+    fields = ("anime","question","choice1","choice2","choice3","right_answer","id")
 
 
 class QuestionsWithAnimesSerializer(serializers.ModelSerializer):

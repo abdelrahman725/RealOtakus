@@ -1,4 +1,4 @@
-const Competitor = ({name,points,level,country,contributions}) => {
+const Competitor = ({name,points,level,country,contributions,user_equal_logged_user}) => {
   return (
 
   <tr className="eachcompetitor">
@@ -15,7 +15,6 @@ const Competitor = ({name,points,level,country,contributions}) => {
         </img>: "N/A"}
     </td>
   </tr>
-    
 
   )
 }

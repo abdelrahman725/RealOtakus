@@ -29,8 +29,7 @@ const Contripution = () => {
   const submit_btn = useRef(null)
   const select_animes = useRef(null)
 
-
-   const GetAllAnimes =async ()=>
+  const GetAllAnimes =async ()=>
    {
      const res = await fetch(`${server}/home/animesoptions`)
      const animes  = await res.json()
@@ -40,11 +39,10 @@ const Contripution = () => {
       )
 
      setanimesoptions(anime_array)
-   }
-  
-
+   }  
 
   const handleselect=(e)=> {setanime(e.value)}
+
 
   const handlechange = (e)=>
   {    
@@ -65,8 +63,7 @@ const Contripution = () => {
     setQuestion(prev => ({...prev, [name]: value}))
   }
 
- 
-
+  
   const HandleSubmision = (e)=>
   {
       e.preventDefault() 
@@ -123,12 +120,10 @@ const Contripution = () => {
         SendContribution()
       }
 
-
       // checking first if the contribution form is valid before submit
       Validate_and_SubmitForm()
 
   }
-
 
   
   useEffect(()=>{ 
@@ -149,35 +144,64 @@ const Contripution = () => {
         <Select options={animesoptions} className="select_animes"  placeholder="select anime" 
         onChange={handleselect} ref={select_animes}/>
         
-        <br /><br />
+        <br/> <br/>
 
-
-       <textarea name="question" cols="30" rows="3" typeof="text" maxLength="350"
+       <textarea name="question" 
+        typeof="text"
+        placeholder = "what is the question?" 
+        cols="30" rows="3" 
+        maxLength="350" minLength="10"
+        required 
         value={Question.question}
-        onChange={handlechange} required placeholder="what is the question?" >
+        onChange={handlechange} 
+        >
        </textarea><br />
 
-       <textarea name="rightanswer" cols="30" rows="3" typeof="text" maxLength="150"
+       <textarea name="rightanswer"
+        typeof="text" 
+        placeholder = "right answer"
+        cols="30" rows="3"
+        maxLength="150" minLength="1"
+        required 
         value={Question.rightanswer} ref={input_2} 
-        onChange={handlechange} required placeholder="right answer">
+        onChange={handlechange} 
+        >
        </textarea><br />
   
 
-     <h3>choices<span> (wrong answers)</span></h3>
+     <h3>choices<span> (wrong answers) </span></h3>
    
-       <textarea name="choice1" cols="30" rows="3" typeof="text" maxLength="150"
+       <textarea name="choice1" 
+        typeof="text" 
+        placeholder = "choice 1"
+        cols="30" rows="3" 
+        maxLength="150" minLength="1"
+        required 
         value={Question.choice1} ref={input_3}
-        onChange={handlechange}  required placeholder="choice 1">
+        onChange={handlechange}
+        >
        </textarea><br />
     
-       <textarea name="choice2" cols="30" rows="3" typeof="text" maxLength="150"
+       <textarea name="choice2"
+        typeof="text"
+        placeholder = "choice 2"
+        cols="30" rows="3" 
+        maxLength="150" minLength="1"
+        required 
         value={Question.choice2} ref={input_4}
-        onChange={handlechange}  required placeholder="choice 2">
+        onChange={handlechange}  
+        >
        </textarea><br />
     
-       <textarea name="choice3" cols="30" rows="3" typeof="text" maxLength="150"
+       <textarea name="choice3" 
+        typeof="text"
+        placeholder = "choice 3"
+        cols="30" rows="3" 
+        maxLength="150" minLength="1"
+        required 
         value={Question.choice3} ref={input_5}
-        onChange={handlechange}  required placeholder="choice 3">
+        onChange={handlechange}
+        >
        </textarea><br />
 
       <br />

@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from time import sleep
+import json
 
 from .models import *
 from .serializers import *
@@ -118,17 +119,30 @@ def GetTest(request, game_anime):
     questions = selected_anime.anime_questions.filter(approved=True).exclude(
         contributor=current_user).order_by("id")[index:index+QUESTIONSCOUNT]
 
-    CurrentGame.gamesnumber += 1
-    game[current_user.id] = CurrentGame
-    CurrentGame.save()
+    serialized_questions = []
+    for question in questions:
+        question_choices = [question.choice1,question.choice2,question.choice3,question.right_answer]
+        random.shuffle(question_choices)
+        question_dict = {
+            "question": question.question,
+            "choice1" : question_choices[0],
+            "choice2" : question_choices[1],
+            "choice3" : question_choices[2],
+            "choice4" : question_choices[3],
+            "id" : question.id
+        }
+        serialized_questions.append(question_dict)
 
     game_questions[current_user.id] = {}
 
     for q in questions:
         game_questions[current_user.id][q.id] = q
+  
+    CurrentGame.gamesnumber += 1
+    game[current_user.id] = CurrentGame
+    CurrentGame.save()
 
-    serialized_data = QuestionSerializer(questions, many=True)
-    return Response(serialized_data.data)
+    return Response(serialized_questions)
 
 
 @login_required
