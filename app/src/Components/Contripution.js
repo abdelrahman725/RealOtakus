@@ -10,7 +10,11 @@ const Contripution = () => {
   const CsrfToken = getCookie('csrftoken')
   const [animesoptions,setanimesoptions] = useState()
   const [msg,setmsg] = useState()
-  //const [contributionGuide,setcontributionGuide] = useState()
+  
+  const  leading_space = /^\s/
+  const  extra_space = /\s{2,}/
+  const  letters_exist = /[a-z]/ig
+
 
   const [Question,setQuestion] = useState({
     question:"",
@@ -20,13 +24,11 @@ const Contripution = () => {
     choice3:"",
   })
   
-  const[anime,setanime]= useState()
+  const[anime,setanime]= useState()  
   
-  const input_2 = useRef(null)
-  const input_3 = useRef(null)
-  const input_4 = useRef(null)
-  const input_5 = useRef(null)
+  const question_ref = useRef(null)
   const submit_btn = useRef(null)
+
   const select_animes = useRef(null)
 
   const GetAllAnimes =async ()=>
@@ -48,18 +50,12 @@ const Contripution = () => {
   {    
 
     const{name,value} = e.target
-
-    if (value[value.length-1]==="\n")
+    if (value.match(leading_space) != null || value.match(extra_space) != null)
     {
-      name === "question"&&input_2.current.focus()
-      name === "rightanswer"&&input_3.current.focus()
-      name === "choice1"&&input_4.current.focus()
-      name === "choice2"&&input_5.current.focus()
-      name === "choice3"&&submit_btn.current.focus()
-      return 
+      return
     }
-      // e.nativeEvent.inputType === "insertLineBreak" 
-    
+   
+      
     setQuestion(prev => ({...prev, [name]: value}))
   }
 
@@ -70,7 +66,7 @@ const Contripution = () => {
 
       // submit the form here : 
 
-      const SendContribution = async()=>
+      const SendContribution = async(cleaned_question)=>
       {
         
         const send = await fetch(`${server}/home/contribute`,{
@@ -81,7 +77,7 @@ const Contripution = () => {
             'X-CSRFToken': CsrfToken,
           },
           body: JSON.stringify({
-            question:Question,
+            question:cleaned_question,
             anime:anime
           })
         })
@@ -101,15 +97,49 @@ const Contripution = () => {
         if (anime ===undefined || anime==="")
         {
           select_animes.current.focus(); 
+          window.scrollTo({ top: 0, behavior: 'smooth' })
           return false;
         }
-    
-    // removes leading and trailing spaces (before checking for duplicates)
-       const unique_choices = new Set()  
-       for (const key in Question)
-          key!=="question"&& unique_choices.add(Question[key].trim())
         
-  
+        const cleaned_question = {
+          question:"",
+          rightanswer:"",
+          choice1:"",
+          choice2:"",
+          choice3:"",
+        }
+
+    
+    // removes leading and trailing spaces (for duplication checking and for form submission)
+        const unique_choices = new Set()  
+        for (const key in Question)
+        { 
+          const trimmed_value = Question[key].trim()
+          key!=="question"&& unique_choices.add(trimmed_value)
+          cleaned_question[key] = trimmed_value
+        }
+          
+        if ( 
+          cleaned_question.question.match(letters_exist) == null 
+          ||
+          cleaned_question.question.match(letters_exist).length < 2
+         )
+         {
+          console.log("question shoud contain at least 2 letters")
+          question_ref.current.focus() 
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          return false
+        }
+        
+        if (cleaned_question.question.length < 10)
+        {
+           console.log("question must be at least 10 characters length")
+           question_ref.current.focus() 
+           window.scrollTo({ top: 0, behavior: 'smooth' })
+           return false
+         }
+        
+
         if (unique_choices.size !==4)
         {
           console.log("each choice must be unique")
@@ -117,11 +147,12 @@ const Contripution = () => {
         }  
 
         document.activeElement.blur()
-        SendContribution()
+        SendContribution(cleaned_question)
       }
 
       // checking first if the contribution form is valid before submit
       Validate_and_SubmitForm()
+      //SendContribution(Question)
 
   }
 
@@ -150,10 +181,11 @@ const Contripution = () => {
         typeof="text"
         placeholder = "what is the question?" 
         cols="30" rows="3" 
-        maxLength="350" minLength="10"
+        maxLength="350" 
         required 
         value={Question.question}
-        onChange={handlechange} 
+        onChange={handlechange}
+        ref={question_ref} 
         >
        </textarea><br />
 
@@ -161,9 +193,9 @@ const Contripution = () => {
         typeof="text" 
         placeholder = "right answer"
         cols="30" rows="3"
-        maxLength="150" minLength="1"
+        maxLength="150" 
         required 
-        value={Question.rightanswer} ref={input_2} 
+        value={Question.rightanswer}  
         onChange={handlechange} 
         >
        </textarea><br />
@@ -175,9 +207,9 @@ const Contripution = () => {
         typeof="text" 
         placeholder = "choice 1"
         cols="30" rows="3" 
-        maxLength="150" minLength="1"
+        maxLength="150" 
         required 
-        value={Question.choice1} ref={input_3}
+        value={Question.choice1} 
         onChange={handlechange}
         >
        </textarea><br />
@@ -186,9 +218,9 @@ const Contripution = () => {
         typeof="text"
         placeholder = "choice 2"
         cols="30" rows="3" 
-        maxLength="150" minLength="1"
+        maxLength="150" 
         required 
-        value={Question.choice2} ref={input_4}
+        value={Question.choice2} 
         onChange={handlechange}  
         >
        </textarea><br />
@@ -197,9 +229,9 @@ const Contripution = () => {
         typeof="text"
         placeholder = "choice 3"
         cols="30" rows="3" 
-        maxLength="150" minLength="1"
+        maxLength="150"
         required 
-        value={Question.choice3} ref={input_5}
+        value={Question.choice3}
         onChange={handlechange}
         >
        </textarea><br />

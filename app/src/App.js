@@ -77,7 +77,7 @@ function App() {
     const res  = await fetch(userdataurl)
     const data = await res.json()
 
-    console.log(data)
+    
     if (!data.user_data.country)
     {
       getUserCountryViaApiServiceThenSaveCountry()

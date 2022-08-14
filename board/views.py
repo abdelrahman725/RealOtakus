@@ -1,14 +1,15 @@
+import random
+from xml.dom import ValidationErr 
+
 from django.db import connection, IntegrityError
 from django.db.models import Count, Q
+from django.forms import ValidationError
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
-from time import sleep
-import json
 
 from .models import *
 from .serializers import *
@@ -27,17 +28,17 @@ for anime in Anime.objects.all():
 
 
 def GetWantedUser(request):
-    return request.user
+    #return request.user
     username = "linus"
     return User.objects.get(username=username)
 
 
-@login_required
+#@login_required
 def ReactApp(request):
     return render(request, "index.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -58,7 +59,7 @@ def GetUserData(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
@@ -75,11 +76,10 @@ def GetDashBoard(request):
 
 
 
-
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
 
@@ -99,7 +99,7 @@ def GetQuizeAnimes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -123,15 +123,15 @@ def GetTest(request, game_anime):
     for question in questions:
         question_choices = [question.choice1,question.choice2,question.choice3,question.right_answer]
         random.shuffle(question_choices)
-        question_dict = {
+        
+        serialized_questions.append({
             "question": question.question,
             "choice1" : question_choices[0],
             "choice2" : question_choices[1],
             "choice3" : question_choices[2],
             "choice4" : question_choices[3],
             "id" : question.id
-        }
-        serialized_questions.append(question_dict)
+        })
 
     game_questions[current_user.id] = {}
 
@@ -145,7 +145,7 @@ def GetTest(request, game_anime):
     return Response(serialized_questions)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitTest(request):
     user = GetWantedUser(request)
@@ -188,17 +188,20 @@ def SubmitTest(request):
     return JsonResponse({"message": "test submitted successfully", "newscore": test_score, "rightanswers": answers_dict, "level": user.level})
 
 
+
+
+
 # ------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
     serialized_data = AnimeSerializer(animes_dict.values(), many=True)
     return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def MakeContribution(request):
     user = GetWantedUser(request)
@@ -208,22 +211,14 @@ def MakeContribution(request):
     except:
         return JsonResponse({"anime_id doesn't exist! or it's not an int"})
 
-    def CheckDuplicatChoices(choices):
-        choies_set = set()
-        for choice in choices:
-            choies_set.add(choice)
-        if len(choies_set) != len(choices):
-            return True
-        return False
-
+    
     QuestionOBject = request.data["question"]
 
-    actualquestion = QuestionOBject["question"].strip()
-
-    c1 = QuestionOBject["choice1"].strip()
-    c2 = QuestionOBject["choice2"].strip()
-    c3 = QuestionOBject["choice3"].strip()
-    right_answer = QuestionOBject["rightanswer"].strip()
+    actualquestion = QuestionOBject["question"]
+    c1 = QuestionOBject["choice1"]
+    c2 = QuestionOBject["choice2"]
+    c3 = QuestionOBject["choice3"]
+    right_answer = QuestionOBject["rightanswer"]
 
 # check if the contributer user is already a reviewer of the anime associated with the question
 
@@ -249,11 +244,16 @@ def MakeContribution(request):
         if 'UNIQUE constraint' in str(e.args):
             return JsonResponse({"message": "sorry this question already exist"})
 
-        return JsonResponse({"message": "error occurred, but stil IntegrityError"})
+        return JsonResponse({"message": e.args}) 
+    
+    except ValidationError as e:
+
+        return JsonResponse({"message": e.args[0]})
 
 
-# endpoint for a reviewr to approve/decline a question contributed by other user/s
-@login_required
+
+# for a reviewr to approve/decline a question contributed by other user/s
+#@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
     state = request.data["state"]
@@ -277,7 +277,7 @@ def ReviewContribution(request):
     return Response({"not expected response"}, status=status.HTTP_200_OK)
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
@@ -289,7 +289,7 @@ def GetMyProfile(request):
             ~Q(contributor=user), approved=False, anime__in=user.animes_to_review.all()),
         many=True)
 
-    user_contributions = QuestionsWithAnimesSerializer(
+    user_contributions = QuestionSerializer(
         user.contributions.all(),
         many=True)
 
@@ -306,7 +306,7 @@ def GetMyProfile(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     

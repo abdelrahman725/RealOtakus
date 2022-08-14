@@ -6,9 +6,10 @@ from django.db.models import Count
 from .models import *
 from .constants import QUESTIONSCOUNT,COUNTRIES
 
+
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
-    parameter_name = 'social'
+    parameter_name = 'social_account'
 
     def lookups(self, request, model_admin):
         return (
@@ -27,9 +28,10 @@ class SocialAccountFilter(admin.SimpleListFilter):
       else:
         return queryset.all()
 
-class ActiveAnimeFilter(admin.SimpleListFilter):
-    title = 'active (has questions)'
-    parameter_name = 'active'
+
+class QuizTakerFilter(admin.SimpleListFilter):
+    title = 'quiz takers'
+    parameter_name = 'taken_quiz'
 
     def lookups(self, request, model_admin):
 
@@ -40,12 +42,14 @@ class ActiveAnimeFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):        
       if self.value() == 'Yes':
-        return queryset.exclude(anime_questions=None)
+        return queryset.filter(tests_completed__gt=0)
       
       if self.value() == 'No':
-        return queryset.filter(anime_questions=None)
+        return queryset.filter(tests_completed=0)
+      
       else:
         return queryset.all()
+  
 
 class CountryFilter(admin.SimpleListFilter):
     title = 'country'
@@ -64,27 +68,53 @@ class CountryFilter(admin.SimpleListFilter):
         return queryset.filter(country=self.value())
       return queryset.all()
 
-# admin mdoels inherit from this class can't be changed or deleted
+
+class ActiveAnimeFilter(admin.SimpleListFilter):
+    title = 'active (has questions)'
+    parameter_name = 'active'
+
+    def lookups(self, request, model_admin):
+
+        return (
+          ('Yes', ('Yes')),
+          ('No', ('No')),
+      )
+
+    def queryset(self, request, queryset):        
+      if self.value() == 'Yes':
+        return queryset.exclude(anime_questions=None)
+      
+      if self.value() == 'No':
+        return queryset.filter(anime_questions=None)
+     
+      else:
+        return queryset.all()
+
+
+# admin models inherit from this class can't be changed or deleted
 class ReadOnly(admin.ModelAdmin):
  
   def has_change_permission(self, request, obj=None):
     return False
  
   def has_delete_permission(self, request, obj=None):
-    # should be False!
+  # should be False!
     return True
+
 
 
 @admin.register(User)
 class User_admin(admin.ModelAdmin):
   readonly_fields =  ("level","points","contributions_count","tests_started","tests_completed")
-  list_display = ("username","email","points","quizes_score","contributions_count","contributor","id")
+  list_display = ("username","email","points","quizes_score","tests_completed","country_name","id")
   filter_horizontal = ("animes_to_review",)
   search_fields = ("username__startswith",)
+
   list_filter  =  (
-  ("animes_to_review",admin.RelatedOnlyFieldListFilter),
+  QuizTakerFilter,
   SocialAccountFilter,
   "contributor",
+  ("animes_to_review",admin.RelatedOnlyFieldListFilter),
   "level",
   CountryFilter
   )
@@ -93,7 +123,6 @@ class User_admin(admin.ModelAdmin):
     query = super(User_admin, self).get_queryset(request)
     return query.exclude(is_superuser=True,username="admin")
 
-  
   def quizes_score(self, obj):
     from django.db.models import Sum
     games = Game.objects.filter(game_owner=obj,gamesnumber__gt=0).aggregate(Sum("score"),Sum("gamesnumber"))
@@ -102,12 +131,18 @@ class User_admin(admin.ModelAdmin):
       correct_over_total_questions = games["score__sum"]  / (games["gamesnumber__sum"] * QUESTIONSCOUNT) 
       return f"{ round(correct_over_total_questions*100) } %"
     return "N/A"
+  
+  def country_name(self,obj):
+    if obj.country:
+      return COUNTRIES[obj.country]
+    return "N/A"
+  country_name.short_description = "country"
 
 
 @admin.register(Question)
 class Question_admin(admin.ModelAdmin):
   readonly_fields =  ("correct_answers","wrong_answers")
-  list_display    =  ("question","view_contributor_link","approved","anime")
+  list_display    =  ("question","anime","view_contributor_link","approved","correct_answers","wrong_answers")
   list_filter     =  (
     ("anime",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
@@ -118,12 +153,15 @@ class Question_admin(admin.ModelAdmin):
 
 # prevent any deletion from anyone if this is one of my approved questions (main questions)  
   def has_delete_permission(self, request, obj=None):
-    if obj and obj.approved and obj.contributor.is_superuser and obj.contributor.username =="admin":
-      return False
+    if obj and obj.contributor:
+      if obj.approved and obj.contributor.is_superuser and obj.contributor.username =="admin":
+        return False
     return True
 
   def view_contributor_link(self, obj):
     if obj.contributor:
+      if obj.contributor.is_superuser:
+        return "admin"
       url = reverse('admin:board_user_change', args=(obj.contributor.id,))
       return format_html('<a href="{}">{}</a>',url, obj.contributor.username)
     return "DELETED"

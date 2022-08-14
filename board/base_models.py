@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+
 from .constants import *
+
 
 class Anime(models.Model):
     anime_name = models.CharField(max_length=50, unique=True)
@@ -35,8 +37,8 @@ class Question(models.Model):
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL,related_name="contributions", null=True, blank=True, default=1)
 
     question = models.TextField(max_length=350)
+
     right_answer = models.CharField(max_length=150)
-    
     choice1 = models.CharField(max_length=150)
     choice2 = models.CharField(max_length=150)
     choice3 = models.CharField(max_length=150)
@@ -49,7 +51,7 @@ class Question(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime'),
+            models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')
             ]
         ordering = ["-id"]
         abstract = True

@@ -45,7 +45,8 @@ class Command(BaseCommand):
         
         # Warning : don't use this when there are Real moderators
         for q in questions:
-            if q.contributor == admin and q.approved == True:
+
+            if q.contributor and q.contributor == admin and q.approved == True:
                 q.correct_answers = 0
                 q.wrong_answers = 0
                 q.save()

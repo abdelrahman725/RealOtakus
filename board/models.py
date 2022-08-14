@@ -1,11 +1,10 @@
 import threading
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 from board import base_models
 
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from .helpers import CreateNotification, CheckLevel
-from .constants import LEVELS
+from .helpers import CreateNotification, CheckLevel,question_validator,choices_integirty
 
 
 def NotifyReviewrs(anime,contributor):
@@ -80,13 +79,21 @@ class Question(base_models.Question):
     
     """
 
+    def clean(self, *args, **kwargs):
+        question_validator(self.question)
+        choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
+        super(Question, self).clean(*args, **kwargs)
+
     previous_status = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.previous_status = self.approved
 
+
     def save(self, *args, **kwargs):
+
+        self.clean()
  
         user = self.contributor
         new_approved_question = False
@@ -146,17 +153,17 @@ class Question(base_models.Question):
             async_thread.start()
 
 
-
     def delete(self, *args, **kwargs):
-        if self.contributor.is_superuser and self.approved==True:
-            print("\n this question can't be deleted \n")        
-            return
-        if self.contributor and not self.contributor.is_superuser:
-            if not self.approved:
-                msg = f"sorry your last question on {self.anime} has been declined as it didn't meet the required criteria"
-                CreateNotification(self.contributor, msg)
+        if self.contributor:
+            if self.contributor.is_superuser and self.approved==True:
+                print("\n approved questions created by superuser can't be deleted \n")        
+                return
+                
+            msg = f"sorry your last question on {self.anime} has been declined as it didn't meet the required criteria"
+            CreateNotification(self.contributor, msg)
 
         super(Question, self).delete(*args, **kwargs)
+
 
     def __str__(self):
         if len(self.question) > 50:

@@ -238,6 +238,7 @@ button {
   font-size: large;
   resize: none;
   outline: none;
+  margin-bottom: 10px;
 }
 
 .contribution .form_elements textarea:first-of-type {
