@@ -11,10 +11,12 @@ const Contripution = () => {
   const [animesoptions,setanimesoptions] = useState()
   const [msg,setmsg] = useState()
   
+  // ensure
+  const  letters_exist = /[a-z]/ig
+  // reject
   const  leading_space = /^\s/
   const  extra_space = /\s{2,}/
-  const  letters_exist = /[a-z]/ig
-
+  const  excluded_symbols = /[#`~'@\^\*\|\\]/
 
   const [Question,setQuestion] = useState({
     question:"",
@@ -50,8 +52,11 @@ const Contripution = () => {
   {    
 
     const{name,value} = e.target
-    if (value.match(leading_space) != null || value.match(extra_space) != null)
-    {
+    if (value.match(leading_space) != null ||
+        value.match(extra_space) != null   ||
+        value.match(excluded_symbols) != null
+    ) {
+      console.log("this input is not allowed")
       return
     }
    
@@ -179,7 +184,7 @@ const Contripution = () => {
 
        <textarea name="question" 
         typeof="text"
-        placeholder = "what is the question?" 
+        placeholder = "what is the question ?" 
         cols="30" rows="3" 
         maxLength="350" 
         required 

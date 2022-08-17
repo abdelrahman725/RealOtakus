@@ -91,6 +91,50 @@ class ActiveAnimeFilter(admin.SimpleListFilter):
         return queryset.all()
 
 
+class IsReviewerFilter(admin.SimpleListFilter):
+    title = 'Reviewer'
+    parameter_name = 'is_reviewer'
+
+    def lookups(self, request, model_admin):
+
+        return (
+          ('Yes', ('Yes')),
+          ('No', ('No')),
+      )
+
+    def queryset(self, request, queryset):        
+      if self.value() == 'Yes':
+        return queryset.exclude(animes_to_review=None)
+      
+      if self.value() == 'No':
+        return queryset.filter(animes_to_review=None)
+     
+      else:
+        return queryset.all()
+
+
+class ReviewersFilter(admin.SimpleListFilter):
+    title = 'has reviewers'
+    parameter_name = 'reviewers_exist'
+
+    def lookups(self, request, model_admin):
+
+        return (
+          ('Yes', ('Yes')),
+          ('No', ('No')),
+      )
+
+    def queryset(self, request, queryset):        
+      if self.value() == 'Yes':
+        return queryset.exclude(anime__reviewers=None)
+      
+      if self.value() == 'No':
+        return queryset.filter(anime__reviewers=None)
+     
+      else:
+        return queryset.all()
+
+
 # admin models inherit from this class can't be changed or deleted
 class ReadOnly(admin.ModelAdmin):
  
@@ -105,19 +149,35 @@ class ReadOnly(admin.ModelAdmin):
 
 @admin.register(User)
 class User_admin(admin.ModelAdmin):
-  readonly_fields =  ("level","points","contributions_count","tests_started","tests_completed")
-  list_display = ("username","email","points","quizes_score","tests_completed","country_name","id")
-  filter_horizontal = ("animes_to_review",)
-  search_fields = ("username__startswith",)
+  readonly_fields =  ("level",
+  "points",
+  "contributions_count",
+  "tests_started",
+  "tests_completed"
+  )
+
+  list_display = (
+    "username",
+    "email",
+    "points",
+    "quizes_score",
+    "tests_completed",
+    "country_name",
+    "reviewer",
+    "id"
+  )
 
   list_filter  =  (
   QuizTakerFilter,
+  IsReviewerFilter,
   SocialAccountFilter,
   "contributor",
   ("animes_to_review",admin.RelatedOnlyFieldListFilter),
   "level",
   CountryFilter
   )
+  filter_horizontal = ("animes_to_review",)
+  search_fields = ("username__startswith",)
   
   def get_queryset(self, request):    
     query = super(User_admin, self).get_queryset(request)
@@ -132,6 +192,10 @@ class User_admin(admin.ModelAdmin):
       return f"{ round(correct_over_total_questions*100) } %"
     return "N/A"
   
+  def reviewer(self,obj):
+    return obj.animes_to_review.exists()
+  reviewer.boolean = True
+
   def country_name(self,obj):
     if obj.country:
       return COUNTRIES[obj.country]
@@ -144,6 +208,7 @@ class Question_admin(admin.ModelAdmin):
   readonly_fields =  ("correct_answers","wrong_answers")
   list_display    =  ("question","anime","view_contributor_link","approved","correct_answers","wrong_answers")
   list_filter     =  (
+    ReviewersFilter,
     ("anime",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
      "approved"

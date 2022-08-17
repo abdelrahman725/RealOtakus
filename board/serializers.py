@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 
+
 class SimpleUserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
@@ -9,7 +10,16 @@ class SimpleUserDataSerializer(serializers.ModelSerializer):
 class AllUserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('id','username','points','level','tests_completed','tests_started','country','contributions_count')
+    fields = (
+      'id',
+      'username',
+      'points',
+      'level',
+      'tests_completed',
+      'tests_started',
+      'country',
+      'contributions_count'
+      )
 
 class LeaderBoradSerializer(serializers.ModelSerializer):
   class Meta:
@@ -21,7 +31,6 @@ class AnimeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
     fields = ("id","anime_name")
-
 
 
 # animes that have questions
@@ -45,13 +54,21 @@ class AnimeNameSerializer(serializers.ModelSerializer):
     fields = ("anime_name",)
 
 
-
 class QuestionSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer()
     
   class Meta:
     model = Question
-    fields = ("anime","question","choice1","choice2","choice3","right_answer","id")
+    fields = (
+    "anime",
+    "question",
+    "choice1",
+    "choice2",
+    "choice3",
+    "right_answer",
+    "approved",
+    "id",
+    )
 
 
 class GameSerializer(serializers.ModelSerializer):

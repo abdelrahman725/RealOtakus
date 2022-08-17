@@ -34,8 +34,7 @@ def CheckLevel(user):
 
 def check_empty_string(value):
 
-    if re.search(r'^\s+$',value):
-        
+    if re.search(r'^\s+$',value):        
         raise ValidationError(
             _('no empty strings allowed')
         )
