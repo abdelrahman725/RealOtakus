@@ -35,6 +35,7 @@ class User(AbstractUser):
 class Question(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL,related_name="contributions", null=True, blank=True, default=1)
+    approved = models.BooleanField(default=True)
     question = models.TextField(max_length=350)
 
     right_answer = models.CharField(max_length=150)
@@ -42,13 +43,11 @@ class Question(models.Model):
     choice2 = models.CharField(max_length=150)
     choice3 = models.CharField(max_length=150)
 
-    approved = models.BooleanField(default=True)
-
     correct_answers = models.PositiveIntegerField(default=0)
     wrong_answers = models.PositiveIntegerField(default=0)
     advanced = models.BooleanField(default=False)
 
-    reviewer_feedback = models.CharField(max_length=100,null=True,blank=True)
+    reviewer_feedback = models.TextField(max_length=100,null=True,blank=True)
 
     class Meta:
         constraints = [

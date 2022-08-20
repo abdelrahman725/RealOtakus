@@ -1,11 +1,14 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
 from .models import *
 from .constants import QUESTIONSCOUNT,COUNTRIES
 
+
+# 8 customized filter classes
 
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
@@ -25,9 +28,6 @@ class SocialAccountFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(socialaccount=None)
     
-      else:
-        return queryset.all()
-
 
 class QuizTakerFilter(admin.SimpleListFilter):
     title = 'quiz takers'
@@ -46,10 +46,7 @@ class QuizTakerFilter(admin.SimpleListFilter):
       
       if self.value() == 'No':
         return queryset.filter(tests_completed=0)
-      
-      else:
-        return queryset.all()
-  
+        
 
 class CountryFilter(admin.SimpleListFilter):
     title = 'country'
@@ -70,8 +67,8 @@ class CountryFilter(admin.SimpleListFilter):
 
 
 class ActiveAnimeFilter(admin.SimpleListFilter):
-    title = 'active (has questions)'
-    parameter_name = 'active'
+    title = 'Active'
+    parameter_name = 'is_active'
 
     def lookups(self, request, model_admin):
 
@@ -87,9 +84,6 @@ class ActiveAnimeFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(anime_questions=None)
      
-      else:
-        return queryset.all()
-
 
 class IsReviewerFilter(admin.SimpleListFilter):
     title = 'Reviewer'
@@ -109,9 +103,6 @@ class IsReviewerFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(animes_to_review=None)
      
-      else:
-        return queryset.all()
-
 
 class ReviewersFilter(admin.SimpleListFilter):
     title = 'has reviewers'
@@ -131,8 +122,66 @@ class ReviewersFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(anime__reviewers=None)
      
-      else:
-        return queryset.all()
+
+class QuestionTypeFilter(admin.SimpleListFilter):
+  title = 'contributor type'
+  parameter_name = 'questions_contributor'
+
+  def lookups(self, request, model_admin):
+
+      return (
+        ('all', _('All')),
+        (None, _('users')),
+        ('admin', _('admin'))
+    )
+
+  def choices(self, cl):
+      for lookup, title in self.lookup_choices:
+          yield {
+              'selected': self.value() == lookup,
+              'query_string': cl.get_query_string({
+                  self.parameter_name: lookup,
+              }, []),
+              'display': title,
+          }
+
+  def queryset(self, request, queryset):
+
+    if self.value() == 'admin':
+      return queryset.filter(contributor__is_superuser=True)
+
+    if self.value() == None:
+      return queryset.filter(contributor__is_superuser=False)
+
+
+class QuizGamesFilter(admin.SimpleListFilter):
+  title = 'quiz games'
+  parameter_name = 'quiz_games'
+
+  def lookups(self, request, model_admin):
+      return (
+        ('all', _('All')),
+        (None, _('Yes')),
+        ('no', _('No'))
+    )
+  
+  def choices(self, cl):
+    for lookup, title in self.lookup_choices:
+        yield {
+            'selected': self.value() == lookup,
+            'query_string': cl.get_query_string({
+                self.parameter_name: lookup,
+            }, []),
+            'display': title,
+        }
+
+  def queryset(self, request, queryset):
+
+    if self.value() == None:
+      return queryset.filter(gamesnumber__gt=0)
+
+    if self.value() == 'no':
+      return queryset.filter(gamesnumber=0)
 
 
 # admin models inherit from this class can't be changed or deleted
@@ -162,8 +211,9 @@ class User_admin(admin.ModelAdmin):
     "points",
     "quizes_score",
     "tests_completed",
-    "country_name",
     "reviewer",
+    "_animes_to_review",
+    "country_name",
     "id"
   )
 
@@ -202,16 +252,27 @@ class User_admin(admin.ModelAdmin):
     return "N/A"
   country_name.short_description = "country"
 
+  def _animes_to_review(self,obj):
+    return obj.animes_to_review.all().count()
 
 @admin.register(Question)
 class Question_admin(admin.ModelAdmin):
   readonly_fields =  ("correct_answers","wrong_answers")
-  list_display    =  ("question","anime","view_contributor_link","approved","correct_answers","wrong_answers")
-  list_filter     =  (
+  list_display    =  (
+    "question",
+    "anime",
+    "view_contributor_link",
+    "approved",
+    "number_of_reviewers"
+    #"correct_answers",
+    #"wrong_answers",
+  )
+  list_filter = (
+    QuestionTypeFilter,
     ReviewersFilter,
+    "approved",
     ("anime",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
-     "approved"
   )
   search_fields   =  ("question",)
 
@@ -231,18 +292,29 @@ class Question_admin(admin.ModelAdmin):
       return format_html('<a href="{}">{}</a>',url, obj.contributor.username)
     return "DELETED"
 
+  view_contributor_link.short_description = "contributor"
+
 # not used yet
   def view_anime_link(self, obj):
     url = reverse('admin:board_anime_change', args=(obj.anime.id,))
     return format_html('<a href="{}">{}</a>',url, obj.anime.anime_name)
 
-  view_contributor_link.short_description = "contributor"
   view_anime_link.short_description = "anime"
+
+  def number_of_reviewers(self,obj):
+    return obj.anime.reviewers.count()
 
 
 @admin.register(Anime)
 class Anime_admin(ReadOnly):
-  list_display = ("anime_name","total_questions","approved_questions","pending_questions") 
+  list_display = (
+  "anime_name",
+  "total_questions"
+  ,"approved_questions",
+  "pending_questions",
+  "number_of_quiz_takers",
+  "_reviewers"
+  ) 
   search_fields = ("anime_name__startswith",)
   
   def custom_titled_filter(title):
@@ -257,6 +329,11 @@ class Anime_admin(ReadOnly):
     ActiveAnimeFilter,
     ("reviewers", custom_titled_filter('reviewr'))
   )
+  def number_of_quiz_takers(self,obj):
+    return Game.objects.filter(anime=obj,gamesnumber__gt=0).count()
+
+  def _reviewers(self,obj):
+    return obj.reviewers.count()
   
   def get_queryset(self, request):
     query = super(Anime_admin, self).get_queryset(request)
@@ -265,11 +342,12 @@ class Anime_admin(ReadOnly):
 
 @admin.register(Game)
 class Game_admin(ReadOnly):
-  list_display = ("anime","game_owner_link","gamesnumber","score","contributions")
+  list_display = ("anime","game_owner_link","gamesnumber","score")
   search_fields   =  ("game_owner__username__startswith",)
   list_filter  = (
+    QuizGamesFilter,
     ("game_owner",admin.RelatedOnlyFieldListFilter),
-    ("anime",admin.RelatedOnlyFieldListFilter)
+    ("anime",admin.RelatedOnlyFieldListFilter),
     )
 
   def game_owner_link(self, obj):
@@ -288,4 +366,3 @@ class Notification_admin(ReadOnly):
     "seen",
     "time"
     )
-

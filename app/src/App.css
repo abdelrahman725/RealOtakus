@@ -294,12 +294,21 @@ button {
   width: 70%;
   color: black;
   padding: 5px 10px;
+  padding-bottom: 10px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
 .questionscontainer .eachquestion p {
   line-height: 2;
+}
+
+.questionscontainer .app_dec_btns {
+  text-align: left;
+}
+
+.questionscontainer .pendingstate {
+  border-color: #e6ab3f;
 }
 
 .questionscontainer .reviewstate {
@@ -312,14 +321,6 @@ button {
 
 .questionscontainer .declinestate {
   border-color: #E76450;
-}
-
-.questionscontainer .declinestate button, .questionscontainer .approvestate button {
-  cursor: default;
-}
-
-.questionscontainer .pendingstate {
-  border-color: #e6ab3f;
 }
 
 @media screen and (max-width: 800px) {

@@ -195,7 +195,6 @@ margin-bottom: 50px;
 
 
 
-
 .Quiz{
     
   .Question{
@@ -280,8 +279,6 @@ margin-bottom: 50px;
 }
 
 
-
-
 .userprofile{
   hr{
     margin-top: 60px;
@@ -328,35 +325,33 @@ margin-bottom: 50px;
     width: 70%;
 
     color:black;
-    padding:5px 10px;  
+    padding:5px 10px;
+    padding-bottom: 10px;  
     box-shadow: $base-shadow ;
     p{
       line-height: 2;
     }
   }
-
   
+  .app_dec_btns
+  {
+    text-align: left;
+  }
+
+  .pendingstate{
+    border-color:rgb(230, 171, 63);
+  }
+
   .reviewstate{
     border-color: #5bc0de;
   }
+
   .approvestate{
     border-color:#4ecd91;
   }
 
   .declinestate{
     border-color: #E76450;
-  }
-  
-  .declinestate,.approvestate
-  {
-    button{
-      cursor: default;
-    }
-  }
-
-
-  .pendingstate{
-    border-color:rgb(230, 171, 63);
   }
   
 

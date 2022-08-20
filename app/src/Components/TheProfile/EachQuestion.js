@@ -39,20 +39,23 @@ return (
             <span><strong>{anime}</strong></span><br />
             {question.question}
         </p> 
-
-        <button className="approve_btn"
-         onClick={()=>ReviewContribution("approve",question.id)}
-         disabled={reviewstate!=="reviewstate"} >
-         approve
-        </button>
         
-         &nbsp;   
+        {reviewstate==="reviewstate" &&
+            <div className="app_dec_btns">
+                <button 
+                onClick={()=>ReviewContribution("approve",question.id)}
+                disabled={reviewstate!=="reviewstate"} >
+                approve
+                </button>
+                &nbsp;&nbsp;
+                <button 
+                onClick={()=>ReviewContribution("decline",question.id)}  
+                disabled={reviewstate!=="reviewstate"} >
+                decline
+                </button> 
+            </div> 
+        }
         
-        <button className="decline_btn"
-         onClick={()=>ReviewContribution("decline",question.id)}  
-         disabled={reviewstate!=="reviewstate"} >
-         decline
-        </button>   
     </div>
   )
 }

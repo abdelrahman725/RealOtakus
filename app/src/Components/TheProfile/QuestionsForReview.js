@@ -1,18 +1,13 @@
-
-import { useState,useEffect } from "react"
+import { useState } from "react"
 import EachQuestion from "./EachQuestion"
 import Select from 'react-select'
-
 
 const QuestionsForReview = ({questions,animesoptions}) => {
   
   const [filteredanime,setfilteredanime]= useState(1)
   const [reviewstates,setreviewstates]= useState({})
 
-
-  
   const handlefilter=(e)=> {setfilteredanime(e.value)}
-
 
   return (
     <div className="questionscontainer">
@@ -22,9 +17,7 @@ const QuestionsForReview = ({questions,animesoptions}) => {
         <br />
         <br />
 
-      {questions.map((q,index)=>(
-
-        
+      {questions.map((q,index)=>(        
         filteredanime===1? 
         <EachQuestion setreviewstate={setreviewstates}
         reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
