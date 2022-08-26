@@ -1,3 +1,5 @@
+import pytz
+
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
@@ -5,11 +7,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
 from .models import *
+from .helpers import CreateNotification
 from .constants import QUESTIONSCOUNT,COUNTRIES
 
-
+def to_local_date_time(utc_datetime):
+  #return utc_datetime
+  if utc_datetime:
+    local_tz = pytz.timezone('Africa/Cairo')
+    return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    
 # 8 customized filter classes
-
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social_account'
@@ -130,27 +137,16 @@ class QuestionTypeFilter(admin.SimpleListFilter):
   def lookups(self, request, model_admin):
 
       return (
-        ('all', _('All')),
-        (None, _('users')),
-        ('admin', _('admin'))
+        ('admin', _('admin')),
+        ('users', _('users'))
     )
-
-  def choices(self, cl):
-      for lookup, title in self.lookup_choices:
-          yield {
-              'selected': self.value() == lookup,
-              'query_string': cl.get_query_string({
-                  self.parameter_name: lookup,
-              }, []),
-              'display': title,
-          }
 
   def queryset(self, request, queryset):
 
     if self.value() == 'admin':
       return queryset.filter(contributor__is_superuser=True)
 
-    if self.value() == None:
+    if self.value() == 'users':
       return queryset.filter(contributor__is_superuser=False)
 
 
@@ -257,27 +253,35 @@ class User_admin(admin.ModelAdmin):
 
 @admin.register(Question)
 class Question_admin(admin.ModelAdmin):
+  date_hierarchy = 'date_created'
   readonly_fields =  ("correct_answers","wrong_answers")
   list_display    =  (
     "question",
     "anime",
     "view_contributor_link",
     "approved",
-    "number_of_reviewers"
-    #"correct_answers",
-    #"wrong_answers",
+    "number_of_reviewers",
+    "_date_created"
   )
+
   list_filter = (
     QuestionTypeFilter,
     ReviewersFilter,
     "approved",
     ("anime",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
+    "date_created"
   )
   search_fields   =  ("question",)
 
+  def delete_model(self, request, obj):
+      CreateNotification(
+          user=obj.contributor,
+          content=f"sorry your question ({obj.question[:15]}...) has been deleted by RealOtakus, as it didn't align with our guidelines"
+        )
+      obj.delete()
 
-# prevent any deletion from anyone if this is one of my approved questions (main questions)  
+# hide Delete button if it's approved question by the admin  
   def has_delete_permission(self, request, obj=None):
     if obj and obj.contributor:
       if obj.approved and obj.contributor.is_superuser and obj.contributor.username =="admin":
@@ -303,6 +307,9 @@ class Question_admin(admin.ModelAdmin):
 
   def number_of_reviewers(self,obj):
     return obj.anime.reviewers.count()
+
+  def _date_created(self,obj):
+    return to_local_date_time(obj.date_created)
 
 
 @admin.register(Anime)
@@ -359,10 +366,13 @@ class Game_admin(ReadOnly):
 
 @admin.register(Notification)
 class Notification_admin(ReadOnly):
-  list_display = ("owner","notification","time","seen")
+  list_display = ("owner","notification","_time","seen")
   search_fields   =  ("owner__username__startswith",)
   list_filter  = (
     ("owner",admin.RelatedOnlyFieldListFilter),
     "seen",
     "time"
     )
+
+  def _time(self,obj):
+    return to_local_date_time(obj.time)

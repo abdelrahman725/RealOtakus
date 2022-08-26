@@ -7,7 +7,8 @@ const EachQuestion = ({anime,question,reviewstate,setreviewstate}) => {
 const {server} = useContext(ServerContext)  
 const CsrfToken = getCookie('csrftoken')
 
-const [loading,setloading] = useState(false) 
+const [loading,setloading] = useState(false)
+const [review,setreview] = useState() 
 
 const ReviewContribution = async(state,question)=>{
 

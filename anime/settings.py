@@ -77,9 +77,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-
 MIDDLEWARE = [
-       
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -88,6 +86,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ] 
 
 ASGI_APPLICATION = "anime.asgi.application"
@@ -164,13 +163,13 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+USE_TZ = False
+
+
 # Translation and formatting :
 USE_I18N = True
 
 USE_L10N = True
-
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

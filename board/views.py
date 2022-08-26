@@ -10,20 +10,18 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from .helpers import login_required, CheckLevel
+from .helpers import login_required, CheckLevel,CreateNotification
 from .models import *
 from .serializers import *
 from .constants import *
 
 # to see the corresponding sql queries that get executed when the relevant orm queryset gets executed
-
 # for q in connection.queries:
 #     print(f"\n\n { q } \n\n")
 
+
 animes_dict = {}
-
 game = {}
-
 game_questions = {}
 
 for anime in Anime.objects.all():
@@ -38,17 +36,17 @@ def GetOrFetchAnime(anime):
         return fetched_anime
 
 def GetWantedUser(request):
-    #return request.user
+    return request.user
     username = "mohamed"
     return User.objects.get(username=username)
 
 
-#@login_required
+@login_required
 def ReactApp(request):
     return render(request, "index.html")
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -69,7 +67,7 @@ def GetUserData(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
         
@@ -98,7 +96,6 @@ def GetDashBoard(request):
                 "pending": 1 if not question.approved else 0
             }
 
-    
     LeaderBorad = LeaderBoradSerializer(top_users, many=True)
     
     return Response({
@@ -106,11 +103,10 @@ def GetDashBoard(request):
         "animes": animes_mapper
     })
 
-
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 
 
-##@login_required
+#@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
 
@@ -135,7 +131,7 @@ def GetQuizeAnimes(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -145,7 +141,8 @@ def GetTest(request, game_anime):
 
     CurrentGame, created = Game.objects.get_or_create(
         game_owner=current_user,
-        anime=selected_anime)
+        anime=selected_anime
+    )
 
     index = CurrentGame.gamesnumber * QUESTIONSCOUNT
     # to delete later : 
@@ -188,7 +185,7 @@ def GetTest(request, game_anime):
     return Response(serialized_questions)
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def SubmitTest(request):
     user = GetWantedUser(request)
@@ -236,14 +233,14 @@ def SubmitTest(request):
 # ------------------------------------------------------------------------------------
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
     serialized_data = AnimeSerializer(animes_dict.values(), many=True)
     return Response(serialized_data.data)
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def MakeContribution(request):
     user = GetWantedUser(request)
@@ -302,33 +299,38 @@ def MakeContribution(request):
         return JsonResponse({"message": e.args[0]})
 
 
-
-# for a reviewr to approve/decline a question contributed by other user/s
-#@login_required
+@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
     state = request.data["state"]
     q_id = int(request.data["question"])
-    question = Question.objects.filter(pk=q_id)
+    feedback = request.data["reviwer_feedback"]
+    try:
+        question = Question.objects.get(pk=q_id)
+  
+        question.reviewer_feedback = feedback
 
-    if not question.exists():
+        if state == "approve":
+            question.approved = True
+            question.save()
+            return Response({"question got approved successfully"}, status=status.HTTP_200_OK)
+        
+        if state == "decline":
+            question.delete()
+            CreateNotification(
+                user=question.contributor,
+                content=f"your last question for {GetOrFetchAnime(question.anime).anime_name} has been rejected by reviewers"
+                 + feedback
+            )
+            #! to do here we want a way to send the reviewer_feedback (submitted by the reviewer) to the question contributor
+
+            return Response({"question is deleted successfully"}, status=status.HTTP_200_OK)
+
+    except Question.DoesNotExist:
         return Response({"sorry this question doesn't exist anymore"}, status=status.HTTP_404_NOT_FOUND)
 
-    question = question[0]
 
-    if state == "approve":
-        question.approved = True
-        question.save()
-        return Response({"question got approved successfully"}, status=status.HTTP_200_OK)
-
-    if state == "decline":
-        question.delete()
-        return Response({"question got declined and deleted successfully"}, status=status.HTTP_200_OK)
-
-    return Response({"not expected response"}, status=status.HTTP_200_OK)
-
-
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
@@ -353,7 +355,8 @@ def GetMyProfile(request):
     user_animes_scores = GameSerializer(
         Game.objects.filter(
             game_owner=user,
-            gamesnumber__gt=0).select_related("anime"),
+            gamesnumber__gt=0
+        ).select_related("anime"),
         many=True
     )    
 
@@ -365,7 +368,7 @@ def GetMyProfile(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)
@@ -376,4 +379,3 @@ def UpdateNotificationsState(request):
         {f"notifications state of {request.user.username} are updated successfully"},
         status=status.HTTP_201_CREATED
     )
-

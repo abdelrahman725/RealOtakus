@@ -14,8 +14,8 @@ class Anime(models.Model):
 
 
 class User(AbstractUser):
-    country = models.CharField(max_length=10, blank=True,null=True)
-    points = models.IntegerField(default=0)
+    country = models.CharField(max_length=10, blank=True, null=True)
+    points = models.PositiveIntegerField(default=0)
     tests_completed = models.PositiveIntegerField(default=0)
     tests_started = models.PositiveIntegerField(default=0)
     contributor = models.BooleanField(default=False)
@@ -36,8 +36,8 @@ class Question(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL,related_name="contributions", null=True, blank=True, default=1)
     approved = models.BooleanField(default=True)
+    
     question = models.TextField(max_length=350)
-
     right_answer = models.CharField(max_length=150)
     choice1 = models.CharField(max_length=150)
     choice2 = models.CharField(max_length=150)
@@ -47,8 +47,8 @@ class Question(models.Model):
     wrong_answers = models.PositiveIntegerField(default=0)
     advanced = models.BooleanField(default=False)
 
+    date_created = models.DateTimeField(default=timezone.now,null=True,blank=True) 
     reviewer_feedback = models.TextField(max_length=100,null=True,blank=True)
-
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')
@@ -76,4 +76,5 @@ class Notification(models.Model):
     seen = models.BooleanField(default=False)
 
     class Meta:
+        ordering = ["-id"]
         abstract = True
