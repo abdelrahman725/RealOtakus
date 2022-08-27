@@ -46,9 +46,8 @@ class Question(models.Model):
     correct_answers = models.PositiveIntegerField(default=0)
     wrong_answers = models.PositiveIntegerField(default=0)
     advanced = models.BooleanField(default=False)
+    date_created = models.DateTimeField(default=timezone.now,null=True) 
 
-    date_created = models.DateTimeField(default=timezone.now,null=True,blank=True) 
-    reviewer_feedback = models.TextField(max_length=100,null=True,blank=True)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')

@@ -333,10 +333,21 @@ margin-bottom: 50px;
     }
   }
   
-  .app_dec_btns
-  {
-    text-align: left;
+  form{
+    .radio{
+      text-align: left;
+      margin-bottom: 10px;
+    }
   }
+  .question_feedback
+  {
+    width :400px;
+    // float: left;
+  }
+  // .app_dec_btns
+  // {
+  //   text-align: left;
+  // }
 
   .pendingstate{
     border-color:rgb(230, 171, 63);

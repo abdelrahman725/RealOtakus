@@ -188,8 +188,7 @@ class ReadOnly(admin.ModelAdmin):
  
   def has_delete_permission(self, request, obj=None):
   # should be False!
-    return True
-
+    return False
 
 
 @admin.register(User)
@@ -205,8 +204,9 @@ class User_admin(admin.ModelAdmin):
     "username",
     "email",
     "points",
-    "quizes_score",
     "tests_completed",
+    "quizes_score",
+    "total_contributions",
     "reviewer",
     "_animes_to_review",
     "country_name",
@@ -250,6 +250,9 @@ class User_admin(admin.ModelAdmin):
 
   def _animes_to_review(self,obj):
     return obj.animes_to_review.all().count()
+  def total_contributions(self,obj):
+    return obj.contributions.filter(approved=True).count()
+
 
 @admin.register(Question)
 class Question_admin(admin.ModelAdmin):
@@ -277,14 +280,14 @@ class Question_admin(admin.ModelAdmin):
   def delete_model(self, request, obj):
       CreateNotification(
           user=obj.contributor,
-          content=f"sorry your question ({obj.question[:15]}...) has been deleted by RealOtakus, as it didn't align with our guidelines"
+          content=f"sorry your question ({obj.question[:15]}...) got deleted by RealOtakus, as it didn't align with our Guidelines, you can read our Guidlines in Contribution form"
         )
       obj.delete()
 
 # hide Delete button if it's approved question by the admin  
   def has_delete_permission(self, request, obj=None):
     if obj and obj.contributor:
-      if obj.approved and obj.contributor.is_superuser and obj.contributor.username =="admin":
+      if obj.approved and obj.contributor.is_superuser:
         return False
     return True
 

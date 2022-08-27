@@ -123,8 +123,8 @@ class Question(base_models.Question):
         super(Question, self).delete(*args, **kwargs)
 
     def __str__(self):
-        if len(self.question) > 50:
-            return f"{self.question[:50]}"
+        if len(self.question) > 55:
+            return f"{self.question[:55]}..."
         return f"{self.question}"
 
 

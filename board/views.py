@@ -1,4 +1,5 @@
 import random
+from time import sleep
 
 from django.db import connection, IntegrityError
 from django.shortcuts import render, redirect
@@ -36,17 +37,17 @@ def GetOrFetchAnime(anime):
         return fetched_anime
 
 def GetWantedUser(request):
-    return request.user
-    username = "mohamed"
+    #return request.user
+    username = "david"
     return User.objects.get(username=username)
 
 
-@login_required
+#@login_required
 def ReactApp(request):
     return render(request, "index.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -67,7 +68,7 @@ def GetUserData(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
         
@@ -106,7 +107,7 @@ def GetDashBoard(request):
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 
 
-#@login_required
+##@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
 
@@ -131,7 +132,7 @@ def GetQuizeAnimes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -185,7 +186,7 @@ def GetTest(request, game_anime):
     return Response(serialized_questions)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitTest(request):
     user = GetWantedUser(request)
@@ -229,18 +230,17 @@ def SubmitTest(request):
 
 
 
-
 # ------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetAllAnimes(request):
     serialized_data = AnimeSerializer(animes_dict.values(), many=True)
     return Response(serialized_data.data)
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def MakeContribution(request):
     user = GetWantedUser(request)
@@ -299,30 +299,28 @@ def MakeContribution(request):
         return JsonResponse({"message": e.args[0]})
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
     state = request.data["state"]
     q_id = int(request.data["question"])
-    feedback = request.data["reviwer_feedback"]
+
     try:
         question = Question.objects.get(pk=q_id)
   
-        question.reviewer_feedback = feedback
-
         if state == "approve":
             question.approved = True
             question.save()
             return Response({"question got approved successfully"}, status=status.HTTP_200_OK)
         
         if state == "decline":
-            question.delete()
+
+            #feedback = request.data["reviwer_feedback"]
             CreateNotification(
                 user=question.contributor,
-                content=f"your last question for {GetOrFetchAnime(question.anime).anime_name} has been rejected by reviewers"
-                 + feedback
+                content=f"feedback sorry your last question for {GetOrFetchAnime(question.anime.id).anime_name} has been rejected by reviewers"
             )
-            #! to do here we want a way to send the reviewer_feedback (submitted by the reviewer) to the question contributor
+            question.delete()
 
             return Response({"question is deleted successfully"}, status=status.HTTP_200_OK)
 
@@ -330,7 +328,7 @@ def ReviewContribution(request):
         return Response({"sorry this question doesn't exist anymore"}, status=status.HTTP_404_NOT_FOUND)
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
@@ -368,7 +366,7 @@ def GetMyProfile(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)
@@ -379,3 +377,4 @@ def UpdateNotificationsState(request):
         {f"notifications state of {request.user.username} are updated successfully"},
         status=status.HTTP_201_CREATED
     )
+

@@ -9,6 +9,7 @@ const Contripution = () => {
   const {server} = useContext(ServerContext)  
   const CsrfToken = getCookie('csrftoken')
   const [animesoptions,setanimesoptions] = useState()
+
   const [msg,setmsg] = useState()
   
   // ensure
@@ -43,6 +44,7 @@ const Contripution = () => {
       )
 
      setanimesoptions(anime_array)
+
    }  
 
   const handleselect=(e)=> {setanime(e.value)}
@@ -177,8 +179,14 @@ const Contripution = () => {
         
         <div className="form_elements">
 
-        <Select options={animesoptions} className="select_animes"  placeholder="select anime" 
-        onChange={handleselect} ref={select_animes}/>
+        <Select 
+        className="select_animes" 
+        placeholder="select anime" 
+        isLoading={animesoptions?false:true}
+        options={animesoptions}
+        onChange={handleselect} 
+        ref={select_animes}
+        />
         
         <br/> <br/>
 

@@ -303,8 +303,13 @@ button {
   line-height: 2;
 }
 
-.questionscontainer .app_dec_btns {
+.questionscontainer form .radio {
   text-align: left;
+  margin-bottom: 10px;
+}
+
+.questionscontainer .question_feedback {
+  width: 400px;
 }
 
 .questionscontainer .pendingstate {
