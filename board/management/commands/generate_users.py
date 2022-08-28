@@ -20,17 +20,19 @@ class Command(BaseCommand):
 
         n_users = options["users"]
         
-        print(f"\n\n start creating {n_users} users...\n")
-        
-        animes = Anime.objects.all()
+        print(f"\n\n generating {n_users} users...\n")
+
+        #animes = Anime.objects.all()
+        #animes_to_review = random.sample(list(animes),random.randint(0,animes.count()))
 
         for i in range(n_users):
+
             level = random.choice(list(LEVELS))
             User.objects.create( 
                 username=f"user_{i}",
-                counter=random.choice(list(COUNTRIES)),
-                points =  LEVELS[level] + random.randint(1,1000),
-                animes_to_review = random.sample(list(animes),random.randint(0,animes.count()))
+                country=random.choice(list(COUNTRIES)),
+                level= level,
+                points =  LEVELS[level] + random.randint(1,950)
             )
       
         print("\n Done \n")

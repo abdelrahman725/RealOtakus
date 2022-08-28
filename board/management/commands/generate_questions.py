@@ -33,14 +33,12 @@ class Command(BaseCommand):
         print(f"\n\n start creating {n_questions} questions...\n")
         
         animes = Anime.objects.all()
+        all_users = User.objects.exclude(is_superuser=True)
 
         for i in range(n_questions):
             anime = random.choice(animes)
-
-            users = User.objects.exclude(animes_to_review__id=anime.id)
-            
             Question.objects.create(    
-                contributor=random.choice(users),
+                contributor=random.choice(all_users.exclude(animes_to_review__id=anime.id)),
                 anime = anime,
                 approved=random.choice([True,False]) if question_state == "mixed" else False,
                 question = f"question_{i+1} for {anime.anime_name}",

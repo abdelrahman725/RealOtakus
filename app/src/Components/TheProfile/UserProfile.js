@@ -23,7 +23,7 @@ export const UserProfile = () => {
     const res = await fetch(profile_url)
     const data  = await res.json()
     
-    console.log(data.UserAnimeScores)
+    //console.log(data.UserAnimeScores)
       
     const anime_options = [{value:1,label:"all animes"}]
       

@@ -74,7 +74,7 @@ def GetDashBoard(request):
         
     all_users = User.objects.exclude(points=0)
     
-    current_highest_points = all_users.values_list("points",flat=True).order_by("-points")[:15]    
+    current_highest_points = all_users.values_list("points",flat=True).order_by("-points")
     top_users = all_users.filter(points__gte=min(current_highest_points))
 
     animes_mapper =  {}    
@@ -315,10 +315,11 @@ def ReviewContribution(request):
         
         if state == "decline":
 
-            #feedback = request.data["reviwer_feedback"]
+            feedback = request.data["feedback"]
+            
             CreateNotification(
                 user=question.contributor,
-                content=f"feedback sorry your last question for {GetOrFetchAnime(question.anime.id).anime_name} has been rejected by reviewers"
+                content=f"feedback : {feedback},  sorry your last question for {GetOrFetchAnime(question.anime.id).anime_name} has been rejected by reviewers"
             )
             question.delete()
 

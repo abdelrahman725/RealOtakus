@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
@@ -77,3 +78,13 @@ class Notification(models.Model):
     class Meta:
         ordering = ["-id"]
         abstract = True
+
+# to be considered
+# class Contribution(models.Model):
+#     contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+#     reviewer  = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="contributions")
+#     state = "todo approved or "
+
+# user = "some user"
+# Question.objects.filter(contributions__reviewer = user)

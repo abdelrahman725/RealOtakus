@@ -10,6 +10,7 @@ from .models import *
 from .helpers import CreateNotification
 from .constants import QUESTIONSCOUNT,COUNTRIES
 
+
 def to_local_date_time(utc_datetime):
   #return utc_datetime
   if utc_datetime:
@@ -203,6 +204,7 @@ class User_admin(admin.ModelAdmin):
   list_display = (
     "username",
     "email",
+    "level",
     "points",
     "tests_completed",
     "quizes_score",
