@@ -17,7 +17,7 @@ const Contripution = () => {
   // reject
   const  leading_space = /^\s/
   const  extra_space = /\s{2,}/
-  const  excluded_symbols = /[#`~'@\^\*\|\\]/
+  const  excluded_symbols = /[#`~@\^\*\|\\]/
 
   const [Question,setQuestion] = useState({
     question:"",

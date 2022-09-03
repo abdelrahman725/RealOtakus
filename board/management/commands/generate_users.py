@@ -2,8 +2,8 @@ import random
 
 from django.core.management.base import BaseCommand
 
-from ...models import *
-from ...constants import COUNTRIES, LEVELS
+from board.models import *
+from board.constants import COUNTRIES, LEVELS
 
 class Command(BaseCommand):
     help = "generate random authentic Users (otakus) for testing purposes"

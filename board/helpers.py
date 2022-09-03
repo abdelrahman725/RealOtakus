@@ -4,32 +4,27 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 
-from .constants import LEVELS
+from board.constants import LEVELS
+
+import board.models
 
 
-def login_required(f):
-    def wraper(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect("/")
-        else:
-            old_function = f(request, *args, **kwargs)
-            return old_function
-    return wraper
+def CreateNotification(receiver,notification,kind):
+    if receiver and not receiver.is_superuser:
 
-
-def CreateNotification(user, content):
-    from .models import Notification
-    if user and not user.is_superuser:
-        Notification.objects.create(owner=user, notification=content)
+        board.models.Notification.objects.create(
+            owner=receiver,
+            notification=notification,
+            kind = kind
+        )
 
 
 def CheckLevel(user):
     for level in reversed(LEVELS):    
         if user.points >= LEVELS[level] and LEVELS[level] != 0:
-            user.level = level            
             CreateNotification(user,f"Level up to {level}, good job")
-            
-            return
+            return level
+    return user.level 
 
 
 def check_empty_string(value):
@@ -70,3 +65,13 @@ def ValidatePassword(password):
     if len(str(password)) >= 3:
         return True
     return False
+
+
+def login_required(f):
+    def wraper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("/")
+        else:
+            old_function = f(request, *args, **kwargs)
+            return old_function
+    return wraper

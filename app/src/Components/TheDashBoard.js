@@ -17,7 +17,6 @@ const TheDashBoard = ({logged_in_user}) => {
     const dashboard = await res.json()
     setotakus(dashboard.leaderboard)
     setinformation_about_animes(dashboard.animes)
-    //console.log(dashboard.animes)
     
     //setTimeout(()=>{
     //},1000)
@@ -50,7 +49,7 @@ return (
       name={competitor.username}
       points={competitor.points}
       level={competitor.level}
-      contributions={competitor.contributions_count}
+      contributions={competitor.n_contributions}
       country = {competitor.country}/>
       )):
       <Competitor

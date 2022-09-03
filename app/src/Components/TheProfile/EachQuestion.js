@@ -10,6 +10,8 @@ const CsrfToken = getCookie('csrftoken')
 
 const [question_state,setquestion_state] = useState()
 
+const [review_result,setreview_result] = useState(false)
+
 const [feedback,setfeedback] = useState() 
 
 const feedback_options = [
@@ -25,7 +27,6 @@ const ReviewSubmission = (e,question)=>{
 
     e.preventDefault()
   
-    
     const SubmitReview = async(question)=>{  
         const send = await fetch(`${server}/home/review`,{
             method : 'POST',
@@ -43,6 +44,7 @@ const ReviewSubmission = (e,question)=>{
     
         const res  = await send.json()
         console.log(res)
+        setreview_result(true)
         setreviewstate(prev => ({...prev,[question]:`${question_state}state`}))
     
         }

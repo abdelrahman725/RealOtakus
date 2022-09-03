@@ -1,19 +1,34 @@
+
 import threading
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from board import base_models
 
-from .helpers import CreateNotification, CheckLevel,question_validator,choices_integirty
+from .helpers import CreateNotification
+from .helpers import choices_integirty
+from .helpers import question_validator
+from .helpers import CheckLevel
 
-
-def NotifyReviewrs(anime,contributor):
+def NotifyReviewrs(anime):
     msg = f"new question for {anime.anime_name} and needs review, check your profile"
     for reviewer in anime.reviewers.all():
-        if reviewer != contributor:
-            CreateNotification(reviewer, msg)
+        CreateNotification(
+            receiver=reviewer,
+            notification= msg,
+            kind="R"
+        )
+
 
 class Anime(base_models.Anime):
+
+    @property
+    def total_questions(self):
+        return self.anime_questions.all().count()
 
     @property
     def approved_questions(self):
@@ -21,18 +36,18 @@ class Anime(base_models.Anime):
 
     @property
     def pending_questions(self):
-        return self.anime_questions.filter(approved=False).count()
+        return self.anime_questions.filter(approved=False,contribution__reviewed_by__isnull=True).count()
 
     @property
-    def total_questions(self):
-        return self.anime_questions.all().count()
+    def rejected_questions(self):
+        return self.anime_questions.filter(approved=False,contribution__reviewed_by__isnull=False).count()
 
     def save(self, *args, **kwargs):
-        new = False
-        if not self.id:
-            new = True
+        existing = self.id
+            
         super(Anime, self).save(*args, **kwargs)
-        if new:
+        
+        if not existing:
             from .views import animes_dict
             animes_dict[self.id] = self
 
@@ -45,87 +60,69 @@ class Anime(base_models.Anime):
 
 
 class User(base_models.User):
+
+    def save(self, *args, **kwargs):
+        
+        self.level = CheckLevel(self)
+
+        super(User, self).save(*args, **kwargs)
+    
     def __str__(self):
         return self.username
 
 
 class Question(base_models.Question):
-    """
-    NOT DONE yet :
-    2. Calling delete() on QuerySet instance: question.objects.all().delete() 
 
-    if this question's contributor is admin and it's approved (default)
-    """
+    # previous_state = None
 
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.previous_state = self.approved
+    
     def clean(self, *args, **kwargs):
         question_validator(self.question)
         choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
         super(Question, self).clean(*args, **kwargs)
 
-    previous_status = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.previous_status = self.approved
-
-
-    def save(self, *args, **kwargs):
-   
+    def save(self, *args, **kwargs):        
         self.clean()
- 
-        user = self.contributor
- 
-        if user and not user.is_superuser:
-         # check if it wasn't approved (which is the default) and now it's approved
-            if self.previous_status == False and self.approved == True:
-
-                msg = f"congratulations your question for {self.anime} ({self.question[:30]}) got approved, another contribution added to your profile"
-                CreateNotification(user, msg)
-                
-                # check if it's his first approved contribution
-                if user.contributor == False:
-                    user.contributor = True
-                    msg = f"you are now a contributor!"
-                    CreateNotification(user, msg)
-
-                CurrentGame, created = Game.objects.get_or_create(
-                    game_owner=user, anime=self.anime)
-                CurrentGame.contributions += 1
-
-            # if the number of approved user contributions for that specific anime reaches 5 contributions
-            # then the user is qualified to be a reviewer for that anime
-                if CurrentGame.contributions == 5:
-                    if self.anime not in user.animes_to_review.all():
-                        user.animes_to_review.add(self.anime)
-                        CreateNotification(
-                            user, f"now you can review {self.anime} questions!")
-
-                CurrentGame.save()
-                user.contributions_count += 1
-                user.points += 10
-                CheckLevel(user)
-                user.save()
-
-            if self.pk == None and self.approved== False :
-                async_notification = threading.Thread(
-                    target=NotifyReviewrs,
-                    args=(self.anime,user)
-                )
-                async_notification.start()
- 
         super(Question, self).save(*args, **kwargs)
  
     def delete(self, *args, **kwargs):
-        if self.contributor:
-            if self.contributor.is_superuser and self.approved==True:
-                print("\n approved questions created by superuser can't be deleted \n")        
-                return
+        if self.active == True:
+            raise ValidationError(
+                 _('production questions can not be deleted')
+            )
         super(Question, self).delete(*args, **kwargs)
-
+        
+ 
     def __str__(self):
         if len(self.question) > 55:
             return f"{self.question[:55]}..."
         return f"{self.question}"
+
+
+class Contribution(base_models.Contribution):
+
+    def save(self, *args, **kwargs):
+
+        if self.pk == None and self.contributor != self.reviewed_by:
+            async_notification = threading.Thread(
+                target=NotifyReviewrs,
+                args=(self.question.anime,)
+            )
+            async_notification.start()
+       
+        super(Contribution, self).save(*args, **kwargs)
+    
+    @property
+    def date_created(self):
+        return self.question.date_created
+
+
+    def __str__(self) -> str:
+        return f"{self.contributor} contributed a new question for {self.question.anime}"
 
 
 class Game(base_models.Game):
@@ -144,4 +141,5 @@ class Notification(base_models.Notification):
             f'notifications_group_{self.owner.id}', {
                 'type': 'send_notifications',
                 'value': self
-            })
+            }
+        )

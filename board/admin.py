@@ -1,14 +1,17 @@
+import math
+from pickle import FALSE
 import pytz
 
+from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from .models import *
-from .helpers import CreateNotification
-from .constants import QUESTIONSCOUNT,COUNTRIES
+from board.models import *
+from board.helpers import CreateNotification
+from board.constants import QUESTIONSCOUNT,COUNTRIES
 
 
 def to_local_date_time(utc_datetime):
@@ -17,7 +20,8 @@ def to_local_date_time(utc_datetime):
     local_tz = pytz.timezone('Africa/Cairo')
     return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
     
-# 8 customized filter classes
+# 10 customized filter classes
+
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social_account'
@@ -35,6 +39,25 @@ class SocialAccountFilter(admin.SimpleListFilter):
       
       if self.value() == 'No':
         return queryset.filter(socialaccount=None)
+
+
+class IsContributorFilter(admin.SimpleListFilter):
+    title = 'contributor'
+    parameter_name = 'is_contributor'
+
+    def lookups(self, request, model_admin):
+        return (
+          ('Yes', ('Yes')),
+          ('No', ('No')),
+      )
+
+    def queryset(self, request, queryset):  
+          
+      if self.value() == 'Yes':
+        return queryset.filter(contributions__question__approved=True)
+      
+      if self.value() == 'No':
+        return queryset.exclude(contributions__question__approved=True)
     
 
 class QuizTakerFilter(admin.SimpleListFilter):
@@ -132,7 +155,7 @@ class ReviewersFilter(admin.SimpleListFilter):
      
 
 class QuestionTypeFilter(admin.SimpleListFilter):
-  title = 'contributor type'
+  title = 'Type'
   parameter_name = 'questions_contributor'
 
   def lookups(self, request, model_admin):
@@ -145,40 +168,56 @@ class QuestionTypeFilter(admin.SimpleListFilter):
   def queryset(self, request, queryset):
 
     if self.value() == 'admin':
-      return queryset.filter(contributor__is_superuser=True)
+      return queryset.filter(contribution__isnull=True)
 
     if self.value() == 'users':
-      return queryset.filter(contributor__is_superuser=False)
+      return queryset.filter(contribution__isnull=False)
 
 
-class QuizGamesFilter(admin.SimpleListFilter):
-  title = 'quiz games'
-  parameter_name = 'quiz_games'
+class OldestToNewestContributionsFilter(admin.SimpleListFilter):
+  title = 'oldest to newest'
+  parameter_name = 'order_by_oldest'
 
   def lookups(self, request, model_admin):
+
       return (
-        ('all', _('All')),
-        (None, _('Yes')),
-        ('no', _('No'))
+        ('yes', _('yes')),
     )
-  
-  def choices(self, cl):
-    for lookup, title in self.lookup_choices:
-        yield {
-            'selected': self.value() == lookup,
-            'query_string': cl.get_query_string({
-                self.parameter_name: lookup,
-            }, []),
-            'display': title,
-        }
 
   def queryset(self, request, queryset):
+    if self.value() == 'yes':
+      # in testing (when datetime data is random)
+      return queryset.order_by("question__date_created")
+      # in actual use
+      return queryset.order_by("id")
 
-    if self.value() == None:
-      return queryset.filter(gamesnumber__gt=0)
 
-    if self.value() == 'no':
-      return queryset.filter(gamesnumber=0)
+class ContributionState(admin.SimpleListFilter):
+  title = 'state'
+  parameter_name = 'state'
+
+  def lookups(self, request, model_admin):
+
+      return (
+        ('p', _('Pending.....')),
+        ('r', _('Reviewed')),
+        ('a', _('Approved')),
+        ('f', _('Declined'))
+    )
+
+  def queryset(self, request, queryset):
+    if self.value() == 'p':
+      return queryset.filter(reviewed_by__isnull=True)
+    
+    if self.value() == 'r':
+      return queryset.filter(reviewed_by__isnull=False)
+
+    if self.value() == 'a':
+      return queryset.filter(question__approved=True,reviewed_by__isnull=False)
+
+    if self.value() == 'f':
+      return queryset.filter(question__approved=False,reviewed_by__isnull=False)
+
 
 
 # admin models inherit from this class can't be changed or deleted
@@ -188,15 +227,193 @@ class ReadOnly(admin.ModelAdmin):
     return False
  
   def has_delete_permission(self, request, obj=None):
-  # should be False!
     return False
+
+
+
+def move_to_production(modeladmin, request, queryset):
+    queryset.update(active=True)
+
+def remove_from_production(modeladmin, request, queryset):
+    queryset.update(active=False)
+
+def approve(modeladmin, request, queryset):
+    queryset.update(approved=True)
+
+@admin.register(Question)
+class Question_admin(admin.ModelAdmin):
+  #date_hierarchy = 'date_created'
+  actions = [move_to_production, remove_from_production,approve]
+
+  readonly_fields =  (
+    "date_created",
+    "correct_answers",
+    "wrong_answers"
+  )
+
+  list_display    =  (
+    "question",
+    "right_answer",
+    "choice1",
+    "choice2",
+    "choice3",
+    "active",
+    "anime",
+    "approved",
+    #"number_of_reviewers",
+    "_date_created"
+  )
+
+  list_filter = (
+    QuestionTypeFilter,
+    "approved",
+    "active",
+    ReviewersFilter,
+    ("anime",admin.RelatedOnlyFieldListFilter),
+    "date_created"
+  )
+  search_fields   =  ("question",)
+
+
+  def delete_model(self, request, obj):
+    try:
+      if obj.contribution:
+        CreateNotification(
+            receiver=obj.contribution.contributor,
+            notification=f"""
+                sorry your question ({obj.question[:15]}...) got deleted by RealOtakus,
+                as it didn't align with our Guidelines,
+                you can read our Guidlines in Contribution form""",
+            kind = "D"
+          )
+    except Contribution.DoesNotExist:
+      pass
+    obj.delete()
+
+# hide Delete button if it's a production question
+  def has_delete_permission(self, request, obj=None):
+    if obj and obj.active == True:
+      return False
+    return True
+
+# not used yet
+  def view_anime_link(self, obj):
+    url = reverse('admin:board_anime_change', args=(obj.anime.id,))
+    return format_html('<a href="{}">{}</a>',url, obj.anime.anime_name)
+
+  view_anime_link.short_description = "anime"
+
+  def number_of_reviewers(self,obj):
+    return obj.anime.reviewers.count()
+
+  def _date_created(self,obj):
+    return to_local_date_time(obj.date_created)
+
+  def _date_reviewed(self,obj):
+    return to_local_date_time(obj.contribution.date_reviewed)
+
+
+@admin.register(Contribution)
+class Contribution_admin(admin.ModelAdmin):
+  readonly_fields =  (
+    "date_reviewed",
+  )
+
+  list_display = (
+    "state",
+    "contributor",
+    "view_question",
+    "reviewed_by",
+    "reviewer_feedback",
+    "_date_created",
+    "_date_reviewed",
+    "reviewed_after"
+  )
+
+  list_filter  = (
+    ContributionState,
+    ("contributor",admin.RelatedOnlyFieldListFilter),
+    ("reviewed_by",admin.RelatedOnlyFieldListFilter),
+    "reviewer_feedback",
+    OldestToNewestContributionsFilter,
+    "date_reviewed"
+
+  )
+
+  def _date_created(self,obj):
+    return to_local_date_time(obj.date_created)
+
+  def _date_reviewed(self,obj):
+    return to_local_date_time(obj.date_reviewed)
+  
+  def reviewed_after(self,obj):
+    
+    if obj.date_created and obj.date_reviewed:
+
+      time_diff = obj.date_reviewed - obj.date_created
+
+      if time_diff.days >=365:  
+        return f"{math.floor(time_diff.days/365)} years"  
+      
+      if time_diff.days >=30:
+        return f"{math.floor(time_diff.days/30)} months"  
+      
+      if time_diff.days >=1:
+        return f"{time_diff.days} days"
+
+      if time_diff.seconds >= 3600:
+        return f"{math.floor(time_diff.seconds/3600)} hours"
+
+      if time_diff.seconds > 60:
+        return f"{math.floor(time_diff.seconds/60)} minutes"
+      
+      return f"{time_diff.seconds} seconds"
+
+    return "N/A"
+  
+  def state(self,obj):
+    if not obj.date_reviewed and not obj.reviewed_by:
+      return "pending ..."
+    
+    if obj.question.approved == True:
+      return "ok approved"
+    
+    return "sorry rejected"  
+  
+  
+  # display only list of questions that aren't 
+  # (already contributions or production or approved)  
+  def get_form(self, request, obj, **kwargs):
+    form = super(Contribution_admin,self).get_form(request, obj, **kwargs)
+    
+    if not obj:
+      form.base_fields['question'] = forms.ModelChoiceField(
+        queryset=Question.objects.filter(
+          contribution__isnull=True,
+          approved=False,
+          active=False
+        )
+      )
+    return form
+
+  def get_readonly_fields(self, request, obj=None):
+
+    if obj:
+        return self.readonly_fields + ('question','contributor','reviewed_by','reviewer_feedback')
+    return self.readonly_fields
+
+  def view_question(self, obj):
+    url = reverse('admin:board_question_change', args=(obj.question.id,))
+    return format_html('<a href="{}">{}</a>',url, obj.question.question)
+  view_question.short_description = "question"
+
 
 
 @admin.register(User)
 class User_admin(admin.ModelAdmin):
-  readonly_fields =  ("level",
+  readonly_fields =  (
+  "level",
   "points",
-  "contributions_count",
   "tests_started",
   "tests_completed"
   )
@@ -207,8 +424,7 @@ class User_admin(admin.ModelAdmin):
     "level",
     "points",
     "tests_completed",
-    "quizes_score",
-    "total_contributions",
+    "contributor",
     "reviewer",
     "_animes_to_review",
     "country_name",
@@ -217,9 +433,10 @@ class User_admin(admin.ModelAdmin):
 
   list_filter  =  (
   QuizTakerFilter,
+  IsContributorFilter,
   IsReviewerFilter,
   SocialAccountFilter,
-  "contributor",
+
   ("animes_to_review",admin.RelatedOnlyFieldListFilter),
   "level",
   CountryFilter
@@ -243,7 +460,13 @@ class User_admin(admin.ModelAdmin):
   def reviewer(self,obj):
     return obj.animes_to_review.exists()
   reviewer.boolean = True
-
+  
+  def contributor(self,obj):
+    if obj.contributions.filter(question__approved=True):
+      return True
+    return False
+  contributor.boolean= True
+  
   def country_name(self,obj):
     if obj.country:
       return COUNTRIES[obj.country]
@@ -252,81 +475,20 @@ class User_admin(admin.ModelAdmin):
 
   def _animes_to_review(self,obj):
     return obj.animes_to_review.all().count()
-  def total_contributions(self,obj):
-    return obj.contributions.filter(approved=True).count()
 
-
-@admin.register(Question)
-class Question_admin(admin.ModelAdmin):
-  date_hierarchy = 'date_created'
-  readonly_fields =  ("correct_answers","wrong_answers")
-  list_display    =  (
-    "question",
-    "anime",
-    "view_contributor_link",
-    "approved",
-    "number_of_reviewers",
-    "_date_created"
-  )
-
-  list_filter = (
-    QuestionTypeFilter,
-    ReviewersFilter,
-    "approved",
-    ("anime",admin.RelatedOnlyFieldListFilter),
-    ("contributor",admin.RelatedOnlyFieldListFilter),
-    "date_created"
-  )
-  search_fields   =  ("question",)
-
-  def delete_model(self, request, obj):
-      CreateNotification(
-          user=obj.contributor,
-          content=f"sorry your question ({obj.question[:15]}...) got deleted by RealOtakus, as it didn't align with our Guidelines, you can read our Guidlines in Contribution form"
-        )
-      obj.delete()
-
-# hide Delete button if it's approved question by the admin  
-  def has_delete_permission(self, request, obj=None):
-    if obj and obj.contributor:
-      if obj.approved and obj.contributor.is_superuser:
-        return False
-    return True
-
-  def view_contributor_link(self, obj):
-    if obj.contributor:
-      if obj.contributor.is_superuser:
-        return "admin"
-      url = reverse('admin:board_user_change', args=(obj.contributor.id,))
-      return format_html('<a href="{}">{}</a>',url, obj.contributor.username)
-    return "DELETED"
-
-  view_contributor_link.short_description = "contributor"
-
-# not used yet
-  def view_anime_link(self, obj):
-    url = reverse('admin:board_anime_change', args=(obj.anime.id,))
-    return format_html('<a href="{}">{}</a>',url, obj.anime.anime_name)
-
-  view_anime_link.short_description = "anime"
-
-  def number_of_reviewers(self,obj):
-    return obj.anime.reviewers.count()
-
-  def _date_created(self,obj):
-    return to_local_date_time(obj.date_created)
 
 
 @admin.register(Anime)
 class Anime_admin(ReadOnly):
   list_display = (
   "anime_name",
-  "total_questions"
-  ,"approved_questions",
+  "total_questions",
+  "approved_questions",
   "pending_questions",
-  "number_of_quiz_takers",
+  "rejected_questions",
+  "quiz_takers",
   "_reviewers"
-  ) 
+) 
   search_fields = ("anime_name__startswith",)
   
   def custom_titled_filter(title):
@@ -341,8 +503,8 @@ class Anime_admin(ReadOnly):
     ActiveAnimeFilter,
     ("reviewers", custom_titled_filter('reviewr'))
   )
-  def number_of_quiz_takers(self,obj):
-    return Game.objects.filter(anime=obj,gamesnumber__gt=0).count()
+  def quiz_takers(self,obj):
+    return obj.anime_games.count()
 
   def _reviewers(self,obj):
     return obj.reviewers.count()
@@ -354,10 +516,15 @@ class Anime_admin(ReadOnly):
 
 @admin.register(Game)
 class Game_admin(ReadOnly):
-  list_display = ("anime","game_owner_link","gamesnumber","score")
+  readonly_fields= ("score","gamesnumber")
+  list_display = (
+    "anime",
+    "game_owner_link",
+    "gamesnumber",
+    "score"
+  )
   search_fields   =  ("game_owner__username__startswith",)
   list_filter  = (
-    QuizGamesFilter,
     ("game_owner",admin.RelatedOnlyFieldListFilter),
     ("anime",admin.RelatedOnlyFieldListFilter),
     )
@@ -371,13 +538,19 @@ class Game_admin(ReadOnly):
 
 @admin.register(Notification)
 class Notification_admin(ReadOnly):
-  list_display = ("owner","notification","_time","seen")
+  list_display = (
+    "kind",
+    "owner",
+    "notification",
+    "_time",
+    "seen"
+  )
   search_fields   =  ("owner__username__startswith",)
   list_filter  = (
     ("owner",admin.RelatedOnlyFieldListFilter),
     "seen",
+    "kind",
     "time"
     )
 
-  def _time(self,obj):
-    return to_local_date_time(obj.time)
+  def _time(self,obj):  return to_local_date_time(obj.time)

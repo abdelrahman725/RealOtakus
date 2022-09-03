@@ -1,4 +1,3 @@
-from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
@@ -19,11 +18,10 @@ class User(AbstractUser):
     points = models.PositiveIntegerField(default=0)
     tests_completed = models.PositiveIntegerField(default=0)
     tests_started = models.PositiveIntegerField(default=0)
-    contributor = models.BooleanField(default=False)
-    contributions_count = models.PositiveIntegerField(default=0)
     animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)
 
     level = models.CharField(
+
         choices=LEVELS_CHOICES,
         max_length=MAX_LEVEL_LENGTH,
         default=LEVELS_CHOICES[0][0])
@@ -35,9 +33,10 @@ class User(AbstractUser):
 
 class Question(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
-    contributor = models.ForeignKey(User, on_delete=models.SET_NULL,related_name="contributions", null=True, blank=True, default=1)
-    approved = models.BooleanField(default=True)
     
+    approved = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
+
     question = models.TextField(max_length=350)
     right_answer = models.CharField(max_length=150)
     choice1 = models.CharField(max_length=150)
@@ -47,7 +46,8 @@ class Question(models.Model):
     correct_answers = models.PositiveIntegerField(default=0)
     wrong_answers = models.PositiveIntegerField(default=0)
     advanced = models.BooleanField(default=False)
-    date_created = models.DateTimeField(default=timezone.now,null=True) 
+    date_created = models.DateTimeField(default=timezone.now,null=True)
+    
 
     class Meta:
         constraints = [
@@ -57,12 +57,22 @@ class Question(models.Model):
         abstract = True
 
 
+class Contribution(models.Model):
+    question = models.OneToOneField(Question, on_delete=models.CASCADE, related_name="contribution")
+    contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,related_name="contributions")
+    reviewed_by =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
+    reviewer_feedback = models.CharField(max_length=100,null=True, blank=True)
+    date_reviewed = models.DateTimeField(null=True,blank=True) 
+    
+    class Meta:
+        abstract = True
+
+
 class Game(models.Model):
     game_owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="get_games")
     anime = models.ForeignKey(Anime, on_delete=models.CASCADE, related_name="anime_games")
     score = models.PositiveIntegerField(default=0)
     gamesnumber = models.PositiveIntegerField(default=0)
-    contributions = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ["-id"]
@@ -75,16 +85,17 @@ class Notification(models.Model):
     time = models.DateTimeField(default=timezone.now)
     seen = models.BooleanField(default=False)
 
+    kind = models.CharField(
+        choices=(
+            ("R","review needed"),
+            ("A","question approved"),
+            ("F","question rejected"),
+            ("D","question deleted")
+        ),
+        max_length=1,
+        null=True,
+        blank=True
+    )
     class Meta:
         ordering = ["-id"]
         abstract = True
-
-# to be considered
-# class Contribution(models.Model):
-#     contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-#     reviewer  = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-#     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="contributions")
-#     state = "todo approved or "
-
-# user = "some user"
-# Question.objects.filter(contributions__reviewer = user)
