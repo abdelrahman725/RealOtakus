@@ -10,7 +10,7 @@ const CsrfToken = getCookie('csrftoken')
 
 const [question_state,setquestion_state] = useState()
 
-const [review_result,setreview_result] = useState(false)
+const [reviewe_sent,setreviewe_sent] = useState(false)
 
 const [feedback,setfeedback] = useState() 
 
@@ -27,7 +27,7 @@ const ReviewSubmission = (e,question)=>{
 
     e.preventDefault()
   
-    const SubmitReview = async(question)=>{  
+    const SubmitReview = async(question)=>{      
         const send = await fetch(`${server}/home/review`,{
             method : 'POST',
             headers : {
@@ -44,7 +44,6 @@ const ReviewSubmission = (e,question)=>{
     
         const res  = await send.json()
         console.log(res)
-        setreview_result(true)
         setreviewstate(prev => ({...prev,[question]:`${question_state}state`}))
     
         }
@@ -55,6 +54,7 @@ const ReviewSubmission = (e,question)=>{
     }  
 
     SubmitReview(question)
+    setreviewe_sent(true)
 }
 
 const handle_question_state = (e)=> setquestion_state(e.target.value)
@@ -120,9 +120,7 @@ return (
                     <br /> 
                 </div>}
                 
-                <button className="" type="submit">
-                    Submit
-                </button>
+                {!reviewe_sent ? <button className="" type="submit">Submit</button>:"loading"}
                 
                 
             </form>

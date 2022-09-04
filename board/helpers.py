@@ -1,22 +1,46 @@
 import re
-
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
+from django.utils import timezone
 
 from board.constants import LEVELS
+
 
 import board.models
 
 
+
+
 def CreateNotification(receiver,notification,kind):
     if receiver and not receiver.is_superuser:
-
         board.models.Notification.objects.create(
             owner=receiver,
             notification=notification,
             kind = kind
         )
+
+
+def MakeContributionApproved(question):
+  
+  try:
+    if question.contribution:
+      if not question.contribution.reviewer and question.previously_approved == False and question.approved :
+
+        question.contribution.reviewer = board.models.User.objects.get(pk=1,is_superuser=True) 
+        question.contribution.date_reviewed = timezone.now()
+        question.contribution.save()
+        question.contribution.contributor.points+=10
+        question.contribution.contributor.save()
+
+        CreateNotification(
+              receiver=question.contribution.contributor,
+              notification=f"Congratulations! your contribution for {question.anime.anime_name} is approvd",
+              kind="A"
+          )
+  
+  except board.models.Contribution.DoesNotExist:
+    pass
 
 
 def CheckLevel(user):

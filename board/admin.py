@@ -1,5 +1,4 @@
 import math
-from pickle import FALSE
 import pytz
 
 from django import forms
@@ -8,9 +7,10 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
+from django.utils import timezone
 
 from board.models import *
-from board.helpers import CreateNotification
+from board.helpers import MakeContributionApproved
 from board.constants import QUESTIONSCOUNT,COUNTRIES
 
 
@@ -207,16 +207,16 @@ class ContributionState(admin.SimpleListFilter):
 
   def queryset(self, request, queryset):
     if self.value() == 'p':
-      return queryset.filter(reviewed_by__isnull=True)
+      return queryset.filter(reviewer__isnull=True)
     
     if self.value() == 'r':
-      return queryset.filter(reviewed_by__isnull=False)
+      return queryset.filter(reviewer__isnull=False)
 
     if self.value() == 'a':
-      return queryset.filter(question__approved=True,reviewed_by__isnull=False)
+      return queryset.filter(question__approved=True,reviewer__isnull=False)
 
     if self.value() == 'f':
-      return queryset.filter(question__approved=False,reviewed_by__isnull=False)
+      return queryset.filter(question__approved=False,reviewer__isnull=False)
 
 
 
@@ -231,21 +231,38 @@ class ReadOnly(admin.ModelAdmin):
 
 
 
+
+
 def move_to_production(modeladmin, request, queryset):
     queryset.update(active=True)
 
 def remove_from_production(modeladmin, request, queryset):
     queryset.update(active=False)
 
-def approve(modeladmin, request, queryset):
-    queryset.update(approved=True)
+def approve(modeladmin, request, queryset):  
+  for question in queryset:
+    question.approved=True
+    question.save()
+    MakeContributionApproved(question)
+
+
+def delete_selected(modeladmin, request, queryset):
+  [question.delete() for question in queryset]
+  
+
 
 @admin.register(Question)
 class Question_admin(admin.ModelAdmin):
   #date_hierarchy = 'date_created'
-  actions = [move_to_production, remove_from_production,approve]
+  actions = [
+    delete_selected,
+    move_to_production,
+    remove_from_production,
+    approve
+  ]
 
   readonly_fields =  (
+    "anime",
     "date_created",
     "correct_answers",
     "wrong_answers"
@@ -274,34 +291,15 @@ class Question_admin(admin.ModelAdmin):
   )
   search_fields   =  ("question",)
 
+  def save_model(self, request, obj, form, change):
+    MakeContributionApproved(obj)
+    super().save_model(request, obj, form, change)
 
-  def delete_model(self, request, obj):
-    try:
-      if obj.contribution:
-        CreateNotification(
-            receiver=obj.contribution.contributor,
-            notification=f"""
-                sorry your question ({obj.question[:15]}...) got deleted by RealOtakus,
-                as it didn't align with our Guidelines,
-                you can read our Guidlines in Contribution form""",
-            kind = "D"
-          )
-    except Contribution.DoesNotExist:
-      pass
-    obj.delete()
 
 # hide Delete button if it's a production question
   def has_delete_permission(self, request, obj=None):
-    if obj and obj.active == True:
-      return False
-    return True
-
-# not used yet
-  def view_anime_link(self, obj):
-    url = reverse('admin:board_anime_change', args=(obj.anime.id,))
-    return format_html('<a href="{}">{}</a>',url, obj.anime.anime_name)
-
-  view_anime_link.short_description = "anime"
+    if obj:
+      return not obj.active
 
   def number_of_reviewers(self,obj):
     return obj.anime.reviewers.count()
@@ -323,7 +321,7 @@ class Contribution_admin(admin.ModelAdmin):
     "state",
     "contributor",
     "view_question",
-    "reviewed_by",
+    "reviewer",
     "reviewer_feedback",
     "_date_created",
     "_date_reviewed",
@@ -333,7 +331,7 @@ class Contribution_admin(admin.ModelAdmin):
   list_filter  = (
     ContributionState,
     ("contributor",admin.RelatedOnlyFieldListFilter),
-    ("reviewed_by",admin.RelatedOnlyFieldListFilter),
+    ("reviewer",admin.RelatedOnlyFieldListFilter),
     "reviewer_feedback",
     OldestToNewestContributionsFilter,
     "date_reviewed"
@@ -372,7 +370,7 @@ class Contribution_admin(admin.ModelAdmin):
     return "N/A"
   
   def state(self,obj):
-    if not obj.date_reviewed and not obj.reviewed_by:
+    if not obj.date_reviewed and not obj.reviewer:
       return "pending ..."
     
     if obj.question.approved == True:
@@ -399,7 +397,7 @@ class Contribution_admin(admin.ModelAdmin):
   def get_readonly_fields(self, request, obj=None):
 
     if obj:
-        return self.readonly_fields + ('question','contributor','reviewed_by','reviewer_feedback')
+        return self.readonly_fields + ('question','contributor','reviewer','reviewer_feedback')
     return self.readonly_fields
 
   def view_question(self, obj):
@@ -446,7 +444,7 @@ class User_admin(admin.ModelAdmin):
   
   def get_queryset(self, request):    
     query = super(User_admin, self).get_queryset(request)
-    return query.exclude(is_superuser=True,username="admin")
+    return query.exclude(is_superuser=True,pk=1)
 
   def quizes_score(self, obj):
     from django.db.models import Sum

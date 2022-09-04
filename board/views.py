@@ -155,7 +155,7 @@ def GetTest(request, game_anime):
     # current game questions
     questions=selected_anime.anime_questions.filter(
             ~Q(contribution__contributor=current_user),
-            ~Q(contribution__reviewed_by=current_user),
+            ~Q(contribution__reviewer=current_user),
             active=True,
             approved=True
         ).order_by("id")[index:index+QUESTIONSCOUNT]
@@ -281,7 +281,7 @@ def MakeContribution(request):
         Contribution.objects.create(
             contributor = user,
             question = new_question,
-            reviewed_by = user if is_anime_reviewr else None,
+            reviewer = user if is_anime_reviewr else None,
             date_reviewed = timezone.now() if is_anime_reviewr else None
         )
 
@@ -320,15 +320,15 @@ def ReviewContribution(request):
     try:
         question = Question.objects.get(pk=q_id)
         
-        if  question.contribution.reviewed_by or question.contribution.date_reviewed :
-
-            return Response({
-                "question has been reviewed by another reviewer"
-            })
+        if  question.contribution.reviewer or question.contribution.date_reviewed :
+            return Response(
+                {"question has been reviewed by another reviewer"},
+                status=status.HTTP_409_CONFLICT
+            )
 
         if feedback: question.contribution.reviewer_feedback = feedback
         
-        question.contribution.reviewed_by = user
+        question.contribution.reviewer = user
         question.contribution.date_reviewed = timezone.now() 
         question.contribution.save()
         sleep(2)
@@ -362,7 +362,7 @@ def ReviewContribution(request):
     except Question.DoesNotExist:
         return Response(
             {"this question doesn't exist anymore, probably is deleted"},
-            status=status.HTTP_404_NOT_FOUND
+            status=status.HTTP_410_GONE
         )
 
 
@@ -378,7 +378,8 @@ def GetMyProfile(request):
         questions_for_review = QuestionSerializer(
             Question.objects.filter(
                     ~Q(contribution__contributor=user),
-                    contribution__reviewed_by__isnull=True,
+                    contribution__isnull=False,
+                    contribution__reviewer__isnull=True,
                     contribution__date_reviewed__isnull = True,
                     approved=False,
                     anime__in=user.animes_to_review.all()

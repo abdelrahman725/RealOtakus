@@ -5,7 +5,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
+
 
 from board import base_models
 
@@ -36,11 +36,11 @@ class Anime(base_models.Anime):
 
     @property
     def pending_questions(self):
-        return self.anime_questions.filter(approved=False,contribution__reviewed_by__isnull=True).count()
+        return self.anime_questions.filter(approved=False,contribution__reviewer__isnull=True).count()
 
     @property
     def rejected_questions(self):
-        return self.anime_questions.filter(approved=False,contribution__reviewed_by__isnull=False).count()
+        return self.anime_questions.filter(approved=False,contribution__reviewer__isnull=False).count()
 
     def save(self, *args, **kwargs):
         existing = self.id
@@ -73,27 +73,31 @@ class User(base_models.User):
 
 class Question(base_models.Question):
 
-    # previous_state = None
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.previous_state = self.approved
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.previously_approved = self.approved
     
     def clean(self, *args, **kwargs):
-        question_validator(self.question)
-        choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
+        if self.pk == None:
+            question_validator(self.question)
+            choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
         super(Question, self).clean(*args, **kwargs)
 
-
-    def save(self, *args, **kwargs):        
-        self.clean()
-        super(Question, self).save(*args, **kwargs)
  
     def delete(self, *args, **kwargs):
         if self.active == True:
             raise ValidationError(
                  _('production questions can not be deleted')
             )
+        try:
+            if self.contribution:
+                CreateNotification(
+                    receiver=self.contribution.contributor,
+                    notification="question got delted as it didn't align with RealOtakus Guidlines",
+                    kind="D"
+                )
+        except Contribution.DoesNotExist:
+            pass
         super(Question, self).delete(*args, **kwargs)
         
  
@@ -107,7 +111,7 @@ class Contribution(base_models.Contribution):
 
     def save(self, *args, **kwargs):
 
-        if self.pk == None and self.contributor != self.reviewed_by:
+        if self.pk == None and self.contributor != self.reviewer:
             async_notification = threading.Thread(
                 target=NotifyReviewrs,
                 args=(self.question.anime,)
