@@ -25,9 +25,6 @@ class Command(BaseCommand):
         users = User.objects.exclude(pk=admin.pk)
         
 
-        Game.objects.all().delete()
-        print("\n deleting all games.. \n")
-
         Notification.objects.all().delete()
         print("\n deleting all notifications.. \n")
 

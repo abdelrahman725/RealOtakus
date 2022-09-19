@@ -16,7 +16,7 @@ const TheDashBoard = ({logged_in_user}) => {
     const res = await fetch(dashboardurl)
     const dashboard = await res.json()
     setotakus(dashboard.leaderboard)
-    setinformation_about_animes(dashboard.animes)
+    //setinformation_about_animes(dashboard.animes)
     
     //setTimeout(()=>{
     //},1000)
@@ -58,8 +58,7 @@ return (
       level={"___________"}
       contributions={"___________"}
       country = {"eg"}/>
-
-      }
+    }
 
   </tbody>
   </table>

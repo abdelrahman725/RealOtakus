@@ -21,13 +21,13 @@ from board.constants import *
 # for q in connection.queries:
 #     print(f"\n\n { q } \n\n")
 
-
 animes_dict = {}
-game = {}
+
 game_questions = {}
 
 for anime in Anime.objects.all():
     animes_dict[anime.pk] = anime
+
 
 def GetOrFetchAnime(anime : int):
     try:
@@ -39,8 +39,7 @@ def GetOrFetchAnime(anime : int):
 
 def GetWantedUser(request):
     #return request.user
-    username = "david"
-    return User.objects.get(username=username)
+    return User.objects.get(username="david")
 
 
 #@login_required
@@ -74,18 +73,28 @@ def GetUserData(request):
     })
 
 
+
+#@login_required
+@api_view(["GET"])
+def GetAllAnimes(request):
+    serialized_data = AnimeSerializer(animes_dict.values(), many=True)
+    return Response(serialized_data.data)
+
+
+
 #@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
     all_users = User.objects.exclude(points=0).annotate(
-        n_contributions=Count("contributions",filter=(Q(contributions__question__approved=True)))
+        n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
     )
-        
+   
     current_highest_score = all_users.values_list("points",flat=True).order_by("-points")
 
     top_users = all_users.filter(points__gte=min([0] if not all_users else current_highest_score))
     LeaderBorad = LeaderBoradSerializer(top_users, many=True)
+    
 
 
     #animes_mapper =  {}    
@@ -107,14 +116,14 @@ def GetDashBoard(request):
     #             "pending": 1 if not question.approved else 0
     #         }
     
-
     return Response({
         "leaderboard": LeaderBorad.data,
         "animes": {}
     })
 
-# -------------------------------------- Quiz related endpoints ----------------------------------------
 
+
+# -------------------------------------- Quiz related endpoints ----------------------------------------
 
 ##@login_required
 @api_view(["GET"])
@@ -122,15 +131,21 @@ def GetQuizeAnimes(request):
 
     user = GetWantedUser(request)
 
-    all_animes=AnimeSerializer(animes_dict.values(), many=True)
+    game_animes = AnimeSerializer(
+        Anime.objects.annotate(active_questions=Count("anime_questions",filter=(
+            Q(anime_questions__active=True) & ~Q(anime_questions__contribution__contributor=user)
+            ))).filter(active_questions__gte=QUESTIONSCOUNT),
+        many=True
+    )
 
-    user_games_dict = {}
-    for game in Game.objects.filter(game_owner=user).select_related("anime"):
-        user_games_dict[game.anime.id] = game.gamesnumber
-    
+    game_animes = AnimeSerializer(
+        animes_dict.values()
+        ,many=True
+    )
+   
     return Response({
-        "animes": all_animes.data,
-        "games": user_games_dict
+        "animes": game_animes.data,
+        "games": {}
     })
 
 
@@ -142,24 +157,14 @@ def GetTest(request, game_anime):
     current_user.tests_started += 1
     current_user.save()
 
-    CurrentGame, created = Game.objects.get_or_create(
-        game_owner=current_user,
-        anime=selected_anime
-    )
-
-    index = CurrentGame.gamesnumber * QUESTIONSCOUNT
-    # to delete later : 
-    index = 0
-
-
-    # current game questions
+    # this game questions
     questions=selected_anime.anime_questions.filter(
             ~Q(contribution__contributor=current_user),
             ~Q(contribution__reviewer=current_user),
-            active=True,
-            approved=True
-        ).order_by("id")[index:index+QUESTIONSCOUNT]
-
+            #active=True
+        ).exclude(
+            pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
+        )[:QUESTIONSCOUNT]
 
     serialized_questions = []
 
@@ -186,10 +191,6 @@ def GetTest(request, game_anime):
 
     for q in questions:
         game_questions[current_user.id][q.id] = q
-  
-    CurrentGame.gamesnumber += 1
-    game[current_user.id] = CurrentGame
-    CurrentGame.save()
 
     return Response(serialized_questions)
 
@@ -203,25 +204,28 @@ def SubmitTest(request):
     questions = game_questions[user.id]
 
     # record test results
+    Answers = []
     for q in test_results:
-        Q = questions[int(q)]
-
-        if test_results[q] == Q.right_answer:
-            Q.correct_answers += 1
+        quiz_question = questions[int(q)]
+        
+        correct_answer = test_results[q] == quiz_question.right_answer
+        
+        if correct_answer:
+            quiz_question.correct_answers += 1
             test_score += 1
 
         else:
-            Q.wrong_answers += 1
-        Q.save()
+            quiz_question.wrong_answers += 1
+        
+        quiz_question.save()
+        Answers.append(QuestionInteraction(user=user,question = quiz_question, correct = correct_answer))
+        
 
+    QuestionInteraction.objects.bulk_create(Answers)
 
     user.points += test_score
     user.tests_completed += 1
     user.save()
-
-    CurrentGame = game[user.id]
-    CurrentGame.score += test_score
-    CurrentGame.save()
 
     answers_dict = {}
 
@@ -230,20 +234,12 @@ def SubmitTest(request):
 
     # deleteing used cache from memory :
     del game_questions[user.id]
-    del game[user.id]
+
 
     return JsonResponse({"message": "test submitted successfully", "newscore": test_score, "rightanswers": answers_dict, "level": user.level})
 
-
-
 # ------------------------------------------------------------------------------------
 
-
-#@login_required
-@api_view(["GET"])
-def GetAllAnimes(request):
-    serialized_data = AnimeSerializer(animes_dict.values(), many=True)
-    return Response(serialized_data.data)
 
 
 #@login_required
@@ -253,36 +249,28 @@ def MakeContribution(request):
 
     try:
         anime = GetOrFetchAnime(int(request.data["anime"]))
-
     except:
         return JsonResponse({"anime doesn't exist"})
 
     QuestionOBject = request.data["question"]
-
-    actualquestion = QuestionOBject["question"]
-    c1 = QuestionOBject["choice1"]
-    c2 = QuestionOBject["choice2"]
-    c3 = QuestionOBject["choice3"]
-    right_answer = QuestionOBject["rightanswer"]
 
     is_anime_reviewr = anime in user.animes_to_review.all()   
 
     try:
         new_question=Question.objects.create(
             anime=anime,
-            approved=is_anime_reviewr,
-            question=actualquestion, 
-            right_answer=right_answer,
-            choice1=c1,
-            choice2=c2,
-            choice3=c3
+            active=is_anime_reviewr,
+            question= QuestionOBject["question"], 
+            right_answer=QuestionOBject["rightanswer"],
+            choice1=QuestionOBject["choice1"],
+            choice2=QuestionOBject["choice2"],
+            choice3=QuestionOBject["choice3"]
         )
 
         Contribution.objects.create(
             contributor = user,
             question = new_question,
-            reviewer = user if is_anime_reviewr else None,
-            date_reviewed = timezone.now() if is_anime_reviewr else None
+            approved= True if is_anime_reviewr else None
         )
 
         if is_anime_reviewr:
@@ -320,7 +308,7 @@ def ReviewContribution(request):
     try:
         question = Question.objects.get(pk=q_id)
         
-        if  question.contribution.reviewer or question.contribution.date_reviewed :
+        if  question.contribution.approved != None:
             return Response(
                 {"question has been reviewed by another reviewer"},
                 status=status.HTTP_409_CONFLICT
@@ -330,14 +318,18 @@ def ReviewContribution(request):
         
         question.contribution.reviewer = user
         question.contribution.date_reviewed = timezone.now() 
-        question.contribution.save()
-        sleep(2)
         
-        if review_state == "approve":
-            question.approved = True
-            question.save()
+        sleep(1)
+
+        if review_state == 1:
+            question.contribution.approved = True
+            question.contribution.save()
+
             question.contribution.contributor.points +=10
             question.contribution.contributor.save()
+
+            question.active = True
+            question.save()
             CreateNotification(
                 receiver=question.contribution.contributor,
                 notification=f"Congratulations! your contribution for {question.anime.anime_name} is approvd",
@@ -348,7 +340,10 @@ def ReviewContribution(request):
                 "question is approved successfully"
             })    
 
-        if review_state == "decline":
+        if review_state == 0:
+            question.contribution.approved = False
+            question.contribution.save()
+            
             CreateNotification(
                 receiver=question.contribution.contributor,
                 notification=f"Sorry your contribution for {question.anime.anime_name} is rejected",
@@ -378,35 +373,26 @@ def GetMyProfile(request):
         questions_for_review = QuestionSerializer(
             Question.objects.filter(
                     ~Q(contribution__contributor=user),
+                    anime__in=user.animes_to_review.all(),
                     contribution__isnull=False,
-                    contribution__reviewer__isnull=True,
-                    contribution__date_reviewed__isnull = True,
-                    approved=False,
-                    anime__in=user.animes_to_review.all()
-                    ).select_related("anime"),
-                many=True)
+                    contribution__approved__isnull=True,
+            ).select_related("anime"),
+        many=True
+        )
 
     user_contributions = QuestionSerializer(
         Question.objects.filter(
-            contribution__contributor=user).select_related("anime"),
-        many=True)
+            contribution__contributor=user
+        ).select_related("anime"),
+    many=True
+    )
     
-    # OR 
-    
-    # user_contributions= QuestionSerializer(
-    #     user.contributions.all().select_related("question"),
-    #     many=True)
-
-    user_games = GameSerializer(
-        user.get_games.all().select_related("anime"),
-        many=True
-    )    
 
     return Response({
         "data": all_user_data.data,
         "questionsForReview": questions_for_review.data if questions_for_review else [], 
         "UserContributions" : user_contributions.data,
-        "UserAnimeScores"   : user_games.data
+     
     })
 
 
@@ -421,4 +407,3 @@ def UpdateNotificationsState(request):
         {f"notifications state of {request.user.username} are updated successfully"},
         status=status.HTTP_201_CREATED
     )
-

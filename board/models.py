@@ -3,7 +3,12 @@ import threading
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
+
 from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_delete,post_delete
+from django.dispatch import receiver
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -31,40 +36,38 @@ class Anime(base_models.Anime):
         return self.anime_questions.all().count()
 
     @property
-    def approved_questions(self):
-        return self.anime_questions.filter(approved=True).count()
+    def active_questions(self):
+        return self.anime_questions.filter(active=True).count()
 
     @property
     def pending_questions(self):
-        return self.anime_questions.filter(approved=False,contribution__reviewer__isnull=True).count()
+        return self.anime_questions.filter(contribution__approved__isnull=True).count()
 
     @property
     def rejected_questions(self):
-        return self.anime_questions.filter(approved=False,contribution__reviewer__isnull=False).count()
+        return self.anime_questions.filter(contribution__approved=False).count()
 
     def save(self, *args, **kwargs):
         existing = self.id
-            
         super(Anime, self).save(*args, **kwargs)
-        
         if not existing:
-            from .views import animes_dict
+            from board.views import animes_dict
             animes_dict[self.id] = self
-
-    def delete(self, *args, **kwargs):
-        from .views import animes_dict
-        del animes_dict[self.id]
-        super(Anime, self).delete(*args, **kwargs)
 
     def __str__(self): return f"{self.anime_name}"
 
 
+@receiver(pre_delete, sender=Anime)
+def before_anime_deletion(sender, instance, **kwargs):
+    from board.views import animes_dict
+    if animes_dict:
+        del animes_dict[instance.id]
+
+
 class User(base_models.User):
 
-    def save(self, *args, **kwargs):
-        
+    def save(self, *args, **kwargs):      
         self.level = CheckLevel(self)
-
         super(User, self).save(*args, **kwargs)
     
     def __str__(self):
@@ -72,33 +75,20 @@ class User(base_models.User):
 
 
 class Question(base_models.Question):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.previously_approved = self.approved
     
     def clean(self, *args, **kwargs):
-        if self.pk == None:
-            question_validator(self.question)
-            choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
+        #if self.pk == None:
+            #question_validator(self.question)
+            #choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
         super(Question, self).clean(*args, **kwargs)
 
  
     def delete(self, *args, **kwargs):
+
         if self.active == True:
             raise ValidationError(
                  _('production questions can not be deleted')
             )
-        try:
-            if self.contribution:
-                CreateNotification(
-                    receiver=self.contribution.contributor,
-                    notification="question got delted as it didn't align with RealOtakus Guidlines",
-                    kind="D"
-                )
-        except Contribution.DoesNotExist:
-            pass
-        super(Question, self).delete(*args, **kwargs)
         
  
     def __str__(self):
@@ -111,12 +101,13 @@ class Contribution(base_models.Contribution):
 
     def save(self, *args, **kwargs):
 
-        if self.pk == None and self.contributor != self.reviewer:
-            async_notification = threading.Thread(
-                target=NotifyReviewrs,
-                args=(self.question.anime,)
-            )
-            async_notification.start()
+
+        # if self.pk == None and self.contributor != self.reviewer:
+        #     async_notification = threading.Thread(
+        #         target=NotifyReviewrs,
+        #         args=(self.question.anime,)
+        #     )
+        #     async_notification.start()
        
         super(Contribution, self).save(*args, **kwargs)
     
@@ -129,14 +120,13 @@ class Contribution(base_models.Contribution):
         return f"{self.contributor} contributed a new question for {self.question.anime}"
 
 
-class Game(base_models.Game):
-    def __str__(self):
-        return f"{self.game_owner} has {self.gamesnumber} quiz for {self.anime}"
+class QuestionInteraction(base_models.QuestionInteraction):
+
+    def __str__(self) -> str:
+        return f"{self.user} interacted with a question on{self.question.anime.anime_name}"
 
 
 class Notification(base_models.Notification):
-    def __str__(self):
-        return f"{self.notification}"
 
     def save(self, *args, **kwargs):
         super(Notification, self).save(*args, **kwargs)
@@ -147,3 +137,6 @@ class Notification(base_models.Notification):
                 'value': self
             }
         )
+
+    def __str__(self):
+        return f"{self.notification}"

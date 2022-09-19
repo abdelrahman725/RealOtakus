@@ -56,16 +56,10 @@ class QuestionSerializer(serializers.ModelSerializer):
     "choice2",
     "choice3",
     "right_answer",
-    "approved",
+    "active",
     "id",
     )
 
-
-class GameSerializer(serializers.ModelSerializer):
-  anime = AnimeNameSerializer()
-  class Meta:
-    model = Game
-    fields = ("anime","score","gamesnumber")
 
     
 class NotificationsSerializer(serializers.ModelSerializer):

@@ -21,7 +21,7 @@ const QuizAnimes = () => {
 // get game animes 
   const GetAnimes = async()=>
   {
-    console.log("requesting animes again !!!!")
+
     const res = await fetch(animesurl)
     const data  = await res.json()
 

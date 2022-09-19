@@ -35,7 +35,7 @@ const ReviewSubmission = (e,question)=>{
             'X-CSRFToken': CsrfToken,
             },
             body: JSON.stringify({
-            state:question_state,
+            state: question_state,
             question:question,
             feedback:feedback ? feedback.value:null 
     
@@ -44,11 +44,12 @@ const ReviewSubmission = (e,question)=>{
     
         const res  = await send.json()
         console.log(res)
-        setreviewstate(prev => ({...prev,[question]:`${question_state}state`}))
+
+        setreviewstate(prev => ({...prev,[question]:`${question_state=== 1 ? "approve" : "decline" }state`}))
     
         }
 
-    if (question_state === "decline" &&  !feedback){
+    if (question_state === 0 &&  !feedback){
         feedback_select.current.focus()
        return
     }  
@@ -57,10 +58,11 @@ const ReviewSubmission = (e,question)=>{
     setreviewe_sent(true)
 }
 
-const handle_question_state = (e)=> setquestion_state(e.target.value)
+const handle_question_state = (e)=> {
+    setquestion_state( parseInt(e.target.value) )
+}
 
 const handle_feedback = selected_option =>   setfeedback(selected_option)    
-
 
 
 return (
@@ -75,35 +77,36 @@ return (
             <form onSubmit={(e)=>ReviewSubmission(e,question.id)} className="reviewform">
        
                 <div className="radio">
-                <label>
-                    <input
-                    className="decline_input"
-                    required
-                    type="radio"
-                    value="approve"
-                    name="state"
-                    checked={question_state=== "approve"}
-                    onChange={handle_question_state}
-                    />
-                    approve
-                </label>
+
+                    <label>
+                        <input
+                        className="decline_input"
+                        required
+                        type="radio"
+                        value={0}
+                        name="state"
+                        checked={question_state=== 0}
+                        onChange={handle_question_state}
+                        />
+                        decline
+                    </label>
                 </div>
                 <div className="radio">
-                <label>
-                    <input
-                    className="approve_input"
-                    required
-                    type="radio"
-                    value="decline"
-                    name="state"
-                    checked={question_state=== "decline"}
-                    onChange={handle_question_state}
-                    />
-                    decline
-                </label>
-                </div><br />
+                    <label>
+                        <input
+                        className="approve_input"
+                        required
+                        type="radio"
+                        value={1}
+                        name="state"
+                        checked={question_state=== 1}
+                        onChange={handle_question_state}
+                        />
+                        approve
+                    </label>
+                </div>
 
-                {question_state=== "decline" &&
+                {question_state=== 0 &&
                  <div>    
                     <Select 
                     className="question_feedback" 

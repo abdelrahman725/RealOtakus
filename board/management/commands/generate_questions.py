@@ -1,5 +1,5 @@
 import random
-from datetime import date, datetime
+from datetime import  datetime
 from random import randrange
 from datetime import timedelta
 
@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 generate_contribution(
                     question=question,
                     contributor=random.choice(all_users.exclude(animes_to_review__id=anime.id))
-                 )
+                )
         
 
         print("\n Done \n")

@@ -14,7 +14,6 @@ export const UserProfile = () => {
   const[pendingcontributions,setpendingcontributions]= useState([])
   const[questionsForReview,setquestionsForReview]= useState([])
   const[animesToReview,setanimesToReview] = useState([])
-  const[animes_scores,setanimes_scores] = useState([])
 
   const[loading,setloading]= useState(true)
 
@@ -43,7 +42,7 @@ export const UserProfile = () => {
     )
     setanimesToReview(anime_options)
     setquestionsForReview(data.questionsForReview)
-    setanimes_scores(data.UserAnimeScores)
+
     
     setloading(false)
   }
@@ -65,7 +64,6 @@ export const UserProfile = () => {
         <br/>
     
           <Contributions approved={approvedcontributions} pending={pendingcontributions}/>
-          <AnimesScores animes={animes_scores} />
 
        </>  
        
