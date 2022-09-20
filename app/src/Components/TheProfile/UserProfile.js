@@ -1,6 +1,5 @@
 import Contributions from './Contributions'
 import QuestionsForReview from './QuestionsForReview'
-import AnimesScores from './AnimesScores'
 
 import { ServerContext } from '../../App'
 import { useContext, useState, useEffect } from "react"

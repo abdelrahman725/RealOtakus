@@ -96,7 +96,6 @@ def GetDashBoard(request):
     LeaderBorad = LeaderBoradSerializer(top_users, many=True)
     
 
-
     #animes_mapper =  {}    
     # for question in Question.objects.all():
     #     anime_name = GetOrFetchAnime(question.anime.id).anime_name
@@ -130,22 +129,14 @@ def GetDashBoard(request):
 def GetQuizeAnimes(request):
 
     user = GetWantedUser(request)
-
+ 
     game_animes = AnimeSerializer(
-        Anime.objects.annotate(active_questions=Count("anime_questions",filter=(
-            Q(anime_questions__active=True) & ~Q(anime_questions__contribution__contributor=user)
-            ))).filter(active_questions__gte=QUESTIONSCOUNT),
+        Anime.objects.filter(active=True),
         many=True
     )
 
-    game_animes = AnimeSerializer(
-        animes_dict.values()
-        ,many=True
-    )
-   
     return Response({
-        "animes": game_animes.data,
-        "games": {}
+        "animes": game_animes.data
     })
 
 
@@ -218,7 +209,8 @@ def SubmitTest(request):
             quiz_question.wrong_answers += 1
         
         quiz_question.save()
-        Answers.append(QuestionInteraction(user=user,question = quiz_question, correct = correct_answer))
+
+        Answers.append(QuestionInteraction(user=user,question = quiz_question, anime=quiz_question.anime, correct = correct_answer))
         
 
     QuestionInteraction.objects.bulk_create(Answers)

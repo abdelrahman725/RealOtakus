@@ -230,6 +230,40 @@ class ReadOnly(admin.ModelAdmin):
     return False
 
 
+@admin.register(Anime)
+class AnimeAdmin(ReadOnly):
+
+
+  list_display = (
+  "anime_name",
+  "active"
+  )
+
+  list_filter = (
+    "active",
+  )
+
+
+
+@admin.register(Notification)
+class NotificationAdmin(ReadOnly):
+  list_display = (
+    "kind",
+    "owner",
+    "notification",
+    "_time",
+    "seen"
+  )
+  search_fields   =  ("owner__username__startswith",)
+  list_filter  = (
+    ("owner",admin.RelatedOnlyFieldListFilter),
+    "seen",
+    "kind",
+    "time"
+    )
+
+  def _time(self,obj):  return to_local_date_time(obj.time)
+
 
 def move_to_production(modeladmin, request, queryset):
     queryset.update(active=True)
@@ -327,7 +361,7 @@ class ContributionAdmin(admin.ModelAdmin):
 
  
 @admin.register(QuestionInteraction)
-class InteractionAdmin(admin.ModelAdmin):
+class InteractionAdmin(ReadOnly):
   
   list_display = (
     "user",
@@ -335,13 +369,12 @@ class InteractionAdmin(admin.ModelAdmin):
     "anime",
     "correct"
   )
+
   list_filter = (
     ("user",admin.RelatedOnlyFieldListFilter),
+    ("anime",admin.RelatedOnlyFieldListFilter),
   )
   
-  def anime(self,obj): 
-    return obj.question.anime
-
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -404,29 +437,4 @@ class UserAdmin(admin.ModelAdmin):
     return "{} animes".format(obj.animes_to_review.all().count())   
 
 
-@admin.register(Anime)
-class AnimeAdmin(ReadOnly):
-  list_display = (
-  "anime_name",
-) 
-  search_fields = ("anime_name__startswith",)
   
-
-@admin.register(Notification)
-class NotificationAdmin(ReadOnly):
-  list_display = (
-    "kind",
-    "owner",
-    "notification",
-    "_time",
-    "seen"
-  )
-  search_fields   =  ("owner__username__startswith",)
-  list_filter  = (
-    ("owner",admin.RelatedOnlyFieldListFilter),
-    "seen",
-    "kind",
-    "time"
-    )
-
-  def _time(self,obj):  return to_local_date_time(obj.time)

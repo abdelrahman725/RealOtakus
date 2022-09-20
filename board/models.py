@@ -1,16 +1,14 @@
 
 import threading
+from time import sleep
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-
 from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_delete,post_delete
+from django.db.models.signals import pre_delete,post_save
 from django.dispatch import receiver
-
 from django.utils.translation import gettext_lazy as _
-
 
 from board import base_models
 
@@ -29,8 +27,22 @@ def NotifyReviewrs(anime):
         )
 
 
-class Anime(base_models.Anime):
+class User(base_models.User):
 
+    def save(self, *args, **kwargs):      
+        self.level = CheckLevel(self)
+        super(User, self).save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.username
+
+
+class Anime(base_models.Anime):
+    
+    @property
+    def total_interactions(self):
+        return self.anime_interactions.all().count()
+        
     @property
     def total_questions(self):
         return self.anime_questions.all().count()
@@ -64,15 +76,6 @@ def before_anime_deletion(sender, instance, **kwargs):
         del animes_dict[instance.id]
 
 
-class User(base_models.User):
-
-    def save(self, *args, **kwargs):      
-        self.level = CheckLevel(self)
-        super(User, self).save(*args, **kwargs)
-    
-    def __str__(self):
-        return self.username
-
 
 class Question(base_models.Question):
     
@@ -84,7 +87,6 @@ class Question(base_models.Question):
 
  
     def delete(self, *args, **kwargs):
-
         if self.active == True:
             raise ValidationError(
                  _('production questions can not be deleted')
@@ -96,18 +98,24 @@ class Question(base_models.Question):
             return f"{self.question[:55]}..."
         return f"{self.question}"
 
+# automatically or manually actiavte an anime ?? personally i prefer manually 
+# @receiver(post_save, sender=Question)
+# def after_question_is_saved(sender, instance, **kwargs):  
+#     if instance.anime.active==False and instance.active:
+#         if instance.anime.anime_questions.filter(active=True).count() >= 5:
+#             instance.anime.active = True
+#             instance.anime.save()
 
 class Contribution(base_models.Contribution):
 
     def save(self, *args, **kwargs):
 
-
-        # if self.pk == None and self.contributor != self.reviewer:
-        #     async_notification = threading.Thread(
-        #         target=NotifyReviewrs,
-        #         args=(self.question.anime,)
-        #     )
-        #     async_notification.start()
+        if self.pk == None and self.contributor != self.reviewer:
+            async_notification = threading.Thread(
+                target=NotifyReviewrs,
+                args=(self.question.anime,)
+            )
+            async_notification.start()
        
         super(Contribution, self).save(*args, **kwargs)
     
@@ -123,7 +131,7 @@ class Contribution(base_models.Contribution):
 class QuestionInteraction(base_models.QuestionInteraction):
 
     def __str__(self) -> str:
-        return f"{self.user} interacted with a question on{self.question.anime.anime_name}"
+        return f"{'correct' if self.correct else 'wrong'} answer by {self.user} on a/an {self.question.anime.anime_name} question"
 
 
 class Notification(base_models.Notification):

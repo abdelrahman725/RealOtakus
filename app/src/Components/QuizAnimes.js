@@ -21,17 +21,14 @@ const QuizAnimes = () => {
 // get game animes 
   const GetAnimes = async()=>
   {
-
     const res = await fetch(animesurl)
     const data  = await res.json()
 
-    const games_dict = data.games
     const anime_array = []
     
     data.animes.map((anime) => 
-    games_dict[anime.id] ?
-    ShowAnime(games_dict[anime.id],anime.quiz_questions_count)&&anime_array.push({value:anime.id,label:anime.anime_name}):
-    anime_array.push({value:anime.id,label:anime.anime_name}))
+    anime_array.push({value:anime.id,label:anime.anime_name})
+    )
     
    setanimesoptions(anime_array)
   }
@@ -52,8 +49,7 @@ const QuizAnimes = () => {
 // compare the passed anime_approved_questions with the number of games that the user had for that anime
   const ShowAnime = (NumberOfGames,anime_questions)=>
   {
-    // to delete later
-    return true
+ 
     if ( anime_questions  >= (NumberOfGames * NUMBER_OF_QUIZ_QUESTIONS) + NUMBER_OF_QUIZ_QUESTIONS ){
       return true
     }
@@ -63,7 +59,7 @@ const QuizAnimes = () => {
   const handlesanimeselecttion=(e)=> {setselected_anime(e.value)}
 
   useEffect(()=>{
-  GetAnimes()
+    GetAnimes()
   },[])
 
 return (

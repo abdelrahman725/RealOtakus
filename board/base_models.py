@@ -7,6 +7,7 @@ from board.constants import *
 
 class Anime(models.Model):
     anime_name = models.CharField(max_length=50, unique=True)
+    active = models.BooleanField(default=False)
     url = models.CharField(max_length=300, default="/", blank=True)
     #url= models.URLField()
 
@@ -68,8 +69,8 @@ class Contribution(models.Model):
 
 class QuestionInteraction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="questions_interacted_with")
-    question = models.ForeignKey(Question,on_delete=models.CASCADE, related_name="interactions")
-    #question = models.OneToOneField(Question,on_delete=models.CASCADE, related_name="interactions")
+    question = models.ForeignKey(Question,on_delete=models.CASCADE, related_name="question_interactions")
+    anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_interactions")
     correct = models.BooleanField(default=False)
 
     class Meta:
