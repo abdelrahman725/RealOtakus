@@ -6,25 +6,19 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_delete,post_save
+from django.db.models.signals import pre_delete, post_delete, pre_save, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from board import base_models
 
-from .helpers import CreateNotification
-from .helpers import choices_integirty
-from .helpers import question_validator
-from .helpers import CheckLevel
-
-def NotifyReviewrs(anime):
-    msg = f"new question for {anime.anime_name} and needs review, check your profile"
-    for reviewer in anime.reviewers.all():
-        CreateNotification(
-            receiver=reviewer,
-            notification= msg,
-            kind="R"
-        )
+from board.helpers import choices_integirty
+from board.helpers import question_validator
+from board.helpers import CheckLevel
+from board.helpers import notify_reviewers
+from board.helpers import announce_new_active_anime
+from board.helpers import deactivate_anime
+from board.helpers import notify_user_of_contribution_state
 
 
 class User(base_models.User):
@@ -41,8 +35,8 @@ class Anime(base_models.Anime):
     
     @property
     def total_interactions(self):
-        return self.anime_interactions.all().count()
-        
+        return self.anime_interactions.all().count()        
+
     @property
     def total_questions(self):
         return self.anime_questions.all().count()
@@ -70,11 +64,10 @@ class Anime(base_models.Anime):
 
 
 @receiver(pre_delete, sender=Anime)
-def before_anime_deletion(sender, instance, **kwargs):
+def deleted_chached_anime(sender, instance, **kwargs):
     from board.views import animes_dict
     if animes_dict:
         del animes_dict[instance.id]
-
 
 
 class Question(base_models.Question):
@@ -84,13 +77,6 @@ class Question(base_models.Question):
             #question_validator(self.question)
             #choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
         super(Question, self).clean(*args, **kwargs)
-
- 
-    def delete(self, *args, **kwargs):
-        if self.active == True:
-            raise ValidationError(
-                 _('production questions can not be deleted')
-            )
         
  
     def __str__(self):
@@ -98,40 +84,69 @@ class Question(base_models.Question):
             return f"{self.question[:55]}..."
         return f"{self.question}"
 
-# automatically or manually actiavte an anime ?? personally i prefer manually 
-# @receiver(post_save, sender=Question)
-# def after_question_is_saved(sender, instance, **kwargs):  
-#     if instance.anime.active==False and instance.active:
-#         if instance.anime.anime_questions.filter(active=True).count() >= 5:
-#             instance.anime.active = True
-#             instance.anime.save()
+
+@receiver(pre_delete, sender=Question)
+def protect_active_questions(sender, instance, **kwargs):
+
+    if instance.active == True:
+        raise ValidationError(
+                _('production questions can not be deleted')
+        )
+
+
+# automatically or manually actiavte an anime ? 
+@receiver(post_save, sender=Question)
+def after_question_is_saved(sender, instance, **kwargs):
+    if instance.active and instance.anime.active == False :
+        async_anime_announcment = threading.Thread(
+                target=announce_new_active_anime,
+                args=(instance,)
+            )
+        async_anime_announcment.start()
+
+
+# @receiver(post_delete, sender = Question)
+# def post_question_deletion(sender, instance, **kwargs):
+#     if instance.anime.active == True:
+#         check_anime_active_state = threading.Thread(
+#                 target=deactivate_anime,
+#                 args=(instance.anime,)
+#             )
+#         check_anime_active_state.start()
+
 
 class Contribution(base_models.Contribution):
-
-    def save(self, *args, **kwargs):
-
-        if self.pk == None and self.contributor != self.reviewer:
-            async_notification = threading.Thread(
-                target=NotifyReviewrs,
-                args=(self.question.anime,)
-            )
-            async_notification.start()
-       
-        super(Contribution, self).save(*args, **kwargs)
     
     @property
     def date_created(self):
         return self.question.date_created
 
-
     def __str__(self) -> str:
         return f"{self.contributor} contributed a new question for {self.question.anime}"
 
 
+@receiver(pre_save, sender=Contribution)
+def contribution_reviewed(sender, instance, **kwargs):
+    if instance.pk != None and instance.approved != None and instance.date_reviewed==None:   
+        print("\n modifying contribution...\n")     
+        notify_user_of_contribution_state(instance)
+        
+
+@receiver(post_save, sender=Contribution)
+def post_contribution_creation(sender, instance, created, **kwargs):
+    if created and instance.contributor != instance.reviewer:
+
+        async_notification = threading.Thread(
+            target=notify_reviewers,
+            args=(instance.question.anime,)
+        )
+        async_notification.start()
+  
+
 class QuestionInteraction(base_models.QuestionInteraction):
 
     def __str__(self) -> str:
-        return f"{'correct' if self.correct else 'wrong'} answer by {self.user} on a/an {self.question.anime.anime_name} question"
+        return f"{'correct' if self.correct_answer==True else 'wrong' if self.correct_answer == False else 'no'} answer by {self.user} on a/an {self.question.anime.anime_name} question"
 
 
 class Notification(base_models.Notification):
@@ -147,4 +162,5 @@ class Notification(base_models.Notification):
         )
 
     def __str__(self):
+
         return f"{self.notification}"

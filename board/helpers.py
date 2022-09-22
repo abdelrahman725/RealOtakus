@@ -4,12 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 from django.utils import timezone
 
-from board.constants import LEVELS
-
-
 import board.models
 
-
+from board.constants import LEVELS
 
 
 def CreateNotification(receiver,notification,kind):
@@ -21,26 +18,74 @@ def CreateNotification(receiver,notification,kind):
         )
 
 
-def MakeContributionApproved(question):
-  
-  try:
-    if question.contribution:
-      if not question.contribution.reviewer and question.previously_approved == False and question.approved :
+def notify_reviewers(anime):
+    msg = f"new question for {anime.anime_name} and needs review, check your profile"
+    for reviewer in anime.reviewers.all():
+        CreateNotification(
+            receiver=reviewer,
+            notification= msg,
+            kind="R"
+        )
 
-        question.contribution.reviewer = board.models.User.objects.get(pk=1,is_superuser=True) 
-        question.contribution.date_reviewed = timezone.now()
-        question.contribution.save()
-        question.contribution.contributor.points+=10
-        question.contribution.contributor.save()
+
+def announce_new_active_anime(question):
+    if question.anime.anime_questions.filter(active=True).count() >= 5:
+        question.anime.active = True
+        question.anime.save()
+
+        notification = f"{question.anime.anime_name} is now active and has questions !"
+        reviewer,contributor = None,None
+        
+        try:        
+            contributor = question.contribution.contributor
+            reviewer =  question.contribution.reviewer
+   
+        except board.models.Contribution.DoesNotExist:
+            pass
+
+        for user in board.models.User.objects.all():
+            if user != reviewer and user != contributor:
+                CreateNotification(
+                    receiver=user,
+                    notification= notification,
+                    kind="to do later"
+                )
+
+
+def deactivate_anime(anime):
+    if anime.anime_questions.filter(active=True).count() < 5:
+        anime.active = False
+        anime.save()
+
+
+def notify_user_of_contribution_state(contribution):
+
+    contribution.date_reviewed = timezone.now()
+
+    if contribution.reviewer == None:
+        contribution.reviewer = board.models.User.objects.get(pk=1,is_superuser=True) 
+
+    
+    if contribution.approved == True:
+        contribution.contributor.points+=10
+        contribution.contributor.save()
+
+        contribution.question.active = True
+        contribution.question.save()
 
         CreateNotification(
-              receiver=question.contribution.contributor,
-              notification=f"Congratulations! your contribution for {question.anime.anime_name} is approvd",
-              kind="A"
-          )
+                receiver=contribution.contributor,
+                notification=f"Congratulations! your contribution for {contribution.question.anime} is approvd",
+                kind="A"
+            )
+
+    if contribution.approved == False:
+        CreateNotification(
+                receiver=contribution.contributor,
+                notification=f"Sorry, your last contribution for {contribution.question.anime} is rejected",
+                kind="F"
+            )
   
-  except board.models.Contribution.DoesNotExist:
-    pass
 
 
 def CheckLevel(user):

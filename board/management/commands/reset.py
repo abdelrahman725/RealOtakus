@@ -9,7 +9,7 @@ from board.constants import BEGINNER
 
 class Command(BaseCommand):
 
-    help = "delete all created data during development except approved questions by admin"
+    help = "delete all created data during testing except active questions"
 
     def handle(self, *args, **options):
 
@@ -41,7 +41,12 @@ class Command(BaseCommand):
             user.save()
   
 
+        Contribution.objects.all().delete()
+     
+        # Note : don't use later
         questions.filter(contribution__isnull=False,active=False).delete()
+        
+        QuestionInteraction.objects.all().delete()
         
         for q in questions.filter(contribution__isnull=True):
             q.correct_answers = 0

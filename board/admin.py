@@ -10,12 +10,11 @@ from django.db.models import Count
 from django.utils import timezone
 
 from board.models import *
-from board.helpers import MakeContributionApproved
-from board.constants import QUESTIONSCOUNT,COUNTRIES
+from board.constants import COUNTRIES,QUESTIONSCOUNT
 
 
 def to_local_date_time(utc_datetime):
-  #return utc_datetime
+
   if utc_datetime:
     local_tz = pytz.timezone('Africa/Cairo')
     return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
@@ -98,8 +97,8 @@ class CountryFilter(admin.SimpleListFilter):
 
 
 class ActiveAnimeFilter(admin.SimpleListFilter):
-    title = 'Active'
-    parameter_name = 'is_active'
+    title = 'has questions'
+    parameter_name = 'contains_questions'
 
     def lookups(self, request, model_admin):
 
@@ -227,21 +226,29 @@ class ReadOnly(admin.ModelAdmin):
     return False
  
   def has_delete_permission(self, request, obj=None):
+    return True
     return False
 
 
 @admin.register(Anime)
-class AnimeAdmin(ReadOnly):
+class AnimeAdmin(admin.ModelAdmin):
 
+  list_editable = ("active",)
+  search_fields = ("anime_name",)
 
   list_display = (
-  "anime_name",
-  "active"
+    "anime_name",
+    "total_questions",
+    "active"
   )
 
   list_filter = (
     "active",
   )
+
+  def get_queryset(self, request):
+    query = super(AnimeAdmin, self).get_queryset(request)
+    return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
 
 
 
@@ -254,7 +261,9 @@ class NotificationAdmin(ReadOnly):
     "_time",
     "seen"
   )
+
   search_fields   =  ("owner__username__startswith",)
+
   list_filter  = (
     ("owner",admin.RelatedOnlyFieldListFilter),
     "seen",
@@ -265,42 +274,64 @@ class NotificationAdmin(ReadOnly):
   def _time(self,obj):  return to_local_date_time(obj.time)
 
 
-def move_to_production(modeladmin, request, queryset):
-    queryset.update(active=True)
 
-def remove_from_production(modeladmin, request, queryset):
-    queryset.update(active=False)
+@admin.register(Contribution)
+class ContributionAdmin(admin.ModelAdmin):
 
-def approve(modeladmin, request, queryset):  
-  for question in queryset:
-    question.approved=True
-    question.save()
-    MakeContributionApproved(question)
-
-def delete_selected(modeladmin, request, queryset):
-  [question.delete() for question in queryset]
+  list_editable = ("approved","reviewer_feedback")
   
+  readonly_fields = (
+    "approved",
+    "question",
+    "contributor",
+    "reviewer",
+    "date_reviewed"
+    
+  )
+
+  list_display = (
+    "approved",
+    "view_question",
+    "contributor",
+    "reviewer",
+    "reviewer_feedback",
+    "date_reviewed"
+  )
+  
+  list_filter = (
+    
+  )
+
+  list_display_links = None
+  
+  def has_delete_permission(self, request, obj=None):
+    return True
+    return False
+
+  def view_question(self, obj):
+    if obj.question:
+      url = reverse('admin:board_question_change', args=(obj.question.id,))
+      return format_html('<a href="{}">{}</a>',url, obj.question.question)
+    return "Deleted"
+
+  view_question.short_description = "question"
+
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
   #date_hierarchy = 'date_created'
-  actions = [
-    delete_selected,
-    move_to_production,
-    remove_from_production,
-    approve
-  ]
 
-  #list_editable = ("approved",)
+  list_editable = ("active",)
+  
+  autocomplete_fields = ['anime']
 
   readonly_fields =  (
-    "anime",
     "date_created",
     "correct_answers",
     "wrong_answers"
   )
 
-  list_display    =  (
+  list_display =  (
     "question",
     "right_answer",
     "choice1",
@@ -319,15 +350,13 @@ class QuestionAdmin(admin.ModelAdmin):
     ("anime",admin.RelatedOnlyFieldListFilter),
     "date_created"
   )
+  
   search_fields   =  ("question",)
-
-  # def save_model(self, request, obj, form, change):
-  #   MakeContributionApproved(obj)
-  #   super().save_model(request, obj, form, change)
 
 
 # hide Delete button if it's an active question
   def has_delete_permission(self, request, obj=None):
+    return True
     if obj: return not obj.active
   
 
@@ -341,48 +370,38 @@ class QuestionAdmin(admin.ModelAdmin):
     return to_local_date_time(obj.contribution.date_reviewed)
 
 
-@admin.register(Contribution)
-class ContributionAdmin(admin.ModelAdmin):
-  list_display = (
-    "_approved",
-    "question",
-    "contributor",
-    "reviewer",
-    "reviewer_feedback",
-    "date_reviewed"
-  )
 
-  def _approved(self,obj):
-    if obj.approved == None: return "pending..."
-    if obj.approved == False: return "rejected"
-    return "approved !"
-  
-  _approved.short_description = "state" 
-
- 
 @admin.register(QuestionInteraction)
-class InteractionAdmin(ReadOnly):
+class QuestionInteractionAdmin(ReadOnly):
   
   list_display = (
     "user",
     "question",
     "anime",
-    "correct"
+    "correct_answer"
   )
 
   list_filter = (
     ("user",admin.RelatedOnlyFieldListFilter),
     ("anime",admin.RelatedOnlyFieldListFilter),
+    "correct_answer"
   )
+
+  def has_add_permission(self, request, obj=None):
+    return True
+    return False
   
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+  
+  autocomplete_fields = ['animes_to_review']
+  
   readonly_fields =  (
-  "level",
-  "points",
-  "tests_started",
-  "tests_completed"
+    "level",
+    "points",
+    "tests_started",
+    "tests_completed"
   )
 
   list_display = (
@@ -399,16 +418,15 @@ class UserAdmin(admin.ModelAdmin):
   )
 
   list_filter  =  (
-  QuizTakerFilter,
-  IsContributorFilter,
-  IsReviewerFilter,
-  SocialAccountFilter,
-
-  ("animes_to_review",admin.RelatedOnlyFieldListFilter),
-  "level",
-  CountryFilter
+    QuizTakerFilter,
+    IsContributorFilter,
+    IsReviewerFilter,
+    SocialAccountFilter,
+    ("animes_to_review",admin.RelatedOnlyFieldListFilter),
+    "level",
+    CountryFilter
   )
-  filter_horizontal = ("animes_to_review",)
+
   search_fields = ("username__startswith",)
   
   def get_queryset(self, request):    
@@ -416,7 +434,6 @@ class UserAdmin(admin.ModelAdmin):
     return query.exclude(is_superuser=True,pk=1)
 
 
-  
   def reviewer(self,obj):
     return obj.animes_to_review.exists()
   reviewer.boolean = True
@@ -435,6 +452,3 @@ class UserAdmin(admin.ModelAdmin):
 
   def reviewer_of(self,obj):
     return "{} animes".format(obj.animes_to_review.all().count())   
-
-
-  

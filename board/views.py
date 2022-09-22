@@ -4,7 +4,7 @@ from time import sleep
 from django.db import connection, IntegrityError
 from django.shortcuts import render, redirect
 from django.forms import ValidationError
-from django.db.models import Count, Q
+from django.db.models import Count, Q,Avg
 from django.http import JsonResponse
 from django.utils import timezone
 
@@ -39,7 +39,7 @@ def GetOrFetchAnime(anime : int):
 
 def GetWantedUser(request):
     #return request.user
-    return User.objects.get(username="david")
+    return User.objects.get(username="bedo1")
 
 
 #@login_required
@@ -86,14 +86,19 @@ def GetAllAnimes(request):
 @api_view(["GET"])
 def GetDashBoard(request):
 
-    all_users = User.objects.exclude(points=0).annotate(
-        n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    )
-   
-    current_highest_score = all_users.values_list("points",flat=True).order_by("-points")
+    # users sorted by their scores in non-increasing order where their score is >= avg_score and !=0 
+    avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
 
-    top_users = all_users.filter(points__gte=min([0] if not all_users else current_highest_score))
-    LeaderBorad = LeaderBoradSerializer(top_users, many=True)
+    # top_competitors = User.objects.annotate(
+    #     n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
+    # ).filter(points__gte= avg_score).order_by("-points")
+
+    top_competitors = User.objects.annotate(
+        n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
+    ).exclude(username="admin").order_by("-points")
+
+
+    LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
     
 
     #animes_mapper =  {}    
@@ -126,10 +131,8 @@ def GetDashBoard(request):
 
 ##@login_required
 @api_view(["GET"])
-def GetQuizeAnimes(request):
-
-    user = GetWantedUser(request)
- 
+def GetQuizeAnimes(request): 
+    
     game_animes = AnimeSerializer(
         Anime.objects.filter(active=True),
         many=True
@@ -195,22 +198,11 @@ def SubmitTest(request):
     questions = game_questions[user.id]
 
     # record test results
+    # To Do here
     Answers = []
-    for q in test_results:
-        quiz_question = questions[int(q)]
-        
-        correct_answer = test_results[q] == quiz_question.right_answer
-        
-        if correct_answer:
-            quiz_question.correct_answers += 1
-            test_score += 1
+   
 
-        else:
-            quiz_question.wrong_answers += 1
-        
-        quiz_question.save()
-
-        Answers.append(QuestionInteraction(user=user,question = quiz_question, anime=quiz_question.anime, correct = correct_answer))
+        #Answers.append(QuestionInteraction(user=user,question = quiz_question, anime=quiz_question.anime, correct = correct_answer))
         
 
     QuestionInteraction.objects.bulk_create(Answers)
@@ -233,7 +225,6 @@ def SubmitTest(request):
 # ------------------------------------------------------------------------------------
 
 
-
 #@login_required
 @api_view(["POST"])
 def MakeContribution(request):
@@ -249,7 +240,7 @@ def MakeContribution(request):
     is_anime_reviewr = anime in user.animes_to_review.all()   
 
     try:
-        new_question=Question.objects.create(
+        new_question = Question.objects.create(
             anime=anime,
             active=is_anime_reviewr,
             question= QuestionOBject["question"], 
@@ -306,10 +297,10 @@ def ReviewContribution(request):
                 status=status.HTTP_409_CONFLICT
             )
 
-        if feedback: question.contribution.reviewer_feedback = feedback
+        if feedback:
+            question.contribution.reviewer_feedback = feedback
         
         question.contribution.reviewer = user
-        question.contribution.date_reviewed = timezone.now() 
         
         sleep(1)
 
@@ -317,17 +308,6 @@ def ReviewContribution(request):
             question.contribution.approved = True
             question.contribution.save()
 
-            question.contribution.contributor.points +=10
-            question.contribution.contributor.save()
-
-            question.active = True
-            question.save()
-            CreateNotification(
-                receiver=question.contribution.contributor,
-                notification=f"Congratulations! your contribution for {question.anime.anime_name} is approvd",
-                kind="A"
-            )
-            
             return Response({
                 "question is approved successfully"
             })    
@@ -336,11 +316,6 @@ def ReviewContribution(request):
             question.contribution.approved = False
             question.contribution.save()
             
-            CreateNotification(
-                receiver=question.contribution.contributor,
-                notification=f"Sorry your contribution for {question.anime.anime_name} is rejected",
-                kind="F"
-            )
             return Response({
                 "question is rejected successfully"
             })
