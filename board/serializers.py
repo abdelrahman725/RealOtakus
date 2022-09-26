@@ -50,20 +50,41 @@ class QuestionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Question
     fields = (
-    "anime",
-    "question",
-    "choice1",
-    "choice2",
-    "choice3",
-    "right_answer",
-    "active",
-    "id",
+      "anime",
+      "question",
+      "choice1",
+      "choice2",
+      "choice3",
+      "right_answer",
+      "active",
+      "id",
+    )
+
+class AnswersSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Question
+    fields = (
+      "id",
+      "right_answer"
     )
 
 
-    
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta: 
     model = Notification
     fields = ("id","notification","kind","time","seen")
+    
+
+class QuestionsApiService(serializers.ModelSerializer):
+    
+  class Meta:
+    model = Question
+    fields = (
+      "id",
+      "question",
+      "choice1",
+      "choice2",
+      "choice3",
+      "right_answer",
+    )
     

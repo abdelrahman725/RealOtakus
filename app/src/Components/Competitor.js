@@ -1,18 +1,16 @@
-import { useEffect,useState,useContext } from "react"
+import { useEffect,useState } from "react"
 
 const Competitor = ({name,points,level,country,contributions,user_equal_logged_user}) => {
   
   const [flag,setflag] = useState()
 
   const fetch_flag_url = async() =>{
-    const flag_res = await fetch(`https://flagcdn.com/256x192/${country}.png`)
-    setTimeout(()=>{
-      setflag(flag_res.url)
-    },1000)
+    const flag_res = await fetch(`https://flagcdn.com/256x192/${country}.png`) 
+    setTimeout(()=>{setflag(flag_res.url)} ,500)
   }  
 
   useEffect(()=>{
-    fetch_flag_url()
+   country && fetch_flag_url()
   },[])
   return (
 
@@ -22,7 +20,7 @@ const Competitor = ({name,points,level,country,contributions,user_equal_logged_u
     <td>{level}</td>
     <td>{contributions}</td>
     <td>        
-      {flag?<img src= {flag} width="32"height="24"></img>: "loading"}
+    {country? flag?<img src={flag} width="32"height="24"></img> : "loading" :"N/A" }
     </td>
   </tr>
 

@@ -2,17 +2,13 @@ import Question from "./Question"
 import Result from "./Result"
 //import Loading from "./Loading"
 
-import getCookie from "../GetCookie"
-
-import { GamdeModeContext,ServerContext } from "../App"
+import { GamdeModeContext } from "../App"
 import { useContext, useState, useEffect } from "react"
+import async_http_request from "./AsyncRequest"
 
 const Game = ({questions,setgamestarted}) => {
 
-  const CsrfToken = getCookie('csrftoken')
-  const {server} = useContext(ServerContext)
   const {setGameMode,setUserData,GameMode} = useContext(GamdeModeContext)
-  
   const [useranswers,setuseranswers] = useState({})
   const [index,setindex] = useState(0)
   const questions_length = questions.length
@@ -37,7 +33,7 @@ const Game = ({questions,setgamestarted}) => {
   }
       
 
-  const nextquestion = ()=>index < questions_length-1 && setindex(index+1)
+  const nextquestion = ()=>  index < questions_length-1 && setindex(index+1)  
 
   const onAnswer = (id,each_new_answer)=>
   {
@@ -48,23 +44,24 @@ const Game = ({questions,setgamestarted}) => {
 
   const SubmitGame = async()=>
   {
-    const send = await fetch(`${server}/home/sendgame`,{
-      
-      method : 'POST',
-      headers : {
-        'Content-type': 'application/json',
-        'X-CSRFToken': CsrfToken,
-      },
-      body: JSON.stringify({
-        results:useranswers
-      })
+   
+    const game_results   = await async_http_request({
+      path:"submitgame",
+      method : "POST",
+      data :  {"answers" : useranswers}
     })
-    const results  = await send.json()
+
+    console.log(game_results)
     
-    setquizresults(results.rightanswers)
-    console.log(results.rightanswers)
-    setgamescore(results.newscore)
-    setUserData(prev => ({...prev, points : prev.points + results.newscore }))    
+    const answers = {}    
+
+    game_results.right_answers.map((question)=>(
+      answers[question.id] = question.right_answer
+    ))
+    
+    setquizresults(answers)
+    setgamescore(game_results.score)
+    setUserData(prev => ({...prev, points : prev.points + game_results.score }))    
     setGameMode(false)
   }
 
@@ -73,7 +70,7 @@ const Game = ({questions,setgamestarted}) => {
     {GameMode ?
     <div className="Quiz">   
         <Question
-        each_question={questions[index]}
+        question={questions[index]}
         Q_no={index}
         onselect={onAnswer}
         questions_length={questions_length}
@@ -86,19 +83,19 @@ const Game = ({questions,setgamestarted}) => {
               setgamestarted(false)
               setGameMode(false)
               }}>
-            exit
+              exit
             </button>
             
             {index===questions_length-1&& 
             <button onClick={SubmitGame}>
-            submit
+              submit
             </button>}
             
             <button
             onClick={nextquestion}
             className={index===questions_length-1?"faded":""}
             disabled={index===questions_length-1}>
-            next
+              next
             </button>            
         </div>
     </div> 

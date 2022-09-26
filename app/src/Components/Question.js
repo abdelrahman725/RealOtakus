@@ -1,12 +1,15 @@
-import { useTimer } from "react-use-precision-timer";
-import { useEffect, useState} from "react"
+import async_http_request from "./AsyncRequest"
 
-const Question = ({each_question,onselect,Q_no,questions_length,nextquestion}) => {
-  
+import { useTimer } from "react-use-precision-timer"
+import { useEffect, useState,} from "react"
+
+const Question = ({question,onselect,Q_no,questions_length,nextquestion}) => {
+
   const [selected,setselected] = useState()
   const [minutes,setminutes] = useState(2)
   const [seconds,setseconds]= useState(0)
   const [timeout,settimout] = useState(false) 
+
   
   const handletimeleft= ()=>{
     if (seconds > 0) {
@@ -27,6 +30,7 @@ const Question = ({each_question,onselect,Q_no,questions_length,nextquestion}) =
           }    } 
 
   }
+
   const reset_timer= ()=>
   {  
     setminutes(2)
@@ -34,7 +38,19 @@ const Question = ({each_question,onselect,Q_no,questions_length,nextquestion}) =
     timer.start()
   }
 
+  const sendquestioninteraction = async()=>
+  {
+    const attempt_response  = await async_http_request({
+      path:`interaction/${question.id}`,
+      method:"POST"
+    })
+
+    console.log(attempt_response)
+  }
+
+
   useEffect(()=>{
+    sendquestioninteraction()
     setselected()
     !timeout && reset_timer()
     },[Q_no])
@@ -43,10 +59,10 @@ const Question = ({each_question,onselect,Q_no,questions_length,nextquestion}) =
   const onChoice = (useranswer)=>
   {
     setselected(useranswer)
-    onselect(each_question.id,useranswer)
+    onselect(question.id,useranswer)
   }
 
- const timer = useTimer({ delay: 100, callback: () => handletimeleft()});
+ const timer = useTimer({ delay: 1000, callback: () => handletimeleft()});
   
 
   return (
@@ -59,27 +75,27 @@ const Question = ({each_question,onselect,Q_no,questions_length,nextquestion}) =
 
       <div className="question_content">
         <p>
-          {Q_no+1}. <strong> {each_question.question} ? </strong>
+          {Q_no+1}. <strong> {question.question} ? </strong>
         </p>
 
-        <div className={each_question.choice1===selected?"choice selected_choice":"choice"}
-        onClick={()=>onChoice(each_question.choice1)}>  
-        {each_question.choice1}
+        <div className={question.choice1===selected?"choice selected_choice":"choice"}
+        onClick={()=>onChoice(question.choice1)}>  
+        {question.choice1}
         </div>
 
-        <div className={each_question.choice2===selected?"choice selected_choice":"choice"}
-        onClick={()=>onChoice(each_question.choice2)}>  
-        {each_question.choice2}
+        <div className={question.choice2===selected?"choice selected_choice":"choice"}
+        onClick={()=>onChoice(question.choice2)}>  
+        {question.choice2}
         </div>
 
-        <div className={each_question.choice3===selected?"choice selected_choice":"choice"}
-        onClick={()=>onChoice(each_question.choice3)}>  
-        {each_question.choice3}
+        <div className={question.choice3===selected?"choice selected_choice":"choice"}
+        onClick={()=>onChoice(question.choice3)}>  
+        {question.choice3}
         </div>
 
-        <div className={each_question.choice4===selected?"choice selected_choice":"choice"}
-        onClick={()=>onChoice(each_question.choice4)}>  
-        {each_question.choice4}
+        <div className={question.choice4===selected?"choice selected_choice":"choice"}
+        onClick={()=>onChoice(question.choice4)}>  
+        {question.choice4}
         </div>
       </div>
       :

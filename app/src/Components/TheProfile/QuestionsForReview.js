@@ -1,6 +1,6 @@
-import { useState } from "react"
 import EachQuestion from "./EachQuestion"
 import Select from 'react-select'
+import { useState } from "react"
 
 const QuestionsForReview = ({questions,animesoptions}) => {
   

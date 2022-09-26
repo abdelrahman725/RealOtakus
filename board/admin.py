@@ -85,7 +85,7 @@ class CountryFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
       countries_choices = set()
 
-      for c in User.objects.values_list('country',flat=True).distinct():
+      for c in User.objects.filter(country__isnull=False).values_list('country',flat=True).distinct():
         countries_choices.add((c,(COUNTRIES[c])))
 
       return countries_choices
@@ -278,36 +278,31 @@ class NotificationAdmin(ReadOnly):
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
 
-  list_editable = ("approved","reviewer_feedback")
-  
   readonly_fields = (
-    "approved",
     "question",
     "contributor",
     "reviewer",
     "date_reviewed"
-    
   )
 
   list_display = (
+    "view_contribution",
+    "contributor",
     "approved",
     "view_question",
-    "contributor",
     "reviewer",
     "reviewer_feedback",
-    "date_reviewed"
+    "_date_created",
+    "_date_reviewed"
   )
   
   list_filter = (
-    
+    "approved",
+    #"deleted_questions" 
   )
-
+  
   list_display_links = None
   
-  def has_delete_permission(self, request, obj=None):
-    return True
-    return False
-
   def view_question(self, obj):
     if obj.question:
       url = reverse('admin:board_question_change', args=(obj.question.id,))
@@ -315,14 +310,62 @@ class ContributionAdmin(admin.ModelAdmin):
     return "Deleted"
 
   view_question.short_description = "question"
+  
+  def view_contribution(self,obj):
+    if not obj.question:
+      return "no related question"
 
+    if obj.approved == None:
+      url = reverse('admin:board_contribution_change', args=(obj.id,))
+      return format_html('<a href="{}">pending...</a>',url)
+
+    return "Reviewed"
+  
+  view_contribution.short_description = "state"
+
+  def _date_created(self,obj):
+    if obj.question:    
+      return to_local_date_time(obj.date_created)
+  
+  def _date_reviewed(self,obj):
+    return to_local_date_time(obj.date_reviewed)
+    
+
+  def get_readonly_fields(self, request, obj=None):
+    if obj and obj.approved != None:
+      return self.readonly_fields + ('approved','reviewer_feedback')
+
+    return self.readonly_fields
+
+
+  def has_delete_permission(self, request, obj=None):
+    return True
+    return False
+
+  def has_add_permission(self,request,obj=None):
+    return False
+
+  
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
   #date_hierarchy = 'date_created'
-
-  list_editable = ("active",)
   
+  fields = (
+    "active",
+    "anime",
+    "question",
+    "right_answer",
+    "choice1",
+    "choice2",
+    "choice3",
+    "correct_answers",
+    "wrong_answers",
+    "date_created"
+  )
+  
+  list_editable=("active",)
+
   autocomplete_fields = ['anime']
 
   readonly_fields =  (
@@ -333,6 +376,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
   list_display =  (
     "question",
+    "id",
     "right_answer",
     "choice1",
     "choice2",
@@ -354,6 +398,11 @@ class QuestionAdmin(admin.ModelAdmin):
   search_fields   =  ("question",)
 
 
+  def get_readonly_fields(self, request, obj=None):
+    if obj and obj.pk:  return self.readonly_fields + ('anime',)
+    return self.readonly_fields
+  
+
 # hide Delete button if it's an active question
   def has_delete_permission(self, request, obj=None):
     return True
@@ -370,10 +419,9 @@ class QuestionAdmin(admin.ModelAdmin):
     return to_local_date_time(obj.contribution.date_reviewed)
 
 
-
 @admin.register(QuestionInteraction)
 class QuestionInteractionAdmin(ReadOnly):
-  
+    
   list_display = (
     "user",
     "question",
@@ -393,28 +441,50 @@ class QuestionInteractionAdmin(ReadOnly):
   
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):  
   
+  fields = (
+    "username",
+    "first_name",
+    "last_name",
+    "email",
+    "country",
+    "level",
+    "points",
+    "animes_to_review",
+    "tests_completed",
+    "tests_started",
+    #"password",
+    "last_login",
+    "date_joined",
+    "is_active"
+  )
+
   autocomplete_fields = ['animes_to_review']
   
   readonly_fields =  (
     "level",
     "points",
+    "first_name",
+    "last_name",
     "tests_started",
-    "tests_completed"
+    "tests_completed",
+    "password",
+    "date_joined",
+    "last_login"
   )
 
   list_display = (
     "username",
-    "email",
+    "id",
+    #"email",
     "level",
     "points",
     "tests_completed",
     "contributions",
     "questions_reviewed",
     "reviewer_of",
-    "country_name",
-    "id"
+    "country_name"
   )
 
   list_filter  =  (

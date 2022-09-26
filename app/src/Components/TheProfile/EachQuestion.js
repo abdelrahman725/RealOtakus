@@ -1,12 +1,8 @@
-import getCookie from "../../GetCookie"
-import { ServerContext } from "../../App"
-import { useContext, useState, useRef} from "react"
+import async_http_request from '../AsyncRequest'
 import Select from 'react-select'
+import { useState, useRef} from "react"
 
 const EachQuestion = ({anime,question,reviewstate,setreviewstate}) => {
-
-const {server} = useContext(ServerContext)  
-const CsrfToken = getCookie('csrftoken')
 
 const [question_state,setquestion_state] = useState()
 
@@ -27,27 +23,23 @@ const ReviewSubmission = (e,question)=>{
 
     e.preventDefault()
   
-    const SubmitReview = async(question)=>{      
-        const send = await fetch(`${server}/home/review`,{
-            method : 'POST',
-            headers : {
-            'Content-type': 'application/json',
-            'X-CSRFToken': CsrfToken,
-            },
-            body: JSON.stringify({
-            state: question_state,
-            question:question,
-            feedback:feedback ? feedback.value:null 
-    
-            })
+    const SubmitReview = async(question)=>{
+
+        const contribution_reviewed_response  = await async_http_request({
+            path:"review",
+            method:"POST",
+            data :{
+                "question":question,
+                "state": question_state,
+                "feedback":feedback ? feedback.value:null 
+            }
         })
-    
-        const res  = await send.json()
-        console.log(res)
+
+        console.log(contribution_reviewed_response)
 
         setreviewstate(prev => ({...prev,[question]:`${question_state=== 1 ? "approve" : "decline" }state`}))
     
-        }
+    }
 
     if (question_state === 0 &&  !feedback){
         feedback_select.current.focus()

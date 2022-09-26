@@ -1,11 +1,11 @@
 
 import threading
-from time import sleep
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError 
 from django.db.models.signals import pre_delete, post_delete, pre_save, post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -121,15 +121,16 @@ class Contribution(base_models.Contribution):
     def date_created(self):
         return self.question.date_created
 
-    def __str__(self) -> str:
-        return f"{self.contributor} contributed a new question for {self.question.anime}"
-
 
 @receiver(pre_save, sender=Contribution)
 def contribution_reviewed(sender, instance, **kwargs):
-    if instance.pk != None and instance.approved != None and instance.date_reviewed==None:   
-        print("\n modifying contribution...\n")     
+    if instance.pk != None and instance.approved != None and instance.date_reviewed == None:   
         notify_user_of_contribution_state(instance)
+        
+    if instance.pk !=None and instance.approved==None:
+        raise IntegrityError(
+            "approved = None, reviewed questions can't return back to be unreviewed"
+        )
         
 
 @receiver(post_save, sender=Contribution)
@@ -146,7 +147,7 @@ def post_contribution_creation(sender, instance, created, **kwargs):
 class QuestionInteraction(base_models.QuestionInteraction):
 
     def __str__(self) -> str:
-        return f"{'correct' if self.correct_answer==True else 'wrong' if self.correct_answer == False else 'no'} answer by {self.user} on a/an {self.question.anime.anime_name} question"
+        return f" {self.user} interacted with a question on {self.question.anime.anime_name}"
 
 
 class Notification(base_models.Notification):
@@ -162,5 +163,4 @@ class Notification(base_models.Notification):
         )
 
     def __str__(self):
-
         return f"{self.notification}"

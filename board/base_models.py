@@ -58,9 +58,9 @@ class Question(models.Model):
 
 
 class Contribution(models.Model):
-    approved = models.BooleanField(null=True, default=None)
     question = models.OneToOneField(Question, on_delete=models.SET_NULL,null=True, related_name="contribution")
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,related_name="contributions")
+    approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
     reviewer_feedback = models.CharField(max_length=100,null=True, blank=True)
     date_reviewed = models.DateTimeField(null=True,blank=True) 
@@ -74,11 +74,14 @@ class QuestionInteraction(models.Model):
     question = models.ForeignKey(Question,on_delete=models.CASCADE, related_name="question_interactions")
     anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_interactions")
 
-    # None means user didn't answer (neither right nor wrong) 
+    # None means user didn't answer 
     # but when calculating score we will count not answering as wrong
     correct_answer = models.BooleanField(null=True, default=None)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'question'], name='user interacts with each question just once')
+            ]
         abstract = True
 
 

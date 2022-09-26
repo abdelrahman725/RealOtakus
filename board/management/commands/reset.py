@@ -41,11 +41,11 @@ class Command(BaseCommand):
             user.save()
   
 
-        Contribution.objects.all().delete()
-     
         # Note : don't use later
         questions.filter(contribution__isnull=False,active=False).delete()
         
+        Contribution.objects.all().delete()
+     
         QuestionInteraction.objects.all().delete()
         
         for q in questions.filter(contribution__isnull=True):

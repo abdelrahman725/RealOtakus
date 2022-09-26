@@ -1,11 +1,10 @@
 import random
 from datetime import  datetime
-from random import randrange
-from datetime import timedelta
+from datetime import  timedelta
 
 from django.core.management.base import BaseCommand
 
-from ...models import *
+from board.models import *
 
 class Command(BaseCommand):
 
@@ -21,17 +20,11 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--state",
-            type=str,
-            choices=["mixed", "pending"],
-            default="pending",
-            help="would you like the questions to be pedning (default) or mix of approved and pending",
-        )
-        parser.add_argument(
             "--contributions",
             type=bool,
             default=True,
         )
+
         parser.add_argument(
             "--iterator",
             type=int,
@@ -41,29 +34,26 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         n_questions = options["questions"]
-        question_state = options["state"]
         contributions =  options["contributions"]
         q_iterator = options["iterator"]
         
         def random_date():
             start = datetime.strptime('1/01/2022 00:00', '%d/%m/%Y %H:%M')
-            end= datetime.strptime('3/09/2022 00:00', '%d/%m/%Y %H:%M')
+            end= datetime.strptime('22/09/2022 00:00', '%d/%m/%Y %H:%M')
             delta = end - start
             int_delta = (delta.days * 24 * 60 * 60) 
-            random_second = randrange(int_delta) + delta.seconds
+            random_second = random.randrange(int_delta) + delta.seconds
             return start + timedelta(minutes=round(random_second/60))
 
 
         def generate_question(anime,question):
             return Question.objects.create(    
                 anime = anime,
-                approved=random.choice([True,False]) if question_state == "mixed" else False,
                 question = question,
                 right_answer= "right_answer",
                 choice1="choice_1",
                 choice2="choice_2",
                 choice3="choice_3" ,
-                advanced= random.choice([True,False]),
                 date_created = random_date()
             )
 
@@ -88,6 +78,7 @@ class Command(BaseCommand):
                 anime=anime,
                 question=f"question_{i} for {anime.anime_name}",
             )
+
             if contributions:
                 generate_contribution(
                     question=question,

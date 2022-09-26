@@ -1,17 +1,12 @@
 import EachNoti from "./EachNoti"
-import getCookie from "../GetCookie"
-
-import { useEffect,useContext } from "react"
-import { ServerContext } from "../App"
+import async_http_request from "./AsyncRequest"
+import { useEffect } from "react"
 
 const Notifications = ({notifications,clear_unseen_count}) => {
-  
-  const {server} = useContext(ServerContext)  
-  const CsrfToken = getCookie('csrftoken')
 
 useEffect(()=>{
 
-// clears unseen_notifcations count after user view them
+  // clears unseen_notifcations count after user view them
   clear_unseen_count(0)
   
 //update notifications state in the backend (which are seen by the user in the  UI) from unseen to seen 
@@ -21,23 +16,16 @@ useEffect(()=>{
     !n.seen&&new_notifications.push(n.id) 
   ))
   
-
   const UpdateNotificationsState = async(notifications)=>{
 
-    const send = await fetch(`${server}/home/update_notifications_state`,{
-        method : 'PUT',
-        headers : {
-        'Content-type': 'application/json',
-        'X-CSRFToken': CsrfToken,
-        },
-        body: JSON.stringify({
-          notifications:notifications,
-        })
+    const notifications_updated_response = await async_http_request({
+      path :"update_notifications_state",
+      method:"PUT",
+      data : {"notifications":notifications}
     })
-
-    const res  = await send.json()
-    console.log(res)
-    }
+    
+    console.log(notifications_updated_response)
+  }
 
   new_notifications.length > 0 && UpdateNotificationsState(new_notifications)
  

@@ -1,16 +1,13 @@
 import Game from "./Game"
+import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
-import { GamdeModeContext ,ServerContext} from "../App"
 
+import { GamdeModeContext } from "../App"
 import {useState,useContext,useEffect} from 'react'
 
 const QuizAnimes = () => {
 
-  const {server} = useContext(ServerContext)
   const {setGameMode,GameMode,NUMBER_OF_QUIZ_QUESTIONS} = useContext(GamdeModeContext)
-
-  const  animegameurl = `${server}/home/getgame`
-  const  animesurl = `${server}/home/quizanimes`
 
   const [animesoptions,setanimesoptions] = useState()
   const [gamequestions,setgamequestions] = useState()
@@ -21,23 +18,22 @@ const QuizAnimes = () => {
 // get game animes 
   const GetAnimes = async()=>
   {
-    const res = await fetch(animesurl)
-    const data  = await res.json()
+    const game_animes = await async_http_request({path:"quizanimes"})
 
-    const anime_array = []
-    
-    data.animes.map((anime) => 
-    anime_array.push({value:anime.id,label:anime.anime_name})
+    const animes_array = []
+
+    game_animes.animes.map((anime) => 
+      animes_array.push({value:anime.id,label:anime.anime_name})
     )
     
-   setanimesoptions(anime_array)
+   setanimesoptions(animes_array)
   }
 
 // get selected anime questions
   const GetGame = async(selectedanime)=>
   {
-    const res = await fetch(`${animegameurl}/${selectedanime}`)
-    const anime_questions  = await res.json()
+    const anime_questions  = await async_http_request({path:`getgame/${selectedanime}`})
+    
     console.log(anime_questions)
   
     setgamequestions(anime_questions)
@@ -45,6 +41,13 @@ const QuizAnimes = () => {
     setgamestarted(true)
     setGameMode(true)    
   }
+
+  const handlesanimeselecttion=(e)=> {setselected_anime(e.value)}
+  
+  useEffect(()=>{
+    GetAnimes()
+  },[])
+
 
 // compare the passed anime_approved_questions with the number of games that the user had for that anime
   const ShowAnime = (NumberOfGames,anime_questions)=>
@@ -54,13 +57,8 @@ const QuizAnimes = () => {
       return true
     }
     return false
-  }
-    
-  const handlesanimeselecttion=(e)=> {setselected_anime(e.value)}
+  }  
 
-  useEffect(()=>{
-    GetAnimes()
-  },[])
 
 return (
   <>
@@ -79,7 +77,7 @@ return (
       
         <button className="startgame"
         onClick={()=> selected_anime && GetGame (selected_anime)}>
-        Start Game 
+         Start Game 
         </button>
     </div>
     }

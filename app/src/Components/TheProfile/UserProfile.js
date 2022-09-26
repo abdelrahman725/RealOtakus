@@ -1,14 +1,11 @@
 import Contributions from './Contributions'
 import QuestionsForReview from './QuestionsForReview'
 
-import { ServerContext } from '../../App'
-import { useContext, useState, useEffect } from "react"
+import { useState, useEffect } from "react"
+import async_http_request from '../AsyncRequest'
 
 export const UserProfile = () => {
   
-  const {server} = useContext(ServerContext)
-  const profile_url  = `${server}/home/profile`
-
   const[approvedcontributions,setapprovedcontributions]= useState([])
   const[pendingcontributions,setpendingcontributions]= useState([])
   const[questionsForReview,setquestionsForReview]= useState([])
@@ -18,8 +15,8 @@ export const UserProfile = () => {
 
   const getProfileData = async()=>
   {
-    const res = await fetch(profile_url)
-    const data  = await res.json()
+  
+    const data  = await async_http_request({path:"profile"})
     
     //console.log(data.UserAnimeScores)
       
@@ -31,13 +28,13 @@ export const UserProfile = () => {
     )
 
     Array.from(anime_names).map((a) => 
-    anime_options.push({value:a,label:a})
+      anime_options.push({value:a,label:a})
     )
     
     data.UserContributions.map((q) =>  
-    q.approved===true ?
-    setapprovedcontributions(prev_approved => [...prev_approved,q]):  
-    setpendingcontributions(prev_pending => [...prev_pending,q])
+      q.approved===true ?
+      setapprovedcontributions(prev_approved => [...prev_approved,q]):  
+      setpendingcontributions(prev_pending => [...prev_pending,q])
     )
     setanimesToReview(anime_options)
     setquestionsForReview(data.questionsForReview)

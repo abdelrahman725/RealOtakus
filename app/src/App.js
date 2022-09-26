@@ -6,13 +6,12 @@ import Contripution from './Components/Contripution'
 import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
 import { UserProfile } from './Components/TheProfile/UserProfile'
-import getCookie from './GetCookie'
+import async_http_request from './Components/AsyncRequest'
 
 import React,{useState,useEffect,createContext} from 'react'
 import useWebSocket from 'react-use-websocket'
 
 export const GamdeModeContext  = createContext()
-export const ServerContext  = createContext()
 
 function App() {
   const [UserData,setUserData] = useState({})
@@ -26,14 +25,11 @@ function App() {
   const [QuizAnimesView,setQuizAnimesView] = useState(false)
   const [ProfileView,setProfileView] = useState(false)
   const NUMBER_OF_QUIZ_QUESTIONS = 5 
-  
-  const CsrfToken = getCookie('csrftoken')
-  
-  const domain = "127.0.0.1:8000"
+
+  const  domain = "127.0.0.1:8000"
   const  server  = `http://${domain}`
   const  socket = `ws://${domain}/ws/socket-server/`
   
-  const  userdataurl = `${server}/home/data`
   const  logout_url = `${server}/logout`
   
   const { lastMessage,readyState } = useWebSocket(socket,{
@@ -72,51 +68,38 @@ function App() {
     window.location.href = logout_url
   }
 
-  const GetUserData = async()=>
-  {
-    const res  = await fetch(userdataurl)
-    const data = await res.json()
+  const GetUserData = async()=>{
 
-    
-    if (!data.user_data.country)
+    const res = await async_http_request({path:"data"})
+
+    if (!res.user_data.country)
     {
       getUserCountryViaApiServiceThenSaveCountry()
     } 
 
-    setUserData(data.user_data)
-
-    setnotifications(data.notifications)
-    setnumber_of_unseen_notifications(data.notifications.filter(n => !n.seen).length)
-
+    setUserData(res.user_data)
+    setnumber_of_unseen_notifications(res.notifications.filter(n => !n.seen).length)
+    setnotifications(res.notifications)
   }
-
+  
   // called if the user doesn't have a saved country (which will always be the case initially for the first login)
   const getUserCountryViaApiServiceThenSaveCountry = async()=>
   {
     
-    const res = await fetch("http://ip-api.com/json")
-    const fetched_country = await res.json()
-  
-  // after we get the country successfully : 
+    const fetched_country = await async_http_request({server:"http://ip-api.com/json"})
+    
     const country_code = fetched_country.countryCode.toLowerCase()
-
+    console.log(country_code)
     
-    // save it to the database so subsequent requests for the same user don't have to query the country from the api service again
-    const save_country = await fetch(userdataurl,{
-    
-      method : 'POST',
-      headers : {
-        'Content-type': 'application/json',
-        'X-CSRFToken': CsrfToken,
-      },
-      body: JSON.stringify({
-        country : country_code
-      })
+    // after we get the country successfully 
+    // save it to the database so subsequent requests for the same user don't have to query the country from the api service again    
+    const save_country  = await async_http_request({
+      path:"data",
+      method:"POST",
+      data: {"country" : country_code}
     })
-    const saving_country_res  = await save_country.json()
 
-    console.log(saving_country_res)
-        
+    console.log(save_country)     
   }
   
   const ManageViews = (View)=>
@@ -170,7 +153,7 @@ function App() {
 
 return (
  <div className="App"> 
-  <ServerContext.Provider value={{server}}>
+
   <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
 
       { UserData && < NavBar 
@@ -189,10 +172,9 @@ return (
 
         { HomeView && <button onClick={Logout}>Sign Out</button> }
 
-
       </div>
       
-      { HomeView && <TheDashBoard logged_in_user={UserData.id}/>}
+      { HomeView && <TheDashBoard logged_in_user={UserData.id} />}
       
        { ProfileView && <UserProfile/>}
 
@@ -206,7 +188,7 @@ return (
       { QuizAnimesView && <QuizAnimes/>} 
 
   </GamdeModeContext.Provider>
-  </ServerContext.Provider>
+
   </div>
  )
 }

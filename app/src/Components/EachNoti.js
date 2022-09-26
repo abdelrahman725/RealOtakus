@@ -27,7 +27,6 @@ const UTCToLocalTime = (utc_time)=>{
      
        <p> <strong>{noti}</strong> </p>
        <p className="notification_time">  {UTCToLocalTime(time)} </p>
-
       <br />
     </div>
         

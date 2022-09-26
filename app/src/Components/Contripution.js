@@ -1,16 +1,13 @@
 import Message from "./Message"
-import { useContext, useState, useEffect, useRef } from "react"
-import { ServerContext } from "../App"
-import getCookie from "../GetCookie"
+import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
+import {  useState, useEffect, useRef } from "react"
 
 const Contripution = () => {
 
-  const {server} = useContext(ServerContext)  
-  const CsrfToken = getCookie('csrftoken')
   const [animesoptions,setanimesoptions] = useState()
-
   const [msg,setmsg] = useState()
+  const [anime,setanime]= useState()  
   
   // ensure
   const  letters_exist = /[a-z]/ig
@@ -27,21 +24,20 @@ const Contripution = () => {
     choice3:"",
   })
   
-  const[anime,setanime]= useState()  
   
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
-
   const select_animes = useRef(null)
 
-  const GetAllAnimes =async ()=>
+  const GetAllAnimes = async ()=>
    {
-     const res = await fetch(`${server}/home/animesoptions`)
-     const animes  = await res.json()
+    
+     const animes  = await async_http_request({path:"animesoptions"})   
      const anime_array = []
-      animes.map((anime) => 
-      anime_array.push({value:anime.id,label:anime.anime_name})
-      )
+     
+     animes.map((anime) => 
+        anime_array.push({value:anime.id,label:anime.anime_name})
+     )
 
      setanimesoptions(anime_array)
 
@@ -75,26 +71,21 @@ const Contripution = () => {
 
       const SendContribution = async(cleaned_question)=>
       {
-        
-        const send = await fetch(`${server}/home/contribute`,{
-    
-          method : 'POST',
-          headers : {
-            'Content-type': 'application/json',
-            'X-CSRFToken': CsrfToken,
-          },
-          body: JSON.stringify({
-            question:cleaned_question,
-            anime:anime
-          })
+        const submit_contribution  = await async_http_request({
+          path:"contribute",
+          method:"POST",
+          data : {
+            "question":cleaned_question,
+            "anime":anime
+          }
         })
-        const res  = await send.json()
+        
+        setmsg(submit_contribution.msg)
     
-        // after waiting for submission now we can clear the states 
+        // after question contribution is submitted now we can clear the states 
         for (const key in Question)
           setQuestion(prev => ({...prev,[key]:""}))
-
-        setmsg(res.message)
+        
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
       

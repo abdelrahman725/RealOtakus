@@ -1,25 +1,18 @@
 import Competitor from "./Competitor"
-import { useEffect,useState,useContext } from "react"
-import { ServerContext } from "../App"
+import async_http_request from "./AsyncRequest"
+import { useEffect,useState } from "react"
 
 const TheDashBoard = ({logged_in_user}) => {
 
-  const {server} = useContext(ServerContext)
-  const dashboardurl = `${server}/home/dashboard`
-
   const[otakus,setotakus] = useState()
-  const[information_about_animes,setinformation_about_animes] = useState()
-
 
   const GetDashbBoard = async()=>
   {
-    const res = await fetch(dashboardurl)
-    const dashboard = await res.json()
+    const dashboard = await async_http_request({
+      path:"dashboard"
+    })
+
     setotakus(dashboard.leaderboard)
-    //setinformation_about_animes(dashboard.animes)
-    
-    //setTimeout(()=>{
-    //},1000)
   }
 
   useEffect(()=>{
@@ -53,11 +46,11 @@ return (
       country = {competitor.country}/>
       )):
       <Competitor
-      name={" loading "}
+      name={"loading"}
       points={"___________"}
       level={"___________"}
       contributions={"___________"}
-      country = {"eg"}/>
+      country = {null}/>
     }
 
   </tbody>

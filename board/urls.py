@@ -1,7 +1,6 @@
 
 from django.urls import path,re_path,include
-from django.views.generic import TemplateView
-from .views import *
+from board.views import *
 
 urlpatterns = [
     
@@ -11,7 +10,8 @@ urlpatterns = [
 
     path('quizanimes',GetQuizeAnimes),
     path('getgame/<int:game_anime>',GetTest),
-    path('sendgame',SubmitTest),
+    path('interaction/<int:question_id>',QuestionEncounter),
+    path('submitgame',SubmitGame),
 
     path('animesoptions',GetAllAnimes),
     path('contribute',MakeContribution),
