@@ -188,11 +188,6 @@ button {
   color: white;
 }
 
-.Quiz .Question .choice:hover {
-  background-color: #365FAA;
-  color: white;
-}
-
 .Quiz .Question .choice {
   cursor: pointer;
 }
@@ -305,11 +300,6 @@ button {
 
 .questionscontainer form .radio {
   text-align: left;
-  margin-bottom: 10px;
-}
-
-.questionscontainer .question_feedback {
-  width: 400px;
 }
 
 .questionscontainer .pendingstate {

@@ -7,7 +7,7 @@ import {useState,useContext,useEffect} from 'react'
 
 const QuizAnimes = () => {
 
-  const {setGameMode,GameMode,NUMBER_OF_QUIZ_QUESTIONS} = useContext(GamdeModeContext)
+  const {setGameMode, NUMBER_OF_QUIZ_QUESTIONS} = useContext(GamdeModeContext)
 
   const [animesoptions,setanimesoptions] = useState()
   const [gamequestions,setgamequestions] = useState()
@@ -18,11 +18,13 @@ const QuizAnimes = () => {
 // get game animes 
   const GetAnimes = async()=>
   {
-    const game_animes = await async_http_request({path:"quizanimes"})
+    const animes_data = await async_http_request({path:"gameanimes"})
+    
+    console.log(animes_data.animes)
 
     const animes_array = []
 
-    game_animes.animes.map((anime) => 
+    animes_data.animes.map((anime) => 
       animes_array.push({value:anime.id,label:anime.anime_name})
     )
     
@@ -33,8 +35,6 @@ const QuizAnimes = () => {
   const GetGame = async(selectedanime)=>
   {
     const anime_questions  = await async_http_request({path:`getgame/${selectedanime}`})
-    
-    console.log(anime_questions)
   
     setgamequestions(anime_questions)
     setselected_anime()
@@ -49,11 +49,11 @@ const QuizAnimes = () => {
   },[])
 
 
-// compare the passed anime_approved_questions with the number of games that the user had for that anime
-  const ShowAnime = (NumberOfGames,anime_questions)=>
-  {
- 
-    if ( anime_questions  >= (NumberOfGames * NUMBER_OF_QUIZ_QUESTIONS) + NUMBER_OF_QUIZ_QUESTIONS ){
+// difference between number of total available anime quizes and number of quizes that the user had for that anime
+// and accordingly determine if there is an available quiz or not for each anime 
+  const IsAnimeAvailable = (n_interactions,anime_questions)=>
+  { 
+    if ( Math.floor(anime_questions/NUMBER_OF_QUIZ_QUESTIONS) -  Math.ceil(n_interactions/NUMBER_OF_QUIZ_QUESTIONS) > 0 ){
       return true
     }
     return false
@@ -72,6 +72,8 @@ return (
         className="select_animes"
         placeholder="select anime"
         options={animesoptions}
+        isLoading={animesoptions?false:true}
+        isClearable= {true}
         onChange={handlesanimeselecttion}  />
         <br /> <br />
       

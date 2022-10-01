@@ -15,9 +15,10 @@ body {
   overflow-y: scroll;
 }
 
-*{
-  box-sizing: border-box;
-  user-select: none;  
+*{ box-sizing: border-box;}
+
+*:not(input,select,textarea){
+  user-select: none;
 }
 
 code {

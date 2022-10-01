@@ -18,6 +18,15 @@ const feedback_options = [
 ]
 
 const feedback_select = useRef(null)
+const customStyles = {
+
+    container: (provided, state) => ({
+        ...provided,
+        width:220,
+        float:"left"
+      }),
+}
+
 
 const ReviewSubmission = (e,question)=>{
 
@@ -82,7 +91,7 @@ return (
                         />
                         decline
                     </label>
-                </div>
+                </div><br />
                 <div className="radio">
                     <label>
                         <input
@@ -97,11 +106,12 @@ return (
                         approve
                     </label>
                 </div>
-
+                <br />
                 {question_state=== 0 &&
                  <div>    
                     <Select 
                     className="question_feedback" 
+                    styles={customStyles}
                     placeholder="feedback"
                     isClearable= {true}
                     isSearchable={false} 
@@ -112,7 +122,7 @@ return (
                     isMulti = {false}
                     //closeMenuOnSelect={false}
                     />
-                    <br /> 
+                    <br /><br /><br />
                 </div>}
                 
                 {!reviewe_sent ? <button className="" type="submit">Submit</button>:"loading"}

@@ -1,7 +1,6 @@
 import math
 import pytz
 
-from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
@@ -10,7 +9,7 @@ from django.db.models import Count
 from django.utils import timezone
 
 from board.models import *
-from board.constants import COUNTRIES,QUESTIONSCOUNT
+from board.constants import COUNTRIES
 
 
 def to_local_date_time(utc_datetime):
@@ -19,8 +18,8 @@ def to_local_date_time(utc_datetime):
     local_tz = pytz.timezone('Africa/Cairo')
     return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
     
-# 10 customized filter classes
 
+# 10 customized filter classes
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social_account'
@@ -134,25 +133,6 @@ class IsReviewerFilter(admin.SimpleListFilter):
         return queryset.filter(animes_to_review=None)
      
 
-class ReviewersFilter(admin.SimpleListFilter):
-    title = 'has reviewers'
-    parameter_name = 'reviewers_exist'
-
-    def lookups(self, request, model_admin):
-
-        return (
-          ('Yes', ('Yes')),
-          ('No', ('No')),
-      )
-
-    def queryset(self, request, queryset):        
-      if self.value() == 'Yes':
-        return queryset.exclude(anime__reviewers=None)
-      
-      if self.value() == 'No':
-        return queryset.filter(anime__reviewers=None)
-     
-
 class QuestionTypeFilter(admin.SimpleListFilter):
   title = 'Type'
   parameter_name = 'questions_contributor'
@@ -173,24 +153,6 @@ class QuestionTypeFilter(admin.SimpleListFilter):
       return queryset.filter(contribution__isnull=False)
 
 
-class OldestToNewestContributionsFilter(admin.SimpleListFilter):
-  title = 'oldest to newest'
-  parameter_name = 'order_by_oldest'
-
-  def lookups(self, request, model_admin):
-
-      return (
-        ('yes', _('yes')),
-    )
-
-  def queryset(self, request, queryset):
-    if self.value() == 'yes':
-      # in testing (when datetime data is random)
-      return queryset.order_by("question__date_created")
-      # in actual use
-      return queryset.order_by("id")
-
-
 class ContributionState(admin.SimpleListFilter):
   title = 'state'
   parameter_name = 'state'
@@ -198,25 +160,43 @@ class ContributionState(admin.SimpleListFilter):
   def lookups(self, request, model_admin):
 
       return (
-        ('p', _('Pending.....')),
+        ('p', _('Pending ....')),
         ('r', _('Reviewed')),
         ('a', _('Approved')),
-        ('f', _('Declined'))
+        ('f', _('Rejected'))
     )
 
   def queryset(self, request, queryset):
     if self.value() == 'p':
-      return queryset.filter(reviewer__isnull=True)
+      return queryset.filter(approved__isnull=True)
     
     if self.value() == 'r':
-      return queryset.filter(reviewer__isnull=False)
+      return queryset.filter(approved__isnull=False)
 
     if self.value() == 'a':
-      return queryset.filter(question__approved=True,reviewer__isnull=False)
+      return queryset.filter(approved=True)
 
     if self.value() == 'f':
-      return queryset.filter(question__approved=False,reviewer__isnull=False)
+      return queryset.filter(approved=False)
 
+
+class ReviewersExistFilter(admin.SimpleListFilter):
+  title = 'has reviewers'
+  parameter_name = 'reviewable'
+
+  def lookups(self, request, model_admin):
+
+      return (
+        ('No', ('No')),
+        ('Yes', ('Yes')),
+    )
+
+  def queryset(self, request, queryset):
+    if self.value() == 'No':
+      return queryset.filter(question__anime__reviewers__isnull=True)
+    
+    if self.value() == 'Yes':
+      return queryset.filter(question__anime__reviewers__isnull=False)
 
 
 # admin models inherit from this class can't be changed or deleted
@@ -254,6 +234,9 @@ class AnimeAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(ReadOnly):
+  readonly_fields = (
+    "time",
+  )
   list_display = (
     "kind",
     "owner",
@@ -282,6 +265,7 @@ class ContributionAdmin(admin.ModelAdmin):
     "question",
     "contributor",
     "reviewer",
+    "date_created",
     "date_reviewed"
   )
 
@@ -290,14 +274,18 @@ class ContributionAdmin(admin.ModelAdmin):
     "contributor",
     "approved",
     "view_question",
-    "reviewer",
+    "reviewers_assigned",
+    "reviewed_by",
     "reviewer_feedback",
     "_date_created",
-    "_date_reviewed"
+    "_date_reviewed",
+    "reviewed_after"
   )
   
   list_filter = (
-    "approved",
+    ContributionState,
+    ReviewersExistFilter,
+    "date_created"
     #"deleted_questions" 
   )
   
@@ -307,7 +295,7 @@ class ContributionAdmin(admin.ModelAdmin):
     if obj.question:
       url = reverse('admin:board_question_change', args=(obj.question.id,))
       return format_html('<a href="{}">{}</a>',url, obj.question.question)
-    return "Deleted"
+    return "removed"
 
   view_question.short_description = "question"
   
@@ -323,13 +311,42 @@ class ContributionAdmin(admin.ModelAdmin):
   
   view_contribution.short_description = "state"
 
+  def reviewed_by(self,obj):
+    return obj.reviewer
+
+  def reviewers_assigned(self,obj):
+    return obj.question.anime.reviewers.count() 
+
   def _date_created(self,obj):
-    if obj.question:    
-      return to_local_date_time(obj.date_created)
+    return to_local_date_time(obj.date_created)
   
   def _date_reviewed(self,obj):
     return to_local_date_time(obj.date_reviewed)
     
+  def reviewed_after(self,obj):
+
+    if obj.date_created and obj.date_reviewed:
+
+      time_diff = obj.date_reviewed - obj.date_created
+
+      if time_diff.days >=365:  
+        return f"{math.floor(time_diff.days/365)} years"  
+      
+      if time_diff.days >=30:
+        return f"{math.floor(time_diff.days/30)} months"  
+      
+      if time_diff.days >=1:
+        return f"{time_diff.days} days"
+
+      if time_diff.seconds >= 3600:
+        return f"{math.floor(time_diff.seconds/3600)} hours"
+
+      if time_diff.seconds > 60:
+        return f"{math.floor(time_diff.seconds/60)} minutes"
+      
+      return f"{time_diff.seconds} seconds"
+
+    return "N/A"
 
   def get_readonly_fields(self, request, obj=None):
     if obj and obj.approved != None:
@@ -337,13 +354,13 @@ class ContributionAdmin(admin.ModelAdmin):
 
     return self.readonly_fields
 
-
   def has_delete_permission(self, request, obj=None):
     return True
     return False
 
   def has_add_permission(self,request,obj=None):
     return False
+    return True
 
   
 
@@ -360,8 +377,7 @@ class QuestionAdmin(admin.ModelAdmin):
     "choice2",
     "choice3",
     "correct_answers",
-    "wrong_answers",
-    "date_created"
+    "wrong_answers"
   )
   
   list_editable=("active",)
@@ -369,7 +385,6 @@ class QuestionAdmin(admin.ModelAdmin):
   autocomplete_fields = ['anime']
 
   readonly_fields =  (
-    "date_created",
     "correct_answers",
     "wrong_answers"
   )
@@ -383,16 +398,14 @@ class QuestionAdmin(admin.ModelAdmin):
     "choice3",
     "active",
     "anime",
-    #"number_of_reviewers",
-    "_date_created"
+    "reviewers_assigned",
+    #"_contribution"
   )
 
   list_filter = (
     QuestionTypeFilter,
     "active",
-    ReviewersFilter,
     ("anime",admin.RelatedOnlyFieldListFilter),
-    "date_created"
   )
   
   search_fields   =  ("question",)
@@ -409,14 +422,26 @@ class QuestionAdmin(admin.ModelAdmin):
     if obj: return not obj.active
   
 
-  def number_of_reviewers(self,obj):
+  def reviewers_assigned(self,obj):
     return obj.anime.reviewers.count()
 
-  def _date_created(self,obj):
-    return to_local_date_time(obj.date_created)
 
-  def _date_reviewed(self,obj):
-    return to_local_date_time(obj.contribution.date_reviewed)
+  def _contribution(self,obj):
+    try:
+      if obj.contribution:
+        url = reverse('admin:board_contribution_change', args=(obj.contribution.id,))
+       
+        contribution_states= {
+                None:"pending...",
+                True:"approved",
+                False:"rejected"
+              }
+        
+        return format_html('<a href="{}">{}</a>',url,contribution_states[obj.contribution.approved]) 
+    except:
+      pass
+    return None
+
 
 
 @admin.register(QuestionInteraction)
@@ -436,7 +461,6 @@ class QuestionInteractionAdmin(ReadOnly):
   )
 
   def has_add_permission(self, request, obj=None):
-    return True
     return False
   
 
@@ -484,7 +508,7 @@ class UserAdmin(admin.ModelAdmin):
     "contributions",
     "questions_reviewed",
     "reviewer_of",
-    "country_name"
+    "view_country"
   )
 
   list_filter  =  (
@@ -514,11 +538,16 @@ class UserAdmin(admin.ModelAdmin):
   def questions_reviewed(self,obj):
     return obj.contributions_reviewed.count()
   
-  def country_name(self,obj):
+  def view_country(self,obj):
     if obj.country:
-      return COUNTRIES[obj.country]
+      return format_html(
+        '<img src="https://flagcdn.com/w80/{}.png" width="35" alt="country flag" >&nbsp;{}</img>',
+        obj.country,
+        COUNTRIES[obj.country]
+      )
+
     return "N/A"
-  country_name.short_description = "country"
+  view_country.short_description = "country"
 
   def reviewer_of(self,obj):
     return "{} animes".format(obj.animes_to_review.all().count())   

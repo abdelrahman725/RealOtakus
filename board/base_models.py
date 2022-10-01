@@ -35,21 +35,19 @@ class User(AbstractUser):
 
 class Question(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
-    question = models.TextField(max_length=350)
     
+    question = models.TextField(max_length=350)
     right_answer = models.CharField(max_length=150)
     choice1 = models.CharField(max_length=150)
     choice2 = models.CharField(max_length=150)
     choice3 = models.CharField(max_length=150)
-
-    active = models.BooleanField(default=False)
     
+    active = models.BooleanField(default=False)
+
     correct_answers = models.PositiveIntegerField(default=0)
     wrong_answers = models.PositiveIntegerField(default=0)
-    date_created = models.DateTimeField(default=timezone.now,null=True)
 
     class Meta:
-
         constraints = [
             models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')
             ]
@@ -63,6 +61,7 @@ class Contribution(models.Model):
     approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
     reviewer_feedback = models.CharField(max_length=100,null=True, blank=True)
+    date_created = models.DateTimeField(default=timezone.now)
     date_reviewed = models.DateTimeField(null=True,blank=True) 
     
     class Meta:
@@ -70,11 +69,11 @@ class Contribution(models.Model):
 
 
 class QuestionInteraction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="questions_interacted_with")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="questions_interacted_with")
     question = models.ForeignKey(Question,on_delete=models.CASCADE, related_name="question_interactions")
     anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_interactions")
 
-    # None means user didn't answer 
+    # None means no answer (always the case initially when recording the interaction)
     # but when calculating score we will count not answering as wrong
     correct_answer = models.BooleanField(null=True, default=None)
 
@@ -93,11 +92,10 @@ class Notification(models.Model):
 
     kind = models.CharField(
         choices=(
-            #("N","new anime"),
+            ("N","new anime"),
             ("R","review needed"),
             ("A","question approved"),
             ("F","question rejected"),
-            ("D","question deleted")
         ),
         max_length=1,
         null=True,

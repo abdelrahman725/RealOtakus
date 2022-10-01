@@ -8,7 +8,7 @@ urlpatterns = [
     path('data',GetUserData),
     path('dashboard',GetDashBoard),
 
-    path('quizanimes',GetQuizeAnimes),
+    path('gameanimes',GetQuizeAnimes),
     path('getgame/<int:game_anime>',GetTest),
     path('interaction/<int:question_id>',QuestionEncounter),
     path('submitgame',SubmitGame),

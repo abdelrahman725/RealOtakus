@@ -50,8 +50,6 @@ const Game = ({questions,setgamestarted}) => {
       method : "POST",
       data :  {"answers" : useranswers}
     })
-
-    console.log(game_results)
     
     const answers = {}    
 
@@ -94,7 +92,7 @@ const Game = ({questions,setgamestarted}) => {
             <button
             onClick={nextquestion}
             className={index===questions_length-1?"faded":""}
-            disabled={index===questions_length-1}>
+            hidden={index===questions_length-1}>
               next
             </button>            
         </div>

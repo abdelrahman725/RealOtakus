@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import *
+from board.models import *
 
 
 class SimpleUserDataSerializer(serializers.ModelSerializer):
@@ -44,6 +44,7 @@ class AnimeNameSerializer(serializers.ModelSerializer):
     fields = ("anime_name",)
 
 
+
 class QuestionSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer()
     
@@ -60,6 +61,7 @@ class QuestionSerializer(serializers.ModelSerializer):
       "id",
     )
 
+
 class AnswersSerializer(serializers.ModelSerializer):
   class Meta:
     model = Question
@@ -68,6 +70,19 @@ class AnswersSerializer(serializers.ModelSerializer):
       "right_answer"
     )
 
+
+class AnimeInteractionsSerializer(serializers.ModelSerializer):
+  user_interactions = serializers.IntegerField()
+  total_questions  = serializers.IntegerField()
+  
+  class Meta:
+    model = Anime 
+    fields = (
+      "id",
+      "anime_name",
+      "user_interactions",
+      "total_questions"
+    )
 
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta: 

@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from board import base_models
 
-from board.helpers import choices_integirty
+from board.helpers import CreateNotification, choices_integirty
 from board.helpers import question_validator
 from board.helpers import CheckLevel
 from board.helpers import notify_reviewers
@@ -105,23 +105,21 @@ def after_question_is_saved(sender, instance, **kwargs):
         async_anime_announcment.start()
 
 
-# @receiver(post_delete, sender = Question)
-# def post_question_deletion(sender, instance, **kwargs):
-#     if instance.anime.active == True:
-#         check_anime_active_state = threading.Thread(
-#                 target=deactivate_anime,
-#                 args=(instance.anime,)
-#             )
-#         check_anime_active_state.start()
+@receiver(post_delete, sender = Question)
+def post_question_deletion(sender, instance, **kwargs):
+    if instance.anime.active == True:
+        check_anime_active_state = threading.Thread(
+                target=deactivate_anime,
+                args=(instance.anime,)
+            )
+        check_anime_active_state.start()
 
 
 class Contribution(base_models.Contribution):
-    
-    @property
-    def date_created(self):
-        return self.question.date_created
+    def __str__(self) -> str:
+        return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime}"
 
-
+   
 @receiver(pre_save, sender=Contribution)
 def contribution_reviewed(sender, instance, **kwargs):
     if instance.pk != None and instance.approved != None and instance.date_reviewed == None:   

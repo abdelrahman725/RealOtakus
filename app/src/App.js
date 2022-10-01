@@ -5,8 +5,8 @@ import Notifications from './Components/Notifications'
 import Contripution from './Components/Contripution'
 import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
-import { UserProfile } from './Components/TheProfile/UserProfile'
 import async_http_request from './Components/AsyncRequest'
+import { UserProfile } from './Components/TheProfile/UserProfile'
 
 import React,{useState,useEffect,createContext} from 'react'
 import useWebSocket from 'react-use-websocket'
@@ -18,7 +18,8 @@ function App() {
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
   const [GameMode,setGameMode] = useState(false)
-  // views :
+  
+  // component views :
   const [HomeView,setHomeView] = useState(true)
   const [NotificationsView,setNotificationsView]= useState(false)
   const [ContributionView,setContributionView]= useState(false)
@@ -29,7 +30,6 @@ function App() {
   const  domain = "127.0.0.1:8000"
   const  server  = `http://${domain}`
   const  socket = `ws://${domain}/ws/socket-server/`
-  
   const  logout_url = `${server}/logout`
   
   const { lastMessage,readyState } = useWebSocket(socket,{
@@ -40,7 +40,6 @@ function App() {
   })
   
   // listening for incoming realtime notifications 
-
   useEffect(() => {
     if (lastMessage !== null) {
       
@@ -93,13 +92,13 @@ function App() {
     
     // after we get the country successfully 
     // save it to the database so subsequent requests for the same user don't have to query the country from the api service again    
-    const save_country  = await async_http_request({
+    const saving_country_res  = await async_http_request({
       path:"data",
       method:"POST",
       data: {"country" : country_code}
     })
 
-    console.log(save_country)     
+    console.log(saving_country_res)     
   }
   
   const ManageViews = (View)=>
@@ -119,8 +118,7 @@ function App() {
         setNotificationsView(false) 
         return
       
-      case "profile" :   
-
+      case "profile" :
         setProfileView(true) 
         setHomeView(false) 
         setQuizAnimesView(false)
@@ -176,11 +174,10 @@ return (
       
       { HomeView && <TheDashBoard logged_in_user={UserData.id} />}
       
-       { ProfileView && <UserProfile/>}
+      { ProfileView && <UserProfile/>}
 
-      { NotificationsView && <Notifications
-       notifications={notifications}
-       clear_unseen_count = {setnumber_of_unseen_notifications}/>
+      { NotificationsView && 
+       <Notifications notifications={notifications} clear_unseen_count = {setnumber_of_unseen_notifications}/>
       }
 
       { ContributionView && <Contripution />}

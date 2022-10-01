@@ -9,12 +9,16 @@ const Contripution = () => {
   const [msg,setmsg] = useState()
   const [anime,setanime]= useState()  
   
+  const question_ref = useRef(null)
+  const submit_btn = useRef(null)
+  const select_animes = useRef(null)
+  
   // ensure
   const  letters_exist = /[a-z]/ig
   // reject
   const  leading_space = /^\s/
   const  extra_space = /\s{2,}/
-  const  excluded_symbols = /[#`~@\^\*\|\\]/
+  const  excluded_symbols = /[#`~@^*|\\]/
 
   const [Question,setQuestion] = useState({
     question:"",
@@ -24,14 +28,9 @@ const Contripution = () => {
     choice3:"",
   })
   
-  
-  const question_ref = useRef(null)
-  const submit_btn = useRef(null)
-  const select_animes = useRef(null)
 
   const GetAllAnimes = async ()=>
-   {
-    
+   { 
      const animes  = await async_http_request({path:"animesoptions"})   
      const anime_array = []
      
@@ -154,10 +153,7 @@ const Contripution = () => {
 
   }
 
-  
-  useEffect(()=>{ 
-    GetAllAnimes()
-  },[])
+  useEffect(()=>{ GetAllAnimes()  },[])
 
 
   return (
@@ -171,16 +167,17 @@ const Contripution = () => {
         <div className="form_elements">
 
         <Select 
-        className="select_animes" 
-        placeholder="select anime" 
-        isLoading={animesoptions?false:true}
-        options={animesoptions}
-        onChange={handleselect} 
-        ref={select_animes}
+          className="select_animes" 
+          placeholder="select anime" 
+          isLoading={animesoptions?false:true}
+          isClearable= {true}
+          options={animesoptions}
+          onChange={handleselect} 
+          ref={select_animes}
         />
         
         <br/> <br/>
-
+    
        <textarea name="question" 
         typeof="text"
         placeholder = "what is the question ?" 

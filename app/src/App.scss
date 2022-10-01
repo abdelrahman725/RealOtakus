@@ -6,6 +6,10 @@ div
 }
 $base-shadow :0.5px 0.5px 3px 0.1px grey;
 
+.question_container_basic{
+  // to do here b2a
+}
+// to extend the above properties use @extend
 
 button { cursor: pointer;}
 .bar
@@ -198,13 +202,11 @@ margin-bottom: 50px;
 .Quiz{
     
   .Question{
-    .choice:hover{
-      background-color: #365FAA; color:white
-    }
     .choice{
       cursor: pointer;
     }
   }
+  
   .buttoncontainer
   {
     width:650px;
@@ -222,6 +224,7 @@ margin-bottom: 50px;
   }
 
 }
+
 @media screen and(max-width: 800px)
 {
   
@@ -260,7 +263,6 @@ margin-bottom: 50px;
     textarea:focus{
       border-color: white;
       outline: #2684FF solid 2.5px;
-      // border : 2px solid #2684FF;
     }
 
 
@@ -312,7 +314,6 @@ margin-bottom: 50px;
   }
 }
 
-
 .questionscontainer
 {
   
@@ -336,19 +337,10 @@ margin-bottom: 50px;
   form{
     .radio{
       text-align: left;
-      margin-bottom: 10px;
     }
+ 
   }
-  .question_feedback
-  {
-    width :400px;
-    // float: left;
-  }
-  // .app_dec_btns
-  // {
-  //   text-align: left;
-  // }
-
+ 
   .pendingstate{
     border-color:rgb(230, 171, 63);
   }
@@ -371,9 +363,8 @@ margin-bottom: 50px;
     .eachquestion{
       width: 90%;
     }
+
   }
 
 }
-
-
 

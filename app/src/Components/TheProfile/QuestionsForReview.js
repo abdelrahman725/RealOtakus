@@ -12,10 +12,13 @@ const QuestionsForReview = ({questions,animesoptions}) => {
   return (
     <div className="questionscontainer">
       <h2>questions for review</h2><br />
-      <Select options={animesoptions} className="select_animes"  placeholder="filter questions" 
+      
+      <Select
+        className="select_animes"
+        placeholder="filter questions" 
+        options={animesoptions}
         onChange={handlefilter} />
-        <br />
-        <br />
+        <br />  <br />
 
       {questions.map((q,index)=>(        
         filteredanime===1? 

@@ -48,7 +48,7 @@ def announce_new_active_anime(question):
                 CreateNotification(
                     receiver=user,
                     notification= notification,
-                    kind="to do later"
+                    kind="N"
                 )
 
 

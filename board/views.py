@@ -6,13 +6,12 @@ from django.shortcuts import render, redirect
 from django.forms import ValidationError
 from django.db.models import Count, Q,Avg
 from django.http import JsonResponse
-from django.utils import timezone
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from board.helpers import login_required,CreateNotification
+from board.helpers import login_required
 from board.models import *
 from board.serializers import *
 from board.constants import *
@@ -133,15 +132,18 @@ def GetDashBoard(request):
 
 @login_required
 @api_view(["GET"])
-def GetQuizeAnimes(request): 
-    
-    game_animes = AnimeSerializer(
-        Anime.objects.filter(active=True),
+def GetQuizeAnimes(request):
+    user = GetWantedUser(request) 
+
+    game_animes = AnimeInteractionsSerializer(
+        Anime.objects.filter(active=True).annotate(
+            user_interactions=Count("anime_interactions",filter=(Q(anime_interactions__user=user)))
+            ),
         many=True
     )
 
     return Response({
-        "animes": game_animes.data
+        "animes": game_animes.data,
     })
 
 
@@ -157,7 +159,7 @@ def GetTest(request, game_anime):
             ~Q(contribution__reviewer=current_user),
             #active=True
         ).exclude(
-            pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
+            # pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
         )[:QUESTIONSCOUNT]
 
     if questions.count() < 5:
