@@ -44,7 +44,6 @@ class AnimeNameSerializer(serializers.ModelSerializer):
     fields = ("anime_name",)
 
 
-
 class QuestionSerializer(serializers.ModelSerializer):
   anime = AnimeNameSerializer()
     
@@ -72,17 +71,18 @@ class AnswersSerializer(serializers.ModelSerializer):
 
 
 class AnimeInteractionsSerializer(serializers.ModelSerializer):
-  user_interactions = serializers.IntegerField()
-  total_questions  = serializers.IntegerField()
+  n_user_interactions = serializers.IntegerField()
+  n_active_questions  = serializers.IntegerField()
   
   class Meta:
     model = Anime 
     fields = (
       "id",
       "anime_name",
-      "user_interactions",
-      "total_questions"
+      "n_user_interactions",
+      "n_active_questions",
     )
+
 
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta: 

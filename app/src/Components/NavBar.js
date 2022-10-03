@@ -1,4 +1,4 @@
-const NavBar = ({data,show,new_notifications}) => {
+const NavBar = ({data,notifications_open,show,new_notifications}) => {
 
   return (
     <div className="bar">
@@ -8,7 +8,7 @@ const NavBar = ({data,show,new_notifications}) => {
       <div className="notifications"
        onClick={ ()=> show("notifications")} >
        activity &nbsp;
-      <strong>{new_notifications > 0 && new_notifications}</strong>
+      <strong>{new_notifications > 0 &&  !notifications_open && new_notifications}</strong>
       </div>
 
       <div onClick={ ()=> show("profile") } className="profilename">{data.username}</div>

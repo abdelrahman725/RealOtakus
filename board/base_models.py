@@ -74,7 +74,7 @@ class QuestionInteraction(models.Model):
     anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_interactions")
 
     # None means no answer (always the case initially when recording the interaction)
-    # but when calculating score we will count not answering as wrong
+    # but when calculating score we will count none as wrong
     correct_answer = models.BooleanField(null=True, default=None)
 
     class Meta:

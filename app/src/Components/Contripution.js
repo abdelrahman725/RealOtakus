@@ -3,7 +3,7 @@ import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
 import {  useState, useEffect, useRef } from "react"
 
-const Contripution = () => {
+const Contripution = ({all_animes}) => {
 
   const [animesoptions,setanimesoptions] = useState()
   const [msg,setmsg] = useState()
@@ -27,23 +27,20 @@ const Contripution = () => {
     choice2:"",
     choice3:"",
   })
-  
 
-  const GetAllAnimes = async ()=>
+  const setAnimesOptions = ()=>
    { 
-     const animes  = await async_http_request({path:"animesoptions"})   
-     const anime_array = []
-     
-     animes.map((anime) => 
-        anime_array.push({value:anime.id,label:anime.anime_name})
+
+    const formated_animes = []
+
+     all_animes.map((anime) => 
+        formated_animes.push({value:anime.id,label:anime.anime_name})
      )
-
-     setanimesoptions(anime_array)
-
+     
+     setanimesoptions(formated_animes)
    }  
 
   const handleselect=(e)=> {setanime(e.value)}
-
 
   const handlechange = (e)=>
   {    
@@ -153,7 +150,7 @@ const Contripution = () => {
 
   }
 
-  useEffect(()=>{ GetAllAnimes()  },[])
+  useEffect(()=>{ setAnimesOptions()  },[])
 
 
   return (
@@ -169,7 +166,6 @@ const Contripution = () => {
         <Select 
           className="select_animes" 
           placeholder="select anime" 
-          isLoading={animesoptions?false:true}
           isClearable= {true}
           options={animesoptions}
           onChange={handleselect} 
@@ -239,7 +235,6 @@ const Contripution = () => {
 
       <br />
       <button type="submit" ref={submit_btn}>submit question</button>
-
 
       </div>
     </form>

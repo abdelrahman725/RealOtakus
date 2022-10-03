@@ -18,6 +18,7 @@ function App() {
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
   const [GameMode,setGameMode] = useState(false)
+  const [all_animes,setall_animes] = useState()
   
   // component views :
   const [HomeView,setHomeView] = useState(true)
@@ -45,7 +46,7 @@ function App() {
       
       const new_data = JSON.parse(lastMessage.data)
       
-      // checking if there is a new notificaation payload
+      // checking if there is a new notificationsnotificaation payload
       if (new_data.payload)
       {
         console.log(new_data.payload)
@@ -77,6 +78,8 @@ function App() {
     } 
 
     setUserData(res.user_data)
+    setall_animes(res.animes)
+    
     setnumber_of_unseen_notifications(res.notifications.filter(n => !n.seen).length)
     setnotifications(res.notifications)
   }
@@ -142,8 +145,7 @@ function App() {
         setHomeView(false)
         setContributionView(false)
         setProfileView(false)
-        return
-      
+        return 
     }
       
   }
@@ -157,6 +159,7 @@ return (
       { UserData && < NavBar 
        data={UserData}
        show={ManageViews}
+       notifications_open = {NotificationsView}
        new_notifications={number_of_unseen_notifications} /> 
       }
 
@@ -177,10 +180,13 @@ return (
       { ProfileView && <UserProfile/>}
 
       { NotificationsView && 
-       <Notifications notifications={notifications} clear_unseen_count = {setnumber_of_unseen_notifications}/>
+       <Notifications 
+        all_notifications={notifications}
+        unseen_count = {number_of_unseen_notifications}
+        clear_unseen_count = {setnumber_of_unseen_notifications} />
       }
 
-      { ContributionView && <Contripution />}
+      { ContributionView && <Contripution  all_animes={all_animes}/>}
 
       { QuizAnimesView && <QuizAnimes/>} 
 

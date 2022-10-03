@@ -2,7 +2,7 @@ import random
 from time import sleep
 
 from django.db import connection, IntegrityError
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.forms import ValidationError
 from django.db.models import Count, Q,Avg
 from django.http import JsonResponse
@@ -16,9 +16,9 @@ from board.models import *
 from board.serializers import *
 from board.constants import *
 
-# to see the corresponding sql queries that get executed when the relevant orm queryset gets executed
-# for q in connection.queries:
-#     print(f"\n\n { q } \n\n")
+# to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed
+# for q in connection.queries : print(f"\n\n { q } \n\n")
+
 
 animes_dict = {}
 
@@ -26,29 +26,30 @@ game_questions = {}
 
 game_interactions = {}
 
-for anime in Anime.objects.all():
-    animes_dict[anime.pk] = anime
+for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
 
-def GetOrFetchAnime(anime : int):
+def GetOrFetchAnime(anime : int):   
     try:
         return animes_dict[anime]
+    
     except KeyError:
         fetched_anime = Anime.objects.get(anime)
         animes_dict[anime] = fetched_anime
         return fetched_anime
 
+
 def GetWantedUser(request):
-    return request.user
-    return User.objects.get(username="another_test")
+    #return request.user
+    return User.objects.get(username="otaku")
 
 
-@login_required
+#@login_required
 def ReactApp(request):
     return render(request, "index.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -62,28 +63,22 @@ def GetUserData(request):
         )
 
     serialized_basic_data = SimpleUserDataSerializer(user, many=False)
-
+    
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(),
         many=True
     )
 
+    all_animes = AnimeSerializer(animes_dict.values(), many=True)
+    
     return Response({
         "user_data": serialized_basic_data.data,
-        "notifications": serialized_notifications.data
+        "notifications": serialized_notifications.data,
+        "animes":all_animes.data
     })
 
 
-
-@login_required
-@api_view(["GET"])
-def GetAllAnimes(request):
-    serialized_data = AnimeSerializer(animes_dict.values(), many=True)
-    return Response(serialized_data.data)
-
-
-
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
@@ -101,65 +96,50 @@ def GetDashBoard(request):
 
     LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
     
-
-    #animes_mapper =  {}    
-    # for question in Question.objects.all():
-    #     anime_name = GetOrFetchAnime(question.anime.id).anime_name
-    #     try:
-    #         anime  = animes_mapper[question.anime.id] 
-    #         animes_mapper[question.anime.id] = {
-    #             "anime_name" : anime_name,
-    #             "total": anime["total"] + 1,
-    #             "approved": anime["approved"] +1 if question.approved else anime["approved"],
-    #             "pending": anime["pending"] +1 if not question.approved else anime["pending"]
-    #         }
-    #     except KeyError:
-    #         animes_mapper[question.anime.id] = {
-    #             "anime_name" : anime_name,
-    #             "total":1,
-    #             "approved": 1 if question.approved else 0,
-    #             "pending": 1 if not question.approved else 0
-    #         }
-    
     return Response({
         "leaderboard": LeaderBorad.data,
         "animes": {}
     })
 
 
-
 # -------------------------------------- Quiz related endpoints ----------------------------------------
+# ------------------------------------------------------------------------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
     user = GetWantedUser(request) 
 
     game_animes = AnimeInteractionsSerializer(
-        Anime.objects.filter(active=True).annotate(
-            user_interactions=Count("anime_interactions",filter=(Q(anime_interactions__user=user)))
+        Anime.objects.annotate(
+            n_user_interactions=Count("anime_interactions",filter=(Q(anime_interactions__user=user)),distinct=True)
+            ).annotate(
+                n_active_questions= Count("anime_questions",distinct=True)
             ),
         many=True
     )
-
+    
     return Response({
         "animes": game_animes.data,
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
     selected_anime = animes_dict[game_anime]
-
+    
+    # To Do here: we have to check n_tests_started against n_tests_completed
+    # To catch malicious or non-serious users
+    
     # this game questions
     questions=selected_anime.anime_questions.filter(
             ~Q(contribution__contributor=current_user),
             ~Q(contribution__reviewer=current_user),
             #active=True
         ).exclude(
-            # pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
+            pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
         )[:QUESTIONSCOUNT]
 
     if questions.count() < 5:
@@ -223,7 +203,7 @@ def QuestionEncounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitGame(request):
     user = GetWantedUser(request)
@@ -261,11 +241,13 @@ def SubmitGame(request):
         "right_answers" :right_answers.data
     })
 
-# ------------------------------------------------------------------------------------
 
 
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
 
-@login_required
+
+#@login_required
 @api_view(["POST"])
 def MakeContribution(request):
     user = GetWantedUser(request)
@@ -316,12 +298,10 @@ def MakeContribution(request):
         return JsonResponse({"msg": e.args}) 
     
     except ValidationError as e:
-
         return JsonResponse({"msg": e.args[0]})
 
 
-
-@login_required
+#@login_required
 @api_view(["POST"])
 def ReviewContribution(request):
     user = GetWantedUser(request)
@@ -369,16 +349,16 @@ def ReviewContribution(request):
         )
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
 
     all_user_data = AllUserDataSerializer(user, many=False)
     
-    questions_for_review = []
+    #questions_to_review = []
     if user.animes_to_review.exists():
-        questions_for_review = QuestionSerializer(
+        questions_to_review = QuestionSerializer(
             Question.objects.filter(
                     ~Q(contribution__contributor=user),
                     anime__in=user.animes_to_review.all(),
@@ -388,19 +368,21 @@ def GetMyProfile(request):
         many=True
         )
 
+    #user_contributions = user.contributions.all().select_related("question")
     
+
     return Response({
         "data": all_user_data.data,
-        "questionsForReview": questions_for_review.data if questions_for_review else [], 
+        "questionsForReview": questions_to_review.data if questions_to_review else [], 
         "UserContributions" : [],
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)
-    
+
     user.getnotifications.filter(pk__in=request.data["notifications"]).update(seen=True)
     
     return Response(
@@ -410,15 +392,14 @@ def UpdateNotificationsState(request):
 
 
 # @api_view(["GET"])
-# def animes_questions_api_service(requst,anime_id,max_count):
+# def animes_questions_api_service(requst, anime_id, count):
     
 #     anime = GetOrFetchAnime(anime_id)
 
 #     serialized_questions = QuestionsApiService(
-#         anime.anime_questions.filter(active=True)[:max_count],
+#         anime.anime_questions.filter(active=True)[:count],
 #     many=True
 #     )
-
 #     return Response({
 #         "data": serialized_questions.data,
 #     })

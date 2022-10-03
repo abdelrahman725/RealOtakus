@@ -1,23 +1,23 @@
 import math
 import pytz
+from datetime import  timedelta
 
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
-from django.utils import timezone
 
 from board.models import *
 from board.constants import COUNTRIES
 
 
 def to_local_date_time(utc_datetime):
-
   if utc_datetime:
+    return utc_datetime  + timedelta(minutes=120)
     local_tz = pytz.timezone('Africa/Cairo')
     return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
-    
+  return "N/A"
 
 # 10 customized filter classes
 class SocialAccountFilter(admin.SimpleListFilter):
@@ -210,33 +210,9 @@ class ReadOnly(admin.ModelAdmin):
     return False
 
 
-@admin.register(Anime)
-class AnimeAdmin(admin.ModelAdmin):
-
-  list_editable = ("active",)
-  search_fields = ("anime_name",)
-
-  list_display = (
-    "anime_name",
-    "total_questions",
-    "active"
-  )
-
-  list_filter = (
-    "active",
-  )
-
-  def get_queryset(self, request):
-    query = super(AnimeAdmin, self).get_queryset(request)
-    return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
-
-
-
 @admin.register(Notification)
 class NotificationAdmin(ReadOnly):
-  readonly_fields = (
-    "time",
-  )
+
   list_display = (
     "kind",
     "owner",
@@ -244,7 +220,9 @@ class NotificationAdmin(ReadOnly):
     "_time",
     "seen"
   )
-
+  
+  autocomplete_fields = ['owner']
+  
   search_fields   =  ("owner__username__startswith",)
 
   list_filter  = (
@@ -254,7 +232,41 @@ class NotificationAdmin(ReadOnly):
     "time"
     )
 
-  def _time(self,obj):  return to_local_date_time(obj.time)
+  list_display_links = None
+
+  def _time(self,obj): return to_local_date_time(obj.time)
+    
+
+@admin.register(Anime)
+class AnimeAdmin(admin.ModelAdmin):
+
+  list_editable = ("active",)
+  
+  search_fields = ("anime_name",)
+
+  list_display = (
+    "anime_name",
+    "total_questions",
+    "contributions",
+    "_reviewers",
+    "active"
+  )
+
+  list_filter = (
+    "active",
+    ("reviewers",admin.RelatedOnlyFieldListFilter)
+  )
+
+  def get_queryset(self, request):
+    query = super(AnimeAdmin, self).get_queryset(request)
+    return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
+  
+  def contributions(self,obj):
+    return obj.anime_questions.filter(contribution__isnull=False).count() 
+
+  def _reviewers(self,obj):
+    return obj.reviewers.all().count()
+
 
 
 
@@ -294,18 +306,26 @@ class ContributionAdmin(admin.ModelAdmin):
   def view_question(self, obj):
     if obj.question:
       url = reverse('admin:board_question_change', args=(obj.question.id,))
-      return format_html('<a href="{}">{}</a>',url, obj.question.question)
+      return format_html(
+        '<p>{anime}<br/><br/> <a href="{url}">{question}</a><p/>',
+        anime=obj.question.anime.anime_name,
+        question=obj.question.question,
+        url=url,
+      )
     return "removed"
 
   view_question.short_description = "question"
   
   def view_contribution(self,obj):
     if not obj.question:
-      return "no related question"
+      return "none"
 
     if obj.approved == None:
       url = reverse('admin:board_contribution_change', args=(obj.id,))
-      return format_html('<a href="{}">pending...</a>',url)
+      return format_html(
+        '<a href="{}" style="color:#FF7F50;font-size:15px;letter-spacing: 1px;">pending...</a>',
+        url
+      )
 
     return "Reviewed"
   
@@ -315,7 +335,9 @@ class ContributionAdmin(admin.ModelAdmin):
     return obj.reviewer
 
   def reviewers_assigned(self,obj):
-    return obj.question.anime.reviewers.count() 
+    if obj.question:
+      return obj.question.anime.reviewers.count() 
+    return "N/A"
 
   def _date_created(self,obj):
     return to_local_date_time(obj.date_created)
@@ -363,7 +385,6 @@ class ContributionAdmin(admin.ModelAdmin):
     return True
 
   
-
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
   #date_hierarchy = 'date_created'
@@ -391,14 +412,13 @@ class QuestionAdmin(admin.ModelAdmin):
 
   list_display =  (
     "question",
-    "id",
+    "anime",
+    #"id",
     "right_answer",
     "choice1",
     "choice2",
     "choice3",
     "active",
-    "anime",
-    "reviewers_assigned",
     #"_contribution"
   )
 
@@ -422,10 +442,6 @@ class QuestionAdmin(admin.ModelAdmin):
     if obj: return not obj.active
   
 
-  def reviewers_assigned(self,obj):
-    return obj.anime.reviewers.count()
-
-
   def _contribution(self,obj):
     try:
       if obj.contribution:
@@ -441,7 +457,6 @@ class QuestionAdmin(admin.ModelAdmin):
     except:
       pass
     return None
-
 
 
 @admin.register(QuestionInteraction)

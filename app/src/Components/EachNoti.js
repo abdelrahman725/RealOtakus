@@ -6,6 +6,7 @@ const EachNoti = ({noti,time}) => {
 const UTCToLocalTime = (utc_time)=>{
   
     const date_time = new Date(utc_time)
+    
     const months_names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
    
     let date = `${months_names[date_time.getMonth()]} ${date_time.getDate()}`

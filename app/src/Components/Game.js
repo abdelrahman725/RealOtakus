@@ -6,7 +6,7 @@ import { GamdeModeContext } from "../App"
 import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
 
-const Game = ({questions,setgamestarted}) => {
+const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
 
   const {setGameMode,setUserData,GameMode} = useContext(GamdeModeContext)
   const [useranswers,setuseranswers] = useState({})
@@ -80,6 +80,7 @@ const Game = ({questions,setgamestarted}) => {
             <button onClick={()=>{
               setgamestarted(false)
               setGameMode(false)
+              fetch_quiz_animes()
               }}>
               exit
             </button>

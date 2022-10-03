@@ -54,14 +54,14 @@ class Command(BaseCommand):
                 choice1="choice_1",
                 choice2="choice_2",
                 choice3="choice_3" ,
-                date_created = random_date()
             )
 
         def generate_contribution(question,contributor):
 
             return Contribution.objects.create(    
                     question = question,
-                    contributor=contributor
+                    contributor=contributor,
+                    date_created = random_date()
                 )
 
 
@@ -87,3 +87,4 @@ class Command(BaseCommand):
         
 
         print("\n Done \n")
+        

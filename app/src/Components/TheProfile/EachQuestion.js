@@ -18,8 +18,8 @@ const feedback_options = [
 ]
 
 const feedback_select = useRef(null)
-const customStyles = {
 
+const customStyles = {
     container: (provided, state) => ({
         ...provided,
         width:220,
