@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from board.models import *
 
 
@@ -8,20 +7,17 @@ class SimpleUserDataSerializer(serializers.ModelSerializer):
     model = User
     fields = ('id','username','points','level','country')
 
+
 class AllUserDataSerializer(serializers.ModelSerializer):
-  # n_contributions = serializers.IntegerField()
   class Meta:
     model = User
     fields = (
-      'id',
       'username',
       'points',
       'level',
-      'contributions',
-      'tests_completed',
-      'tests_started',
       'country',
-      )
+    )
+
 
 class LeaderBoradSerializer(serializers.ModelSerializer):
   n_contributions = serializers.IntegerField()
@@ -37,7 +33,6 @@ class AnimeSerializer(serializers.ModelSerializer):
     fields = ("id","anime_name")
 
     
-
 class AnimeNameSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime 
@@ -56,10 +51,22 @@ class QuestionSerializer(serializers.ModelSerializer):
       "choice2",
       "choice3",
       "right_answer",
-      "active",
       "id",
     )
+  
 
+class ContributionSerializer(serializers.ModelSerializer):
+  question = QuestionSerializer()
+
+  class Meta:
+    model = Contribution
+    fields = (
+      "approved",
+      "reviewer_feedback",
+      "date_reviewed",
+      "question"
+    ) 
+  
 
 class AnswersSerializer(serializers.ModelSerializer):
   class Meta:
@@ -91,15 +98,14 @@ class NotificationsSerializer(serializers.ModelSerializer):
     
 
 class QuestionsApiService(serializers.ModelSerializer):
-    
   class Meta:
     model = Question
     fields = (
       "id",
       "question",
+      "right_answer",
       "choice1",
       "choice2",
-      "choice3",
-      "right_answer",
+      "choice3"
     )
     

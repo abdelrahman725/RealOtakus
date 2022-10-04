@@ -6,7 +6,7 @@ from django.utils import timezone
 
 import board.models
 
-from board.constants import LEVELS
+from board.constants import LEVELS, QUESTIONSCOUNT
 
 
 def CreateNotification(receiver,notification,kind):
@@ -19,21 +19,20 @@ def CreateNotification(receiver,notification,kind):
 
 
 def notify_reviewers(anime):
-    msg = f"new question for {anime.anime_name} and needs review, check your profile"
     for reviewer in anime.reviewers.all():
         CreateNotification(
             receiver=reviewer,
-            notification= msg,
+            notification= f"new question for {anime.anime_name} and needs review, check your profile",
             kind="R"
         )
 
 
+# good feature to have, not completed yet
 def announce_new_active_anime(question):
-    if question.anime.anime_questions.filter(active=True).count() >= 5:
+    if question.anime.anime_questions.filter(active=True).count() >= QUESTIONSCOUNT:
         question.anime.active = True
         question.anime.save()
 
-        notification = f"{question.anime.anime_name} is now active and has questions !"
         reviewer,contributor = None,None
         
         try:        
@@ -47,15 +46,9 @@ def announce_new_active_anime(question):
             if user != reviewer and user != contributor:
                 CreateNotification(
                     receiver=user,
-                    notification= notification,
+                    notification= f"{question.anime.anime_name} is now active and has questions !",
                     kind="N"
                 )
-
-
-def deactivate_anime(anime):
-    if anime.anime_questions.filter(active=True).count() < 5:
-        anime.active = False
-        anime.save()
 
 
 def notify_user_of_contribution_state(contribution):
@@ -64,7 +57,6 @@ def notify_user_of_contribution_state(contribution):
 
     if contribution.reviewer == None:
         contribution.reviewer = board.models.User.objects.get(pk=1,is_superuser=True) 
-
     
     if contribution.approved == True:
         contribution.contributor.points+=10

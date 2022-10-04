@@ -46,7 +46,6 @@ function App() {
       
       const new_data = JSON.parse(lastMessage.data)
       
-      // checking if there is a new notificationsnotificaation payload
       if (new_data.payload)
       {
         console.log(new_data.payload)
@@ -63,11 +62,9 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps    
   },[])
 
-  const Logout = ()=>
-  {
-    window.location.href = logout_url
-  }
 
+  const Logout = ()=>  window.location.href = logout_url
+  
   const GetUserData = async()=>{
 
     const res = await async_http_request({path:"data"})
@@ -156,7 +153,8 @@ return (
 
   <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
 
-      { UserData && < NavBar 
+      { UserData && 
+      < NavBar 
        data={UserData}
        show={ManageViews}
        notifications_open = {NotificationsView}
@@ -165,7 +163,7 @@ return (
 
       <div className="upperbuttons">
 
-        <div>{!GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>}</div>
+        <div> {!GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>} </div> 
 
         { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
@@ -186,7 +184,7 @@ return (
         clear_unseen_count = {setnumber_of_unseen_notifications} />
       }
 
-      { ContributionView && <Contripution  all_animes={all_animes}/>}
+      { ContributionView && <Contripution all_animes={all_animes} />}
 
       { QuizAnimesView && <QuizAnimes/>} 
 

@@ -12,12 +12,11 @@ from django.utils.translation import gettext_lazy as _
 
 from board import base_models
 
-from board.helpers import CreateNotification, choices_integirty
+from board.helpers import CreateNotification
+from board.helpers import choices_integirty
 from board.helpers import question_validator
 from board.helpers import CheckLevel
 from board.helpers import notify_reviewers
-from board.helpers import announce_new_active_anime
-from board.helpers import deactivate_anime
 from board.helpers import notify_user_of_contribution_state
 
 
@@ -33,10 +32,6 @@ class User(base_models.User):
 
 class Anime(base_models.Anime):
     
-    @property
-    def total_interactions(self):
-        return self.anime_interactions.all().count()        
-
     @property
     def total_questions(self):
         return self.anime_questions.all().count()
@@ -87,37 +82,15 @@ class Question(base_models.Question):
 
 @receiver(pre_delete, sender=Question)
 def protect_active_questions(sender, instance, **kwargs):
-
     if instance.active == True:
         raise ValidationError(
                 _('production questions can not be deleted')
         )
 
 
-# automatically or manually actiavte an anime ? 
-@receiver(post_save, sender=Question)
-def after_question_is_saved(sender, instance, **kwargs):
-    if instance.active and instance.anime.active == False :
-        async_anime_announcment = threading.Thread(
-                target=announce_new_active_anime,
-                args=(instance,)
-            )
-        async_anime_announcment.start()
-
-
-@receiver(post_delete, sender = Question)
-def post_question_deletion(sender, instance, **kwargs):
-    if instance.anime.active == True:
-        check_anime_active_state = threading.Thread(
-                target=deactivate_anime,
-                args=(instance.anime,)
-            )
-        check_anime_active_state.start()
-
-
 class Contribution(base_models.Contribution):
     def __str__(self) -> str:
-        return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime}"
+        return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime if self.question else 'an anime'}"
 
    
 @receiver(pre_save, sender=Contribution)
@@ -133,8 +106,8 @@ def contribution_reviewed(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Contribution)
 def post_contribution_creation(sender, instance, created, **kwargs):
+    
     if created and instance.contributor != instance.reviewer:
-
         async_notification = threading.Thread(
             target=notify_reviewers,
             args=(instance.question.anime,)
@@ -143,9 +116,13 @@ def post_contribution_creation(sender, instance, created, **kwargs):
   
 
 class QuestionInteraction(base_models.QuestionInteraction):
-
     def __str__(self) -> str:
         return f" {self.user} interacted with a question on {self.question.anime.anime_name}"
+
+
+class Game(base_models.Game):
+    def __str__(self) -> str:
+        return "game we 5las just for now bs"
 
 
 class Notification(base_models.Notification):

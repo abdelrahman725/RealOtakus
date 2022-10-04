@@ -30,7 +30,6 @@ const Contripution = ({all_animes}) => {
 
   const setAnimesOptions = ()=>
    { 
-
     const formated_animes = []
 
      all_animes.map((anime) => 
@@ -40,8 +39,8 @@ const Contripution = ({all_animes}) => {
      setanimesoptions(formated_animes)
    }  
 
-  const handleselect=(e)=> {setanime(e.value)}
-
+  const handleselect=(e)=> {e ? setanime(e.value) : setanime()}
+  
   const handlechange = (e)=>
   {    
 
@@ -76,7 +75,7 @@ const Contripution = ({all_animes}) => {
           }
         })
         
-        setmsg(submit_contribution.msg)
+        setmsg(submit_contribution.info)
     
         // after question contribution is submitted now we can clear the states 
         for (const key in Question)
@@ -113,12 +112,10 @@ const Contripution = ({all_animes}) => {
           cleaned_question[key] = trimmed_value
         }
           
-        if ( 
-          cleaned_question.question.match(letters_exist) == null 
-          ||
-          cleaned_question.question.match(letters_exist).length < 2
-         )
-         {
+        if ( cleaned_question.question.match(letters_exist) == null  
+            ||
+             cleaned_question.question.match(letters_exist).length < 2
+         ){
           console.log("question shoud contain at least 2 letters")
           question_ref.current.focus() 
           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -131,9 +128,8 @@ const Contripution = ({all_animes}) => {
            question_ref.current.focus() 
            window.scrollTo({ top: 0, behavior: 'smooth' })
            return false
-         }
-        
-
+        }
+    
         if (unique_choices.size !==4)
         {
           console.log("each choice must be unique")

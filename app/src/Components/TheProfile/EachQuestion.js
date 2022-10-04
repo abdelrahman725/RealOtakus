@@ -2,13 +2,13 @@ import async_http_request from '../AsyncRequest'
 import Select from 'react-select'
 import { useState, useRef} from "react"
 
-const EachQuestion = ({anime,question,reviewstate,setreviewstate}) => {
+const EachQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 
 const [question_state,setquestion_state] = useState()
-
-const [reviewe_sent,setreviewe_sent] = useState(false)
-
+const [review_submitted,set_review_submitted] = useState(false)
 const [feedback,setfeedback] = useState() 
+
+const feedback_select = useRef(null)
 
 const feedback_options = [
     { value: 'invalid', label: 'invalid' },
@@ -17,8 +17,6 @@ const feedback_options = [
     { value: 'choices are similar', label: 'choices are similar' }      
 ]
 
-const feedback_select = useRef(null)
-
 const customStyles = {
     container: (provided, state) => ({
         ...provided,
@@ -26,7 +24,6 @@ const customStyles = {
         float:"left"
       }),
 }
-
 
 const ReviewSubmission = (e,question)=>{
 
@@ -52,18 +49,16 @@ const ReviewSubmission = (e,question)=>{
 
     if (question_state === 0 &&  !feedback){
         feedback_select.current.focus()
-       return
+        return
     }  
 
     SubmitReview(question)
-    setreviewe_sent(true)
+    set_review_submitted(true)
 }
 
-const handle_question_state = (e)=> {
-    setquestion_state( parseInt(e.target.value) )
-}
+const handle_question_state = (e)=> setquestion_state( parseInt(e.target.value) )
 
-const handle_feedback = selected_option =>   setfeedback(selected_option)    
+const handle_feedback = selected_option =>  setfeedback(selected_option)    
 
 
 return (
@@ -73,7 +68,6 @@ return (
             {question.question}
         </p> 
         
-
         {reviewstate==="reviewstate" &&
             <form onSubmit={(e)=>ReviewSubmission(e,question.id)} className="reviewform">
        
@@ -91,7 +85,10 @@ return (
                         />
                         decline
                     </label>
-                </div><br />
+                </div>
+                
+                <br />
+             
                 <div className="radio">
                     <label>
                         <input
@@ -106,6 +103,7 @@ return (
                         approve
                     </label>
                 </div>
+             
                 <br />
                 {question_state=== 0 &&
                  <div>    
@@ -113,26 +111,26 @@ return (
                     className="question_feedback" 
                     styles={customStyles}
                     placeholder="feedback"
-                    isClearable= {true}
-                    isSearchable={false} 
+                    isClearable = {false}
+                    isSearchable ={false} 
                     options={feedback_options}
                     value={feedback}
                     onChange={handle_feedback} 
                     ref={feedback_select}
-                    isMulti = {false}
-                    //closeMenuOnSelect={false}
+                    // isMulti = {false}
                     />
                     <br /><br /><br />
                 </div>}
                 
-                {!reviewe_sent ? <button className="" type="submit">Submit</button>:"loading"}
+                {!review_submitted ? <button className="" type="submit">Submit</button>:"loading"}
                 
                 
             </form>
         }
         
     </div>
-  )
+)
+
 }
 
 export default EachQuestion

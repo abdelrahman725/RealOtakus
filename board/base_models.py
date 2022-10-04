@@ -16,10 +16,8 @@ class Anime(models.Model):
 
 
 class User(AbstractUser):
-    country = models.CharField(max_length=10, blank=True, null=True)
     points = models.PositiveIntegerField(default=0)
-    tests_completed = models.PositiveIntegerField(default=0)
-    tests_started = models.PositiveIntegerField(default=0)
+    country = models.CharField(max_length=10, blank=True, null=True)
     animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)
 
     level = models.CharField(
@@ -43,9 +41,6 @@ class Question(models.Model):
     choice3 = models.CharField(max_length=150)
     
     active = models.BooleanField(default=False)
-
-    correct_answers = models.PositiveIntegerField(default=0)
-    wrong_answers = models.PositiveIntegerField(default=0)
 
     class Meta:
         constraints = [
@@ -84,6 +79,16 @@ class QuestionInteraction(models.Model):
         abstract = True
 
 
+class Game(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_games")
+    anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_games")
+    games = models.PositiveSmallIntegerField(default=1) 
+    completed = models.BooleanField(default=False)
+    
+    class Meta:
+        abstract = True
+
+
 class Notification(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="getnotifications")
     notification = models.CharField(max_length=250)
@@ -105,3 +110,4 @@ class Notification(models.Model):
     class Meta:
         ordering = ["-id"]
         abstract = True
+

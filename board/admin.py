@@ -245,10 +245,11 @@ class AnimeAdmin(admin.ModelAdmin):
   search_fields = ("anime_name",)
 
   list_display = (
-    "anime_name",
+    "view_anime",
     "total_questions",
     "contributions",
     "_reviewers",
+    "interactions",
     "active"
   )
 
@@ -261,6 +262,12 @@ class AnimeAdmin(admin.ModelAdmin):
     query = super(AnimeAdmin, self).get_queryset(request)
     return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
   
+  def view_anime(self,obj):
+    return format_html('<p>{}<p/><br/>',obj.anime_name) 
+  
+  def interactions(self,obj):
+    return obj.anime_interactions.all().count()        
+
   def contributions(self,obj):
     return obj.anime_questions.filter(contribution__isnull=False).count() 
 
@@ -396,19 +403,12 @@ class QuestionAdmin(admin.ModelAdmin):
     "right_answer",
     "choice1",
     "choice2",
-    "choice3",
-    "correct_answers",
-    "wrong_answers"
+    "choice3"
   )
   
   list_editable=("active",)
 
   autocomplete_fields = ['anime']
-
-  readonly_fields =  (
-    "correct_answers",
-    "wrong_answers"
-  )
 
   list_display =  (
     "question",
@@ -419,6 +419,9 @@ class QuestionAdmin(admin.ModelAdmin):
     "choice2",
     "choice3",
     "active",
+    "correct_answers",
+    "wrong_answers",
+    #"not_answered",
     #"_contribution"
   )
 
@@ -429,6 +432,15 @@ class QuestionAdmin(admin.ModelAdmin):
   )
   
   search_fields   =  ("question",)
+
+  def correct_answers(self,obj):
+    return obj.question_interactions.filter(correct_answer=True).count()
+  
+  def wrong_answers(self,obj):
+    return obj.question_interactions.filter(correct_answer=False).count()
+  
+  def not_answered(self,obj): 
+    return obj.question_interactions.filter(correct_answer__isnull=True).count()
 
 
   def get_readonly_fields(self, request, obj=None):
@@ -491,8 +503,6 @@ class UserAdmin(admin.ModelAdmin):
     "level",
     "points",
     "animes_to_review",
-    "tests_completed",
-    "tests_started",
     #"password",
     "last_login",
     "date_joined",
@@ -506,8 +516,6 @@ class UserAdmin(admin.ModelAdmin):
     "points",
     "first_name",
     "last_name",
-    "tests_started",
-    "tests_completed",
     "password",
     "date_joined",
     "last_login"
@@ -519,7 +527,6 @@ class UserAdmin(admin.ModelAdmin):
     #"email",
     "level",
     "points",
-    "tests_completed",
     "contributions",
     "questions_reviewed",
     "reviewer_of",
@@ -527,7 +534,7 @@ class UserAdmin(admin.ModelAdmin):
   )
 
   list_filter  =  (
-    QuizTakerFilter,
+    #QuizTakerFilter,
     IsContributorFilter,
     IsReviewerFilter,
     SocialAccountFilter,

@@ -38,8 +38,11 @@ const QuizAnimes = () => {
 // get selected anime questions
   const GetGame = async(selectedanime)=>
   {
-    const anime_questions  = await async_http_request({path:`getgame/${selectedanime}`})
-  
+    const anime_questions  = await async_http_request({path:`getgame/${ selectedanime }`})
+    
+     if (anime_questions.length !== 5)
+      return
+    
     setgamequestions(anime_questions)
     setselected_anime()
     setgamestarted(true)
@@ -60,11 +63,11 @@ const QuizAnimes = () => {
     return true
   }  
 
-
 return (
   <>
    { gamestarted ? 
-    <Game questions={gamequestions} setgamestarted={setgamestarted} fetch_quiz_animes = {GetAnimes}/>
+
+   <Game questions={gamequestions} setgamestarted={setgamestarted} fetch_quiz_animes = {GetAnimes}/>
     :
     <div className="animeslist">
        <h2>which anime you want to take quiz in ?</h2><br />

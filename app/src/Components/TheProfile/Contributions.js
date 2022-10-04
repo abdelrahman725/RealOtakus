@@ -1,6 +1,6 @@
 import Contripution from "./Contribution"
 
-const Contributions = ({approved,pending}) => {
+const Contributions = ({approved,pending,rejected}) => {
   return (
   <>
       <h2>Your Contributions</h2><br />
@@ -11,25 +11,26 @@ const Contributions = ({approved,pending}) => {
     <div className="contributions">
         
       <p>pending  </p>
-      {pending.map((q,index)=>(
+      
+      {pending.map((c,index)=>(
         <Contripution 
         key={index}
-        question={q}
-        is_approved={q.approved}/>
+        question={c.question}
+        is_approved={null}/>
       ))}
+
       <br />
+      
       <p>approved  </p>
-      {approved.map((q,index)=>(
+      {approved.map((c,index)=>(
         <Contripution
         key={index} 
-        question={q}
-        is_approved={q.approved}/>
+        question={c.question}
+        is_approved={true}/>
       ))}
           
     </div>
-      
       :
-      
       "no contributions yet"
     }
     </div>
