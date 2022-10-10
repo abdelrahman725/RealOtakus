@@ -1,12 +1,13 @@
 import re
+
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 from django.utils import timezone
 
+from board.constants import LEVELS 
 import board.models
-
-from board.constants import LEVELS, QUESTIONSCOUNT
 
 
 def CreateNotification(receiver,notification,kind):
@@ -27,30 +28,6 @@ def notify_reviewers(anime):
         )
 
 
-# good feature to have, not completed yet
-def announce_new_active_anime(question):
-    if question.anime.anime_questions.filter(active=True).count() >= QUESTIONSCOUNT:
-        question.anime.active = True
-        question.anime.save()
-
-        reviewer,contributor = None,None
-        
-        try:        
-            contributor = question.contribution.contributor
-            reviewer =  question.contribution.reviewer
-   
-        except board.models.Contribution.DoesNotExist:
-            pass
-
-        for user in board.models.User.objects.all():
-            if user != reviewer and user != contributor:
-                CreateNotification(
-                    receiver=user,
-                    notification= f"{question.anime.anime_name} is now active and has questions !",
-                    kind="N"
-                )
-
-
 def notify_user_of_contribution_state(contribution):
 
     contribution.date_reviewed = timezone.now()
@@ -59,8 +36,10 @@ def notify_user_of_contribution_state(contribution):
         contribution.reviewer = board.models.User.objects.get(pk=1,is_superuser=True) 
     
     if contribution.approved == True:
-        contribution.contributor.points+=10
-        contribution.contributor.save()
+
+        if contribution.contributor: 
+            contribution.contributor.points+=10
+            contribution.contributor.save()
 
         contribution.question.active = True
         contribution.question.save()
@@ -78,7 +57,6 @@ def notify_user_of_contribution_state(contribution):
                 kind="F"
             )
   
-
 
 def CheckLevel(user):
     for level in reversed(LEVELS):    

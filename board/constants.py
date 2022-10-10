@@ -1,7 +1,4 @@
 
-# mentors that i will later assign them manually
-MENTORS = ()
-
 # get all model fields
 #[f.name for f in MyModel._meta.get_fields()]
 
@@ -24,8 +21,7 @@ LEVELS = {
 
 LEVELS_CHOICES = []
 
-for level in LEVELS:
-    LEVELS_CHOICES.append((level, level))
+for level in LEVELS: LEVELS_CHOICES.append((level, level))
 
 
 NUMBER_OF_LEVELS = len(LEVELS)
@@ -292,4 +288,3 @@ COUNTRIES = {
     "zm":"Zambia",
     "zw":"Zimbabwe"
 }
-

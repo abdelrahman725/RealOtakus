@@ -21,7 +21,9 @@ const QuizAnimes = () => {
     setanimesoptions()
 
     const animes_data = await async_http_request({path:"gameanimes"})
-    console.log(animes_data.animes)
+
+    //console.log(animes_data.animes)
+
     const animes_array = []
 
     animes_data.animes.map((anime) => 
@@ -38,12 +40,14 @@ const QuizAnimes = () => {
 // get selected anime questions
   const GetGame = async(selectedanime)=>
   {
-    const anime_questions  = await async_http_request({path:`getgame/${ selectedanime }`})
+    const game  = await async_http_request({path:`getgame/${ selectedanime }`})
     
-     if (anime_questions.length !== 5)
+    if (game.info !== "ok"){
+      console.log(game.info)
       return
+    }
     
-    setgamequestions(anime_questions)
+    setgamequestions(game.game_questions)
     setselected_anime()
     setgamestarted(true)
     setGameMode(true)    
@@ -67,7 +71,11 @@ return (
   <>
    { gamestarted ? 
 
-   <Game questions={gamequestions} setgamestarted={setgamestarted} fetch_quiz_animes = {GetAnimes}/>
+   <Game
+      questions={gamequestions}
+      setgamestarted={setgamestarted}
+      fetch_quiz_animes = {GetAnimes}
+    />
     :
     <div className="animeslist">
        <h2>which anime you want to take quiz in ?</h2><br />

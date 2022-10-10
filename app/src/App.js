@@ -2,10 +2,13 @@ import './App.css'
 
 import NavBar from './Components/NavBar'
 import Notifications from './Components/Notifications'
-import Contripution from './Components/Contripution'
+import Contribute from './Components/Contribute'
 import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
+import UserContributions from './Components/UserContributions'
+import QuestionsForReview from './Components/QuestionsForReview'
 import async_http_request from './Components/AsyncRequest'
+
 import { UserProfile } from './Components/TheProfile/UserProfile'
 
 import React,{useState,useEffect,createContext} from 'react'
@@ -26,8 +29,8 @@ function App() {
   const [ContributionView,setContributionView]= useState(false)
   const [QuizAnimesView,setQuizAnimesView] = useState(false)
   const [ProfileView,setProfileView] = useState(false)
+  
   const NUMBER_OF_QUIZ_QUESTIONS = 5 
-
   const  domain = "127.0.0.1:8000"
   const  server  = `http://${domain}`
   const  socket = `ws://${domain}/ws/socket-server/`
@@ -57,20 +60,33 @@ function App() {
   }, [lastMessage, setnotifications]);
 
   
-  useEffect(()=>{
-    GetUserData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps    
-  },[])
-
-
   const Logout = ()=>  window.location.href = logout_url
-  
+   
+  // called if the user doesn't have a saved country (which will always be the case initially for the first login)
+  const getUserCountryViaApiServiceThenSaveCountry = async()=>
+   {  
+    
+     const fetched_country = await async_http_request({server:"http://ip-api.com/json"})
+     
+     const country_code = fetched_country.countryCode.toLowerCase()
+     console.log(country_code)
+     
+     // after we get the country successfully 
+     // save it to the database so subsequent requests for the same user don't have to query the country from the api service again    
+     const saving_country_res  = await async_http_request({
+       path:"data",
+       method:"POST",
+       data: {"country" : country_code}
+     })
+ 
+     console.log(saving_country_res)     
+   }
+ 
   const GetUserData = async()=>{
 
     const res = await async_http_request({path:"data"})
 
-    if (!res.user_data.country)
-    {
+    if (!res.user_data.country){
       getUserCountryViaApiServiceThenSaveCountry()
     } 
 
@@ -81,26 +97,11 @@ function App() {
     setnotifications(res.notifications)
   }
   
-  // called if the user doesn't have a saved country (which will always be the case initially for the first login)
-  const getUserCountryViaApiServiceThenSaveCountry = async()=>
-  {
-    
-    const fetched_country = await async_http_request({server:"http://ip-api.com/json"})
-    
-    const country_code = fetched_country.countryCode.toLowerCase()
-    console.log(country_code)
-    
-    // after we get the country successfully 
-    // save it to the database so subsequent requests for the same user don't have to query the country from the api service again    
-    const saving_country_res  = await async_http_request({
-      path:"data",
-      method:"POST",
-      data: {"country" : country_code}
-    })
+  useEffect(()=>{
+    GetUserData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps    
+  },[])
 
-    console.log(saving_country_res)     
-  }
-  
   const ManageViews = (View)=>
   {
     
@@ -109,7 +110,6 @@ function App() {
     
     switch(View)
     {
-
       case "home":
         setHomeView(true)
         setQuizAnimesView(false) 
@@ -143,52 +143,59 @@ function App() {
         setContributionView(false)
         setProfileView(false)
         return 
+    
     }
       
   }
 
-
 return (
- <div className="App"> 
+  <div className="App"> 
 
-  <GamdeModeContext.Provider value={{GameMode,NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
+    <GamdeModeContext.Provider value={{GameMode, NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
 
-      { UserData && 
-      < NavBar 
-       data={UserData}
-       show={ManageViews}
-       notifications_open = {NotificationsView}
-       new_notifications={number_of_unseen_notifications} /> 
-      }
+        { UserData && 
+        < NavBar 
+          data={UserData}
+          show={ManageViews}
+          notifications_open = {NotificationsView}
+          new_notifications={number_of_unseen_notifications} 
+        /> 
+        }
 
-      <div className="upperbuttons">
+        <div className="navigation_buttons">
 
-        <div> {!GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>} </div> 
+          {!GameMode&&  <button onClick={()=>ManageViews("home")}>Home</button>} 
+  
+          { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
-        { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
+          { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
 
-        { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
+          { HomeView && <button onClick={Logout}>Sign Out</button> }
 
-        { HomeView && <button onClick={Logout}>Sign Out</button> }
+        </div> 
+        
+        { HomeView && <TheDashBoard logged_in_user={UserData.id} />}
+        
+        { ProfileView && <UserProfile />}
 
-      </div>
-      
-      { HomeView && <TheDashBoard logged_in_user={UserData.id} />}
-      
-      { ProfileView && <UserProfile/>}
+        { NotificationsView && 
+        <Notifications 
+          all_notifications={notifications}
+          unseen_count = {number_of_unseen_notifications}
+          clear_unseen_count = {setnumber_of_unseen_notifications} 
+        />
+        }
 
-      { NotificationsView && 
-       <Notifications 
-        all_notifications={notifications}
-        unseen_count = {number_of_unseen_notifications}
-        clear_unseen_count = {setnumber_of_unseen_notifications} />
-      }
+        { QuizAnimesView && <QuizAnimes/>} 
+        
+        { ContributionView && <Contribute all_animes={all_animes} />}
 
-      { ContributionView && <Contripution all_animes={all_animes} />}
+        {/* <QuestionsForReview/> */}
 
-      { QuizAnimesView && <QuizAnimes/>} 
+        {/* <UserContributions/> */}
 
-  </GamdeModeContext.Provider>
+
+    </GamdeModeContext.Provider>
 
   </div>
  )

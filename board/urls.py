@@ -13,8 +13,8 @@ urlpatterns = [
     path('interaction/<int:question_id>',QuestionEncounter),
     path('submitgame',SubmitGame),
 
-    path('contribute',MakeContribution),
-    path('review',ReviewContribution),
+    path('contribution',get_or_make_contribution),
+    path('review',contribution_to_review),
 
     path('profile',GetMyProfile),
     path('update_notifications_state',UpdateNotificationsState)

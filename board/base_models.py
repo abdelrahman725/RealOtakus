@@ -18,6 +18,8 @@ class Anime(models.Model):
 class User(AbstractUser):
     points = models.PositiveIntegerField(default=0)
     country = models.CharField(max_length=10, blank=True, null=True)
+    tests_started = models.PositiveSmallIntegerField(default=0)
+    tests_completed = models.PositiveSmallIntegerField(default=0)
     animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)
 
     level = models.CharField(
@@ -32,13 +34,14 @@ class User(AbstractUser):
 
 
 class Question(models.Model):
+
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
-    
+
     question = models.TextField(max_length=350)
-    right_answer = models.CharField(max_length=150)
     choice1 = models.CharField(max_length=150)
     choice2 = models.CharField(max_length=150)
     choice3 = models.CharField(max_length=150)
+    right_answer = models.CharField(max_length=150)
     
     active = models.BooleanField(default=False)
 
@@ -69,7 +72,7 @@ class QuestionInteraction(models.Model):
     anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_interactions")
 
     # None means no answer (always the case initially when recording the interaction)
-    # but when calculating score we will count none as wrong
+    # but when calculating score None should be wrong answer
     correct_answer = models.BooleanField(null=True, default=None)
 
     class Meta:
@@ -81,7 +84,7 @@ class QuestionInteraction(models.Model):
 
 class Game(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_games")
-    anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_games")
+    anime = models.ForeignKey(Anime, on_delete=models.PROTECT,related_name="anime_games")
     games = models.PositiveSmallIntegerField(default=1) 
     completed = models.BooleanField(default=False)
     

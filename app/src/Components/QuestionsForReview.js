@@ -1,23 +1,33 @@
-import EachQuestion from "./EachQuestion"
+import ReviewQuestion from "./ReviewQuestion"
+import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
 import { useState, useEffect } from "react"
 
-const QuestionsForReview = ({questions, animes_for_review}) => {
+const QuestionsForReview = () => {
   
+  const [animes,setanimes] = useState([])
+  const [questions,setquestions]= useState([])
   const [filtered_anime,setfiltered_anime]= useState()
   const [reviewstates,setreviewstates]= useState({})
   const [animes_options,setanimes_options]= useState([])
 
   const handlefilter=(e)=> {e ? setfiltered_anime(e.value) : setfiltered_anime()}
+  
+  const fetch_questions = async () =>{
 
-  useEffect(()=>{
+    const res  = await async_http_request({ path:"review" })
 
-    animes_for_review.map((anime) =>  
+    res.animes.map((anime) =>  
       setanimes_options(
         prev =>[...prev, { value:anime.anime_name, label:anime.anime_name }]
       )
     )
-  },[])
+
+    setanimes(res.animes)
+    setquestions(res.questions)  
+  }
+  
+  useEffect(()=>{ fetch_questions() },[])
   
 
   return (
@@ -28,6 +38,7 @@ const QuestionsForReview = ({questions, animes_for_review}) => {
         className="select_animes"
         placeholder="filter questions"
         isClearable={true} 
+        isLoading={animes_options ? false: true}
         options={animes_options}
         onChange={handlefilter} 
       />
@@ -35,7 +46,7 @@ const QuestionsForReview = ({questions, animes_for_review}) => {
 
       {questions.map((q,index)=>(        
         !filtered_anime? 
-          <EachQuestion 
+          <ReviewQuestion 
             setreviewstate={setreviewstates}
             reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
             anime={q.anime.anime_name}
@@ -44,7 +55,7 @@ const QuestionsForReview = ({questions, animes_for_review}) => {
           />
         :
           filtered_anime===q.anime.anime_name&&
-          <EachQuestion 
+          <ReviewQuestion 
             setreviewstate={setreviewstates}
             reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
             anime={q.anime.anime_name}

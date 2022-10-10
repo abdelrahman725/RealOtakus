@@ -20,7 +20,7 @@ const Competitor = ({name,points,level,country,contributions,user_equal_logged_u
     <td>{level}</td>
     <td>{contributions}</td>
     <td>        
-    {country? flag?<img src={flag} width="32"height="24"></img> : "loading" :"N/A" }
+    {country? flag?<img src={flag} width="32"height="24"></img> : "loading" : "N/A" }
     </td>
   </tr>
 

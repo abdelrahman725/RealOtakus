@@ -6,8 +6,7 @@ const TheDashBoard = ({logged_in_user}) => {
 
   const[otakus,setotakus] = useState()
 
-  const GetDashbBoard = async()=>
-  {
+  const GetDashbBoard = async()=> {
     const dashboard = await async_http_request({
       path:"dashboard"
     })
@@ -15,9 +14,7 @@ const TheDashBoard = ({logged_in_user}) => {
     setotakus(dashboard.leaderboard)
   }
 
-  useEffect(()=>{
-    GetDashbBoard()
-  },[])
+  useEffect(()=>{ GetDashbBoard() },[])
 
 return (
   <div className="container">

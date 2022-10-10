@@ -5,17 +5,25 @@ from board.models import *
 class SimpleUserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('id','username','points','level','country')
-
-
-class AllUserDataSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = User
     fields = (
+      'id',
       'username',
       'points',
       'level',
+      'country'
+    )
+
+
+class ProfileDataSerializer(serializers.ModelSerializer):
+  
+  class Meta:
+    model = User
+    fields = (
+      'points',
+      'level',
       'country',
+      'tests_started',
+      'tests_completed'
     )
 
 
@@ -24,7 +32,13 @@ class LeaderBoradSerializer(serializers.ModelSerializer):
 
   class Meta:  
     model = User
-    fields = ('username','points','level','n_contributions','country')
+    fields = (
+      'username',
+      'points',
+      'level',
+      'n_contributions',
+      'country'
+    )
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -62,8 +76,9 @@ class ContributionSerializer(serializers.ModelSerializer):
     model = Contribution
     fields = (
       "approved",
-      "reviewer_feedback",
+      "date_created",
       "date_reviewed",
+      "reviewer_feedback",
       "question"
     ) 
   
@@ -91,10 +106,42 @@ class AnimeInteractionsSerializer(serializers.ModelSerializer):
     )
 
 
+# class UserInteractionSerializer(serializers.ModelSerializer):
+#   anime= AnimeNameSerializer()
+  
+#   class Meta:
+#     model = QuestionInteraction
+#     fields = (
+#       "anime",
+#       "correct_answer"
+#     )
+
+class UserInteractionSerializer(serializers.ModelSerializer):
+  right_answers = serializers.IntegerField()
+  wrong_answers = serializers.IntegerField()
+  no_answers = serializers.IntegerField()
+
+  
+  class Meta:
+    model = Anime
+    fields = (
+      "anime_name",
+      "right_answers",
+      "wrong_answers",
+      "no_answers"
+    )
+
+
 class NotificationsSerializer(serializers.ModelSerializer):
   class Meta: 
     model = Notification
-    fields = ("id","notification","kind","time","seen")
+    fields = (
+      "id",
+      "notification",
+      "kind",
+      "time",
+      "seen"
+    )
     
 
 class QuestionsApiService(serializers.ModelSerializer):

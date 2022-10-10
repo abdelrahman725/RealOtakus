@@ -248,6 +248,7 @@ class AnimeAdmin(admin.ModelAdmin):
     "view_anime",
     "total_questions",
     "contributions",
+    "admin_questions",
     "_reviewers",
     "interactions",
     "active"
@@ -267,14 +268,15 @@ class AnimeAdmin(admin.ModelAdmin):
   
   def interactions(self,obj):
     return obj.anime_interactions.all().count()        
-
+  
+  def admin_questions(self,obj):
+    return obj.anime_questions.exclude(contribution__isnull=False).count()   
+  
   def contributions(self,obj):
     return obj.anime_questions.filter(contribution__isnull=False).count() 
 
   def _reviewers(self,obj):
     return obj.reviewers.all().count()
-
-
 
 
 @admin.register(Contribution)
@@ -303,8 +305,10 @@ class ContributionAdmin(admin.ModelAdmin):
   
   list_filter = (
     ContributionState,
+    ("contributor",admin.RelatedOnlyFieldListFilter),
+    ("question__anime",admin.RelatedOnlyFieldListFilter),
     ReviewersExistFilter,
-    "date_created"
+    "date_created",
     #"deleted_questions" 
   )
   
@@ -418,6 +422,7 @@ class QuestionAdmin(admin.ModelAdmin):
     "choice1",
     "choice2",
     "choice3",
+    "contributor",
     "active",
     "correct_answers",
     "wrong_answers",
@@ -432,6 +437,12 @@ class QuestionAdmin(admin.ModelAdmin):
   )
   
   search_fields   =  ("question",)
+
+  def contributor(self,obj):
+    try:
+      return obj.contribution.contributor
+    except Contribution.DoesNotExist:
+      return "admin"
 
   def correct_answers(self,obj):
     return obj.question_interactions.filter(correct_answer=True).count()
@@ -502,6 +513,8 @@ class UserAdmin(admin.ModelAdmin):
     "country",
     "level",
     "points",
+    "tests_started",
+    "tests_completed",
     "animes_to_review",
     #"password",
     "last_login",
@@ -514,6 +527,8 @@ class UserAdmin(admin.ModelAdmin):
   readonly_fields =  (
     "level",
     "points",
+    "tests_started",
+    "tests_completed",
     "first_name",
     "last_name",
     "password",
@@ -527,6 +542,10 @@ class UserAdmin(admin.ModelAdmin):
     #"email",
     "level",
     "points",
+    #"quiz_avg_score",
+    #"tests_started",
+    #"tests_completed",
+    #"quiz_seriousness",
     "contributions",
     "questions_reviewed",
     "reviewer_of",
@@ -548,7 +567,18 @@ class UserAdmin(admin.ModelAdmin):
   def get_queryset(self, request):    
     query = super(UserAdmin, self).get_queryset(request)
     return query.exclude(is_superuser=True,pk=1)
+  
+  def quiz_avg_score(self,obj):
+    if obj.questions_interacted_with.exists():
+      all_answers =  obj.questions_interacted_with.all().count()
+      right_answers =  obj.questions_interacted_with.filter(correct_answer=True).count()
+      return f"{ right_answers / all_answers * 100} %"
+    return "N/A"
 
+  def quiz_seriousness(self,obj):
+    if obj.tests_started >0:
+      return f"{ obj.tests_completed / obj.tests_started *100} %"
+    return "N/A"
 
   def reviewer(self,obj):
     return obj.animes_to_review.exists()

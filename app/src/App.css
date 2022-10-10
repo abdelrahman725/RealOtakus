@@ -4,40 +4,24 @@ div {
   text-align: center;
 }
 
-button {
+button, .pointer_cursor {
   cursor: pointer;
 }
 
-.bar {
+.navigation_buttons {
+  margin-top: 40px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  position: fixed;
-  z-index: 2;
-  top: 0;
-  width: 100%;
-  background-color: #262F36;
-  color: beige;
-  padding: 20px;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
-.bar .profilename, .bar .notifications {
-  cursor: pointer;
-}
-
-.upperbuttons {
-  margin-top: 80px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  width: 300px;
-}
-
-.upperbuttons button {
+.navigation_buttons button {
+  width: 150px;
+  margin-left: 10px;
+  margin-right: 10px;
   color: white;
   font-weight: bold;
   margin-bottom: 7px;
@@ -47,21 +31,7 @@ button {
   letter-spacing: 3px;
 }
 
-.upperbuttons div {
-  margin-bottom: 50px;
-}
-
-.upperbuttons button:first-child {
-  position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  right: 50%;
-  -webkit-transform: translate(50%);
-          transform: translate(50%);
-  width: 300px;
-}
-
-.dashboard, .animesboard {
+.dashboard {
   -webkit-transition: 1s;
   transition: 1s;
   border-radius: 10px;
@@ -73,29 +43,16 @@ button {
   background-color: #262F36;
 }
 
-.dashboard .head, .animesboard .head {
+.dashboard .head {
   border-bottom: 5px solid #3e4d58;
 }
 
-.dashboard tr, .animesboard tr {
+.dashboard tr {
   border-bottom: 1.5px solid #3e4d58;
 }
 
-.dashboard tbody tr:last-child, .animesboard tbody tr:last-child {
+.dashboard tbody tr:last-child {
   border-bottom: none;
-}
-
-.animesboard {
-  width: 600px;
-}
-
-.animesboard th {
-  font-size: large;
-  padding: 20px 10px;
-}
-
-.animesboard td {
-  padding: 15px 10px;
 }
 
 .dashboard {
@@ -112,21 +69,6 @@ button {
 }
 
 @media screen and (max-width: 630px) {
-  .animesboard {
-    width: 95%;
-  }
-  .upperbuttons {
-    margin-top: 200px;
-  }
-  .bar {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
-  .bar div {
-    margin-bottom: 15px;
-  }
   .dashboard {
     font-size: x-small;
   }
@@ -186,10 +128,6 @@ button {
 .Question .wrongchoice {
   background-color: #C41E3A;
   color: white;
-}
-
-.Quiz .Question .choice {
-  cursor: pointer;
 }
 
 .Quiz .buttoncontainer {

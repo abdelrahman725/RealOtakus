@@ -4,7 +4,8 @@ from time import sleep
 from django.db import connection, IntegrityError
 from django.shortcuts import render
 from django.forms import ValidationError
-from django.db.models import Count, Q,Avg
+from django.db import models
+from django.db.models import Subquery, Count, Avg, OuterRef, Q
 from django.http import JsonResponse
 
 from rest_framework.response import Response
@@ -41,16 +42,16 @@ def GetOrFetchAnime(anime : int):
 
 
 def GetWantedUser(request):
+    return User.objects.get(username="user")
     return request.user
-    return User.objects.get(username="otaku")
 
 
-@login_required
+#@login_required
 def ReactApp(request):
     return render(request, "index.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -58,12 +59,21 @@ def GetUserData(request):
     if request.method == "POST":
         user.country = request.data["country"]
         user.save()
-        return Response(
-            {"countrycreated"},
-            status=status.HTTP_201_CREATED
+        return Response({
+            "info":"country saved"
+            },
+            status= status.HTTP_201_CREATED
         )
 
-    serialized_basic_data = SimpleUserDataSerializer(user, many=False)
+    basic_user_data = SimpleUserDataSerializer(
+        User.objects.values(
+            "id",
+            "username",
+            "points",
+            "level",
+            "country"
+        ).get(id=user.id)
+    )
     
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(),
@@ -73,59 +83,68 @@ def GetUserData(request):
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
     
     return Response({
-        "user_data": serialized_basic_data.data,
+        "user_data": basic_user_data.data,
         "notifications": serialized_notifications.data,
         "animes":all_animes.data
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
     # users sorted by their scores in non-increasing order where their score is >= avg_score and !=0 
     avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
 
-    # top_competitors = User.objects.annotate(
-    #     n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    # ).filter(points__gte= avg_score).order_by("-points")
-
     top_competitors = User.objects.annotate(
         n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    ).exclude(username="admin").order_by("-points")
+    ).filter(points__gte= avg_score).order_by("-points")
 
+    # top_competitors = User.objects.annotate(
+    #     n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
+    # ).exclude(username="admin").order_by("-points")
 
     LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
     
     return Response({
         "leaderboard": LeaderBorad.data,
-        "animes": {}
     })
 
 
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
     user = GetWantedUser(request) 
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.annotate(
-            n_user_interactions=Count("anime_interactions",filter=(Q(anime_interactions__user=user)),distinct=True)
-            ).annotate(
-                n_active_questions= Count("anime_questions",distinct=True)
+            n_user_interactions=Count(
+                "anime_interactions",
+                filter=(Q(anime_interactions__user=user)),
+                distinct=True
+            )).annotate(
+                n_active_questions= Count(
+                    "anime_questions",
+                    filter=(
+                    #~Q(contribution__contributor=user),
+                    #~Q(contribution__reviewer=user),
+                    #active=True
+                    ),
+                    distinct=True
+                )
             ),
         many=True
     )
     
     return Response({
-        "animes": game_animes.data,
+        "animes": game_animes.data
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -133,22 +152,23 @@ def GetTest(request, game_anime):
     
     # To Do here: we have to check n_tests_started against n_tests_completed
     # To catch malicious or non-serious users
+    # if current_user.tests_started - current_user.tests_completed == "To Do":
+        # catch here and act upon that
+        # pass
     
     # this game questions
     questions=selected_anime.anime_questions.filter(
-            ~Q(contribution__contributor=current_user),
-            ~Q(contribution__reviewer=current_user),
+            ~Q(contribution__contributor=current_user, contribution__reviewer=current_user),
             #active=True
         ).exclude(
             pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
         )[:QUESTIONSCOUNT]
+    
 
-    if questions.count() < QUESTIONSCOUNT:
+    if questions.count() != QUESTIONSCOUNT:
         return Response({
             "info" : "no enough questions for the quiz",
-            },
-            status.HTTP_204_NO_CONTENT
-        )
+        })
     
     serialized_questions = []
 
@@ -176,9 +196,13 @@ def GetTest(request, game_anime):
     for q in questions:
         game_questions[current_user.id][q.id] = q
 
+    current_user.tests_started +=1
     current_user.save()
 
-    return Response(serialized_questions)
+    return Response({   
+        "info" : "ok",
+        "game_questions" : serialized_questions
+    })
 
 
 @api_view(["POST"])
@@ -205,7 +229,7 @@ def QuestionEncounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitGame(request):
     user = GetWantedUser(request)
@@ -226,10 +250,11 @@ def SubmitGame(request):
         
         interaction.save()
 
+    right_answers = AnswersSerializer(game_questions[user.id].values(), many=True)
+    
+    user.tests_completed += 1
     user.points += game_score 
     user.save()
-
-    right_answers = AnswersSerializer(game_questions[user.id].values(), many=True)
     
     # delete used cache from memory :
     del game_questions[user.id]
@@ -247,10 +272,17 @@ def SubmitGame(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-@login_required
-@api_view(["POST"])
-def MakeContribution(request):
+#@login_required
+@api_view(["GET","POST"])
+def get_or_make_contribution(request):
     user = GetWantedUser(request)
+
+    if request.method == "GET":
+        user_contributions = ContributionSerializer(
+            user.contributions.select_related("question"),
+            many=True
+        )
+        return Response(user_contributions.data)
 
     try:
         anime = GetOrFetchAnime(int(request.data["anime"]))
@@ -301,10 +333,35 @@ def MakeContribution(request):
         return JsonResponse({"info": e.args[0]})
 
 
-@login_required
-@api_view(["POST"])
-def ReviewContribution(request):
+#@login_required
+@api_view(["GET","POST"])
+def contribution_to_review(request):
     user = GetWantedUser(request)
+    
+    if request.method == "GET":
+    
+        animes = user.animes_to_review.all()
+    
+        questions =  []
+        if animes:
+            questions = QuestionSerializer(
+                Question.objects.filter(
+                        ~Q(contribution__contributor=user),
+                        anime__in=animes,
+                        contribution__isnull=False,
+                        contribution__approved__isnull=True,
+                ).select_related("anime"),
+                many=True
+            ).data
+        
+        animes = AnimeSerializer(animes, many=True)
+    
+        return Response({
+            "questions" :questions,
+            "animes" : animes
+        })
+    
+
     review_state = request.data["state"]
     q_id = int(request.data["question"])
     feedback = request.data["feedback"]
@@ -343,49 +400,62 @@ def ReviewContribution(request):
         
     except Question.DoesNotExist:
         return Response(
-            {"this question doesn't exist anymore, probably is deleted"},
+            {"info" : "this question doesn't exist anymore, probably is deleted"},
             status=status.HTTP_410_GONE
         )
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
 
-    all_user_data = AllUserDataSerializer(user, many=False)
-
-    user_contributions = ContributionSerializer(
-        user.contributions.select_related("question"),
-        many=True
+    profile_data = ProfileDataSerializer(
+        User.objects.values(
+            "points",
+            "level",
+            "country",
+            "tests_started",
+            "tests_completed"
+            ).get(id=user.id)
     )
 
-    animes_to_review = user.animes_to_review.all()
-    
-    questions_to_review =  []
-    
-    if animes_to_review:
-        questions_to_review = QuestionSerializer(
-            Question.objects.filter(
-                    ~Q(contribution__contributor=user),
-                    anime__in=animes_to_review,
-                    contribution__isnull=False,
-                    contribution__approved__isnull=True,
-            ).select_related("anime"),
+    # user_interactions = UserInteractionSerializer(
+    #     user.questions_interacted_with.select_related("anime"),
+    #     many=True
+    # )
+
+    user_interactions = UserInteractionSerializer(
+        Anime.objects.filter(id__in=user.questions_interacted_with.values("anime")).annotate(
+            right_answers=Count("anime_interactions", filter=(
+                    Q(anime_interactions__correct_answer=True, anime_interactions__user=user)
+                ),
+                distinct=True
+            )
+        ).annotate(
+            wrong_answers=Count("anime_interactions", filter=(
+                    Q(anime_interactions__correct_answer=False, anime_interactions__user=user)       
+                ),
+                distinct=True
+            )
+        ).annotate(
+            no_answers=Count("anime_interactions", filter=(
+                    Q(anime_interactions__correct_answer__isnull=True, anime_interactions__user=user)       
+                ),
+                distinct=True
+            )
+        ),
         many=True
-        ).data
+    )
     
-    animes_to_review = AnimeSerializer(animes_to_review, many=True)
-    
+        
     return Response({
-        "data": all_user_data.data,
-        "user_contributions" : user_contributions.data,
-        "animes_for_review" : animes_to_review.data,
-        "questions_to_review": questions_to_review 
+        "user_data": profile_data.data,
+        "user_interactions" : user_interactions.data,
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)
@@ -406,7 +476,8 @@ def UpdateNotificationsState(request):
 #     anime = GetOrFetchAnime(anime_id)
 
 #     serialized_questions = QuestionsApiService(
-#         anime.anime_questions.filter(active=True)[:n_questions], many=True
+#         anime.anime_questions.filter(active=True)[:n_questions],
+#         many=True
 #     )
 #     return Response({
 #         "data": serialized_questions.data,

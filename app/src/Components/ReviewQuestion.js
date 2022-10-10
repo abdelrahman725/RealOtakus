@@ -1,8 +1,8 @@
-import async_http_request from '../AsyncRequest'
+import async_http_request from './AsyncRequest'
 import Select from 'react-select'
 import { useState, useRef} from "react"
 
-const EachQuestion = ({anime, question, reviewstate, setreviewstate}) => {
+const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 
 const [question_state,setquestion_state] = useState()
 const [review_submitted,set_review_submitted] = useState(false)
@@ -133,4 +133,4 @@ return (
 
 }
 
-export default EachQuestion
+export default ReviewQuestion

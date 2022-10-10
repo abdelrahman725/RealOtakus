@@ -3,9 +3,10 @@ import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
 import {  useState, useEffect, useRef } from "react"
 
-const Contripution = ({all_animes}) => {
+const Contribute = ({all_animes}) => {
 
-  const [animesoptions,setanimesoptions] = useState()
+  const [animesoptions,setanimesoptions] = useState([])
+
   const [msg,setmsg] = useState()
   const [anime,setanime]= useState()  
   
@@ -28,6 +29,7 @@ const Contripution = ({all_animes}) => {
     choice3:"",
   })
 
+
   const setAnimesOptions = ()=>
    { 
     const formated_animes = []
@@ -39,8 +41,6 @@ const Contripution = ({all_animes}) => {
      setanimesoptions(formated_animes)
    }  
 
-  const handleselect=(e)=> {e ? setanime(e.value) : setanime()}
-  
   const handlechange = (e)=>
   {    
 
@@ -57,7 +57,6 @@ const Contripution = ({all_animes}) => {
     setQuestion(prev => ({...prev, [name]: value}))
   }
 
-  
   const HandleSubmision = (e)=>
   {
       e.preventDefault() 
@@ -67,7 +66,7 @@ const Contripution = ({all_animes}) => {
       const SendContribution = async(cleaned_question)=>
       {
         const submit_contribution  = await async_http_request({
-          path:"contribute",
+          path:"contribution",
           method:"POST",
           data : {
             "question":cleaned_question,
@@ -145,14 +144,20 @@ const Contripution = ({all_animes}) => {
       //SendContribution(Question)
 
   }
-
-  useEffect(()=>{ setAnimesOptions()  },[])
+  
+  const handleselect=(e)=> {e ? setanime(e.value) : setanime()}
+  
+  useEffect(()=>{ 
+    setAnimesOptions()  
+  },[])
 
 
   return (
     <div className="container contribution">
+
       <h1>contribute a quesion </h1>
-         
+    
+     
       <br />
       {msg && <Message msg={msg}/>}
       <form onSubmit={HandleSubmision} >
@@ -169,7 +174,7 @@ const Contripution = ({all_animes}) => {
         />
         
         <br/> <br/>
-    
+      
        <textarea name="question" 
         typeof="text"
         placeholder = "what is the question ?" 
@@ -238,4 +243,4 @@ const Contripution = ({all_animes}) => {
   )
 }
 
-export default Contripution
+export default Contribute

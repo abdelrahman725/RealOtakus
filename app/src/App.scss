@@ -1,41 +1,49 @@
-div
-{
+
+div{
   margin-left: auto;
   margin-right: auto;
   text-align: center; 
 }
+
 $base-shadow :0.5px 0.5px 3px 0.1px grey;
 
-.question_container_basic{
-  // to do here b2a
-}
-// to extend the above properties use @extend
-
-button { cursor: pointer;}
-.bar
-{
-  display: flex;
-  position: fixed;
-
-  z-index:2;
-  top: 0;
-  width: 100%;
-  background-color: #262F36;
-  color: beige;
-  padding:20px;
-  .profilename,.notifications
+.question_container_basic{ 
+  // to do here
+  @media screen and(max-width: 800px)
   {
-    cursor: pointer;
+    .eachquestion{
+     // to do here brdk      
+    }
+
   }
 }
 
-.upperbuttons
+.dashboard_container_basic{
+  // to do here
+}
+
+// to extend the above properties use @extend
+
+button, .pointer_cursor {
+  cursor: pointer;
+}
+
+
+.navigation_buttons
 {
-  margin-top: 80px;
+  margin-top: 40px;
   display: flex;
-  flex-direction: column;
-  width:300px;
+  justify-content: center;
+
+  //align-items: center;
+  //flex-direction: column;
+
+
   button{
+
+    width: 150px;
+    margin-left: 10px;
+    margin-right: 10px;  
     color: white;
     font-weight:bold;
     margin-bottom: 7px;
@@ -44,22 +52,11 @@ button { cursor: pointer;}
     background-color: #262F36;
     letter-spacing: 3px;
   }
-  div{
-margin-bottom: 50px;
-  }
-  button:first-child{
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    right:50%;
-    transform: translate(50%);
-    width:300px;
 
-  }
 }
 
- 
-.dashboard, .animesboard{
+ // convert this to basic later
+.dashboard{
   transition:  1s;
  
   border-radius: 10px;
@@ -86,18 +83,6 @@ margin-bottom: 50px;
   
 }
 
-.animesboard{
-  width: 600px;
-  th{
-    font-size: large;
-    padding: 20px 10px;
-  }
-  td{
-    padding: 15px 10px;
-  }
-
-
-}
 
 .dashboard{
   width: 50%;
@@ -110,21 +95,8 @@ margin-bottom: 50px;
 }
  
 
-
 @media screen and(max-width: 630px)
 {
-  .animesboard{
-    width: 95%;
-  }
-  .upperbuttons{
-    margin-top: 200px;
-  }
-
-
-  .bar{
-    flex-direction: column;
-    div{margin-bottom: 15px;}
-  }
   .dashboard
   {
     font-size: x-small;
@@ -134,6 +106,7 @@ margin-bottom: 50px;
    th{ padding: 15px 5px;   font-size: small;}
      
   }
+
   .Question{
     width:90%;
 
@@ -198,20 +171,14 @@ margin-bottom: 50px;
 }
 
 
-
 .Quiz{
-    
-  .Question{
-    .choice{
-      cursor: pointer;
-    }
-  }
-  
+     
   .buttoncontainer
   {
     width:650px;
     display: flex;
     justify-content: space-between;
+    
     button{
       color: white;
       border: none ;
@@ -239,7 +206,6 @@ margin-bottom: 50px;
   }
 
 }
-
 
 .contribution
 { 
