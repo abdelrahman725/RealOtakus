@@ -1,7 +1,8 @@
 import random
-from datetime import  datetime
-from datetime import  timedelta
+import pytz
 
+from django.utils import timezone
+from datetime import  datetime
 from django.core.management.base import BaseCommand
 
 from board.models import *
@@ -36,16 +37,13 @@ class Command(BaseCommand):
         n_questions = options["questions"]
         contributions =  options["contributions"]
         q_iterator = options["iterator"]
-        
+
         def random_date():
-            start = datetime.strptime('1/01/2022 00:00', '%d/%m/%Y %H:%M')
-            end= datetime.strptime('22/09/2022 00:00', '%d/%m/%Y %H:%M')
-            delta = end - start
-            int_delta = (delta.days * 24 * 60 * 60) 
-            random_second = random.randrange(int_delta) + delta.seconds
-            return start + timedelta(minutes=round(random_second/60))
-
-
+            start = datetime(2020, 1, 1, 0, 0, 0, 0, pytz.UTC)
+            end = timezone.now()
+            return start + (end - start) * random.random()
+        
+   
         def generate_question(anime,question):
             return Question.objects.create(    
                 anime = anime,
@@ -62,7 +60,7 @@ class Command(BaseCommand):
                     question = question,
                     contributor=contributor,
                     date_created = random_date()
-                )
+            )
 
 
         print(f"\n\n Creating {n_questions} questions...\n")

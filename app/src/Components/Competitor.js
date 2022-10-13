@@ -1,6 +1,6 @@
 import { useEffect,useState } from "react"
 
-const Competitor = ({name,points,level,country,contributions,user_equal_logged_user}) => {
+const Competitor = ({name,points,level,country,contributions,is_logged_in_user}) => {
   
   const [flag,setflag] = useState()
 

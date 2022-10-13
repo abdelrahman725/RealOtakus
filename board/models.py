@@ -149,3 +149,4 @@ class Notification(base_models.Notification):
 
     def __str__(self):
         return f"{self.notification}"
+

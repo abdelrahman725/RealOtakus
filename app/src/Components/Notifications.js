@@ -27,7 +27,7 @@ useEffect(()=>{
         data : {"notifications": unseen_notifications}
       })
     
-      console.log(notifications_updated_response)
+      //console.log(notifications_updated_response)
     }
 
      UpdateNotificationsState()
@@ -35,7 +35,7 @@ useEffect(()=>{
 },[all_notifications])
   
   return (
-    <div className="notifications">
+    <div className="centered_div notifications">
       <br/>
         {all_notifications.length>0?all_notifications.map((noti,index)=>(
 

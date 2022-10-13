@@ -4,32 +4,38 @@ import async_http_request from '../AsyncRequest'
 
 export const UserProfile = () => {
   
-  const [user_data,set_user_data] = useState([])
+  const [user_data,set_user_data] = useState()
   const [user_interactions,setuser_interactions] = useState([])
-  const [profile_is_loading,setprofile_is_loading]= useState(true)
 
-  const getProfileData = async()=>{
+  useEffect(()=>{
 
-    const profile_data  = await async_http_request({path:"profile"})
-    set_user_data(profile_data.user_data)
-    setuser_interactions(profile_data.user_interactions)
-    setprofile_is_loading(false)
-  }
+    async function getProfileData(){
 
-  useEffect(()=>{ getProfileData() },[])
+      const profile_result  = await async_http_request({path:"profile"})
+      if (profile_result===null){
+        return
+      }
+      
+      set_user_data(profile_result.user_data)
+      setuser_interactions(profile_result.user_interactions)
+    }
+    getProfileData() 
+  
+  },[])
 
   return (
-    <div className="userprofile">
+    <div className="centered_div userprofile">
 
-    {!profile_is_loading ?
+    {user_data ?
       <div>
-
+        
       <Interactions interactions={user_interactions} />
         
       </div>
-     :
-
+      :
+      
       <strong>loading</strong>
+      
     }
     
     </div>

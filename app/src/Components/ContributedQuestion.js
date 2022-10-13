@@ -9,7 +9,7 @@ const ContributedQuestion = ({contribution}) => {
       <p>
         <span> <strong> {contribution.question.anime.anime_name} </strong> </span>
         <br/>
-         {contribution.question.question}
+         {contribution.question.question}<br/>
          {contribution.approved===false && contribution.reviewer_feedback}
       </p>
     </div>

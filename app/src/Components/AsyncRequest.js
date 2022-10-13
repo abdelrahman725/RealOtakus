@@ -1,32 +1,50 @@
+
 import getCookie from '../GetCookie'
+export const domain = "127.0.0.1:8000"
 
 const CsrfToken = getCookie('csrftoken')
-const  myserver  = `http://127.0.0.1:8000/home`
+const myserver = `http://${domain}/home`
 
-const async_http_request = async({ server = myserver, path=null, method="GET", data=null }={})=>{
-        
-    const url = path?`${server}/${path}`: server
 
-    if (method !== "GET"){
-        const send_request = await fetch(url,{
-            method : method,
-            headers : {
-                'Content-type': 'application/json',
-                'X-CSRFToken': CsrfToken,
-            },
-            body : JSON.stringify(data)
-        })
-        const res  = await send_request.json()
-        return res
+const async_http_request = async ({ server = myserver, path = null, method = "GET", data = null } = {}) => {
+    
+    const url = path ? `${server}/${path}` : server
+
+    if (method !== "GET") {
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-type': 'application/json',
+                    'X-CSRFToken': CsrfToken,
+                },
+                body: JSON.stringify(data)
+            })
+            const result = await response.json()
+            return result
+        }
+
+        catch (error) {
+            console.log("catching error! ", error)
+            return null
+        }
     }
 
     else {
-        const send_request  = await fetch(url)
-        const res  = await send_request.json()
-        return res
+        try {
+            const response = await fetch(url)
+            const result = await response.json()
+            return result
+        }
+
+        catch (error) {
+            console.log("catching error! ", error)
+            return null
+        }
     }
 
-   
+
 }
 
 export default async_http_request

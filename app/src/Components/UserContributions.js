@@ -1,6 +1,6 @@
 import ContributedQuestion from "./ContributedQuestion"
 import async_http_request from "./AsyncRequest"
-import {  useState, useEffect, useRef } from "react"
+import {  useState, useEffect } from "react"
 
 const UserContributions = () => {
 
@@ -9,26 +9,33 @@ const UserContributions = () => {
   const [rejected_contributions,set_rejected_contributions]= useState([])
   const [n_contributions,set_n_contributions] = useState()
   
-  const get_contributions = async()=>{
+  useEffect(()=>{
 
-    const contributions  = await async_http_request({path:"contribution"})
+    async function get_contributions(){
 
-    set_n_contributions(contributions.length)
-    
-    contributions.map((contribution) =>  {
-        contribution.approved===null  && set_pending_contributions(pending =>   [...pending, contribution])
-        contribution.approved===false && set_rejected_contributions(rejected => [...rejected, contribution])
-        contribution.approved===true  && set_approved_contributions(approved => [...approved, contribution])  
-    })
+      const contributions  = await async_http_request({path:"contribution"})
+      if (contributions===null){
+        return
+      }
+
+      set_n_contributions(contributions.length)
       
-  }
+      contributions.map((contribution) =>  {
+          contribution.approved===null  && set_pending_contributions(pending =>   [...pending,  contribution])
+          contribution.approved===false && set_rejected_contributions(rejected => [...rejected, contribution])
+          contribution.approved===true  && set_approved_contributions(approved => [...approved, contribution])  
+      })
+        
+    }
 
-  useEffect(()=>{  get_contributions()},[])
+    get_contributions()}
+  
+  ,[])
 
 return (
     
     <div className="contributions">
-        <h2>your contributions</h2>
+        <h2>your contributions, total : {n_contributions&&n_contributions}</h2>
         
         {pending_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
         

@@ -1,4 +1,4 @@
-div {
+.centered_div {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -8,8 +8,47 @@ button, .pointer_cursor {
   cursor: pointer;
 }
 
+.navbar {
+  background-color: #262F36;
+  height: 70px;
+  color: white;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.navbar .logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: 40px;
+  font-size: 30px;
+  letter-spacing: 4px;
+}
+
+.navbar .header_data {
+  min-width: 360px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.navbar .header_data div {
+  margin-right: 40px;
+}
+
 .navigation_buttons {
-  margin-top: 40px;
+  margin-top: 80px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -26,17 +65,18 @@ button, .pointer_cursor {
   font-weight: bold;
   margin-bottom: 7px;
   border-radius: 10px;
-  padding: 12px 0px;
+  padding: 15px 0px;
   background-color: #262F36;
-  letter-spacing: 3px;
+  letter-spacing: 1px;
 }
 
 .dashboard {
   -webkit-transition: 1s;
   transition: 1s;
-  border-radius: 10px;
-  border-collapse: collapse;
+  width: 60%;
   text-align: center;
+  border-radius: 7px;
+  border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
   color: white;
@@ -47,6 +87,11 @@ button, .pointer_cursor {
   border-bottom: 5px solid #3e4d58;
 }
 
+.dashboard th {
+  padding: 20px;
+  font-size: medium;
+}
+
 .dashboard tr {
   border-bottom: 1.5px solid #3e4d58;
 }
@@ -55,22 +100,14 @@ button, .pointer_cursor {
   border-bottom: none;
 }
 
-.dashboard {
-  width: 50%;
-}
-
 .dashboard td {
-  padding: 15px   18px;
+  padding: 20px   18px;
 }
 
-.dashboard th {
-  padding: 20px;
-  font-size: medium;
-}
-
-@media screen and (max-width: 630px) {
+@media screen and (max-width: 510px) {
   .dashboard {
-    font-size: x-small;
+    width: 80%;
+    font-size: small;
   }
   .dashboard td {
     padding: 10px   5px;
@@ -85,6 +122,8 @@ button, .pointer_cursor {
 }
 
 .select_animes {
+  margin-left: auto;
+  margin-right: auto;
   width: 250px;
 }
 
@@ -99,8 +138,47 @@ button, .pointer_cursor {
   background-color: green;
 }
 
-.Result .Question {
-  margin-bottom: 100px;
+.questionscontainer .eachquestion {
+  border-left: solid 20px;
+  border-radius: 3px;
+  text-align: left;
+  margin-bottom: 15px;
+  width: 70%;
+  color: black;
+  padding: 5px 10px;
+  padding-bottom: 10px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+}
+
+.questionscontainer .eachquestion p {
+  line-height: 2;
+}
+
+.questionscontainer form .radio {
+  text-align: left;
+}
+
+.questionscontainer .pendingstate {
+  border-color: #e6ab3f;
+}
+
+.questionscontainer .reviewstate {
+  border-color: #5bc0de;
+}
+
+.questionscontainer .approvestate {
+  border-color: #4ecd91;
+}
+
+.questionscontainer .declinestate {
+  border-color: #E76450;
+}
+
+@media screen and (max-width: 800px) {
+  .questionscontainer .eachquestion {
+    width: 90%;
+  }
 }
 
 .Question {
@@ -164,7 +242,7 @@ button, .pointer_cursor {
   font-weight: lighter;
 }
 
-.contribution .form_elements textarea {
+.contribution .contribution_form textarea {
   padding: 10px;
   width: 350px;
   border-radius: 8px;
@@ -174,16 +252,16 @@ button, .pointer_cursor {
   margin-bottom: 10px;
 }
 
-.contribution .form_elements textarea:first-of-type {
+.contribution .contribution_form textarea:first-of-type {
   height: 120px;
 }
 
-.contribution .form_elements textarea:focus {
+.contribution .contribution_form textarea:focus {
   border-color: white;
   outline: #2684FF solid 2.5px;
 }
 
-.contribution .form_elements button {
+.contribution .contribution_form button {
   padding: 10px 15px;
   font-size: large;
   letter-spacing: 2px;
@@ -193,17 +271,11 @@ button, .pointer_cursor {
   background-color: #00AD83;
 }
 
-.userprofile hr {
-  margin-top: 60px;
-  margin-bottom: 60px;
-  width: 90%;
-}
-
 .notifications .notification {
-  border-radius: 3px;
+  border-radius: 6px;
   text-align: left;
-  margin-bottom: 30px;
-  width: 60%;
+  margin-bottom: 40px;
+  width: 90%;
   color: black;
   padding: 0px 10px;
   padding-top: 10px;
@@ -217,48 +289,5 @@ button, .pointer_cursor {
   position: absolute;
   bottom: 0px;
   font-size: small;
-}
-
-.questionscontainer .eachquestion {
-  border-left: solid 20px;
-  border-radius: 3px;
-  text-align: left;
-  margin-bottom: 15px;
-  width: 70%;
-  color: black;
-  padding: 5px 10px;
-  padding-bottom: 10px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
-}
-
-.questionscontainer .eachquestion p {
-  line-height: 2;
-}
-
-.questionscontainer form .radio {
-  text-align: left;
-}
-
-.questionscontainer .pendingstate {
-  border-color: #e6ab3f;
-}
-
-.questionscontainer .reviewstate {
-  border-color: #5bc0de;
-}
-
-.questionscontainer .approvestate {
-  border-color: #4ecd91;
-}
-
-.questionscontainer .declinestate {
-  border-color: #E76450;
-}
-
-@media screen and (max-width: 800px) {
-  .questionscontainer .eachquestion {
-    width: 90%;
-  }
 }
 /*# sourceMappingURL=App.css.map */

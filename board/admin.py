@@ -39,6 +39,21 @@ class SocialAccountFilter(admin.SimpleListFilter):
         return queryset.filter(socialaccount=None)
 
 
+class OldestToRecentFilter(admin.SimpleListFilter):
+    title = 'oldest to latest'
+    parameter_name = 'chronological_order'
+
+    def lookups(self, request, model_admin):
+        return (
+          ('Yes', ('Yes')),
+      )
+
+    def queryset(self, request, queryset):  
+          
+      if self.value() == 'Yes':
+        return queryset.order_by("id")
+
+    
 class IsContributorFilter(admin.SimpleListFilter):
     title = 'contributor'
     parameter_name = 'is_contributor'
@@ -132,7 +147,7 @@ class IsReviewerFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(animes_to_review=None)
      
-
+     
 class QuestionTypeFilter(admin.SimpleListFilter):
   title = 'Type'
   parameter_name = 'questions_contributor'
@@ -141,7 +156,7 @@ class QuestionTypeFilter(admin.SimpleListFilter):
 
       return (
         ('admin', _('admin')),
-        ('users', _('users'))
+        ('users', _('contribution'))
     )
 
   def queryset(self, request, queryset):
@@ -304,9 +319,12 @@ class ContributionAdmin(admin.ModelAdmin):
   )
   
   list_filter = (
+    OldestToRecentFilter,
     ContributionState,
-    ("contributor",admin.RelatedOnlyFieldListFilter),
     ("question__anime",admin.RelatedOnlyFieldListFilter),
+    #you know the difference right ?("question__anime__reviewers",admin.RelatedOnlyFieldListFilter),
+    ("contributor",admin.RelatedOnlyFieldListFilter),
+    ("reviewer",admin.RelatedOnlyFieldListFilter),
     ReviewersExistFilter,
     "date_created",
     #"deleted_questions" 
@@ -334,7 +352,7 @@ class ContributionAdmin(admin.ModelAdmin):
     if obj.approved == None:
       url = reverse('admin:board_contribution_change', args=(obj.id,))
       return format_html(
-        '<a href="{}" style="color:#FF7F50;font-size:15px;letter-spacing: 1px;">pending...</a>',
+        '<a href="{}" style="color:red;font-size:15px;letter-spacing: 1px;">pending...</a>',
         url
       )
 
@@ -414,15 +432,17 @@ class QuestionAdmin(admin.ModelAdmin):
 
   autocomplete_fields = ['anime']
 
+  list_display_links = ("question",)
+
   list_display =  (
+    "contributor",
     "question",
     "anime",
     #"id",
     "right_answer",
-    "choice1",
-    "choice2",
-    "choice3",
-    "contributor",
+    #"choice1",
+    #"choice2",
+    #"choice3",
     "active",
     "correct_answers",
     "wrong_answers",
@@ -503,7 +523,7 @@ class QuestionInteractionAdmin(ReadOnly):
   
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):  
+class UserAdmin(admin.ModelAdmin):
   
   fields = (
     "username",
@@ -557,9 +577,9 @@ class UserAdmin(admin.ModelAdmin):
     IsContributorFilter,
     IsReviewerFilter,
     SocialAccountFilter,
-    ("animes_to_review",admin.RelatedOnlyFieldListFilter),
     "level",
-    CountryFilter
+    CountryFilter,
+    ("animes_to_review",admin.RelatedOnlyFieldListFilter)
   )
 
   search_fields = ("username__startswith",)

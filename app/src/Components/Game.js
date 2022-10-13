@@ -2,13 +2,13 @@ import Question from "./Question"
 import Result from "./Result"
 //import Loading from "./Loading"
 
-import { GamdeModeContext } from "../App"
+import { GlobalStates } from "../App"
 import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
 
 const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
 
-  const {setGameMode,setUserData,GameMode} = useContext(GamdeModeContext)
+  const {N_Game_Questions,setGameMode,set_user_data,GameMode} = useContext(GlobalStates)
   const [useranswers,setuseranswers] = useState({})
   const [index,setindex] = useState(0)
   const questions_length = questions.length
@@ -59,7 +59,7 @@ const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
     
     setquizresults(answers)
     setgamescore(game_results.score)
-    setUserData(prev => ({...prev, points : prev.points + game_results.score }))    
+    set_user_data(prev => ({...prev, points : prev.points + game_results.score }))    
     setGameMode(false)
   }
 
@@ -76,7 +76,7 @@ const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
         
         <br /> 
         
-        <div className="buttoncontainer">
+        <div className="centered_div buttoncontainer">
             <button onClick={()=>{
               setgamestarted(false)
               setGameMode(false)
@@ -100,6 +100,7 @@ const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
     </div> 
     :
     <Result
+    n_quiz_questions={N_Game_Questions}
     results={quizresults}
     useranswers={useranswers}
     score={gamescore}

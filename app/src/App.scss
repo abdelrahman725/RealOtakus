@@ -1,5 +1,5 @@
 
-div{
+.centered_div{
   margin-left: auto;
   margin-right: auto;
   text-align: center; 
@@ -29,18 +29,48 @@ button, .pointer_cursor {
 }
 
 
+.navbar{
+  background-color: #262F36;
+  height: 70px;
+  color: white;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  .logo{
+    
+    display: flex;
+    margin-left: 40px;
+    font-size: 30px;
+    letter-spacing: 4px;
+  }
+  
+  .header_data{
+    min-width: 360px;
+    display: flex;
+    
+    div{
+      margin-right: 40px;  
+    }
+  }
+
+}
+
+
 .navigation_buttons
 {
-  margin-top: 40px;
+  margin-top: 80px;
   display: flex;
   justify-content: center;
 
-  //align-items: center;
-  //flex-direction: column;
+  // align-items: center;
+  // flex-direction: column;
 
-
-  button{
-
+  button {
     width: 150px;
     margin-left: 10px;
     margin-right: 10px;  
@@ -48,58 +78,54 @@ button, .pointer_cursor {
     font-weight:bold;
     margin-bottom: 7px;
     border-radius: 10px;
-    padding: 12px 0px;
+    padding: 15px 0px;
     background-color: #262F36;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
   }
 
 }
 
  // convert this to basic later
 .dashboard{
+
   transition:  1s;
- 
-  border-radius: 10px;
-  border-collapse: collapse;
+  width: 60%;
   text-align: center;
+  border-radius: 7px;
+  border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
-
   color: white; 
   background-color: #262F36;
 
   .head{
-
     border-bottom: 5px solid #3e4d58; 
   }
-  tr
-  {
+  
+  th{ 
+    padding: 20px;
+     font-size: medium;
+  }
+  
+  tr{
     border-bottom: 1.5px solid #3e4d58;
   }
   
   tbody tr:last-child{
     border-bottom: none;
   }
-  
+
+  td{ padding:  20px   18px; }
+   
 }
 
 
-.dashboard{
-  width: 50%;
-
-  td{ padding:  15px   18px; }
-  
-  th{ padding: 20px; font-size: medium;}
-
-  
-}
- 
-
-@media screen and(max-width: 630px)
+@media screen and(max-width: 510px)
 {
   .dashboard
   {
-    font-size: x-small;
+    width: 80%;
+    font-size: small;
   
     td{ padding:  10px   5px; }
   
@@ -116,168 +142,24 @@ button, .pointer_cursor {
 
 .select_animes
 {
+  margin-left: auto;
+  margin-right: auto;
   width:250px;
 }
 
 .animeslist
 {
-
-.startgame{
-  padding: 10px 20px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  font-size: large;
-  color: white;
-  border-radius: 5px;
-  border: none;
-  background-color: green;
-}
-
-
-}
-
-.Result{
-  .Question{
-    margin-bottom: 100px;
-  }
-
-}
-
-
-.Question{
-
-  width: 700px;
-
-  .choice 
-  {
-    margin-bottom: 10px;
-   
-    color:black;
-    padding:20px 15px;  
-    box-shadow: $base-shadow ;
-  }
-  .selected_choice
-  {
-    background-color: #365FAA;
+  .startgame{
+    padding: 10px 20px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    font-size: large;
     color: white;
-
-  }
-  .rightchoice{ background-color: #00AD83; color: white;}
-  .wrongchoice{
-    background-color: #C41E3A;
-    color: white;
-  }
-  
-}
-
-
-.Quiz{
-     
-  .buttoncontainer
-  {
-    width:650px;
-    display: flex;
-    justify-content: space-between;
-    
-    button{
-      color: white;
-      border: none ;
-      background-color: #365FAA;
-      padding: 5px 20px;
-    }
-    .faded{
-      opacity: 60%;
-    }
+    border-radius: 5px;
+    border: none;
+    background-color: green;
   }
 
-}
-
-@media screen and(max-width: 800px)
-{
-  
-  .Question{
-    width: 85%;
-  }
-  .Quiz{
-      .buttoncontainer
-      {
-        width:85%;
-      }
-  }
-
-}
-
-.contribution
-{ 
-  
-  span{
-    font-weight: lighter;
-  }
-  .form_elements{
-    textarea{
-      padding:10px;
-      width: 350px;
-      border-radius: 8px;
-      font-size: large;
-      resize: none;
-      outline: none;
-      margin-bottom: 10px;
-    }
-    textarea:first-of-type{
-      height: 120px;
-    }
-    textarea:focus{
-      border-color: white;
-      outline: #2684FF solid 2.5px;
-    }
-
-
-    button{
-      padding : 10px 15px;
-      font-size: large;
-      letter-spacing: 2px;
-      border-radius: 4px;
-      color: aliceblue;
-      border: none;
-      background-color: #00AD83;
-    }
-    
-  }
-
-}
-
-
-.userprofile{
-  hr{
-    margin-top: 60px;
-    margin-bottom: 60px;
-    width: 90%;
-  }
-}
-
-.notifications
-{
-
-  .notification
-  {
-
-    border-radius: 3px;
-    text-align: left;
-    margin-bottom: 30px;
-    width: 60%;
-    color:black;
-    padding:0px 10px;
-    padding-top: 10px;
-    padding-bottom: 25px;
-    box-shadow: $base-shadow ;
-    position: relative;
-    .notification_time
-    {
-      position: absolute;
-      bottom: 0px;
-      font-size: small;
-    }
-  }
 }
 
 .questionscontainer
@@ -332,5 +214,137 @@ button, .pointer_cursor {
 
   }
 
+}
+
+
+.Question{
+
+  width: 700px;
+
+  .choice {
+    margin-bottom: 10px;
+    color:black;
+    padding:20px 15px;  
+    box-shadow: $base-shadow ;
+  }
+
+  .selected_choice{
+    background-color: #365FAA;
+    color: white;
+  }
+
+  .rightchoice{
+    background-color: #00AD83;
+    color: white;
+  }
+
+  .wrongchoice{
+    background-color: #C41E3A;
+    color: white;
+  }
+  
+}
+
+
+.Quiz{
+     
+  .buttoncontainer
+  {
+    width:650px;
+    display: flex;
+    justify-content: space-between;
+    
+    button{
+      color: white;
+      border: none ;
+      background-color: #365FAA;
+      padding: 5px 20px;
+    }
+    .faded{
+      opacity: 60%;
+    }
+  }
+
+}
+
+@media screen and(max-width: 800px)
+{
+  
+  .Question{
+    width: 85%;
+  }
+  .Quiz{
+      .buttoncontainer
+      {
+        width:85%;
+      }
+  }
+
+}
+
+.contribution
+{ 
+  
+  span{
+    font-weight: lighter;
+  }
+  
+  .contribution_form{
+  
+    textarea{
+      padding:10px;
+      width: 350px;
+      border-radius: 8px;
+      font-size: large;
+      resize: none;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    
+    textarea:first-of-type{
+      height: 120px;
+    }
+    
+    textarea:focus{
+      border-color: white;
+      outline: #2684FF solid 2.5px;
+    }
+
+    button{
+      padding : 10px 15px;
+      font-size: large;
+      letter-spacing: 2px;
+      border-radius: 4px;
+      color: aliceblue;
+      border: none;
+      background-color: #00AD83;
+    }
+    
+  }
+
+}
+
+.notifications
+{
+  .notification{
+    border-radius: 6px;
+    text-align: left;
+    margin-bottom: 40px;
+    
+    width: 90%;
+    color:black;
+    padding:0px 10px;
+    padding-top: 10px;
+    padding-bottom: 25px;
+    box-shadow: $base-shadow ;
+    position: relative;
+   
+    .notification_time
+    {
+      position: absolute;
+      bottom: 0px;
+      font-size: small;
+    }
+  }
 }
 

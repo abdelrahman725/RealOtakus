@@ -2,11 +2,14 @@ import React from 'react'
 
 const Interactions = ({interactions}) => {
   return (
-    <div>
+
+    <div className="interactions">
       <h1>interactions</h1>
       {interactions.map((interaction, index) => (
         
-          <p>{interaction.anime_name}</p>
+          <div key={index}>
+            {interaction.anime_name}
+          </div>
         
       ))
       }

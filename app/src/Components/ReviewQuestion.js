@@ -7,7 +7,6 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 const [question_state,setquestion_state] = useState()
 const [review_submitted,set_review_submitted] = useState(false)
 const [feedback,setfeedback] = useState() 
-
 const feedback_select = useRef(null)
 
 const feedback_options = [
@@ -58,11 +57,11 @@ const ReviewSubmission = (e,question)=>{
 
 const handle_question_state = (e)=> setquestion_state( parseInt(e.target.value) )
 
-const handle_feedback = selected_option =>  setfeedback(selected_option)    
+const on_feedback_selection = selected_option =>  setfeedback(selected_option)    
 
 
 return (
-    <div className={`eachquestion ${reviewstate}`}>
+    <div className={`centered_div eachquestion ${reviewstate}`}>
         <p> 
             <span><strong>{anime}</strong></span><br />
             {question.question}
@@ -115,14 +114,14 @@ return (
                     isSearchable ={false} 
                     options={feedback_options}
                     value={feedback}
-                    onChange={handle_feedback} 
+                    onChange={on_feedback_selection} 
                     ref={feedback_select}
                     // isMulti = {false}
                     />
                     <br /><br /><br />
                 </div>}
                 
-                {!review_submitted ? <button className="" type="submit">Submit</button>:"loading"}
+                {!review_submitted ? <button type="submit">Submit</button>:"loading"}
                 
                 
             </form>

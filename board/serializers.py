@@ -16,6 +16,8 @@ class SimpleUserDataSerializer(serializers.ModelSerializer):
 
 class ProfileDataSerializer(serializers.ModelSerializer):
   
+  n_questions_reviewed = serializers.IntegerField()
+
   class Meta:
     model = User
     fields = (
@@ -23,7 +25,8 @@ class ProfileDataSerializer(serializers.ModelSerializer):
       'level',
       'country',
       'tests_started',
-      'tests_completed'
+      'tests_completed',
+      'n_questions_reviewed'
     )
 
 
@@ -54,7 +57,7 @@ class AnimeNameSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-  anime = AnimeNameSerializer()
+  anime = AnimeSerializer()
     
   class Meta:
     model = Question

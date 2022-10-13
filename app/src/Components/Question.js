@@ -38,14 +38,13 @@ const Question = ({question,onselect,Q_no,questions_length,nextquestion}) => {
     timer.start()
   }
 
-  const sendquestioninteraction = async()=>
-  {
+  const sendquestioninteraction = async()=>{
     const attempt_response  = await async_http_request({
       path:`interaction/${question.id}`,
       method:"POST"
     })
 
-    console.log(attempt_response)
+    //console.log(attempt_response)
   }
 
 
@@ -53,7 +52,7 @@ const Question = ({question,onselect,Q_no,questions_length,nextquestion}) => {
     sendquestioninteraction()
     setselected()
     !timeout && reset_timer()
-    },[Q_no])
+  },[Q_no])
 
       
   const onChoice = (useranswer)=>
@@ -66,7 +65,7 @@ const Question = ({question,onselect,Q_no,questions_length,nextquestion}) => {
   
 
   return (
-    <div className="Question">
+    <div className="centered_div Question">
 
       <h3> <span> time left :</span> {"0"+minutes}:{seconds < 10&&"0"}{seconds} </h3>
       <br />

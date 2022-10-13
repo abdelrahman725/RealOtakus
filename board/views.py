@@ -34,7 +34,6 @@ for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 def GetOrFetchAnime(anime : int):   
     try:
         return animes_dict[anime]
-    
     except KeyError:
         fetched_anime = Anime.objects.get(anime)
         animes_dict[anime] = fetched_anime
@@ -42,7 +41,7 @@ def GetOrFetchAnime(anime : int):
 
 
 def GetWantedUser(request):
-    return User.objects.get(username="user")
+    return User.objects.get(username="José")
     return request.user
 
 
@@ -74,6 +73,7 @@ def GetUserData(request):
             "country"
         ).get(id=user.id)
     )
+    is_user_reviewer = user.animes_to_review.exists()
     
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(),
@@ -82,8 +82,10 @@ def GetUserData(request):
 
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
     
+    
     return Response({
         "user_data": basic_user_data.data,
+        "reviewer" : is_user_reviewer,
         "notifications": serialized_notifications.data,
         "animes":all_animes.data
     })
@@ -96,13 +98,13 @@ def GetDashBoard(request):
     # users sorted by their scores in non-increasing order where their score is >= avg_score and !=0 
     avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
 
-    top_competitors = User.objects.annotate(
-        n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    ).filter(points__gte= avg_score).order_by("-points")
-
     # top_competitors = User.objects.annotate(
     #     n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    # ).exclude(username="admin").order_by("-points")
+    # ).filter(points__gte= avg_score).order_by("-points")
+
+    top_competitors = User.objects.annotate(
+        n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
+    ).exclude(username="admin").order_by("-points")
 
     LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
     
@@ -120,7 +122,7 @@ def GetQuizeAnimes(request):
     user = GetWantedUser(request) 
 
     game_animes = AnimeInteractionsSerializer(
-        Anime.objects.annotate(
+        Anime.objects.filter(active=True).annotate(
             n_user_interactions=Count(
                 "anime_interactions",
                 filter=(Q(anime_interactions__user=user)),
@@ -129,15 +131,15 @@ def GetQuizeAnimes(request):
                 n_active_questions= Count(
                     "anime_questions",
                     filter=(
-                    #~Q(contribution__contributor=user),
-                    #~Q(contribution__reviewer=user),
-                    #active=True
+                    # Q(anime_questions__active=True),
+                    # ~Q(contribution__contributor=user,contribution__reviewer=user)
                     ),
                     distinct=True
                 )
             ),
         many=True
     )
+    #sleep(1)
     
     return Response({
         "animes": game_animes.data
@@ -339,29 +341,25 @@ def contribution_to_review(request):
     user = GetWantedUser(request)
     
     if request.method == "GET":
-    
         animes = user.animes_to_review.all()
     
-        questions =  []
-        if animes:
-            questions = QuestionSerializer(
-                Question.objects.filter(
-                        ~Q(contribution__contributor=user),
-                        anime__in=animes,
-                        contribution__isnull=False,
-                        contribution__approved__isnull=True,
-                ).select_related("anime"),
-                many=True
-            ).data
+        questions = QuestionSerializer(
+            Question.objects.filter(
+                    ~Q(contribution__contributor=user),
+                    anime__in=animes,
+                    contribution__isnull=False,
+                    contribution__approved__isnull=True,
+            ).select_related("anime").order_by("id"),
+            many=True
+        )
         
-        animes = AnimeSerializer(animes, many=True)
-    
+        #sleep(1)
+        
         return Response({
-            "questions" :questions,
-            "animes" : animes
+            "questions" :questions.data,
         })
     
-
+    
     review_state = request.data["state"]
     q_id = int(request.data["question"])
     feedback = request.data["feedback"]
@@ -411,14 +409,12 @@ def GetMyProfile(request):
     user = GetWantedUser(request)
 
     profile_data = ProfileDataSerializer(
-        User.objects.values(
-            "points",
-            "level",
-            "country",
-            "tests_started",
-            "tests_completed"
-            ).get(id=user.id)
+        User.objects.annotate(
+            n_questions_reviewed = Count("contributions_reviewed")
+        ).get(id=user.id)
     )
+
+    #user.contributions_reviewed.all().count()
 
     # user_interactions = UserInteractionSerializer(
     #     user.questions_interacted_with.select_related("anime"),

@@ -5,42 +5,44 @@ import Notifications from './Components/Notifications'
 import Contribute from './Components/Contribute'
 import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
-import UserContributions from './Components/UserContributions'
 import QuestionsForReview from './Components/QuestionsForReview'
-import async_http_request from './Components/AsyncRequest'
+import InfoMessage from './Components/InfoMessage'
+//import UserContributions from './Components/UserContributions'
 
 import { UserProfile } from './Components/TheProfile/UserProfile'
-
+import { domain } from './Components/AsyncRequest'
+import async_http_request from './Components/AsyncRequest'
 import React,{useState,useEffect,createContext} from 'react'
 import useWebSocket from 'react-use-websocket'
 
-export const GamdeModeContext  = createContext()
+export const GlobalStates  = createContext()
 
 function App() {
-  const [UserData,setUserData] = useState({})
+  const [info_message, set_info_message] = useState()
+  const [user_data,set_user_data] = useState()
+  const [user_is_reviewer,setuser_is_reviewer]= useState()
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
-  const [GameMode,setGameMode] = useState(false)
   const [all_animes,setall_animes] = useState()
+  const [GameMode,setGameMode] = useState(false)
   
   // component views :
   const [HomeView,setHomeView] = useState(true)
+  const [ReviewView,setReviewView] = useState(false)
   const [NotificationsView,setNotificationsView]= useState(false)
   const [ContributionView,setContributionView]= useState(false)
   const [QuizAnimesView,setQuizAnimesView] = useState(false)
   const [ProfileView,setProfileView] = useState(false)
   
-  const NUMBER_OF_QUIZ_QUESTIONS = 5 
-  const  domain = "127.0.0.1:8000"
-  const  server  = `http://${domain}`
-  const  socket = `ws://${domain}/ws/socket-server/`
-  const  logout_url = `${server}/logout`
+  const N_Game_Questions = 5 
   
+  const socket = `ws://${domain}/ws/socket-server/`
+   
   const { lastMessage,readyState } = useWebSocket(socket,{
-
-  //Will attempt to reconnect on all close events, such as server shutting down
-  onOpen: () => console.log('\n connection open \n\n'),
-  shouldReconnect: (closeEvent) => true,
+    
+    //Will attempt to reconnect on all close events, such as server shutting down
+    onOpen: () => console.log('\n connection open \n\n'),
+    shouldReconnect: (closeEvent) => true,
   })
   
   // listening for incoming realtime notifications 
@@ -49,22 +51,20 @@ function App() {
       
       const new_data = JSON.parse(lastMessage.data)
       
-      if (new_data.payload)
-      {
+      if (new_data.payload){
         console.log(new_data.payload)
         setnotifications(prev_notifications => [ new_data.payload,...prev_notifications])
-        setnumber_of_unseen_notifications(number_of_unseen_notifications+1)
+        setnumber_of_unseen_notifications( prev => prev+1)
       }
 
     }
   }, [lastMessage, setnotifications]);
 
   
-  const Logout = ()=>  window.location.href = logout_url
+  const Logout = ()=>  window.location.href = `http://${domain}/logout`
    
   // called if the user doesn't have a saved country (which will always be the case initially for the first login)
-  const getUserCountryViaApiServiceThenSaveCountry = async()=>
-   {  
+  const getUserCountryViaApiServiceThenSaveCountry = async()=>{  
     
      const fetched_country = await async_http_request({server:"http://ip-api.com/json"})
      
@@ -81,37 +81,55 @@ function App() {
  
      console.log(saving_country_res)     
    }
- 
-  const GetUserData = async()=>{
+   
+   useEffect(()=>{
 
-    const res = await async_http_request({path:"data"})
-
-    if (!res.user_data.country){
-      getUserCountryViaApiServiceThenSaveCountry()
-    } 
-
-    setUserData(res.user_data)
-    setall_animes(res.animes)
-    
-    setnumber_of_unseen_notifications(res.notifications.filter(n => !n.seen).length)
-    setnotifications(res.notifications)
-  }
+    async function GetUserData(){
+      const result = await async_http_request({path:"data"})
+     
+      if (result===null){
+        set_info_message("network error")
+        return
+      }
   
-  useEffect(()=>{
-    GetUserData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps    
-  },[])
+      if (!result.user_data.country){
+        getUserCountryViaApiServiceThenSaveCountry()
+      } 
+  
+      set_user_data(result.user_data)
+      setuser_is_reviewer(result.reviewer)
+                
+      setnumber_of_unseen_notifications(result.notifications.filter(n => !n.seen).length)
+      setnotifications(result.notifications)
 
-  const ManageViews = (View)=>
+      const formated_animes = []
+
+      result.animes.map((anime) => 
+        formated_animes.push({
+          value:anime.id,
+          label:anime.anime_name,
+        })
+      )
+
+      setall_animes(formated_animes)
+  
+    }
+
+    GetUserData()
+  },[])
+  
+
+  const ManageViews = (pressed_view)=>
   {
     
     if (GameMode)
         return
     
-    switch(View)
+    switch(pressed_view)
     {
       case "home":
         setHomeView(true)
+        setReviewView(false)
         setQuizAnimesView(false) 
         setContributionView(false)
         setProfileView(false)
@@ -120,6 +138,7 @@ function App() {
       
       case "profile" :
         setProfileView(true) 
+        setReviewView(false)
         setHomeView(false) 
         setQuizAnimesView(false)
         setContributionView(false)
@@ -130,6 +149,11 @@ function App() {
         setContributionView(true)
         setHomeView(false)
         return
+
+      case "review" :
+        setReviewView(true)
+        setHomeView(false)
+        return
       
       case "quiz" :
         setQuizAnimesView(true)
@@ -137,13 +161,16 @@ function App() {
         return
 
       case "notifications" :
-        setNotificationsView(true) 
+        setNotificationsView(true)
+        setReviewView(false) 
         setQuizAnimesView(false)
         setHomeView(false)
         setContributionView(false)
         setProfileView(false)
         return 
-    
+      
+      default:
+        return
     }
       
   }
@@ -151,34 +178,47 @@ function App() {
 return (
   <div className="App"> 
 
-    <GamdeModeContext.Provider value={{GameMode, NUMBER_OF_QUIZ_QUESTIONS, setGameMode, setUserData}}>
+    <GlobalStates.Provider value={{GameMode, N_Game_Questions, setGameMode, set_user_data, set_info_message}}>
 
-        { UserData && 
         < NavBar 
-          data={UserData}
+          user={user_data}
           show={ManageViews}
           notifications_open = {NotificationsView}
           new_notifications={number_of_unseen_notifications} 
         /> 
-        }
-
+        
         <div className="navigation_buttons">
 
-          {!GameMode&&  <button onClick={()=>ManageViews("home")}>Home</button>} 
+          { !HomeView && !GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>} 
+  
+          { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute</button> }
   
           { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
-          { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute a question</button> }
+          { user_is_reviewer && HomeView && <button onClick={()=>ManageViews("review")}>Review contributions</button> }
 
-          { HomeView && <button onClick={Logout}>Sign Out</button> }
+        </div>
 
-        </div> 
+        <InfoMessage msg={info_message}/>
         
-        { HomeView && <TheDashBoard logged_in_user={UserData.id} />}
+        <br /> 
+        
+        { HomeView && <TheDashBoard current_user= {user_data && user_data.id} />}
+        
         
         { ProfileView && <UserProfile />}
 
+        
+        { QuizAnimesView && <QuizAnimes/>} 
+        
+        
+        { ContributionView && <Contribute all_animes_options={all_animes} />}
+        
+        { ReviewView &&  <QuestionsForReview/> }
+
+
         { NotificationsView && 
+
         <Notifications 
           all_notifications={notifications}
           unseen_count = {number_of_unseen_notifications}
@@ -186,16 +226,8 @@ return (
         />
         }
 
-        { QuizAnimesView && <QuizAnimes/>} 
-        
-        { ContributionView && <Contribute all_animes={all_animes} />}
 
-        {/* <QuestionsForReview/> */}
-
-        {/* <UserContributions/> */}
-
-
-    </GamdeModeContext.Provider>
+    </GlobalStates.Provider>
 
   </div>
  )

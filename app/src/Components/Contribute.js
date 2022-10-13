@@ -1,18 +1,16 @@
-import Message from "./Message"
 import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
-import {  useState, useEffect, useRef } from "react"
+import {  useState, useRef,useContext } from "react"
+import { GlobalStates } from "../App"
 
-const Contribute = ({all_animes}) => {
+const Contribute = ({all_animes_options}) => {
 
-  const [animesoptions,setanimesoptions] = useState([])
-
-  const [msg,setmsg] = useState()
+  const {set_info_message} = useContext(GlobalStates)
   const [anime,setanime]= useState()  
   
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
-  const select_animes = useRef(null)
+  const anime_select = useRef(null)
   
   // ensure
   const  letters_exist = /[a-z]/ig
@@ -29,39 +27,19 @@ const Contribute = ({all_animes}) => {
     choice3:"",
   })
 
-
-  const setAnimesOptions = ()=>
-   { 
-    const formated_animes = []
-
-     all_animes.map((anime) => 
-        formated_animes.push({value:anime.id,label:anime.anime_name})
-     )
-     
-     setanimesoptions(formated_animes)
-   }  
-
-  const handlechange = (e)=>
-  {    
-
+  const handle_form_change = (e)=> {    
     const{name,value} = e.target
-    if (value.match(leading_space) != null ||
-        value.match(extra_space) != null   ||
-        value.match(excluded_symbols) != null
-    ) {
+
+    if (value.match(leading_space) != null || value.match(extra_space) != null || value.match(excluded_symbols) != null) {
       console.log("this input is not allowed")
       return
     }
-   
-      
+    
     setQuestion(prev => ({...prev, [name]: value}))
   }
 
-  const HandleSubmision = (e)=>
-  {
+  const handle_form_submission = (e)=>{
       e.preventDefault() 
-
-      // submit the form here : 
 
       const SendContribution = async(cleaned_question)=>
       {
@@ -70,25 +48,24 @@ const Contribute = ({all_animes}) => {
           method:"POST",
           data : {
             "question":cleaned_question,
-            "anime":anime
+            "anime":anime.value
           }
         })
         
-        setmsg(submit_contribution.info)
+        set_info_message(submit_contribution.info)
     
         // after question contribution is submitted now we can clear the states 
         for (const key in Question)
           setQuestion(prev => ({...prev,[key]:""}))
         
         window.scrollTo({ top: 0, behavior: 'smooth' })
+        setanime(null)
       }
       
-
-      const Validate_and_SubmitForm =()=>{
+      const validate_contribution_form_then_submit =()=>{
     
-        if (anime ===undefined || anime==="")
-        {
-          select_animes.current.focus(); 
+        if (!anime){
+          anime_select.current.focus(); 
           window.scrollTo({ top: 0, behavior: 'smooth' })
           return false;
         }
@@ -113,8 +90,8 @@ const Contribute = ({all_animes}) => {
           
         if ( cleaned_question.question.match(letters_exist) == null  
             ||
-             cleaned_question.question.match(letters_exist).length < 2
-         ){
+              cleaned_question.question.match(letters_exist).length < 2
+          ){
           console.log("question shoud contain at least 2 letters")
           question_ref.current.focus() 
           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -123,10 +100,10 @@ const Contribute = ({all_animes}) => {
         
         if (cleaned_question.question.length < 10)
         {
-           console.log("question must be at least 10 characters length")
-           question_ref.current.focus() 
-           window.scrollTo({ top: 0, behavior: 'smooth' })
-           return false
+            console.log("question must be at least 10 characters length")
+            question_ref.current.focus() 
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            return false
         }
     
         if (unique_choices.size !==4)
@@ -139,106 +116,105 @@ const Contribute = ({all_animes}) => {
         SendContribution(cleaned_question)
       }
 
-      // checking first if the contribution form is valid before submit
-      Validate_and_SubmitForm()
-      //SendContribution(Question)
+      validate_contribution_form_then_submit()
+      
+  }
 
+  const on_anime_select = (selected_anime)=> {
+    setanime(selected_anime) 
+    selected_anime && !Question.question && question_ref.current.focus()
+    selected_anime &&  anime_select.current.blur()
   }
   
-  const handleselect=(e)=> {e ? setanime(e.value) : setanime()}
-  
-  useEffect(()=>{ 
-    setAnimesOptions()  
-  },[])
-
-
+ 
   return (
-    <div className="container contribution">
+    <div className="centered_div contribution">
 
       <h1>contribute a quesion </h1>
-    
      
       <br />
-      {msg && <Message msg={msg}/>}
-      <form onSubmit={HandleSubmision} >
-        
-        <div className="form_elements">
-
-        <Select 
-          className="select_animes" 
-          placeholder="select anime" 
-          isClearable= {true}
-          options={animesoptions}
-          onChange={handleselect} 
-          ref={select_animes}
-        />
-        
-        <br/> <br/>
-      
-       <textarea name="question" 
-        typeof="text"
-        placeholder = "what is the question ?" 
-        cols="30" rows="3" 
-        maxLength="350" 
-        required 
-        value={Question.question}
-        onChange={handlechange}
-        ref={question_ref} 
-        >
-       </textarea><br />
-
-       <textarea name="rightanswer"
-        typeof="text" 
-        placeholder = "right answer"
-        cols="30" rows="3"
-        maxLength="150" 
-        required 
-        value={Question.rightanswer}  
-        onChange={handlechange} 
-        >
-       </textarea><br />
+     
+      <form onSubmit={handle_form_submission} >
   
+        <div className="contribution_form">
 
-     <h3>choices<span> (wrong answers) </span></h3>
-   
-       <textarea name="choice1" 
-        typeof="text" 
-        placeholder = "choice 1"
-        cols="30" rows="3" 
-        maxLength="150" 
-        required 
-        value={Question.choice1} 
-        onChange={handlechange}
-        >
-       </textarea><br />
+            <Select 
+              className="select_animes" 
+              placeholder="select anime"
+              isClearable= {true}
+              isLoading={!all_animes_options}
+              options={all_animes_options}
+              onChange={on_anime_select} 
+              value={anime}
+              ref={anime_select}
+            />
+            
+            <br/> <br/>
+          
+          <textarea name="question" 
+            typeof="text"
+            placeholder = "what is the question ?" 
+            cols="30" rows="3" 
+            maxLength="350" 
+            required 
+            value={Question.question}
+            onChange={handle_form_change}
+            ref={question_ref} 
+            >
+          </textarea><br />
+
+          <textarea name="rightanswer"
+            typeof="text" 
+            placeholder = "right answer"
+            cols="30" rows="3"
+            maxLength="150" 
+            required 
+            value={Question.rightanswer}  
+            onChange={handle_form_change} 
+            >
+          </textarea><br />
+      
+          <h3>choices <span>(wrong answers)</span> </h3>
+      
+          <textarea name="choice1" 
+            typeof="text" 
+            placeholder = "choice 1"
+            cols="30" rows="3" 
+            maxLength="150" 
+            required 
+            value={Question.choice1} 
+            onChange={handle_form_change}
+            >
+          </textarea><br />
+        
+          <textarea name="choice2"
+            typeof="text"
+            placeholder = "choice 2"
+            cols="30" rows="3" 
+            maxLength="150" 
+            required 
+            value={Question.choice2} 
+            onChange={handle_form_change}  
+            >
+          </textarea><br />
+        
+          <textarea name="choice3" 
+            typeof="text"
+            placeholder = "choice 3"
+            cols="30" rows="3" 
+            maxLength="150"
+            required 
+            value={Question.choice3}
+            onChange={handle_form_change}
+            >
+          </textarea><br />
+
+          <button type="submit" ref={submit_btn}>submit question</button>
+
+        </div>
+
+      </form>
     
-       <textarea name="choice2"
-        typeof="text"
-        placeholder = "choice 2"
-        cols="30" rows="3" 
-        maxLength="150" 
-        required 
-        value={Question.choice2} 
-        onChange={handlechange}  
-        >
-       </textarea><br />
-    
-       <textarea name="choice3" 
-        typeof="text"
-        placeholder = "choice 3"
-        cols="30" rows="3" 
-        maxLength="150"
-        required 
-        value={Question.choice3}
-        onChange={handlechange}
-        >
-       </textarea><br />
-
-      <br />
-      <button type="submit" ref={submit_btn}>submit question</button>
-
-      </div>
-    </form>
     </div>
   )
 }

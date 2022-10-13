@@ -1,60 +1,75 @@
 import Competitor from "./Competitor"
 import async_http_request from "./AsyncRequest"
-import { useEffect,useState } from "react"
+import { GlobalStates } from "../App"
+import { useEffect,useState,useContext } from "react"
 
-const TheDashBoard = ({logged_in_user}) => {
+const TheDashBoard = ({current_user}) => {
 
-  const[otakus,setotakus] = useState()
+  const {set_info_message} = useContext(GlobalStates)
+  const[dashboard_users,set_dashboard_users] = useState()
 
-  const GetDashbBoard = async()=> {
-    const dashboard = await async_http_request({
-      path:"dashboard"
-    })
+  useEffect(()=>{
+    async function GetDashbBoard(){
+      const dashboard_result = await async_http_request({
+        path:"dashboard"
+      })
+  
+      if (dashboard_result===null){
+        set_info_message("network error")
+        return
+      }
+  
+      set_dashboard_users(dashboard_result.leaderboard)
+      console.log("dashboard fetched")
+    }
 
-    setotakus(dashboard.leaderboard)
-  }
-
-  useEffect(()=>{ GetDashbBoard() },[])
+    GetDashbBoard() 
+  
+  },[])
 
 return (
   <div className="container">
   
-  <h1>Top Ranked Otakus</h1>
+    <h1 style={{textAlign:"center"}}>Top Competitors</h1>
 
-<table className="dashboard">
-  <thead>
-  <tr>
-    <th className="head">name</th>
-    <th className="head">score</th>
-    <th className="head">level</th>
-    <th className="head">contributions</th>
-    <th className="head">country</th>
-  </tr>
-  </thead>
-<tbody>  
-    {otakus?otakus.map((competitor,index)=> (    
-      <Competitor
-      user_equal_logged_user={logged_in_user===competitor.id?true:false}
-      key={index}
-      name={competitor.username}
-      points={competitor.points}
-      level={competitor.level}
-      contributions={competitor.n_contributions}
-      country = {competitor.country}/>
-      )):
-      <Competitor
-      name={"loading"}
-      points={"___________"}
-      level={"___________"}
-      contributions={"___________"}
-      country = {null}/>
-    }
-
-  </tbody>
-  </table>
+    <table className="dashboard">
+    
+      <thead>
+        <tr>
+          <th className="head">name</th>
+          <th className="head">score</th>
+          <th className="head">level</th>
+          <th className="head">contributions</th>
+          <th className="head">country</th>
+        </tr>
+      </thead>
       
-  
-        
+      <tbody>  
+
+        {dashboard_users?dashboard_users.map((competitor,index)=> (
+          
+          <Competitor
+            is_logged_in_user={current_user===competitor.id}
+            key={index}
+            name={competitor.username}
+            points={competitor.points}
+            level={competitor.level}
+            contributions={competitor.n_contributions}
+            country = {competitor.country}/>
+            )):
+          
+          <Competitor
+            name={"________"}
+            points={"________"}
+            level={"________"}
+            contributions={"________"}
+            country = {null}/>
+        }
+
+      </tbody>
+    
+    </table>
+            
   </div> 
   )
 }
