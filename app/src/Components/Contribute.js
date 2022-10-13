@@ -1,6 +1,6 @@
 import async_http_request from "./AsyncRequest"
 import Select from 'react-select'
-import {  useState, useRef,useContext } from "react"
+import {  useState, useRef,useContext, useEffect } from "react"
 import { GlobalStates } from "../App"
 
 const Contribute = ({all_animes_options}) => {
@@ -39,8 +39,9 @@ const Contribute = ({all_animes_options}) => {
   }
 
   const handle_form_submission = (e)=>{
+    
       e.preventDefault() 
-
+      
       const SendContribution = async(cleaned_question)=>
       {
         const submit_contribution  = await async_http_request({
@@ -116,8 +117,7 @@ const Contribute = ({all_animes_options}) => {
         SendContribution(cleaned_question)
       }
 
-      validate_contribution_form_then_submit()
-      
+      validate_contribution_form_then_submit()  
   }
 
   const on_anime_select = (selected_anime)=> {
@@ -126,7 +126,12 @@ const Contribute = ({all_animes_options}) => {
     selected_anime &&  anime_select.current.blur()
   }
   
- 
+  useEffect(()=>{
+    
+    return()=>{ set_info_message() }
+
+  },[])
+
   return (
     <div className="centered_div contribution">
 
@@ -174,7 +179,7 @@ const Contribute = ({all_animes_options}) => {
             >
           </textarea><br />
       
-          <h3>choices <span>(wrong answers)</span> </h3>
+          <h3>choices <span style={{fontWeight:"lighter"}}>(wrong answers)</span> </h3>
       
           <textarea name="choice1" 
             typeof="text" 

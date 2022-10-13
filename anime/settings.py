@@ -39,7 +39,6 @@ for i in range(2,12):
 
 INSTALLED_APPS = [
     
-    'authen',
     'board',
     
     'django.contrib.admin',
@@ -187,7 +186,7 @@ STATICFILES_DIRS = [
     os.path.join(os.path.join(BASE_DIR, 'app'), 'build', 'static'),
 ]
 
-LOGIN_REDIRECT_URL ='/home'
+LOGIN_REDIRECT_URL ='/'
 
 SOCIALACCOUNT_EMAIL_REQUIRED = True
 

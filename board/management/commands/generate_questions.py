@@ -66,7 +66,13 @@ class Command(BaseCommand):
         print(f"\n\n Creating {n_questions} questions...\n")
         
         animes = Anime.objects.all()
+        
         all_users = User.objects.exclude(is_superuser=True)
+        
+        # for user in random.sample(list(all_users), random.randint(1,all_users.count())):
+        #     for anime in random.sample(list(animes), random.randint(1,animes.count())):
+        #         user.animes_to_review.add(anime)
+
 
         for i in range(q_iterator, q_iterator + n_questions):
 

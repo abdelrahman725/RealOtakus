@@ -7,15 +7,24 @@
 
 $base-shadow :0.5px 0.5px 3px 0.1px grey;
 
-.question_container_basic{ 
-  // to do here
-  @media screen and(max-width: 800px)
-  {
-    .eachquestion{
-     // to do here brdk      
-    }
 
-  }
+.questions_container{
+  @extend .centered_div;
+  margin: 10px;
+}
+
+  
+.question_basic{
+  @extend .centered_div;
+  display: flex;  
+  border-left: solid 20px;
+  border-radius: 5px;
+  box-shadow: $base-shadow ;
+  max-width: 800px;
+  margin-bottom: 80px;
+  padding:5px 10px;
+  padding-bottom: 10px;  
+
 }
 
 .dashboard_container_basic{
@@ -61,8 +70,7 @@ button, .pointer_cursor {
 }
 
 
-.navigation_buttons
-{
+.navigation_buttons{
   margin-top: 80px;
   display: flex;
   justify-content: center;
@@ -74,7 +82,7 @@ button, .pointer_cursor {
     width: 150px;
     margin-left: 10px;
     margin-right: 10px;  
-    color: white;
+    color: white; 
     font-weight:bold;
     margin-bottom: 7px;
     border-radius: 10px;
@@ -85,16 +93,14 @@ button, .pointer_cursor {
 
 }
 
- // convert this to basic later
+
 .dashboard{
+  @extend .centered_div;
 
   transition:  1s;
   width: 60%;
-  text-align: center;
   border-radius: 7px;
   border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
   color: white; 
   background-color: #262F36;
 
@@ -119,36 +125,28 @@ button, .pointer_cursor {
    
 }
 
+// for dashboards
+@media screen and(max-width: 510px){
 
-@media screen and(max-width: 510px)
-{
-  .dashboard
-  {
-    width: 80%;
-    font-size: small;
+  .dashboard{
+    
+    font-size: 15px;
   
-    td{ padding:  10px   5px; }
+    td{ padding:  12px   12px; }
   
-   th{ padding: 15px 5px;   font-size: small;}
+    th{ padding: 15px 8px;   font-size: small;}
      
   }
 
-  .Question{
-    width:90%;
-
-  }
-  
 }
 
-.select_animes
-{
+.select_animes{
   margin-left: auto;
   margin-right: auto;
   width:250px;
 }
 
-.animeslist
-{
+.animeslist{
   .startgame{
     padding: 10px 20px;
     font-weight: bold;
@@ -162,95 +160,90 @@ button, .pointer_cursor {
 
 }
 
-.questionscontainer
-{
+.review_page {
+  @extend .questions_container;
   
-  .eachquestion
-  {
-    border-left: solid 20px;
-    border-radius: 3px;
-    text-align: left;
-    margin-bottom: 15px;
-    width: 70%;
-
-    color:black;
-    padding:5px 10px;
-    padding-bottom: 10px;  
-    box-shadow: $base-shadow ;
-    p{
-      line-height: 2;
-    }
+  .canceledstate{
+    border-color: grey;
   }
   
-  form{
-    .radio{
-      text-align: left;
-    }
- 
-  }
- 
   .pendingstate{
     border-color:rgb(230, 171, 63);
   }
 
   .reviewstate{
-    border-color: #5bc0de;
+    border-color: rgb(186, 157, 104);;
+  }
+  
+  .declinestate{
+    border-color: #E76450;
   }
 
   .approvestate{
     border-color:#4ecd91;
   }
 
-  .declinestate{
-    border-color: #E76450;
+  .review_question {  
+    @extend .question_basic;
+
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+    
+    p{
+      line-height: 2;
+    }
   }
   
-
-  @media screen and(max-width: 800px)
-  {
-    .eachquestion{
-      width: 90%;
+  form {
+    
+    label { margin-right: 15px;}
+    
+    .question_feedback{
+      margin-bottom: 20px;
+      max-width: 400px;
     }
 
-  }
-
+  } 
 }
 
 
-.Question{
+.game_container{
+  margin: 10px;
+}
 
-  width: 700px;
+.game{
+  
+  @extend .centered_div;
+  max-width: 750px;
 
-  .choice {
-    margin-bottom: 10px;
-    color:black;
-    padding:20px 15px;  
-    box-shadow: $base-shadow ;
-  }
+  .game_question{
 
-  .selected_choice{
-    background-color: #365FAA;
-    color: white;
-  }
-
-  .rightchoice{
-    background-color: #00AD83;
-    color: white;
-  }
-
-  .wrongchoice{
-    background-color: #C41E3A;
-    color: white;
+    .choice {
+      border-radius: 4px;
+      margin-bottom: 15px;
+      padding:20px 15px;  
+      box-shadow: $base-shadow ;
+    }
+  
+    .selected_choice{
+      background-color: #365FAA;
+      color: white;
+    }
+  
+    .rightchoice{
+      background-color: #00AD83;
+      color: white;
+    }
+  
+    .wrongchoice{
+      background-color: #C41E3A;
+      color: white;
+    }
+    
   }
   
-}
-
-
-.Quiz{
-     
-  .buttoncontainer
-  {
-    width:650px;
+  .game_buttons  {
     display: flex;
     justify-content: space-between;
     
@@ -267,40 +260,22 @@ button, .pointer_cursor {
 
 }
 
-@media screen and(max-width: 800px)
-{
-  
-  .Question{
-    width: 85%;
-  }
-  .Quiz{
-      .buttoncontainer
-      {
-        width:85%;
-      }
-  }
 
-}
-
-.contribution
-{ 
+.contribution{
   
-  span{
-    font-weight: lighter;
-  }
-  
-  .contribution_form{
-  
+  .contribution_form{  
+    
     textarea{
+      margin: 3px;
       padding:10px;
-      width: 350px;
+      max-width: 350px;
       border-radius: 8px;
       font-size: large;
       resize: none;
       outline: none;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
-    
+   
     textarea:first-of-type{
       height: 120px;
     }
@@ -315,7 +290,7 @@ button, .pointer_cursor {
       font-size: large;
       letter-spacing: 2px;
       border-radius: 4px;
-      color: aliceblue;
+      //color: aliceblue;
       border: none;
       background-color: #00AD83;
     }
@@ -324,27 +299,25 @@ button, .pointer_cursor {
 
 }
 
-.notifications
-{
-  .notification{
+.notifications{
+  @extend .centered_div;
+  max-width: 650px;
+  
+  .notification{  
     border-radius: 6px;
     text-align: left;
+    margin: 10px;
     margin-bottom: 40px;
-    
-    width: 90%;
-    color:black;
     padding:0px 10px;
     padding-top: 10px;
     padding-bottom: 25px;
     box-shadow: $base-shadow ;
     position: relative;
    
-    .notification_time
-    {
+    .notification_time{
       position: absolute;
       bottom: 0px;
       font-size: small;
     }
   }
 }
-

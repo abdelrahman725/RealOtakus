@@ -2,15 +2,15 @@
 # get all model fields
 #[f.name for f in MyModel._meta.get_fields()]
 
-# number of questions in each quiz users take
+# Constant number of quiz questions
 QUESTIONSCOUNT = 5
 
 BEGINNER = "beginner"
 INTERMEDIATE = "intermediate"
-ADVANCED= "advanced"
-REALOTAKU= "realOtaku"
+ADVANCED = "advanced"
+REALOTAKU = "realOtaku"
 
-#  levels_to_points mapper, shows points users should get to reach each level
+#  levels_to_points mapper, shows points (mininum) users should get to reach each level
 LEVELS = {
     BEGINNER: 0,
     INTERMEDIATE: 1000,

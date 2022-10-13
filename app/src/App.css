@@ -1,7 +1,25 @@
-.centered_div {
+.centered_div, .questions_container, .review_page, .question_basic, .review_page .review_question, .dashboard, .game, .notifications {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+}
+
+.questions_container, .review_page {
+  margin: 10px;
+}
+
+.question_basic, .review_page .review_question {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-left: solid 20px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  max-width: 800px;
+  margin-bottom: 80px;
+  padding: 5px 10px;
+  padding-bottom: 10px;
 }
 
 button, .pointer_cursor {
@@ -74,11 +92,8 @@ button, .pointer_cursor {
   -webkit-transition: 1s;
   transition: 1s;
   width: 60%;
-  text-align: center;
   border-radius: 7px;
   border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
   color: white;
   background-color: #262F36;
 }
@@ -106,18 +121,14 @@ button, .pointer_cursor {
 
 @media screen and (max-width: 510px) {
   .dashboard {
-    width: 80%;
-    font-size: small;
+    font-size: 15px;
   }
   .dashboard td {
-    padding: 10px   5px;
+    padding: 12px   12px;
   }
   .dashboard th {
-    padding: 15px 5px;
+    padding: 15px 8px;
     font-size: small;
-  }
-  .Question {
-    width: 90%;
   }
 }
 
@@ -138,78 +149,82 @@ button, .pointer_cursor {
   background-color: green;
 }
 
-.questionscontainer .eachquestion {
-  border-left: solid 20px;
-  border-radius: 3px;
-  text-align: left;
-  margin-bottom: 15px;
-  width: 70%;
-  color: black;
-  padding: 5px 10px;
-  padding-bottom: 10px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+.review_page .canceledstate {
+  border-color: grey;
 }
 
-.questionscontainer .eachquestion p {
-  line-height: 2;
-}
-
-.questionscontainer form .radio {
-  text-align: left;
-}
-
-.questionscontainer .pendingstate {
+.review_page .pendingstate {
   border-color: #e6ab3f;
 }
 
-.questionscontainer .reviewstate {
-  border-color: #5bc0de;
+.review_page .reviewstate {
+  border-color: #ba9d68;
 }
 
-.questionscontainer .approvestate {
-  border-color: #4ecd91;
-}
-
-.questionscontainer .declinestate {
+.review_page .declinestate {
   border-color: #E76450;
 }
 
-@media screen and (max-width: 800px) {
-  .questionscontainer .eachquestion {
-    width: 90%;
-  }
+.review_page .approvestate {
+  border-color: #4ecd91;
 }
 
-.Question {
-  width: 700px;
+.review_page .review_question {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  text-align: left;
 }
 
-.Question .choice {
-  margin-bottom: 10px;
-  color: black;
+.review_page .review_question p {
+  line-height: 2;
+}
+
+.review_page form label {
+  margin-right: 15px;
+}
+
+.review_page form .question_feedback {
+  margin-bottom: 20px;
+  max-width: 400px;
+}
+
+.game_container {
+  margin: 10px;
+}
+
+.game {
+  max-width: 750px;
+}
+
+.game .game_question .choice {
+  border-radius: 4px;
+  margin-bottom: 15px;
   padding: 20px 15px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
-.Question .selected_choice {
+.game .game_question .selected_choice {
   background-color: #365FAA;
   color: white;
 }
 
-.Question .rightchoice {
+.game .game_question .rightchoice {
   background-color: #00AD83;
   color: white;
 }
 
-.Question .wrongchoice {
+.game .game_question .wrongchoice {
   background-color: #C41E3A;
   color: white;
 }
 
-.Quiz .buttoncontainer {
-  width: 650px;
+.game .game_buttons {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -218,38 +233,26 @@ button, .pointer_cursor {
           justify-content: space-between;
 }
 
-.Quiz .buttoncontainer button {
+.game .game_buttons button {
   color: white;
   border: none;
   background-color: #365FAA;
   padding: 5px 20px;
 }
 
-.Quiz .buttoncontainer .faded {
+.game .game_buttons .faded {
   opacity: 60%;
 }
 
-@media screen and (max-width: 800px) {
-  .Question {
-    width: 85%;
-  }
-  .Quiz .buttoncontainer {
-    width: 85%;
-  }
-}
-
-.contribution span {
-  font-weight: lighter;
-}
-
 .contribution .contribution_form textarea {
+  margin: 3px;
   padding: 10px;
-  width: 350px;
+  max-width: 350px;
   border-radius: 8px;
   font-size: large;
   resize: none;
   outline: none;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .contribution .contribution_form textarea:first-of-type {
@@ -266,17 +269,19 @@ button, .pointer_cursor {
   font-size: large;
   letter-spacing: 2px;
   border-radius: 4px;
-  color: aliceblue;
   border: none;
   background-color: #00AD83;
+}
+
+.notifications {
+  max-width: 650px;
 }
 
 .notifications .notification {
   border-radius: 6px;
   text-align: left;
+  margin: 10px;
   margin-bottom: 40px;
-  width: 90%;
-  color: black;
   padding: 0px 10px;
   padding-top: 10px;
   padding-bottom: 25px;

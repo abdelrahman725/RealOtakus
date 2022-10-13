@@ -5,7 +5,7 @@ from django.db import connection, IntegrityError
 from django.shortcuts import render
 from django.forms import ValidationError
 from django.db import models
-from django.db.models import Subquery, Count, Avg, OuterRef, Q
+from django.db.models import Count, Avg, Q
 from django.http import JsonResponse
 
 from rest_framework.response import Response
@@ -41,16 +41,17 @@ def GetOrFetchAnime(anime : int):
 
 
 def GetWantedUser(request):
-    return User.objects.get(username="José")
     return request.user
+    return User.objects.get(username="user")
 
 
-#@login_required
 def ReactApp(request):
-    return render(request, "index.html")
+    if request.user.is_authenticated:
+        return render(request, "index.html")
+    return render(request, "board/home.html")
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def GetUserData(request):
     user = GetWantedUser(request)
@@ -70,10 +71,11 @@ def GetUserData(request):
             "username",
             "points",
             "level",
-            "country"
+            "country",
         ).get(id=user.id)
-    )
-    is_user_reviewer = user.animes_to_review.exists()
+    ).data
+
+    basic_user_data["is_reviewer"] = user.animes_to_review.exists()
     
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(),
@@ -81,17 +83,15 @@ def GetUserData(request):
     )
 
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
-    
-    
+        
     return Response({
-        "user_data": basic_user_data.data,
-        "reviewer" : is_user_reviewer,
+        "user_data": basic_user_data,
         "notifications": serialized_notifications.data,
         "animes":all_animes.data
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetDashBoard(request):
 
@@ -116,7 +116,7 @@ def GetDashBoard(request):
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
     user = GetWantedUser(request) 
@@ -146,7 +146,7 @@ def GetQuizeAnimes(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -231,7 +231,7 @@ def QuestionEncounter(request, question_id):
     )
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def SubmitGame(request):
     user = GetWantedUser(request)
@@ -274,7 +274,7 @@ def SubmitGame(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-#@login_required
+@login_required
 @api_view(["GET","POST"])
 def get_or_make_contribution(request):
     user = GetWantedUser(request)
@@ -335,8 +335,8 @@ def get_or_make_contribution(request):
         return JsonResponse({"info": e.args[0]})
 
 
-#@login_required
-@api_view(["GET","POST"])
+@login_required
+@api_view(["GET","PUT"])
 def contribution_to_review(request):
     user = GetWantedUser(request)
     
@@ -353,7 +353,7 @@ def contribution_to_review(request):
             many=True
         )
         
-        #sleep(1)
+        sleep(0.5)
         
         return Response({
             "questions" :questions.data,
@@ -369,7 +369,7 @@ def contribution_to_review(request):
         
         if  question.contribution.approved != None:
             return Response(
-                {"question has been reviewed by another reviewer"},
+                {"info":"question has been reviewed by another reviewer"},
                 status=status.HTTP_409_CONFLICT
             )
 
@@ -385,7 +385,7 @@ def contribution_to_review(request):
             question.contribution.save()
 
             return Response({
-                "question is approved successfully"
+                "info":"question is approved successfully"
             })    
 
         if review_state == 0:
@@ -393,7 +393,7 @@ def contribution_to_review(request):
             question.contribution.save()
             
             return Response({
-                "question is rejected successfully"
+                "info":"question is rejected successfully"
             })
         
     except Question.DoesNotExist:
@@ -403,7 +403,7 @@ def contribution_to_review(request):
         )
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
@@ -443,15 +443,14 @@ def GetMyProfile(request):
         ),
         many=True
     )
-    
-        
+       
     return Response({
         "user_data": profile_data.data,
         "user_interactions" : user_interactions.data,
     })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)

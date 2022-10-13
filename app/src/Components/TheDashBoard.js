@@ -28,11 +28,11 @@ const TheDashBoard = ({current_user}) => {
   },[])
 
 return (
-  <div className="container">
+  <div className="dashboard_container">
   
     <h1 style={{textAlign:"center"}}>Top Competitors</h1>
-
-    <table className="dashboard">
+  
+    <table className="dashboard leaderboard">
     
       <thead>
         <tr>

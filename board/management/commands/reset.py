@@ -32,7 +32,9 @@ class Command(BaseCommand):
         for user in users:
             user.points = 0
             user.level = BEGINNER
-            #user.animes_to_review.clear()
+            user.tests_started = 0
+            user.tests_completed = 0
+            user.animes_to_review.clear()
             user.save()
   
 

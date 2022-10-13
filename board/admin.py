@@ -101,7 +101,7 @@ class CountryFilter(admin.SimpleListFilter):
 
       for c in User.objects.filter(country__isnull=False).values_list('country',flat=True).distinct():
         countries_choices.add((c,(COUNTRIES[c])))
-
+        
       return countries_choices
     
     def queryset(self, request, queryset): 
@@ -566,6 +566,7 @@ class UserAdmin(admin.ModelAdmin):
     #"tests_started",
     #"tests_completed",
     #"quiz_seriousness",
+    #"password",
     "contributions",
     "questions_reviewed",
     "reviewer_of",

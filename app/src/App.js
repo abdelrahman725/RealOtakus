@@ -18,11 +18,10 @@ import useWebSocket from 'react-use-websocket'
 export const GlobalStates  = createContext()
 
 function App() {
-  const [info_message, set_info_message] = useState()
   const [user_data,set_user_data] = useState()
-  const [user_is_reviewer,setuser_is_reviewer]= useState()
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
+  const [info_message, set_info_message] = useState()
   const [all_animes,setall_animes] = useState()
   const [GameMode,setGameMode] = useState(false)
   
@@ -54,7 +53,7 @@ function App() {
       if (new_data.payload){
         console.log(new_data.payload)
         setnotifications(prev_notifications => [ new_data.payload,...prev_notifications])
-        setnumber_of_unseen_notifications( prev => prev+1)
+        setnumber_of_unseen_notifications( prev => prev + 1)
       }
 
     }
@@ -95,10 +94,8 @@ function App() {
       if (!result.user_data.country){
         getUserCountryViaApiServiceThenSaveCountry()
       } 
-  
+      
       set_user_data(result.user_data)
-      setuser_is_reviewer(result.reviewer)
-                
       setnumber_of_unseen_notifications(result.notifications.filter(n => !n.seen).length)
       setnotifications(result.notifications)
 
@@ -195,7 +192,7 @@ return (
   
           { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
 
-          { user_is_reviewer && HomeView && <button onClick={()=>ManageViews("review")}>Review contributions</button> }
+          { user_data && user_data.is_reviewer && HomeView && <button onClick={()=>ManageViews("review")}>Review contributions</button> }
 
         </div>
 

@@ -34,7 +34,7 @@ const UserContributions = () => {
 
 return (
     
-    <div className="contributions">
+    <div className="questions_container">
         <h2>your contributions, total : {n_contributions&&n_contributions}</h2>
         
         {pending_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}

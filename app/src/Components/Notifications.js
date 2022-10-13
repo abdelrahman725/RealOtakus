@@ -35,10 +35,9 @@ useEffect(()=>{
 },[all_notifications])
   
   return (
-    <div className="centered_div notifications">
+    <div className="notifications">
       <br/>
         {all_notifications.length>0?all_notifications.map((noti,index)=>(
-
           <EachNoti key={index} noti={noti.notification} time={noti.time}/>
           )): 
           <p>no activity yet</p>

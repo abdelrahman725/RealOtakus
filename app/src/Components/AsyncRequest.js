@@ -3,7 +3,8 @@ import getCookie from '../GetCookie'
 export const domain = "127.0.0.1:8000"
 
 const CsrfToken = getCookie('csrftoken')
-const myserver = `http://${domain}/home`
+
+const myserver = `http://${domain}`
 
 
 const async_http_request = async ({ server = myserver, path = null, method = "GET", data = null } = {}) => {
@@ -21,6 +22,11 @@ const async_http_request = async ({ server = myserver, path = null, method = "GE
                 },
                 body: JSON.stringify(data)
             })
+
+            if (!response.ok){
+                return response
+            }
+            
             const result = await response.json()
             return result
         }

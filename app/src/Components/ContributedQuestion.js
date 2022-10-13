@@ -1,7 +1,7 @@
 const ContributedQuestion = ({contribution}) => {
   
   return (
-    <div  className ={`eachquestion ${
+    <div  className ={`question_basic ${
       contribution.approved===true? "approvestate" : 
       contribution.approved===false? "declinestate" :
        "pendingstate"}`

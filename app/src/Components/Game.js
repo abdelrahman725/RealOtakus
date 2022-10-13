@@ -64,49 +64,49 @@ const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
   }
 
   return (
-    <>
-    {GameMode ?
-    <div className="Quiz">   
-        <Question
-        question={questions[index]}
-        Q_no={index}
-        onselect={onAnswer}
-        questions_length={questions_length}
-        nextquestion={nextquestion}/>
-        
-        <br /> 
-        
-        <div className="centered_div buttoncontainer">
-            <button onClick={()=>{
-              setgamestarted(false)
-              setGameMode(false)
-              fetch_quiz_animes()
-              }}>
-              exit
-            </button>
-            
-            {index===questions_length-1&& 
-            <button onClick={SubmitGame}>
-              submit
-            </button>}
-            
-            <button
-            onClick={nextquestion}
-            className={index===questions_length-1?"faded":""}
-            hidden={index===questions_length-1}>
-              next
-            </button>            
-        </div>
-    </div> 
-    :
-    <Result
-    n_quiz_questions={N_Game_Questions}
-    results={quizresults}
-    useranswers={useranswers}
-    score={gamescore}
-    questions={questions}/> 
-  }
-  </>
+    <div className="game_container">
+      {GameMode ?
+      <div className="game">   
+          <Question
+          question={questions[index]}
+          Q_no={index}
+          onselect={onAnswer}
+          questions_length={questions_length}
+          nextquestion={nextquestion}/>
+          
+          <br /> 
+          
+          <div className="centered_div game_buttons">
+              <button onClick={()=>{
+                setgamestarted(false)
+                setGameMode(false)
+                fetch_quiz_animes()
+                }}>
+                exit
+              </button>
+              
+              {index===questions_length-1&& 
+              <button onClick={SubmitGame}>
+                submit
+              </button>}
+              
+              <button
+              onClick={nextquestion}
+              className={index===questions_length-1?"faded":""}
+              hidden={index===questions_length-1}>
+                next
+              </button>            
+          </div>
+      </div> 
+      :
+      <Result
+      n_quiz_questions={N_Game_Questions}
+      results={quizresults}
+      useranswers={useranswers}
+      score={gamescore}
+      questions={questions}/> 
+      }
+  </div>
   )
 }
 

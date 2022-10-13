@@ -11,7 +11,6 @@ const QuestionsForReview = () => {
   const [selected_anime,setselected_anime]= useState()
   const [reviewstates,setreviewstates]= useState({})
   const [animes_options,setanimes_options]= useState([])
-  const [loading,setloading] = useState(true)
   const anime_select = useRef(null)
 
   const handle_questions_filter=(selected)=> {
@@ -43,7 +42,6 @@ const QuestionsForReview = () => {
         })
 
         setquestions(questions_result.questions)  
-        setloading(false)
       
       } 
     }
@@ -59,9 +57,9 @@ const QuestionsForReview = () => {
   
 
   return (
-    <div className="centered_div questionscontainer">
+    <div className="review_page">
       
-      <h2>contributed questions that need review</h2>
+      <h2>{questions && questions.length } contributed questions that need review</h2>
       <br />
  
       <Select

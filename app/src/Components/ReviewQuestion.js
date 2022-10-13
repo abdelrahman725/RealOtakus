@@ -6,6 +6,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 
 const [question_state,setquestion_state] = useState()
 const [review_submitted,set_review_submitted] = useState(false)
+const [info, setinfo]=useState()
 const [feedback,setfeedback] = useState() 
 const feedback_select = useRef(null)
 
@@ -16,23 +17,16 @@ const feedback_options = [
     { value: 'choices are similar', label: 'choices are similar' }      
 ]
 
-const customStyles = {
-    container: (provided, state) => ({
-        ...provided,
-        width:220,
-        float:"left"
-      }),
-}
 
 const ReviewSubmission = (e,question)=>{
 
     e.preventDefault()
   
     const SubmitReview = async(question)=>{
-
-        const contribution_reviewed_response  = await async_http_request({
+        
+        const review_submission_response  = await async_http_request({
             path:"review",
-            method:"POST",
+            method:"PUT",
             data :{
                 "question":question,
                 "state": question_state,
@@ -40,9 +34,20 @@ const ReviewSubmission = (e,question)=>{
             }
         })
 
-        console.log(contribution_reviewed_response)
+        if(review_submission_response===null){
+            return
+        }
 
-        setreviewstate(prev => ({...prev,[question]:`${question_state=== 1 ? "approve" : "decline" }state`}))
+        if (review_submission_response instanceof Response){
+            const conflict_result = await review_submission_response.json()
+            setreviewstate(prev => ({...prev,[question]:"canceledstate"}))
+            setinfo(conflict_result.info)
+        } 
+
+        else {
+            setinfo(review_submission_response.info)
+            setreviewstate(prev => ({...prev,[question]:`${question_state=== 1 ? "approve" : "decline" }state`}))
+        }
     
     }
 
@@ -51,27 +56,52 @@ const ReviewSubmission = (e,question)=>{
         return
     }  
 
-    SubmitReview(question)
+    setinfo()
     set_review_submitted(true)
+    SubmitReview(question)
 }
 
 const handle_question_state = (e)=> setquestion_state( parseInt(e.target.value) )
 
-const on_feedback_selection = selected_option =>  setfeedback(selected_option)    
+const on_feedback_selection = selected_option => {
+    setfeedback(selected_option)    
+    feedback_select.current.blur()
+
+} 
 
 
 return (
-    <div className={`centered_div eachquestion ${reviewstate}`}>
-        <p> 
-            <span><strong>{anime}</strong></span><br />
-            {question.question}
-        </p> 
+    <div className={`review_question ${reviewstate}`}>
+        <p> <strong>{anime}</strong> </p>
         
-        {reviewstate==="reviewstate" &&
-            <form onSubmit={(e)=>ReviewSubmission(e,question.id)} className="reviewform">
-       
-                <div className="radio">
+        <div className="question"> 
+            {question.question}
+        </div>
+        
+        <div className="choices">
+            <p>right answer : {question.right_answer}</p>
+            <p>choice 1 : {question.choice1}</p>
+            <p>choice 2 : {question.choice2}</p>
+            <p>choice 3 : {question.choice3}</p>
+            <hr />
+        </div>
 
+        {reviewstate==="reviewstate" &&
+            <form onSubmit={(e)=>ReviewSubmission(e,question.id)}>
+                <div className="radios">      
+                    <label>
+                        <input
+                        className="approve_input"
+                        required
+                        type="radio"
+                        value={1}
+                        name="state"
+                        checked={question_state=== 1}
+                        onChange={handle_question_state}
+                        />
+                        approve
+                    </label>
+                
                     <label>
                         <input
                         className="decline_input"
@@ -85,30 +115,12 @@ return (
                         decline
                     </label>
                 </div>
-                
-                <br />
-             
-                <div className="radio">
-                    <label>
-                        <input
-                        className="approve_input"
-                        required
-                        type="radio"
-                        value={1}
-                        name="state"
-                        checked={question_state=== 1}
-                        onChange={handle_question_state}
-                        />
-                        approve
-                    </label>
-                </div>
              
                 <br />
                 {question_state=== 0 &&
-                 <div>    
+                 
                     <Select 
                     className="question_feedback" 
-                    styles={customStyles}
                     placeholder="feedback"
                     isClearable = {false}
                     isSearchable ={false} 
@@ -118,15 +130,15 @@ return (
                     ref={feedback_select}
                     // isMulti = {false}
                     />
-                    <br /><br /><br />
-                </div>}
+                }
                 
                 {!review_submitted ? <button type="submit">Submit</button>:"loading"}
                 
-                
+
             </form>
         }
-        
+
+        <div>{info}</div>
     </div>
 )
 

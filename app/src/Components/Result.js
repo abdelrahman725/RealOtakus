@@ -13,14 +13,17 @@ const get_choice_class=(right_answer,user_answer,choice)=>{
 }
 
   return (
-    <div className="centered_div Result">
+    <div className="game">
     <h2>Resulsts</h2>
     <h3>score  {score} / {n_quiz_questions} </h3> 
     <br />  
       {questions.map((q,index)=>(
     
-        <div className="centered_div Question" key={index}>
-            <p> <strong>{q.question}? </strong> </p>
+        <div className="game_question" key={index}>
+            
+            <p> 
+              <strong>{q.question}? </strong> 
+            </p>
 
              <div className={get_choice_class(results[q.id],useranswers[q.id],q.choice1)}>
               {q.choice1}
@@ -38,7 +41,7 @@ const get_choice_class=(right_answer,user_answer,choice)=>{
               {q.choice4}
             </div>
 
-            <hr style={{margin:"100px 0px"}}/>
+            <hr style={{margin:"120px 0px"}}/>
         </div>
           
       ))}
