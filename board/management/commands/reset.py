@@ -34,7 +34,6 @@ class Command(BaseCommand):
             user.level = BEGINNER
             user.tests_started = 0
             user.tests_completed = 0
-            user.animes_to_review.clear()
             user.save()
   
 

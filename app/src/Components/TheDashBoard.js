@@ -1,31 +1,10 @@
 import Competitor from "./Competitor"
-import async_http_request from "./AsyncRequest"
 import { GlobalStates } from "../App"
 import { useEffect,useState,useContext } from "react"
 
-const TheDashBoard = ({current_user}) => {
+const TheDashBoard = ({ dashboard_users, current_user }) => {
 
-  const {set_info_message} = useContext(GlobalStates)
-  const[dashboard_users,set_dashboard_users] = useState()
-
-  useEffect(()=>{
-    async function GetDashbBoard(){
-      const dashboard_result = await async_http_request({
-        path:"dashboard"
-      })
-  
-      if (dashboard_result===null){
-        set_info_message("network error")
-        return
-      }
-  
-      set_dashboard_users(dashboard_result.leaderboard)
-      console.log("dashboard fetched")
-    }
-
-    GetDashbBoard() 
-  
-  },[])
+  //const {set_info_message} = useContext(GlobalStates)
 
 return (
   <div className="dashboard_container">
@@ -36,11 +15,11 @@ return (
     
       <thead>
         <tr>
-          <th className="head">name</th>
-          <th className="head">score</th>
-          <th className="head">level</th>
-          <th className="head">contributions</th>
-          <th className="head">country</th>
+          <th> name </th>
+          <th> score </th>
+          <th> level </th>
+          <th> contributions </th>
+          <th> country </th>
         </tr>
       </thead>
       
@@ -51,6 +30,7 @@ return (
           <Competitor
             is_logged_in_user={current_user===competitor.id}
             key={index}
+            index={index}
             name={competitor.username}
             points={competitor.points}
             level={competitor.level}

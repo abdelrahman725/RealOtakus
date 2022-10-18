@@ -9,10 +9,9 @@
    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge">  -->
    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">   
   <link href="{% static 'board/styles.css' %}" rel="stylesheet"> 
-  <script src="{% static 'board/index.js' %}"></script>
- 
+  <script src="{% static 'board/index.js' %}"></script> 
 
-  <title>otaku challenge</title>
+  <title>Real Otakus</title>
   
 </head>
 
@@ -20,10 +19,8 @@
 
 <div class="main">
 
-  <!-- <img  src="{% static 'board/images/Attack.png' %}"> alt=""> -->
- 
   <div class="navbar">
-    <h1 class="logo">Real Otakus </h1>
+    <h1>Real Otakus </h1>
   </div>
 
   <div class="content">
@@ -36,28 +33,14 @@
       
       <h2>what can you do</h2>
       <ul>
-        
-        <li>
-          take a quiz in your favorite anime
-
-        </li>
-        <li>
-
-          see where you stand from other otakus compeititors
-        </li>
-        <li>
-          review others contributed questions
-          
-        </li>
-        <li>
-          contribute by creating questions
-
-        </li>
-
+        <li>take a quiz in your favorite anime</li>
+        <li>see where you stand from other otakus compeititors</li>
+        <li>review others contributed questions</li>
+        <li>contribute by creating questions</li>
       </ul>
   </div>
-  <div class="forms">
 
+  <div class="forms">
     <div class="formcontainer LoginPage">
   
           <h2>Login</h2>
@@ -105,10 +88,9 @@
         {% endfor %}
         {% endif %}
     </div>
-      
-    <a class="google" href="{% provider_login_url 'google' %}">  
-
+    
     <!-- <img src="https://img.icons8.com/color/48/000000/google-logo.png"/> -->
+   <a class="google" href="{% provider_login_url 'google' %}">  
     
       <svg width="46px" height="46px" viewBox="0 0 46 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
         <!-- Generator: Sketch 3.3.3 (12081) - http://www.bohemiancoding.com/sketch -->
@@ -153,10 +135,9 @@
         </g>
       </svg>
 
-  <p>continue with google</p>
+      <p>continue with google</p>
    </a>
 
-   
 
 </div>
 <br>

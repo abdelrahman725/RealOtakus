@@ -36,7 +36,6 @@ useEffect(()=>{
   
   return (
     <div className="notifications">
-      <br/>
         {all_notifications.length>0?all_notifications.map((noti,index)=>(
           <EachNoti key={index} noti={noti.notification} time={noti.time}/>
           )): 

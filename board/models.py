@@ -1,9 +1,7 @@
-
 import threading
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError 
 from django.db.models.signals import pre_delete, pre_save, post_save
@@ -11,7 +9,6 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from board import base_models
-
 from board.helpers import choices_integirty
 from board.helpers import question_validator
 from board.helpers import CreateNotification
@@ -20,24 +17,20 @@ from board.helpers import notify_reviewers
 from board.helpers import notify_user_of_contribution_state
 
 
-class User(base_models.User):
-
-    def save(self, *args, **kwargs):      
-        self.level = CheckLevel(self)
-        super(User, self).save(*args, **kwargs)
-    
+class User(base_models.User):    
     def __str__(self):
         return self.username
 
+
 @receiver(pre_save, sender=User)
 def update_user_points_level(sender, instance, **kwargs):
-   if instance.tests_completed != 0 and instance.tests_completed %10 ==0:
-    instance.points += 20 
+    if instance.tests_completed != 0 and instance.tests_completed %10 ==0:
+        instance.points += 20 
+        CreateNotification(
+            receiver=instance,
+            notification="new achievement! you have completed 10 quizes, +20 points",
+        )
     instance.level = CheckLevel(instance)
-    CreateNotification(
-        receiver=instance,
-        notification="new achievement! you have completed 10 quizes, +20 points",
-    )
    
 
 class Anime(base_models.Anime):
@@ -58,21 +51,21 @@ class Anime(base_models.Anime):
     def rejected_questions(self):
         return self.anime_questions.filter(contribution__approved=False).count()
 
-    def save(self, *args, **kwargs):
-        existing = self.id
-        super(Anime, self).save(*args, **kwargs)
-        if not existing:
-            from board.views import animes_dict
-            animes_dict[self.id] = self
-
     def __str__(self): return f"{self.anime_name}"
 
 
+@receiver(post_save, sender=Anime)
+def chache_new_created_anime(sender, instance, created, **kwargs):
+    if created :
+        from board.views import animes_dict
+        if animes_dict :  animes_dict[instance.id] = instance
+
+   
+
 @receiver(pre_delete, sender=Anime)
-def deleted_chached_anime(sender, instance, **kwargs):
+def delete_chached_anime(sender, instance, **kwargs):
     from board.views import animes_dict
-    if animes_dict:
-        del animes_dict[instance.id]
+    if animes_dict: del animes_dict[instance.id]
 
 
 class Question(base_models.Question):
@@ -132,11 +125,10 @@ class QuestionInteraction(base_models.QuestionInteraction):
 
 class Game(base_models.Game):
     def __str__(self) -> str:
-        return "game we 5las just for now bs"
+        return "an instance of a non used model yet"
 
 
 class Notification(base_models.Notification):
-
     def save(self, *args, **kwargs):
         super(Notification, self).save(*args, **kwargs)
         channel_layer = get_channel_layer()
@@ -147,6 +139,4 @@ class Notification(base_models.Notification):
             }
         )
 
-    def __str__(self):
-        return f"{self.notification}"
-
+    def __str__(self):return f"{self.kind} {self.notification}"

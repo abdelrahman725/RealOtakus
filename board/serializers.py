@@ -23,7 +23,6 @@ class ProfileDataSerializer(serializers.ModelSerializer):
     fields = (
       'points',
       'level',
-      'country',
       'tests_started',
       'tests_completed',
       'n_questions_reviewed'
@@ -48,12 +47,6 @@ class AnimeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
     fields = ("id","anime_name")
-
-    
-class AnimeNameSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Anime 
-    fields = ("anime_name",)
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -110,7 +103,7 @@ class AnimeInteractionsSerializer(serializers.ModelSerializer):
 
 
 # class UserInteractionSerializer(serializers.ModelSerializer):
-#   anime= AnimeNameSerializer()
+#   anime = AnimeSerializer()
   
 #   class Meta:
 #     model = QuestionInteraction
@@ -121,17 +114,14 @@ class AnimeInteractionsSerializer(serializers.ModelSerializer):
 
 class UserInteractionSerializer(serializers.ModelSerializer):
   right_answers = serializers.IntegerField()
-  wrong_answers = serializers.IntegerField()
-  no_answers = serializers.IntegerField()
+  not_right_answers = serializers.IntegerField()
 
-  
   class Meta:
     model = Anime
     fields = (
       "anime_name",
       "right_answers",
-      "wrong_answers",
-      "no_answers"
+      "not_right_answers"
     )
 
 

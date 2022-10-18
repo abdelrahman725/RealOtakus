@@ -61,7 +61,10 @@ def notify_user_of_contribution_state(contribution):
 def CheckLevel(user):
     for level in reversed(LEVELS):    
         if user.points >= LEVELS[level] and LEVELS[level] != 0:
-            CreateNotification(user,f"Level up to {level}, good job")
+            CreateNotification(
+                receiver=user,
+                notification= f"Level up to {level}, good job"
+            )
             return level
     return user.level 
 
@@ -111,6 +114,6 @@ def login_required(f):
         if not request.user.is_authenticated:
             return redirect("/")
         else:
-            old_function = f(request, *args, **kwargs)
-            return old_function
+            requested_endpoint = f(request, *args, **kwargs)
+            return requested_endpoint
     return wraper

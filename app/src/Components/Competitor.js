@@ -1,21 +1,27 @@
+import { FaCrown } from 'react-icons/fa'
 import { useEffect,useState } from "react"
 
-const Competitor = ({name,points,level,country,contributions,is_logged_in_user}) => {
+const Competitor = ({name,points, level, country, contributions, is_logged_in_user, index}) => {
   
   const [flag,setflag] = useState()
 
-  const fetch_flag_url = async() =>{
-    const flag_res = await fetch(`https://flagcdn.com/256x192/${country}.png`) 
-    setTimeout(()=>{setflag(flag_res.url)} ,500)
-  }  
-
   useEffect(()=>{
-   country && fetch_flag_url()
+
+    async function fetch_flag_url(){
+      const flag_res = await fetch(`https://flagcdn.com/256x192/${country}.png`)       
+      setTimeout(()=>{ setflag(flag_res.url)} ,600)
+    }
+
+    country && fetch_flag_url()
   },[])
+  
   return (
 
-  <tr className="eachcompetitor">
-    <td>{name}</td>
+  <tr className="competitor">
+    <td className={index===0 ?"top_competitor":""}>
+     {index === 0 &&<FaCrown className="top_competitor_icon"/>}
+      {name}
+    </td>
     <td>{points}</td>
     <td>{level}</td>
     <td>{contributions}</td>

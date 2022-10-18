@@ -1,35 +1,17 @@
-.centered_div, .questions_container, .review_page, .question_basic, .review_page .review_question, .dashboard, .game, .notifications {
+.centered_div, .dashboard, .account, .account .profile, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game, .notifications {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
 }
 
-.questions_container, .review_page {
-  margin: 10px;
-}
-
-.question_basic, .review_page .review_question {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  border-left: solid 20px;
-  border-radius: 5px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  max-width: 800px;
-  margin-bottom: 80px;
-  padding: 5px 10px;
-  padding-bottom: 10px;
-}
-
-button, .pointer_cursor {
+button, .pointer_cursor, .navbar .icon {
   cursor: pointer;
 }
 
 .navbar {
   background-color: #262F36;
-  height: 70px;
   color: white;
+  padding: 15px;
   position: fixed;
   top: 0;
   width: 100%;
@@ -37,36 +19,37 @@ button, .pointer_cursor {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
 }
 
+.navbar div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-right: 16px;
+}
+
+.navbar .icon {
+  color: #6e7174;
+  font-size: xx-large;
+}
+
+.navbar .icon:hover {
+  color: white;
+}
+
 .navbar .logo {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  margin-left: 40px;
   font-size: 30px;
-  letter-spacing: 4px;
-}
-
-.navbar .header_data {
-  min-width: 360px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-}
-
-.navbar .header_data div {
-  margin-right: 40px;
+  letter-spacing: 1px;
+  color: beige;
 }
 
 .navigation_buttons {
-  margin-top: 80px;
+  margin-top: 110px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -76,16 +59,30 @@ button, .pointer_cursor {
 }
 
 .navigation_buttons button {
-  width: 150px;
+  width: 170px;
   margin-left: 10px;
   margin-right: 10px;
   color: white;
+  padding: 0px 10px;
   font-weight: bold;
-  margin-bottom: 7px;
+  height: 55px;
   border-radius: 10px;
-  padding: 15px 0px;
   background-color: #262F36;
   letter-spacing: 1px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.navigation_buttons button .icon {
+  margin-right: 3px;
+  font-size: x-large;
 }
 
 .dashboard {
@@ -96,13 +93,12 @@ button, .pointer_cursor {
   border-collapse: collapse;
   color: white;
   background-color: #262F36;
-}
-
-.dashboard .head {
-  border-bottom: 5px solid #3e4d58;
+  -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
+          box-shadow: 0.5px 0.5px 10px 0.1px grey;
 }
 
 .dashboard th {
+  border-bottom: 6px solid #3e4d58;
   padding: 20px;
   font-size: medium;
 }
@@ -119,69 +115,143 @@ button, .pointer_cursor {
   padding: 20px   18px;
 }
 
-@media screen and (max-width: 510px) {
-  .dashboard {
+.leaderboard .top_competitor {
+  position: relative;
+  right: 5px;
+}
+
+.leaderboard .top_competitor_icon {
+  margin-right: 2px;
+  color: #FFD700;
+  font-size: large;
+}
+
+.account {
+  margin: 10px;
+}
+
+.account .profile {
+  color: white;
+  background-color: #262F36;
+  border-radius: 7px;
+  -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
+          box-shadow: 0.5px 0.5px 10px 0.1px grey;
+  max-width: 800px;
+  padding: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.account .profile div {
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.account .profile div p {
+  font-weight: bold;
+  font-size: 35px;
+}
+
+.account .profile hr {
+  background-color: #353e45;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+.account .interactions {
+  margin-top: 100px;
+}
+
+@media screen and (max-width: 540px) {
+  .navbar {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .navbar .logo {
+    margin-bottom: 10px;
+  }
+  .leaderboard {
     font-size: 15px;
   }
-  .dashboard td {
-    padding: 12px   12px;
+  .leaderboard td {
+    padding: 12px 12px;
   }
-  .dashboard th {
+  .leaderboard th {
     padding: 15px 8px;
     font-size: small;
   }
 }
 
-.select_animes {
-  margin-left: auto;
-  margin-right: auto;
-  width: 250px;
+@media screen and (max-width: 700px) {
+  .account .profile {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .account .profile hr {
+    width: 80%;
+    margin-bottom: 30px;
+  }
+  .navigation_buttons {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .navigation_buttons button {
+    width: 240px;
+  }
 }
 
-.animeslist .startgame {
-  padding: 10px 20px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  font-size: large;
-  color: white;
-  border-radius: 5px;
-  border: none;
-  background-color: green;
+.questions_container, .review_page {
+  margin: 10px;
 }
 
-.review_page .canceledstate {
+.questions_container .canceledstate, .review_page .canceledstate {
   border-color: grey;
 }
 
-.review_page .pendingstate {
+.questions_container .pendingstate, .review_page .pendingstate {
   border-color: #e6ab3f;
 }
 
-.review_page .reviewstate {
+.questions_container .reviewstate, .review_page .reviewstate {
   border-color: #ba9d68;
 }
 
-.review_page .declinestate {
+.questions_container .declinestate, .review_page .declinestate {
   border-color: #E76450;
 }
 
-.review_page .approvestate {
+.questions_container .approvestate, .review_page .approvestate {
   border-color: #4ecd91;
 }
 
-.review_page .review_question {
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+.question_basic, .contributed_question, .review_question {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-left: solid 20px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
+          box-shadow: 0.5px 0.5px 10px 0.1px grey;
+  max-width: 800px;
+  padding: 5px 10px;
+  padding-bottom: 10px;
   text-align: left;
 }
 
-.review_page .review_question p {
-  line-height: 2;
+.contributed_question {
+  margin-bottom: 20px;
 }
 
 .review_page form label {
@@ -190,7 +260,22 @@ button, .pointer_cursor {
 
 .review_page form .question_feedback {
   margin-bottom: 20px;
-  max-width: 400px;
+  max-width: 300px;
+}
+
+.review_question {
+  margin-bottom: 100px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.review_question p {
+  line-height: 2;
 }
 
 .game_container {
@@ -205,8 +290,8 @@ button, .pointer_cursor {
   border-radius: 4px;
   margin-bottom: 15px;
   padding: 20px 15px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
+          box-shadow: 0.5px 0.5px 10px 0.1px grey;
 }
 
 .game .game_question .selected_choice {
@@ -273,6 +358,23 @@ button, .pointer_cursor {
   background-color: #00AD83;
 }
 
+.select_animes {
+  margin-left: auto;
+  margin-right: auto;
+  width: 250px;
+}
+
+.animeslist .startgame {
+  padding: 10px 20px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  font-size: large;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  background-color: green;
+}
+
 .notifications {
   max-width: 650px;
 }
@@ -285,8 +387,8 @@ button, .pointer_cursor {
   padding: 0px 10px;
   padding-top: 10px;
   padding-bottom: 25px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
+          box-shadow: 0.5px 0.5px 10px 0.1px grey;
   position: relative;
 }
 

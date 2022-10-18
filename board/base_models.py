@@ -113,4 +113,3 @@ class Notification(models.Model):
     class Meta:
         ordering = ["-id"]
         abstract = True
-

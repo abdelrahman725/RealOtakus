@@ -35,15 +35,11 @@ const UserContributions = () => {
 return (
     
     <div className="questions_container">
-        <h2>your contributions, total : {n_contributions&&n_contributions}</h2>
+        <h2>{n_contributions && n_contributions} contributions</h2>
         
         {pending_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
         
-        <br />
-        
         {approved_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
-        
-        <br />
         
         {rejected_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
                 

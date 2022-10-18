@@ -82,33 +82,29 @@ const Contribute = ({all_animes_options}) => {
     
     // removes leading and trailing spaces (for duplication checking and for form submission)
         const unique_choices = new Set()  
-        for (const key in Question)
-        { 
+        for (const key in Question){ 
           const trimmed_value = Question[key].trim()
           key!=="question"&& unique_choices.add(trimmed_value)
           cleaned_question[key] = trimmed_value
         }
-          
-        if ( cleaned_question.question.match(letters_exist) == null  
-            ||
-              cleaned_question.question.match(letters_exist).length < 2
-          ){
+
+        const letters_exist_match = cleaned_question.question.match(letters_exist)
+
+        if ( letters_exist_match== null  || letters_exist_match.length < 2){
           console.log("question shoud contain at least 2 letters")
           question_ref.current.focus() 
           window.scrollTo({ top: 0, behavior: 'smooth' })
           return false
         }
         
-        if (cleaned_question.question.length < 10)
-        {
+        if (cleaned_question.question.length < 10){
             console.log("question must be at least 10 characters length")
             question_ref.current.focus() 
             window.scrollTo({ top: 0, behavior: 'smooth' })
             return false
         }
     
-        if (unique_choices.size !==4)
-        {
+        if (unique_choices.size !==4){
           console.log("each choice must be unique")
           return false
         }  
@@ -126,11 +122,7 @@ const Contribute = ({all_animes_options}) => {
     selected_anime &&  anime_select.current.blur()
   }
   
-  useEffect(()=>{
-    
-    return()=>{ set_info_message() }
-
-  },[])
+  useEffect(()=>{ return()=> set_info_message()   },[])
 
   return (
     <div className="centered_div contribution">
@@ -143,7 +135,7 @@ const Contribute = ({all_animes_options}) => {
   
         <div className="contribution_form">
 
-            <Select 
+          <Select 
               className="select_animes" 
               placeholder="select anime"
               isClearable= {true}
@@ -152,9 +144,9 @@ const Contribute = ({all_animes_options}) => {
               onChange={on_anime_select} 
               value={anime}
               ref={anime_select}
-            />
+          />
             
-            <br/> <br/>
+          <br/> <br/>
           
           <textarea name="question" 
             typeof="text"

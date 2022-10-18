@@ -4,7 +4,6 @@ from time import sleep
 from django.db import connection, IntegrityError
 from django.shortcuts import render
 from django.forms import ValidationError
-from django.db import models
 from django.db.models import Count, Avg, Q
 from django.http import JsonResponse
 
@@ -41,19 +40,22 @@ def GetOrFetchAnime(anime : int):
 
 
 def GetWantedUser(request):
+    return User.objects.get(username="otaku")
     return request.user
-    return User.objects.get(username="user")
 
 
 def ReactApp(request):
     if request.user.is_authenticated:
+        # react app
         return render(request, "index.html")
+    # django template
     return render(request, "board/home.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
-def GetUserData(request):
+def main_data(request):
+    print(f"\nfetching home data again!\n")
     user = GetWantedUser(request)
 
     if request.method == "POST":
@@ -83,20 +85,9 @@ def GetUserData(request):
     )
 
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
-        
-    return Response({
-        "user_data": basic_user_data,
-        "notifications": serialized_notifications.data,
-        "animes":all_animes.data
-    })
-
-
-@login_required
-@api_view(["GET"])
-def GetDashBoard(request):
 
     # users sorted by their scores in non-increasing order where their score is >= avg_score and !=0 
-    avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
+    #avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
 
     # top_competitors = User.objects.annotate(
     #     n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
@@ -107,16 +98,21 @@ def GetDashBoard(request):
     ).exclude(username="admin").order_by("-points")
 
     LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
-    
+
+        
     return Response({
-        "leaderboard": LeaderBorad.data,
+        "user_data": basic_user_data,
+        "notifications": serialized_notifications.data,
+        "animes":all_animes.data,
+        "leaderboard": LeaderBorad.data
     })
+
 
 
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
     user = GetWantedUser(request) 
@@ -131,8 +127,8 @@ def GetQuizeAnimes(request):
                 n_active_questions= Count(
                     "anime_questions",
                     filter=(
-                    # Q(anime_questions__active=True),
-                    # ~Q(contribution__contributor=user,contribution__reviewer=user)
+                     #Q(anime_questions__active=True),
+                     #Q(contribution__contributor=user,contribution__reviewer=user)
                     ),
                     distinct=True
                 )
@@ -146,7 +142,7 @@ def GetQuizeAnimes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -231,7 +227,7 @@ def QuestionEncounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def SubmitGame(request):
     user = GetWantedUser(request)
@@ -274,7 +270,7 @@ def SubmitGame(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET","POST"])
 def get_or_make_contribution(request):
     user = GetWantedUser(request)
@@ -335,7 +331,7 @@ def get_or_make_contribution(request):
         return JsonResponse({"info": e.args[0]})
 
 
-@login_required
+#@login_required
 @api_view(["GET","PUT"])
 def contribution_to_review(request):
     user = GetWantedUser(request)
@@ -403,18 +399,16 @@ def contribution_to_review(request):
         )
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
 
     profile_data = ProfileDataSerializer(
-        User.objects.annotate(
+        User.objects.values("points","level","tests_started","tests_completed").annotate(
             n_questions_reviewed = Count("contributions_reviewed")
         ).get(id=user.id)
     )
-
-    #user.contributions_reviewed.all().count()
 
     # user_interactions = UserInteractionSerializer(
     #     user.questions_interacted_with.select_related("anime"),
@@ -429,15 +423,10 @@ def GetMyProfile(request):
                 distinct=True
             )
         ).annotate(
-            wrong_answers=Count("anime_interactions", filter=(
-                    Q(anime_interactions__correct_answer=False, anime_interactions__user=user)       
-                ),
-                distinct=True
-            )
-        ).annotate(
-            no_answers=Count("anime_interactions", filter=(
-                    Q(anime_interactions__correct_answer__isnull=True, anime_interactions__user=user)       
-                ),
+            not_right_answers=Count("anime_interactions", filter=((
+                ~Q(anime_interactions__correct_answer=True)) 
+                & (Q(anime_interactions__user=user)
+                )),
                 distinct=True
             )
         ),
@@ -450,7 +439,7 @@ def GetMyProfile(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)

@@ -1,7 +1,10 @@
+from time import sleep
 import math
 import pytz
 from datetime import  timedelta
 
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
@@ -559,6 +562,7 @@ class UserAdmin(admin.ModelAdmin):
   list_display = (
     "username",
     "id",
+    "last_login",
     #"email",
     "level",
     "points",
@@ -604,6 +608,13 @@ class UserAdmin(admin.ModelAdmin):
   def reviewer(self,obj):
     return obj.animes_to_review.exists()
   reviewer.boolean = True
+  
+  def authenticated(self,obj):
+    uid_list = []
+    for session in Session.objects.filter(expire_date__gte=timezone.now()):
+      uid_list.append(session.get_decoded().get('_auth_user_id', None))
+    return obj in User.objects.filter(id__in=uid_list)
+  authenticated.boolean = True
   
   def contributions(self,obj):
     return obj.contributions.filter(approved=True).count()

@@ -1,17 +1,19 @@
 from django.urls import path, re_path
+from board.authen_views import Register
+from board.authen_views import Login
+from board.authen_views import Logout
 from board.views import *
-from board.authen_views import * 
 
-urlpatterns = [    
+
+urlpatterns = [
     
     path('',ReactApp,name="home"),
     path('register/',Register,name="register_url"),
     path('login/',Login,name="login_url"),
     path('logout/',Logout),
     
-    path('data',GetUserData),
-    path('dashboard',GetDashBoard),
-
+    path('data',main_data),
+    
     path('gameanimes',GetQuizeAnimes),
     path('getgame/<int:game_anime>',GetTest),
     path('interaction/<int:question_id>',QuestionEncounter),

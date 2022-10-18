@@ -21,7 +21,11 @@ def Register(request):
 
     else:
       try:
-        user = User.objects.create_user(username=username,password=password,email=email)
+        user = User.objects.create_user(
+          username=username,
+          password=password,
+          email=email
+        )
         user.save()
         login(request, user)
       except IntegrityError:
@@ -40,8 +44,8 @@ def Login(request):
     else:
       messages.error(request, 'wrong username or password')
   return HttpResponseRedirect(reverse("home"))
-    
-  
+
+
 def Logout(request):
   logout(request)
   list(messages.get_messages(request))

@@ -1,15 +1,22 @@
 import './App.css'
 
 import NavBar from './Components/NavBar'
+import About from './Components/About'
 import Notifications from './Components/Notifications'
 import Contribute from './Components/Contribute'
 import QuizAnimes from './Components/QuizAnimes'
 import TheDashBoard from './Components/TheDashBoard'
 import QuestionsForReview from './Components/QuestionsForReview'
 import InfoMessage from './Components/InfoMessage'
-//import UserContributions from './Components/UserContributions'
-
+import UserContributions from './Components/UserContributions'
 import { UserProfile } from './Components/TheProfile/UserProfile'
+
+import { FcIdea } from 'react-icons/fc'
+import { FaEye } from 'react-icons/fa'
+import { FcDatabase } from 'react-icons/fc'
+import { MdQuiz } from 'react-icons/md'
+
+
 import { domain } from './Components/AsyncRequest'
 import async_http_request from './Components/AsyncRequest'
 import React,{useState,useEffect,createContext} from 'react'
@@ -19,6 +26,7 @@ export const GlobalStates  = createContext()
 
 function App() {
   const [user_data,set_user_data] = useState()
+  const [dashboard_users,set_dashboard_users] = useState()  
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
   const [info_message, set_info_message] = useState()
@@ -30,6 +38,7 @@ function App() {
   const [ReviewView,setReviewView] = useState(false)
   const [NotificationsView,setNotificationsView]= useState(false)
   const [ContributionView,setContributionView]= useState(false)
+  const [MyContributionsView,setMyContributionsView] = useState(false)
   const [QuizAnimesView,setQuizAnimesView] = useState(false)
   const [ProfileView,setProfileView] = useState(false)
   
@@ -60,7 +69,7 @@ function App() {
   }, [lastMessage, setnotifications]);
 
   
-  const Logout = ()=>  window.location.href = `http://${domain}/logout`
+  const logout = ()=>  window.location.href = `http://${domain}/logout`
    
   // called if the user doesn't have a saved country (which will always be the case initially for the first login)
   const getUserCountryViaApiServiceThenSaveCountry = async()=>{  
@@ -83,7 +92,7 @@ function App() {
    
    useEffect(()=>{
 
-    async function GetUserData(){
+    async function get_home_data(){
       const result = await async_http_request({path:"data"})
      
       if (result===null){
@@ -96,6 +105,7 @@ function App() {
       } 
       
       set_user_data(result.user_data)
+      set_dashboard_users(result.leaderboard)
       setnumber_of_unseen_notifications(result.notifications.filter(n => !n.seen).length)
       setnotifications(result.notifications)
 
@@ -112,23 +122,21 @@ function App() {
   
     }
 
-    GetUserData()
+    get_home_data()
   },[])
-  
 
-  const ManageViews = (pressed_view)=>
-  {
-    
+  const ManageViews = (pressed_view)=> {
+  
     if (GameMode)
         return
     
-    switch(pressed_view)
-    {
+    switch(pressed_view){
       case "home":
         setHomeView(true)
         setReviewView(false)
         setQuizAnimesView(false) 
         setContributionView(false)
+        setMyContributionsView(false)
         setProfileView(false)
         setNotificationsView(false) 
         return
@@ -139,6 +147,7 @@ function App() {
         setHomeView(false) 
         setQuizAnimesView(false)
         setContributionView(false)
+        setMyContributionsView(false)
         setNotificationsView(false) 
         return
        
@@ -146,6 +155,11 @@ function App() {
         setContributionView(true)
         setHomeView(false)
         return
+      
+      case "mycontributions" :
+      setMyContributionsView(true)
+      setHomeView(false)
+      return
 
       case "review" :
         setReviewView(true)
@@ -159,6 +173,7 @@ function App() {
 
       case "notifications" :
         setNotificationsView(true)
+        setMyContributionsView(false)
         setReviewView(false) 
         setQuizAnimesView(false)
         setHomeView(false)
@@ -182,37 +197,52 @@ return (
           show={ManageViews}
           notifications_open = {NotificationsView}
           new_notifications={number_of_unseen_notifications} 
+          logout={logout}
         /> 
         
         <div className="navigation_buttons">
-
-          { !HomeView && !GameMode&& <button onClick={()=>ManageViews("home")}>Home</button>} 
   
-          { HomeView && <button onClick={()=>ManageViews("contribution")}>Contribute</button> }
+          { HomeView && 
+          <button onClick={()=>ManageViews("contribution")}>
+            <FcIdea className="icon"/>
+            Contribute
+          </button> }
   
-          { HomeView && <button onClick={()=>ManageViews("quiz")}>take a quiz</button> }
+          { HomeView && 
+          <button onClick={()=>ManageViews("quiz")}>
+            <MdQuiz className="icon"/>
+            Take Quiz
+          </button> }
 
-          { user_data && user_data.is_reviewer && HomeView && <button onClick={()=>ManageViews("review")}>Review contributions</button> }
+          { HomeView && 
+          <button onClick={()=>ManageViews("mycontributions")}>
+            <FcDatabase className="icon"/>
+            My Contributions
+          </button> }
+
+          { user_data && user_data.is_reviewer && HomeView && 
+          <button onClick={()=>ManageViews("review")}>
+            <FaEye className="icon"/>
+            Review Contributions
+          </button> }
 
         </div>
 
-        <InfoMessage msg={info_message}/>
+        {info_message && <InfoMessage msg={info_message}/> }
+                
+        {/* <About/> */}
         
-        <br /> 
-        
-        { HomeView && <TheDashBoard current_user= {user_data && user_data.id} />}
-        
-        
+        { HomeView && <TheDashBoard dashboard_users={dashboard_users} current_user= {user_data && user_data.id} />}
+                
         { ProfileView && <UserProfile />}
 
-        
         { QuizAnimesView && <QuizAnimes/>} 
-        
         
         { ContributionView && <Contribute all_animes_options={all_animes} />}
         
+        { MyContributionsView && <UserContributions/>}
+        
         { ReviewView &&  <QuestionsForReview/> }
-
 
         { NotificationsView && 
 
@@ -222,7 +252,6 @@ return (
           clear_unseen_count = {setnumber_of_unseen_notifications} 
         />
         }
-
 
     </GlobalStates.Provider>
 

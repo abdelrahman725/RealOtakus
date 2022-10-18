@@ -4,15 +4,33 @@ const Interactions = ({interactions}) => {
   return (
 
     <div className="interactions">
-      <h1>interactions</h1>
-      {interactions.map((interaction, index) => (
+
+      <h2>interactions</h2>
+
+      <table className="dashboard">
+        <thead>
+          <tr>
+            <th> anime</ th>
+            <th> right answers </th>
+            <th> wrong/no  &nbsp;answers</th>
+          </tr>
+        </thead>
         
-          <div key={index}>
-            {interaction.anime_name}
-          </div>
+        <tbody>  
+
+          {interactions.map((interaction, index) => (  
+            <tr key={index}>
+              <td>{interaction.anime_name}</td>
+              <td>{interaction.right_answers}</td>
+              <td>{interaction.not_right_answers}</td>
+            </tr>
+              
+          ))}
         
-      ))
-      }
+        </tbody>
+    
+      </table>
+      
     </div>
   )
 }

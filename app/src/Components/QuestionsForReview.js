@@ -59,14 +59,16 @@ const QuestionsForReview = () => {
   return (
     <div className="review_page">
       
-      <h2>{questions && questions.length } contributed questions that need review</h2>
+      <h2>
+        {questions && questions.length}  contributed questions that need review
+      </h2>
       <br />
  
       <Select
         className="select_animes"
         placeholder="filter questions"
         isClearable={true} 
-        isLoading={animes_options.length <= 0}
+        isLoading={!questions}
         options={animes_options}
         onChange={handle_questions_filter} 
         ref={anime_select}

@@ -15,7 +15,7 @@ export const UserProfile = () => {
       if (profile_result===null){
         return
       }
-      
+      console.log(profile_result.user_data)
       set_user_data(profile_result.user_data)
       setuser_interactions(profile_result.user_interactions)
     }
@@ -24,19 +24,37 @@ export const UserProfile = () => {
   },[])
 
   return (
-    <div className="centered_div userprofile">
+    <div className="account">
 
-    {user_data ?
-      <div>
-        
-      <Interactions interactions={user_interactions} />
-        
-      </div>
-      :
-      
-      <strong>loading</strong>
-      
-    }
+      {user_data ?
+        <div>
+          <div className="profile">
+            <div>
+              tests started
+              <p>{user_data.tests_started}</p>
+            </div>
+            <hr />
+            <div>
+              tests completed
+              <p>
+                {user_data.tests_completed}
+              </p>
+            </div>
+            <hr />
+           
+            <div>
+              contributions made
+              <p>{user_data.n_questions_reviewed}</p>
+            </div>
+          
+          </div>
+          <br />
+          { user_interactions.length > 0 &&  <Interactions interactions={user_interactions} />  } 
+        </div>
+
+        :
+        <strong>loading</strong> 
+      }
     
     </div>
   )

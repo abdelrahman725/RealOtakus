@@ -7,7 +7,6 @@ const EachNoti = ({noti,time}) => {
     <div className="centered_div notification">  
        <p> <strong>{noti}</strong> </p>
        <p className="notification_time">  {UtcToLocalTime(time)} </p>
-      <br />
     </div>
         
   )
