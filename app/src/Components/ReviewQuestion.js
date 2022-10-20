@@ -11,10 +11,11 @@ const [feedback,setfeedback] = useState()
 const feedback_select = useRef(null)
 
 const feedback_options = [
-    { value: 'invalid', label: 'invalid' },
-    { value: 'too easy', label: 'too easy' },
-    { value: 'not correct', label: 'not correct' } ,
-    { value: 'choices are similar', label: 'choices are similar' }      
+    { value: 1, label: 'invalid format' },
+    { value: 2, label: 'Q is not clear' },
+    { value: 3, label: 'wrong information' },
+    { value: 4, label: 'easy / predictable' },
+    { value: 5, label: 'choices are similar' }    
 ]
 
 
@@ -30,7 +31,7 @@ const ReviewSubmission = (e,question)=>{
             data :{
                 "question":question,
                 "state": question_state,
-                "feedback":feedback ? feedback.value:null 
+                "feedback":feedback ? feedback.label:null 
             }
         })
 
@@ -66,7 +67,6 @@ const handle_question_state = (e)=> setquestion_state( parseInt(e.target.value) 
 const on_feedback_selection = selected_option => {
     setfeedback(selected_option)    
     feedback_select.current.blur()
-
 } 
 
 
@@ -79,17 +79,22 @@ return (
         </div>
         
         <div className="choices">
-            <p>right answer : {question.right_answer}</p>
-            <p>choice 1 : {question.choice1}</p>
-            <p>choice 2 : {question.choice2}</p>
-            <p>choice 3 : {question.choice3}</p>
+            <p>right answer  {question.right_answer}</p>
+            wrong choices
+            <ul>   
+                <li> {question.choice1}</li>
+                <li> {question.choice2}</li>
+                <li> {question.choice3}</li>
+            </ul>
             <hr />
         </div>
 
-        {reviewstate==="reviewstate" &&
+        {reviewstate==="pendingstate" &&
             <form onSubmit={(e)=>ReviewSubmission(e,question.id)}>
-                <div className="radios">      
+
+                 <div className="radios">
                     <label>
+                        approve
                         <input
                         className="approve_input"
                         required
@@ -97,12 +102,12 @@ return (
                         value={1}
                         name="state"
                         checked={question_state=== 1}
-                        onChange={handle_question_state}
-                        />
-                        approve
+                        onChange={handle_question_state}/>
+                        <span className="approve_checkmark"></span>
                     </label>
                 
                     <label>
+                        reject
                         <input
                         className="decline_input"
                         required
@@ -112,9 +117,9 @@ return (
                         checked={question_state=== 0}
                         onChange={handle_question_state}
                         />
-                        decline
+                        <span className="decline_checkmark"></span>
                     </label>
-                </div>
+                </div> 
              
                 <br />
                 {question_state=== 0 &&
@@ -128,7 +133,7 @@ return (
                     value={feedback}
                     onChange={on_feedback_selection} 
                     ref={feedback_select}
-                    // isMulti = {false}
+                    isMulti = {false}
                     />
                 }
                 

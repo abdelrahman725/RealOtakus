@@ -59,8 +59,8 @@ const QuestionsForReview = () => {
   return (
     <div className="review_page">
       
-      <h2>
-        {questions && questions.length}  contributed questions that need review
+      <h2 className="title">
+        <span>{questions && questions.length}</span> contributions need review
       </h2>
       <br />
  
@@ -80,7 +80,7 @@ const QuestionsForReview = () => {
         !selected_anime? 
           <ReviewQuestion 
             setreviewstate={setreviewstates}
-            reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
+            reviewstate={reviewstates[q.id]?reviewstates[q.id]:"pendingstate"} 
             anime={q.anime.anime_name}
             question={q}
             key={index}
@@ -89,7 +89,7 @@ const QuestionsForReview = () => {
           selected_anime.value===q.anime.anime_name&&
           <ReviewQuestion 
             setreviewstate={setreviewstates}
-            reviewstate={reviewstates[q.id]?reviewstates[q.id]:"reviewstate"} 
+            reviewstate={reviewstates[q.id]?reviewstates[q.id]:"pendingstate"} 
             anime={q.anime.anime_name}
             question={q} 
             key={index}

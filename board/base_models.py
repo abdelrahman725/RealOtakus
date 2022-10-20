@@ -82,16 +82,6 @@ class QuestionInteraction(models.Model):
         abstract = True
 
 
-class Game(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_games")
-    anime = models.ForeignKey(Anime, on_delete=models.PROTECT,related_name="anime_games")
-    games = models.PositiveSmallIntegerField(default=1) 
-    completed = models.BooleanField(default=False)
-    
-    class Meta:
-        abstract = True
-
-
 class Notification(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="getnotifications")
     notification = models.CharField(max_length=250)

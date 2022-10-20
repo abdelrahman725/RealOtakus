@@ -123,11 +123,6 @@ class QuestionInteraction(base_models.QuestionInteraction):
         return f" {self.user} interacted with a question on {self.question.anime.anime_name}"
 
 
-class Game(base_models.Game):
-    def __str__(self) -> str:
-        return "an instance of a non used model yet"
-
-
 class Notification(base_models.Notification):
     def save(self, *args, **kwargs):
         super(Notification, self).save(*args, **kwargs)

@@ -17,6 +17,7 @@ class SimpleUserDataSerializer(serializers.ModelSerializer):
 class ProfileDataSerializer(serializers.ModelSerializer):
   
   n_questions_reviewed = serializers.IntegerField()
+  n_approved_contributions = serializers.IntegerField()
 
   class Meta:
     model = User
@@ -25,7 +26,8 @@ class ProfileDataSerializer(serializers.ModelSerializer):
       'level',
       'tests_started',
       'tests_completed',
-      'n_questions_reviewed'
+      'n_questions_reviewed',
+      'n_approved_contributions'
     )
 
 

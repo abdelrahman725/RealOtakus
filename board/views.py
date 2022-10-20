@@ -40,7 +40,7 @@ def GetOrFetchAnime(anime : int):
 
 
 def GetWantedUser(request):
-    return User.objects.get(username="otaku")
+    return User.objects.get(username="pablo")
     return request.user
 
 
@@ -55,7 +55,6 @@ def ReactApp(request):
 #@login_required
 @api_view(["GET", "POST"])
 def main_data(request):
-    print(f"\nfetching home data again!\n")
     user = GetWantedUser(request)
 
     if request.method == "POST":
@@ -406,7 +405,9 @@ def GetMyProfile(request):
 
     profile_data = ProfileDataSerializer(
         User.objects.values("points","level","tests_started","tests_completed").annotate(
-            n_questions_reviewed = Count("contributions_reviewed")
+            n_questions_reviewed = Count("contributions_reviewed",distinct=True)
+        ).annotate(
+            n_approved_contributions = Count("contributions",filter=(Q(contributions__approved=True)),distinct=True)
         ).get(id=user.id)
     )
 

@@ -1,8 +1,8 @@
 let RegisterPage;
 let LoginPage;
 
-function formFocus()
-{   // window.scrollBy({
+function formFocus(){   
+    // window.scrollBy({
     //     top:50,
     //     behavior: 'smooth',
     // });
@@ -12,12 +12,11 @@ function formFocus()
 
 
 
-function ClearMessages()
-{
-    document.querySelector(".messages").innerHTML=""
+function ClearMessages(){
+    //document.querySelector(".messages").innerHTML=""
 }
-function ShowRegister()
-{
+
+function ShowRegister(){
   ClearMessages()
   RegisterPage.style.display = "block";
   LoginPage.style.display = "none";
@@ -25,18 +24,14 @@ function ShowRegister()
 
 }
 
-function ShowLogin()
-{
+function ShowLogin(){
   ClearMessages()
   RegisterPage.style.display = "none";
   LoginPage.style.display = "block";
   //document.getElementById("login_name").focus();
-
 }
 
-function CheckPasswords()
-{
-
+function CheckPasswords(){
     let pass_inputs = document.getElementsByClassName("pass");
     let RegisterBtn = document.getElementById("registerbtn");
 
@@ -70,8 +65,7 @@ function CheckPasswords()
 
 }
 
-document.addEventListener("DOMContentLoaded",()=>
-{
+document.addEventListener("DOMContentLoaded",()=>{
    RegisterPage = document.querySelector(".RegisterPage");
    LoginPage = document.querySelector(".LoginPage");
    //CheckPasswords();

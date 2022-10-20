@@ -1,5 +1,4 @@
 import './App.css'
-
 import NavBar from './Components/NavBar'
 import About from './Components/About'
 import Notifications from './Components/Notifications'
@@ -9,13 +8,14 @@ import TheDashBoard from './Components/TheDashBoard'
 import QuestionsForReview from './Components/QuestionsForReview'
 import InfoMessage from './Components/InfoMessage'
 import UserContributions from './Components/UserContributions'
+import Footer from './Components/Footer'
 import { UserProfile } from './Components/TheProfile/UserProfile'
 
+import { BiCodeAlt } from 'react-icons/bi'
 import { FcIdea } from 'react-icons/fc'
 import { FaEye } from 'react-icons/fa'
 import { FcDatabase } from 'react-icons/fc'
 import { MdQuiz } from 'react-icons/md'
-
 
 import { domain } from './Components/AsyncRequest'
 import async_http_request from './Components/AsyncRequest'
@@ -35,6 +35,7 @@ function App() {
   
   // component views :
   const [HomeView,setHomeView] = useState(true)
+  const [AboutView,setAboutView] = useState(false)
   const [ReviewView,setReviewView] = useState(false)
   const [NotificationsView,setNotificationsView]= useState(false)
   const [ContributionView,setContributionView]= useState(false)
@@ -60,7 +61,7 @@ function App() {
       const new_data = JSON.parse(lastMessage.data)
       
       if (new_data.payload){
-        console.log(new_data.payload)
+        //console.log(new_data.payload)
         setnotifications(prev_notifications => [ new_data.payload,...prev_notifications])
         setnumber_of_unseen_notifications( prev => prev + 1)
       }
@@ -131,8 +132,10 @@ function App() {
         return
     
     switch(pressed_view){
+
       case "home":
         setHomeView(true)
+        setAboutView(false)
         setReviewView(false)
         setQuizAnimesView(false) 
         setContributionView(false)
@@ -144,6 +147,7 @@ function App() {
       case "profile" :
         setProfileView(true) 
         setReviewView(false)
+        setAboutView(false)
         setHomeView(false) 
         setQuizAnimesView(false)
         setContributionView(false)
@@ -155,7 +159,18 @@ function App() {
         setContributionView(true)
         setHomeView(false)
         return
-      
+
+      case "about":
+        setAboutView(true)
+        setHomeView(false)
+        setNotificationsView(false)
+        setMyContributionsView(false)
+        setReviewView(false) 
+        setQuizAnimesView(false)
+        setContributionView(false)
+        setProfileView(false)
+        return 
+
       case "mycontributions" :
       setMyContributionsView(true)
       setHomeView(false)
@@ -174,6 +189,7 @@ function App() {
       case "notifications" :
         setNotificationsView(true)
         setMyContributionsView(false)
+        setAboutView(false)
         setReviewView(false) 
         setQuizAnimesView(false)
         setHomeView(false)
@@ -200,41 +216,57 @@ return (
           logout={logout}
         /> 
         
-        <div className="navigation_buttons">
-  
-          { HomeView && 
-          <button onClick={()=>ManageViews("contribution")}>
-            <FcIdea className="icon"/>
-            Contribute
-          </button> }
-  
-          { HomeView && 
-          <button onClick={()=>ManageViews("quiz")}>
-            <MdQuiz className="icon"/>
-            Take Quiz
-          </button> }
+          <div className="spaced_div"></div>
+          { HomeView ? 
 
-          { HomeView && 
-          <button onClick={()=>ManageViews("mycontributions")}>
-            <FcDatabase className="icon"/>
-            My Contributions
-          </button> }
+            <div className="navigation_buttons">
+              
+              <button onClick={()=>ManageViews("contribution")}>
+                <FcIdea className="icon"/>
+                Contribute
+              </button> 
 
-          { user_data && user_data.is_reviewer && HomeView && 
-          <button onClick={()=>ManageViews("review")}>
-            <FaEye className="icon"/>
-            Review Contributions
-          </button> }
+              <button onClick={()=>ManageViews("quiz")}>
+                <MdQuiz className="icon"/>
+                Start Quiz
+              </button> 
 
-        </div>
+              <button onClick={()=>ManageViews("mycontributions")}>
+                <FcDatabase className="icon"/>
+                My Contributions
+              </button> 
 
-        {info_message && <InfoMessage msg={info_message}/> }
+              { user_data && user_data.is_reviewer &&  
+                <button onClick={()=>ManageViews("review")}>
+                  <FaEye className="icon"/>
+                  Review Contributions
+                </button> 
+              }
+            </div>
+
+          :
+           !GameMode && 
+            <div onClick={()=>ManageViews("home")} className="back_arrow">
+             <span className="pointer_cursor">&#8249;</span>
+            </div>
+          }
+
+        { info_message && <InfoMessage msg={info_message}/> }
                 
-        {/* <About/> */}
+        { AboutView && <About/> }
         
         { HomeView && <TheDashBoard dashboard_users={dashboard_users} current_user= {user_data && user_data.id} />}
                 
-        { ProfileView && <UserProfile />}
+        { NotificationsView && 
+
+        <Notifications 
+          all_notifications={notifications}
+          unseen_count = {number_of_unseen_notifications}
+          clear_unseen_count = {setnumber_of_unseen_notifications} 
+        />
+        }
+
+        { ProfileView && <UserProfile is_reviewer={user_data && user_data.is_reviewer}/>}
 
         { QuizAnimesView && <QuizAnimes/>} 
         
@@ -244,14 +276,7 @@ return (
         
         { ReviewView &&  <QuestionsForReview/> }
 
-        { NotificationsView && 
-
-        <Notifications 
-          all_notifications={notifications}
-          unseen_count = {number_of_unseen_notifications}
-          clear_unseen_count = {setnumber_of_unseen_notifications} 
-        />
-        }
+        {/* <Footer/> */}
 
     </GlobalStates.Provider>
 

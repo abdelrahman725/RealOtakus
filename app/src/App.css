@@ -4,12 +4,19 @@
   text-align: center;
 }
 
-button, .pointer_cursor, .navbar .icon {
+button, .pointer_cursor {
   cursor: pointer;
+}
+
+.icon_basic, .navbar .icon {
+  cursor: pointer;
+  color: #6e7174;
+  font-size: xx-large;
 }
 
 .navbar {
   background-color: #262F36;
+  border-bottom: 2px solid #645c30;
   color: white;
   padding: 15px;
   position: fixed;
@@ -33,13 +40,8 @@ button, .pointer_cursor, .navbar .icon {
   margin-right: 16px;
 }
 
-.navbar .icon {
-  color: #6e7174;
-  font-size: xx-large;
-}
-
 .navbar .icon:hover {
-  color: white;
+  color: #49c18c;
 }
 
 .navbar .logo {
@@ -48,8 +50,22 @@ button, .pointer_cursor, .navbar .icon {
   color: beige;
 }
 
+.spaced_div {
+  margin-top: 90px;
+}
+
+.back_arrow {
+  margin-bottom: 10px;
+  font-size: 60px;
+  position: relative;
+  margin-left: 40px;
+}
+
+.back_arrow span:hover {
+  color: #49c18c;
+}
+
 .navigation_buttons {
-  margin-top: 110px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -62,11 +78,12 @@ button, .pointer_cursor, .navbar .icon {
   width: 170px;
   margin-left: 10px;
   margin-right: 10px;
+  margin-bottom: 7px;
   color: white;
   padding: 0px 10px;
   font-weight: bold;
   height: 55px;
-  border-radius: 10px;
+  border-radius: 7px;
   background-color: #262F36;
   letter-spacing: 1px;
   display: -webkit-box;
@@ -88,7 +105,6 @@ button, .pointer_cursor, .navbar .icon {
 .dashboard {
   -webkit-transition: 1s;
   transition: 1s;
-  width: 60%;
   border-radius: 7px;
   border-collapse: collapse;
   color: white;
@@ -115,6 +131,10 @@ button, .pointer_cursor, .navbar .icon {
   padding: 20px   18px;
 }
 
+.leaderboard {
+  width: 65%;
+}
+
 .leaderboard .top_competitor {
   position: relative;
   right: 5px;
@@ -127,26 +147,25 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .account {
-  margin: 10px;
+  margin: 20px;
 }
 
 .account .profile {
+  width: 85%;
   color: white;
   background-color: #262F36;
   border-radius: 7px;
   -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
           box-shadow: 0.5px 0.5px 10px 0.1px grey;
-  max-width: 800px;
-  padding: 10px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
 .account .profile div {
-  margin-top: 15px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-top: 20px;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 
 .account .profile div p {
@@ -162,10 +181,19 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .account .interactions {
-  margin-top: 100px;
+  width: 85%;
+}
+
+@media screen and (max-width: 372px) {
+  textarea {
+    width: 90%;
+  }
 }
 
 @media screen and (max-width: 540px) {
+  .spaced_div {
+    margin-top: 125px;
+  }
   .navbar {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -187,7 +215,7 @@ button, .pointer_cursor, .navbar .icon {
   }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 900px) {
   .account .profile {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
@@ -224,10 +252,6 @@ button, .pointer_cursor, .navbar .icon {
   border-color: #e6ab3f;
 }
 
-.questions_container .reviewstate, .review_page .reviewstate {
-  border-color: #ba9d68;
-}
-
 .questions_container .declinestate, .review_page .declinestate {
   border-color: #E76450;
 }
@@ -241,7 +265,7 @@ button, .pointer_cursor, .navbar .icon {
   display: -ms-flexbox;
   display: flex;
   border-left: solid 20px;
-  border-radius: 5px;
+  border-radius: 7px;
   -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
           box-shadow: 0.5px 0.5px 10px 0.1px grey;
   max-width: 800px;
@@ -255,7 +279,63 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .review_page form label {
-  margin-right: 15px;
+  margin-right: 20px;
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  font-size: large;
+}
+
+.review_page form label input {
+  position: absolute;
+  opacity: 0;
+}
+
+.review_page form label span {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.review_page form label input:checked ~ .approve_checkmark {
+  background-color: #1aa590;
+}
+
+.review_page form label input:checked ~ .decline_checkmark {
+  background-color: #f36421;
+}
+
+.review_page form label span:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.review_page form label input:checked ~ span:after {
+  display: block;
+}
+
+.review_page form label span:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+.review_page form .review_buttons {
+  margin-bottom: 10px;
+}
+
+.review_page form .review_buttons button {
+  margin-right: 20px;
 }
 
 .review_page form .question_feedback {
@@ -264,7 +344,7 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .review_question {
-  margin-bottom: 100px;
+  margin-bottom: 110px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
@@ -274,8 +354,8 @@ button, .pointer_cursor, .navbar .icon {
           justify-content: flex-start;
 }
 
-.review_question p {
-  line-height: 2;
+.review_question .choices {
+  margin-bottom: 10px;
 }
 
 .game_container {
@@ -287,7 +367,7 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .game .game_question .choice {
-  border-radius: 4px;
+  border-radius: 7px;
   margin-bottom: 15px;
   padding: 20px 15px;
   -webkit-box-shadow: 0.5px 0.5px 10px 0.1px grey;
@@ -330,10 +410,8 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .contribution .contribution_form textarea {
-  margin: 3px;
   padding: 10px;
-  max-width: 350px;
-  border-radius: 8px;
+  border-radius: 7px;
   font-size: large;
   resize: none;
   outline: none;
@@ -353,7 +431,7 @@ button, .pointer_cursor, .navbar .icon {
   padding: 10px 15px;
   font-size: large;
   letter-spacing: 2px;
-  border-radius: 4px;
+  border-radius: 7px;
   border: none;
   background-color: #00AD83;
 }
@@ -370,7 +448,7 @@ button, .pointer_cursor, .navbar .icon {
   letter-spacing: 3px;
   font-size: large;
   color: white;
-  border-radius: 5px;
+  border-radius: 7px;
   border: none;
   background-color: green;
 }
@@ -380,7 +458,7 @@ button, .pointer_cursor, .navbar .icon {
 }
 
 .notifications .notification {
-  border-radius: 6px;
+  border-radius: 7px;
   text-align: left;
   margin: 10px;
   margin-bottom: 40px;

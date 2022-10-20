@@ -84,7 +84,6 @@ const QuizAnimes = () => {
     />
     :
     <div className="centered_div animeslist">
-       <h2>which anime you want to take quiz in ?</h2><br />
       
        <Select 
         className="select_animes"

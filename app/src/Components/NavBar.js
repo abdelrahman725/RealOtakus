@@ -21,7 +21,7 @@ return (
         </div>
         
         <div>
-         <FiInfo className="info icon" onClick={ ()=> show("info")}/>
+         <FiInfo className="info icon" onClick={ ()=> show("about")}/>
         </div>
         
       </div> 
@@ -33,8 +33,8 @@ return (
           <BsPersonFill className="icon" 
           onClick={ ()=> show("profile")}
           onMouseEnter = {()=>username_ref.current.style.color="white"}
-          onMouseLeave = {()=>username_ref.current.style.color="#6e7174"}
-          />
+          onMouseLeave = {()=>username_ref.current.style.color="#6e7174"}/>
+          
           <div style={{color:"#6e7174"}} ref={username_ref}>
             {user.username}
           </div>
