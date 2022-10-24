@@ -10,6 +10,29 @@ from board.constants import LEVELS
 import board.models
 
 
+def get_client_ip(request):
+    # use this in case of a the application is running behind a reverse proxy server(like Nginx)
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        print ("returning FORWARDED_FOR")
+        ip = x_forwarded_for.split(',')[-1].strip()
+
+    elif request.META.get('HTTP_X_REAL_IP'):
+        print ("returning REAL_IP")
+        ip = request.META.get('HTTP_X_REAL_IP')
+
+    else:
+        print ("returning REMOTE_ADDR")
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+def print_request_relevant_ips(request):
+    print(f"REMOTE_ADDR : {request.META.get('REMOTE_ADDR')}\n")
+    print(f"REMOTE_HOST : {request.META.get('REMOTE_HOST')}\n")
+    print(f"SERVER_NAME : {request.META.get('SERVER_NAME')}\n")
+
+
 def CreateNotification(receiver,notification,kind):
     if receiver and not receiver.is_superuser:
         board.models.Notification.objects.create(

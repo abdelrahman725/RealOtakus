@@ -8,18 +8,13 @@
   <meta charset="UTF-8">
    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge">  -->
    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">   
-  <link href="{% static 'board/styles.css' %}" rel="stylesheet"> 
+   <link href="{% static 'board/styles.css' %}" rel="stylesheet"> 
   <script src="{% static 'board/index.js' %}"></script> 
-
   <title>Real Otakus</title>
-  
 </head>
 
 <body >
-
-  <div class="navbar">
-    <h1>Real Otakus </h1>
-  </div>
+  <h1>so you are a real otaku ?</h1>
 
   <div class="about">
       <p class="intro">
@@ -28,66 +23,26 @@
       </p>
       
       <h2>what can you do</h2>
-      <ul>
-        <li>take a quiz in your favorite anime</li>
-        <li>see where you stand from other otakus compeititors</li>
-        <li>review others contributed questions</li>
-        <li>contribute by creating questions</li>
-      </ul>
+        <p>take a quiz in your favorite anime</p>
+        <p>see where you stand from other otakus compeititors</p>
+        <p>review others contributed questions</p>
+        <p>contribute by creating questions</p>
   </div>
 
-  <div class="form_container">
-    <div class="LoginPage">
-  
-          <h2>Login</h2>
-            <form action="{%url 'login_url' %}" method="post" >
-              {% csrf_token %}
-
-                <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus>
-                <input type="password" name="password" placeholder=" passsword" autocomplete="off" required>
-                <input type="submit" value="Sign in" class="formbtn">
-                
-            </form>
-          
-          <button id="registerview" onclick="ShowRegister()" class="switchbtn">sign up</button> 
-    </div>
-
-    <div class="RegisterPage" style="display: none">
-      <h2>Register</h2>
-      
-          <form  action="{%url 'register_url' %}" method="post" >
-            {% csrf_token %}
-
-              <input id="register_name" type="text" name="registerusername" placeholder="username" autocomplete="off" > 
-              <input id="email" type="email" name="email" placeholder="email"  autocomplete="off" required >
-
-              <input id="register_password" type="password" name="registerpassword" placeholder="passsword"  autocomplete="off" required class="pass">
-              
-              <input id="confirm_password" type="password" name="confirmpassword" placeholder="confirm passsword"  autocomplete="off" required class="pass">
-               
-              <input type="submit" value="Sign Up" class="formbtn" id= "registerbtn">
-            </form>
-        <button onclick="ShowLogin()" class="switchbtn">already a member</button> 
-  </div> 
-
-   <div class="messages">
-      {% if messages %}
-      {% for msg in messages  %}
-        <div class="msg"> {{msg}}</div>
-        {% endfor %}
-        {% endif %}
-    </div> 
-    
-    <a class="google" href="{% provider_login_url 'google' %}">continue with google </a>
-
-  </div>
-  
+  <form action="{%url 'login_url' %}" method="post" >
+      {% csrf_token %}
+      <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus><br>
+      <input type="password" name="password" placeholder=" passsword" autocomplete="off" required><br>
+      <input type="submit" value="Sign in" class="formbtn">
+  </form>
   <br>
-  <footer></footer>
 
-
-<!-- <a target="_blank" href="https://icons8.com/icon/17949/google">Google icon by Icons8</a> -->
-
+  <div class="form">  
+    <button type="button" id="authenticate" class="google_login" value="{% provider_login_url 'google' %}">
+      continue with google
+    </button>
+  </div>
+  
 </body>
             
 </html>

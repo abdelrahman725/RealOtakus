@@ -2,7 +2,7 @@
 # get all model fields
 #[f.name for f in MyModel._meta.get_fields()]
 
-# Constant number of quiz questions
+# number of questions in a Quiz
 QUESTIONSCOUNT = 5
 
 BEGINNER = "beginner"
@@ -18,13 +18,7 @@ LEVELS = {
     REALOTAKU: 5000
 }
 
-
-LEVELS_CHOICES = []
-
-for level in LEVELS: LEVELS_CHOICES.append((level, level))
-
-
-NUMBER_OF_LEVELS = len(LEVELS)
+LEVELS_CHOICES = [(level,level) for level in LEVELS]
 
 # for 'max_length' parameter of the User model definition
 MAX_LEVEL_LENGTH = len(max(LEVELS, key=len))
@@ -288,3 +282,5 @@ COUNTRIES = {
     "zm":"Zambia",
     "zw":"Zimbabwe"
 }
+
+COUNTRY_CHOICES = [(code,COUNTRIES[code]) for code in COUNTRIES]

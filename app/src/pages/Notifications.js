@@ -1,8 +1,8 @@
-import EachNoti from "./EachNoti"
-import async_http_request from "./AsyncRequest"
+import EachNoti from "./Components/EachNoti"
+import async_http_request from "./Components/AsyncRequest"
 import { useEffect } from "react"
 
-const Notifications = ({all_notifications, unseen_count, clear_unseen_count}) => {
+const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_notifications }) => {
 
 useEffect(()=>{
     
@@ -10,7 +10,7 @@ useEffect(()=>{
       return
 
     // clears unseen_notifcations count after user view them
-    clear_unseen_count(0)
+    setnumber_of_unseen_notifications(0)
       
   //update notifications state fronend and backend (which are seen by the user in the  UI) from unseen to seen   
     const unseen_notifications = []
@@ -27,7 +27,7 @@ useEffect(()=>{
         data : {"notifications": unseen_notifications}
       })
     
-      //console.log(notifications_updated_response)
+      console.log(notifications_updated_response)
     }
 
      UpdateNotificationsState()

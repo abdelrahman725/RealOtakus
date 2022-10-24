@@ -1,3 +1,4 @@
+from random import choices
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
@@ -17,7 +18,14 @@ class Anime(models.Model):
 
 class User(AbstractUser):
     points = models.PositiveIntegerField(default=0)
-    country = models.CharField(max_length=10, blank=True, null=True)
+    
+    country = models.CharField(
+        choices=COUNTRY_CHOICES,
+        max_length=10,
+        blank=True,
+        null=True
+    )
+
     tests_started = models.PositiveSmallIntegerField(default=0)
     tests_completed = models.PositiveSmallIntegerField(default=0)
     animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)
@@ -25,7 +33,7 @@ class User(AbstractUser):
     level = models.CharField(
         choices=LEVELS_CHOICES,
         max_length=MAX_LEVEL_LENGTH,
-        default=LEVELS_CHOICES[0][0]
+        default=BEGINNER
     )
 
     class Meta:

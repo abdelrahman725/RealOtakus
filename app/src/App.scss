@@ -1,7 +1,14 @@
 
-$base-shadow :0.5px 0.5px 10px 0.1px grey;
 $base_div_backgroun_color  : #262F36;
+$base_green_button_color : #46BB5D;
+$base-shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
+
+body{
+  //background-color: #202225;
+  //background-color: #dfe5ea;
+}
+
 
 .centered_div{
   margin-left: auto;
@@ -14,20 +21,28 @@ button, .pointer_cursor {
   cursor: pointer;
 }
 
-.basic_button{
-  // default style of all buttons
+button{
+  border-radius: $base_border_radius;
+  transition:  0.3s;
+  border: none;
+  font-weight: bold;
+  padding: 10px 15px;
+  letter-spacing: 1px;
 }
 
 .icon_basic{
   cursor: pointer;
-  color: #6e7174;
+  border-radius: $base_border_radius;
   font-size:xx-large;
+  color: black;
+  color: #6e7174;
+  &:hover{
+    color: white;
+  }
 }
-
 
 .navbar{
   background-color: $base_div_backgroun_color;
-  border-bottom: 2px solid #645c30;
   color: white;
   padding:15px;
   position:fixed;
@@ -37,41 +52,30 @@ button, .pointer_cursor {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  
+
   div{
     display: flex;
-    margin-right: 16px; 
+    flex-direction: row;
+    margin:  0px 13px; 
   }
 
   .icon{
     @extend .icon_basic;
   }
 
-  .icon:hover{
-    color: #49c18c;
-  }
-
   .logo{
     font-size: 30px;
     letter-spacing: 1px;
-    color: beige;
+    color:white;
   }
 
 }
+
 
 .spaced_div{
   margin-top: 90px;
 }
 
-.back_arrow{
-  margin-bottom: 10px;
-  font-size:60px;
-  position: relative;
-  margin-left: 40px;
-  span:hover{
-    color:#49c18c
-  }
-}
 
 .navigation_buttons{
   display: flex;
@@ -84,19 +88,21 @@ button, .pointer_cursor {
     margin-bottom: 7px;
     color: white; 
     padding: 0px 10px;
-    font-weight:bold;
     height: 55px;
-    border-radius: $base_border_radius;
     background-color: $base_div_backgroun_color;
-    letter-spacing: 1px;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &:hover{
+      transform: scale(1.04);
+    }
 
     .icon{
       margin-right: 3px;
       font-size: x-large;
     }
+  
   }
   
 }
@@ -145,7 +151,6 @@ button, .pointer_cursor {
   
 }
 
-
 .account{
   @extend .centered_div;
   margin: 20px;
@@ -176,6 +181,7 @@ button, .pointer_cursor {
       padding:5px;
     }
   }
+  
   .interactions{
     width: 85%;
   }
@@ -189,31 +195,41 @@ button, .pointer_cursor {
   }
 }
 
-@media screen and(max-width: 540px){
+@media screen and(max-width: 550px){
   
-  .spaced_div{
-    margin-top: 125px;
-  }
-  
-  .navbar{
-    flex-direction: column;
-    .logo{
-      margin-bottom: 10px;
-    }
-  }
 
   .leaderboard{
-    font-size: 15px;
+    font-size: 12px;
   
-    td{ padding:  12px 12px; }
+    td{ padding:  12px 8px; }
   
-    th{ padding: 15px 8px;  font-size: small;}
+    th{ padding: 15px 7px;  font-size: small;}
   }
 
 }
 
 
 @media screen and(max-width: 900px){
+
+  .navbar{
+    flex-direction: column;
+
+    .left{
+      margin-bottom: 20px;
+    }
+  }
+  
+  .spaced_div{
+    margin-top: 150px;
+  }
+
+  .navigation_buttons {
+    align-items: center;
+    flex-direction: column;   
+    button {
+     width: 240px;
+   }
+ }
   
   .account{
     .profile{
@@ -225,13 +241,6 @@ button, .pointer_cursor {
     }
   }
 
-  .navigation_buttons {
-    align-items: center;
-    flex-direction: column;   
-    button {
-     width: 240px;
-   }
- }
 }
 
 
@@ -261,6 +270,7 @@ button, .pointer_cursor {
   
 .question_basic{
   @extend .centered_div;
+  background-color: white;
   display: flex;  
   border-left: solid 20px;
   border-radius: $base_border_radius;
@@ -272,14 +282,13 @@ button, .pointer_cursor {
 }
 
 
-.contributed_question{
-  
+.contributed_question{  
   @extend .question_basic;
   margin-bottom: 20px;
 }
 
 
-.review_page {
+.review_page{
   @extend .questions_container;
   
   form {
@@ -349,19 +358,25 @@ button, .pointer_cursor {
       margin-bottom: 20px;
       max-width: 300px;
     }
+
+    button{
+      padding: 5px 10px;
+      font-weight: lighter;
+      color: white;
+      background-color: #365FAA;
+    }
   } 
 
 }
 
 
-.review_question {  
+.review_question{  
   @extend .question_basic;
   margin-bottom: 110px;
   flex-direction: column;
   justify-content: flex-start;
   .choices{
     margin-bottom: 10px;
-    
   }
 }
 
@@ -369,7 +384,6 @@ button, .pointer_cursor {
 .game_container{
   margin: 10px;
 }
-
 
 .game{
   
@@ -380,6 +394,7 @@ button, .pointer_cursor {
 
     .choice {
       border-radius: $base_border_radius;
+      background-color: white;
       margin-bottom: 15px;
       padding:20px 15px;  
       box-shadow: $base-shadow ;
@@ -402,15 +417,13 @@ button, .pointer_cursor {
     
   }
   
-  .game_buttons  {
+  .game_buttons{
     display: flex;
     justify-content: space-between;
     
     button{
       color: white;
-      border: none ;
       background-color: #365FAA;
-      padding: 5px 20px;
     }
     
     .faded{
@@ -432,24 +445,18 @@ button, .pointer_cursor {
       resize: none;
       outline: none;
       margin-bottom: 14px;
+      &:first-of-type{
+        height: 120px;
+      }
+      &:focus{
+        border-color: white;
+        outline: #2684FF solid 2.5px;
+      }
     }
    
-    textarea:first-of-type{
-      height: 120px;
-    }
-    
-    textarea:focus{
-      border-color: white;
-      outline: #2684FF solid 2.5px;
-    }
-
     button{
-      padding : 10px 15px;
-      font-size: large;
-      letter-spacing: 2px;
-      border-radius: $base_border_radius;
-      border: none;
-      background-color: #00AD83;
+      background-color: $base_green_button_color;
+      color: white;
     }
     
   }
@@ -465,19 +472,12 @@ button, .pointer_cursor {
 
 
 .animeslist{
-  .startgame{
-    padding: 10px 20px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    font-size: large;
+  .start_button{
     color: white;
-    border-radius: $base_border_radius;
-    border: none;
-    background-color: green;
+    background-color: $base_green_button_color;
   }
 
 }
-
 
 .notifications{
   @extend .centered_div;
@@ -485,6 +485,7 @@ button, .pointer_cursor {
   
   .notification{  
     border-radius: $base_border_radius;
+    background-color: white;
     text-align: left;
     margin: 10px;
     margin-bottom: 40px;
@@ -500,4 +501,10 @@ button, .pointer_cursor {
       font-size: small;
     }
   }
+}
+
+footer{
+  @extend .centered_div;
+  margin-top: 100px;
+  margin-bottom: 15px;
 }

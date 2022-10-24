@@ -1,8 +1,9 @@
-import Interactions from './Interactions'
+import async_http_request from "./Components/AsyncRequest"
 import { useState, useEffect } from "react"
-import async_http_request from '../AsyncRequest'
+import Interactions from "./Components/Interactions"
 import { FcOk } from 'react-icons/fc' 
-export const UserProfile = ({is_reviewer}) => {
+
+const UserProfile = ({is_reviewer}) => {
   
   const [user_data,set_user_data] = useState()
   const [user_interactions,setuser_interactions] = useState([])
@@ -65,3 +66,4 @@ export const UserProfile = ({is_reviewer}) => {
     </div>
   )
 }
+export default UserProfile

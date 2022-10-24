@@ -1,8 +1,6 @@
 import Question from "./Question"
 import Result from "./Result"
-//import Loading from "./Loading"
-
-import { GlobalStates } from "../App"
+import { GlobalStates } from "../../App"
 import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
 

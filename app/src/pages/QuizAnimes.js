@@ -1,5 +1,5 @@
-import Game from "./Game"
-import async_http_request from "./AsyncRequest"
+import Game from "./Components/Game"
+import async_http_request from "./Components/AsyncRequest"
 import Select from 'react-select'
 
 import { GlobalStates } from "../App"
@@ -98,7 +98,7 @@ const QuizAnimes = () => {
         />
         <br /> <br />
       
-        <button className="startgame"
+        <button className="start_button"
         onClick={()=> selected_anime ? GetGame () : anime_select.current.focus() }>
          Start Game 
         </button>

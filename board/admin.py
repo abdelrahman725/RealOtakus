@@ -398,7 +398,7 @@ class ContributionAdmin(admin.ModelAdmin):
       if time_diff.seconds > 60:
         return f"{math.floor(time_diff.seconds/60)} minutes"
       
-      return f"{time_diff.seconds} seconds"
+      return "a few seconds ago"
 
     return "N/A"
 
@@ -548,7 +548,7 @@ class UserAdmin(admin.ModelAdmin):
   autocomplete_fields = ['animes_to_review']
   
   readonly_fields =  (
-    "level",
+    #"level",
     "points",
     "tests_started",
     "tests_completed",
@@ -583,6 +583,7 @@ class UserAdmin(admin.ModelAdmin):
     IsReviewerFilter,
     SocialAccountFilter,
     "level",
+    #"country",
     CountryFilter,
     ("animes_to_review",admin.RelatedOnlyFieldListFilter)
   )

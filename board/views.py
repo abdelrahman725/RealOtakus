@@ -40,8 +40,8 @@ def GetOrFetchAnime(anime : int):
 
 
 def GetWantedUser(request):
-    return User.objects.get(username="pablo")
     return request.user
+    return User.objects.get(username="otaku")
 
 
 def ReactApp(request):
@@ -52,11 +52,11 @@ def ReactApp(request):
     return render(request, "board/home.html")
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def main_data(request):
     user = GetWantedUser(request)
-
+    
     if request.method == "POST":
         user.country = request.data["country"]
         user.save()
@@ -111,7 +111,7 @@ def main_data(request):
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetQuizeAnimes(request):
     user = GetWantedUser(request) 
@@ -141,7 +141,7 @@ def GetQuizeAnimes(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetTest(request, game_anime):
     current_user = GetWantedUser(request)
@@ -226,7 +226,7 @@ def QuestionEncounter(request, question_id):
     )
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def SubmitGame(request):
     user = GetWantedUser(request)
@@ -269,7 +269,7 @@ def SubmitGame(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-#@login_required
+@login_required
 @api_view(["GET","POST"])
 def get_or_make_contribution(request):
     user = GetWantedUser(request)
@@ -330,7 +330,7 @@ def get_or_make_contribution(request):
         return JsonResponse({"info": e.args[0]})
 
 
-#@login_required
+@login_required
 @api_view(["GET","PUT"])
 def contribution_to_review(request):
     user = GetWantedUser(request)
@@ -398,7 +398,7 @@ def contribution_to_review(request):
         )
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def GetMyProfile(request):
     user = GetWantedUser(request)
@@ -440,7 +440,7 @@ def GetMyProfile(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def UpdateNotificationsState(request):
     user = GetWantedUser(request)
@@ -467,4 +467,3 @@ def UpdateNotificationsState(request):
 #     return Response({
 #         "data": serialized_questions.data,
 #     })
-

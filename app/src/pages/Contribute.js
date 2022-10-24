@@ -1,4 +1,4 @@
-import async_http_request from "./AsyncRequest"
+import async_http_request from "./Components/AsyncRequest"
 import Select from 'react-select'
 import {  useState, useRef,useContext, useEffect } from "react"
 import { GlobalStates } from "../App"

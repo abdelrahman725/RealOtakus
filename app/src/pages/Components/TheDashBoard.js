@@ -1,6 +1,7 @@
 import Competitor from "./Competitor"
-import { GlobalStates } from "../App"
+import { GlobalStates } from "../Home"
 import { useEffect,useState,useContext } from "react"
+
 
 const TheDashBoard = ({ dashboard_users, current_user }) => {
 

@@ -1,6 +1,6 @@
-import ContributedQuestion from "./ContributedQuestion"
-import async_http_request from "./AsyncRequest"
-import {  useState, useEffect } from "react"
+import ContributedQuestion from "./Components/ContributedQuestion"
+import async_http_request from "./Components/AsyncRequest"
+import { useState, useEffect } from "react"
 
 const UserContributions = () => {
 
