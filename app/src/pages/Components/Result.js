@@ -1,3 +1,4 @@
+
 const Result = ({results, useranswers, questions, score,n_quiz_questions}) => {
 
 const get_choice_class=(right_answer,user_answer,choice)=>{
@@ -18,12 +19,10 @@ const get_choice_class=(right_answer,user_answer,choice)=>{
     <h3>score  {score} / {n_quiz_questions} </h3> 
     <br />  
       {questions.map((q,index)=>(
-    
+
         <div className="game_question" key={index}>
             
-            <p> 
-              <strong>{q.question}? </strong> 
-            </p>
+            <p>  <strong>{q.question}? </strong>  </p>
 
              <div className={get_choice_class(results[q.id],useranswers[q.id],q.choice1)}>
               {q.choice1}

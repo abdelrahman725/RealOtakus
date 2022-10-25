@@ -61,7 +61,7 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
     onselect(question.id, useranswer)
   }
 
-  const timer = useTimer({ delay: 1000, callback: () => handletimeleft() });
+  const timer = useTimer({ delay: 10000, callback: () => handletimeleft() });
 
 
   return (

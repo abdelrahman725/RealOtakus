@@ -1,14 +1,14 @@
 from django.db import IntegrityError
 from django.contrib import messages
 from django.urls import reverse
-from django.shortcuts import render, redirect
-from django.http import  HttpResponseRedirect
-
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 
+from board.helpers import login_required
 from board.models import *
 
-def Register(request):
+
+def user_register(request):
 
   if request.method == "POST":
     username = request.POST["registerusername"]
@@ -31,10 +31,10 @@ def Register(request):
       except IntegrityError:
         messages.warning(request, 'username already exists')
 
-  return HttpResponseRedirect(reverse("home"))
+  return redirect("/")
 
 
-def Login(request):
+def user_login(request):
   if request.method == "POST":
     username = request.POST["username"]
     password= request.POST["password"]
@@ -43,10 +43,11 @@ def Login(request):
       login(request,user)
     else:
       messages.error(request, 'wrong username or password')
-  return HttpResponseRedirect(reverse("home"))
+  return redirect("/")
 
 
-def Logout(request):
+@login_required
+def user_logout(request):
   logout(request)
   list(messages.get_messages(request))
-  return HttpResponseRedirect(reverse("home"))
+  return redirect("/")

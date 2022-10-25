@@ -30,7 +30,7 @@ SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost","127.0.0.1","10.5.50.163"]
+ALLOWED_HOSTS = ["localhost","127.0.0.1",]
 
 for i in range(2,12):
     ALLOWED_HOSTS.append(f"192.168.1.{i}")
@@ -190,4 +190,4 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 
 SOCIALACCOUNT_QUERY_EMAIL = SOCIALACCOUNT_EMAIL_REQUIRED
 
-ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Django]"
+#ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Django]"

@@ -23,11 +23,16 @@ button, .pointer_cursor {
 
 button{
   border-radius: $base_border_radius;
+  color: white;
   transition:  0.3s;
   border: none;
   font-weight: bold;
   padding: 10px 15px;
   letter-spacing: 1px;
+}
+
+.submit_btn{
+  background-color: $base_green_button_color;
 }
 
 .icon_basic{
@@ -85,8 +90,7 @@ button{
     width: 170px;
     margin-left: 10px;
     margin-right: 10px;
-    margin-bottom: 7px;
-    color: white; 
+    margin-bottom: 7px; 
     padding: 0px 10px;
     height: 55px;
     background-color: $base_div_backgroun_color;
@@ -207,7 +211,6 @@ button{
   }
 
 }
-
 
 @media screen and(max-width: 900px){
 
@@ -362,7 +365,6 @@ button{
     button{
       padding: 5px 10px;
       font-weight: lighter;
-      color: white;
       background-color: #365FAA;
     }
   } 
@@ -417,20 +419,6 @@ button{
     
   }
   
-  .game_buttons{
-    display: flex;
-    justify-content: space-between;
-    
-    button{
-      color: white;
-      background-color: #365FAA;
-    }
-    
-    .faded{
-      opacity: 60%;
-    }
-  }
-
 }
 
 
@@ -448,21 +436,20 @@ button{
       &:first-of-type{
         height: 120px;
       }
-      &:focus{
-        border-color: white;
-        outline: #2684FF solid 2.5px;
-      }
     }
-   
-    button{
-      background-color: $base_green_button_color;
-      color: white;
+
+    button:focus, textarea:focus{
+      outline: #2684FF solid 2.1px;
+      border-color: white;
     }
-    
+
+    .checkbox:checked{
+      outline: none;
+    }
+
   }
 
 }
-
 
 .select_animes{
   margin-left: auto;
@@ -470,14 +457,6 @@ button{
   width:250px;
 }
 
-
-.animeslist{
-  .start_button{
-    color: white;
-    background-color: $base_green_button_color;
-  }
-
-}
 
 .notifications{
   @extend .centered_div;

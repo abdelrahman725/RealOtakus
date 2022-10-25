@@ -4,7 +4,7 @@ import { GlobalStates } from "../../App"
 import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
 
-const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
+const Game = ({questions}) => {
 
   const {N_Game_Questions,setGameMode,set_user_data,GameMode} = useContext(GlobalStates)
   const [useranswers,setuseranswers] = useState({})
@@ -74,26 +74,12 @@ const Game = ({fetch_quiz_animes, questions,setgamestarted}) => {
           
           <br /> 
           
-          <div className="centered_div game_buttons">
-              <button onClick={()=>{
-                setgamestarted(false)
-                setGameMode(false)
-                fetch_quiz_animes()
-                }}>
-                exit
-              </button>
-              
-              {index===questions_length-1&& 
-              <button onClick={SubmitGame}>
-                submit
-              </button>}
-              
-              <button
-              onClick={nextquestion}
-              className={index===questions_length-1?"faded":""}
-              hidden={index===questions_length-1}>
-                next
-              </button>            
+          <div className="game_buttons">
+              {index===questions_length-1 ? 
+              <button onClick={SubmitGame} className="submit_btn"> submit </button>
+              : 
+              <button onClick={nextquestion} style={{backgroundColor: "#365FAA"}}> next </button>            
+              }
           </div>
       </div> 
       :

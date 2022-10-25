@@ -25,7 +25,7 @@ const QuestionsForReview = () => {
 
     async function fetch_questions(){
 
-      const questions_result  = await async_http_request({ path:"review" })
+      const questions_result  = await async_http_request({ path:"get_review_contribution" })
       if (questions_result===null){
         set_info_message("network error")
         return

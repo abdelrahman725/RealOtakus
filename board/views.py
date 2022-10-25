@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.forms import ValidationError
 from django.db.models import Count, Avg, Q
 from django.http import JsonResponse
+from django.shortcuts import redirect
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -29,8 +30,12 @@ game_interactions = {}
 
 for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
+def get_current_user(request):
+    return request.user
+    return User.objects.get(username="pablo")
 
-def GetOrFetchAnime(anime : int):   
+
+def get_or_query_anime(anime : int):   
     try:
         return animes_dict[anime]
     except KeyError:
@@ -39,23 +44,24 @@ def GetOrFetchAnime(anime : int):
         return fetched_anime
 
 
-def GetWantedUser(request):
-    return request.user
-    return User.objects.get(username="otaku")
-
-
-def ReactApp(request):
+def react_view(request):
     if request.user.is_authenticated:
-        # react app
         return render(request, "index.html")
-    # django template
+    return redirect("/")
+
+
+def react_app(request):
+  # react app
+    if request.user.is_authenticated:
+        return render(request, "index.html")
+  # django template
     return render(request, "board/home.html")
 
 
 @login_required
 @api_view(["GET", "POST"])
-def main_data(request):
-    user = GetWantedUser(request)
+def get_home_data(request):
+    user = get_current_user(request)
     
     if request.method == "POST":
         user.country = request.data["country"]
@@ -107,14 +113,13 @@ def main_data(request):
     })
 
 
-
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
 @login_required
 @api_view(["GET"])
-def GetQuizeAnimes(request):
-    user = GetWantedUser(request) 
+def get_game_animes(request):
+    user = get_current_user(request) 
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True).annotate(
@@ -143,8 +148,8 @@ def GetQuizeAnimes(request):
 
 @login_required
 @api_view(["GET"])
-def GetTest(request, game_anime):
-    current_user = GetWantedUser(request)
+def get_game(request, game_anime):
+    current_user = get_current_user(request)
     selected_anime = animes_dict[game_anime]
     
     # To Do here: we have to check n_tests_started against n_tests_completed
@@ -203,9 +208,9 @@ def GetTest(request, game_anime):
 
 
 @api_view(["POST"])
-def QuestionEncounter(request, question_id):
+def record_question_encounter(request, question_id):
 
-    user = GetWantedUser(request)
+    user = get_current_user(request)
     
     question = game_questions[user.id][question_id]
 
@@ -228,8 +233,8 @@ def QuestionEncounter(request, question_id):
 
 @login_required
 @api_view(["POST"])
-def SubmitGame(request):
-    user = GetWantedUser(request)
+def submit_game(request):
+    user = get_current_user(request)
     user_answers = request.data["answers"]
 
     game_score = 0
@@ -272,7 +277,7 @@ def SubmitGame(request):
 @login_required
 @api_view(["GET","POST"])
 def get_or_make_contribution(request):
-    user = GetWantedUser(request)
+    user = get_current_user(request)
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
@@ -282,7 +287,7 @@ def get_or_make_contribution(request):
         return Response(user_contributions.data)
 
     try:
-        anime = GetOrFetchAnime(int(request.data["anime"]))
+        anime = get_or_query_anime(int(request.data["anime"]))
     except:
         return JsonResponse({"anime doesn't exist"})
 
@@ -332,8 +337,8 @@ def get_or_make_contribution(request):
 
 @login_required
 @api_view(["GET","PUT"])
-def contribution_to_review(request):
-    user = GetWantedUser(request)
+def get_or_review_contribution(request):
+    user = get_current_user(request)
     
     if request.method == "GET":
         animes = user.animes_to_review.all()
@@ -400,8 +405,8 @@ def contribution_to_review(request):
 
 @login_required
 @api_view(["GET"])
-def GetMyProfile(request):
-    user = GetWantedUser(request)
+def get_user_profile(request):
+    user = get_current_user(request)
 
     profile_data = ProfileDataSerializer(
         User.objects.values("points","level","tests_started","tests_completed").annotate(
@@ -442,8 +447,8 @@ def GetMyProfile(request):
 
 @login_required
 @api_view(["PUT"])
-def UpdateNotificationsState(request):
-    user = GetWantedUser(request)
+def update_notifications(request):
+    user = get_current_user(request)
 
     user.getnotifications.filter(pk__in=request.data["notifications"]).update(seen=True)
     
@@ -458,7 +463,7 @@ def UpdateNotificationsState(request):
 # @api_view(["GET"])
 # def animes_questions_api_service(requst, anime_id, n_questions):
     
-#     anime = GetOrFetchAnime(anime_id)
+#     anime = get_or_query_anime(anime_id)
 
 #     serialized_questions = QuestionsApiService(
 #         anime.anime_questions.filter(active=True)[:n_questions],

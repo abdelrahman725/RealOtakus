@@ -20,7 +20,7 @@ const QuizAnimes = () => {
     
     setanimesoptions()
     
-    const quiz_animes_result = await async_http_request({path:"gameanimes"})
+    const quiz_animes_result = await async_http_request({path:"getgameanimes"})
     
     if (quiz_animes_result===null){
       set_info_message("network error")
@@ -75,13 +75,7 @@ const QuizAnimes = () => {
 
  return (
   <>
-   { gamestarted ? 
-
-   <Game
-      questions={gamequestions}
-      setgamestarted={setgamestarted}
-      fetch_quiz_animes = {GetAnimes}
-    />
+   { gamestarted ?  <Game questions={gamequestions} />
     :
     <div className="centered_div animeslist">
       
@@ -94,13 +88,12 @@ const QuizAnimes = () => {
         isLoading={animesoptions?false:true}
         onChange={on_anime_select}
         isOptionDisabled={(option) => hide_anime(option.user_interactions, option.anime_questions)}
-        ref={anime_select}
-        />
-        <br /> <br />
+        ref={anime_select}/>
+        
+        <br />
       
-        <button className="start_button"
-        onClick={()=> selected_anime ? GetGame () : anime_select.current.focus() }>
-         Start Game 
+        <button className="submit_btn" onClick={()=> selected_anime ? GetGame () : anime_select.current.focus() }>
+          Start Game 
         </button>
     </div>
     }

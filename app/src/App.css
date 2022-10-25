@@ -10,12 +10,17 @@ button, .pointer_cursor {
 
 button {
   border-radius: 7px;
+  color: white;
   -webkit-transition: 0.3s;
   transition: 0.3s;
   border: none;
   font-weight: bold;
   padding: 10px 15px;
   letter-spacing: 1px;
+}
+
+.submit_btn {
+  background-color: #46BB5D;
 }
 
 .icon_basic, .navbar .icon {
@@ -83,7 +88,6 @@ button {
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 7px;
-  color: white;
   padding: 0px 10px;
   height: 55px;
   background-color: #262F36;
@@ -353,7 +357,6 @@ button {
 .review_page form button {
   padding: 5px 10px;
   font-weight: lighter;
-  color: white;
   background-color: #365FAA;
 }
 
@@ -404,24 +407,6 @@ button {
   color: white;
 }
 
-.game .game_buttons {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-}
-
-.game .game_buttons button {
-  color: white;
-  background-color: #365FAA;
-}
-
-.game .game_buttons .faded {
-  opacity: 60%;
-}
-
 .contribution .contribution_form textarea {
   padding: 10px;
   border-radius: 7px;
@@ -435,25 +420,19 @@ button {
   height: 120px;
 }
 
-.contribution .contribution_form textarea:focus {
+.contribution .contribution_form button:focus, .contribution .contribution_form textarea:focus {
+  outline: #2684FF solid 2.1px;
   border-color: white;
-  outline: #2684FF solid 2.5px;
 }
 
-.contribution .contribution_form button {
-  background-color: #46BB5D;
-  color: white;
+.contribution .contribution_form .checkbox:checked {
+  outline: none;
 }
 
 .select_animes {
   margin-left: auto;
   margin-right: auto;
   width: 250px;
-}
-
-.animeslist .start_button {
-  color: white;
-  background-color: #46BB5D;
 }
 
 .notifications {

@@ -11,6 +11,7 @@ const Contribute = ({all_animes_options}) => {
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
+  const checkbox = useRef(null)
   
   // ensure
   const  letters_exist = /[a-z]/ig
@@ -45,7 +46,7 @@ const Contribute = ({all_animes_options}) => {
       const SendContribution = async(cleaned_question)=>
       {
         const submit_contribution  = await async_http_request({
-          path:"contribution",
+          path:"get_make_contribution",
           method:"POST",
           data : {
             "question":cleaned_question,
@@ -55,18 +56,19 @@ const Contribute = ({all_animes_options}) => {
         
         set_info_message(submit_contribution.info)
     
-        // after question contribution is submitted now we can clear the states 
+      // clear form after submission 
         for (const key in Question)
           setQuestion(prev => ({...prev,[key]:""}))
         
         window.scrollTo({ top: 0, behavior: 'smooth' })
         setanime(null)
+        checkbox.current.checked = false
       }
       
       const validate_contribution_form_then_submit =()=>{
-    
+        
         if (!anime){
-          anime_select.current.focus(); 
+          anime_select.current.focus() 
           window.scrollTo({ top: 0, behavior: 'smooth' })
           return false;
         }
@@ -205,8 +207,11 @@ const Contribute = ({all_animes_options}) => {
             onChange={handle_form_change}
             >
           </textarea><br />
-
-          <button type="submit" ref={submit_btn}>submit question</button>
+          
+          <input type="checkbox" className="checkbox" name="instructions" ref={checkbox} required/>
+          <label htmlFor="instructions"> I have read instructions</label>
+          <br /> <br />
+          <button type="submit"  className="submit_btn" ref={submit_btn}>submit question</button>
 
         </div>
 

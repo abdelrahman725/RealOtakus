@@ -26,7 +26,7 @@ const ReviewSubmission = (e,question)=>{
     const SubmitReview = async(question)=>{
         
         const review_submission_response  = await async_http_request({
-            path:"review",
+            path:"get_review_contribution",
             method:"PUT",
             data :{
                 "question":question,
@@ -52,6 +52,10 @@ const ReviewSubmission = (e,question)=>{
     
     }
 
+    if (question_state !== 0 && question_state !==1){
+        return
+    }
+
     if (question_state === 0 &&  !feedback){
         feedback_select.current.focus()
         return
@@ -62,18 +66,21 @@ const ReviewSubmission = (e,question)=>{
     SubmitReview(question)
 }
 
-const handle_question_state = (e)=> setquestion_state( parseInt(e.target.value) )
-
+const handle_question_state = (e)=>{
+    
+    const value  = parseInt(e.target.value)
+    value ===1 && setfeedback()
+    setquestion_state(value)
+} 
+    
 const on_feedback_selection = selected_option => {
     setfeedback(selected_option)    
     feedback_select.current.blur()
 } 
 
-
 return (
     <div className={`review_question ${reviewstate}`}>
-        <p> <strong>{anime}</strong> </p>
-        
+        <p> <strong>{anime}</strong></p>
         <div className="question"> 
             {question.question}
         </div>

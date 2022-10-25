@@ -11,7 +11,7 @@ import  About  from './pages/About'
 import  Footer from "./pages/Components/Footer"
 
 import  React, { useState, useEffect, createContext} from 'react'
-import  { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { domain } from './pages/Components/AsyncRequest'
 
 import useWebSocket from 'react-use-websocket'
@@ -55,7 +55,7 @@ function App(){
   useEffect(()=>{
 
     async function get_home_data(){
-      const result = await async_http_request({path:"data"})
+      const result = await async_http_request({path:"gethomedata"})
      
       if (result===null){
         set_info_message("network error")
@@ -94,6 +94,8 @@ function App(){
           darkmode={darkmode}
           setdarkmode = {setdarkmode}/> 
         <div className="spaced_div"></div>
+        
+        <h1>{GameMode}</h1>
 
       <Routes>
         <Route path="/" element={ <Home dashboard_users={dashboard_users} user_data={user_data}/> }/>

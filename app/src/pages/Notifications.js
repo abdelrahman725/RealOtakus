@@ -22,7 +22,7 @@ useEffect(()=>{
     const UpdateNotificationsState = async()=>{
 
       const notifications_updated_response = await async_http_request({
-        path :"update_notifications_state",
+        path :"update_notifications",
         method:"PUT",
         data : {"notifications": unseen_notifications}
       })

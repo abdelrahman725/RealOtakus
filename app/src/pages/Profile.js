@@ -12,7 +12,7 @@ const UserProfile = ({is_reviewer}) => {
 
     async function getProfileData(){
 
-      const profile_result  = await async_http_request({path:"profile"})
+      const profile_result  = await async_http_request({path:"getprofile"})
       if (profile_result===null){
         return
       }

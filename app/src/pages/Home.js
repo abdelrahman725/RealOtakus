@@ -13,33 +13,32 @@ return (
 
   <div className="home">
     
-    <div className="navigation_buttons">     
-            <Link to="contribute">
-              <button>
-                <FcIdea className="icon"/> Contribute
-              </button> 
-            </Link>
+    <div className="navigation_buttons"> 
 
-            <Link to="game">
-              <button>
-                <MdQuiz className="icon"/> Start Quiz
-              </button> 
-            </Link>
+        <Link to="contribute">
+          <button>
+            <FcIdea className="icon"/> Contribute
+          </button> 
+        </Link>
 
-            <Link to="mycontributions">
-              <button>
-                <FcDatabase className="icon"/> My Contributions
-              </button> 
-            </Link>
+        <Link to="game">
+          <button>
+            <MdQuiz className="icon"/> Start Quiz
+          </button> 
+        </Link>
 
-           
-            {user_data && user_data.is_reviewer &&  
-              <Link to="review">
-                <button>
-                  <FaEye className="icon"/> Review Contributions
-                </button>
-              </Link>
-            } 
+        <Link to="mycontributions">
+          <button>
+            <FcDatabase className="icon"/> My Contributions
+          </button> 
+        </Link>
+
+        {user_data && user_data.is_reviewer &&  
+          <Link to="review">
+            <button>
+              <FaEye className="icon"/> Review Contributions
+            </button>
+          </Link> } 
 
     </div>
     
