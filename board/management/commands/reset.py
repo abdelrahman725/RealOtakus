@@ -43,9 +43,6 @@ class Command(BaseCommand):
         Contribution.objects.all().delete()
      
         QuestionInteraction.objects.all().delete()
-
-        try: Game.objects.all().delete()
-        except: pass
     
 
         print("\n--- data has been cleard successfully ---\n")

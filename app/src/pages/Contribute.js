@@ -16,7 +16,7 @@ const Contribute = ({all_animes_options}) => {
   // ensure
   const  letters_exist = /[a-z]/ig
   // reject
-  const  leading_space = /^\s/
+  const  leading_space = /^\s+/
   const  extra_space = /\s{2,}/
   const  excluded_symbols = /[#`~@^*|\\]/
 
@@ -124,7 +124,20 @@ const Contribute = ({all_animes_options}) => {
     selected_anime &&  anime_select.current.blur()
   }
   
-  useEffect(()=>{ return()=> set_info_message()   },[])
+  useEffect(()=>{
+    
+    if (Question.question){
+      window.onbeforeunload = (e)=>{
+        return true
+      }
+    }
+    
+    return()=>{
+      window.onbeforeunload = null
+      set_info_message()   
+    } 
+
+  },[Question.question])
 
   return (
     <div className="centered_div contribution">

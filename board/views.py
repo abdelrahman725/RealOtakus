@@ -30,9 +30,11 @@ game_interactions = {}
 
 for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
+react_user = User.objects.get(username="marawan")
+
 def get_current_user(request):
+    return react_user
     return request.user
-    return User.objects.get(username="pablo")
 
 
 def get_or_query_anime(anime : int):   
@@ -58,7 +60,7 @@ def react_app(request):
     return render(request, "board/home.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
@@ -116,11 +118,11 @@ def get_home_data(request):
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game_animes(request):
     user = get_current_user(request) 
-
+    
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True).annotate(
             n_user_interactions=Count(
@@ -146,17 +148,23 @@ def get_game_animes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
     current_user = get_current_user(request)
     selected_anime = animes_dict[game_anime]
     
-    # To Do here: we have to check n_tests_started against n_tests_completed
     # To catch malicious or non-serious users
-    # if current_user.tests_started - current_user.tests_completed == "To Do":
+    if current_user.tests_started - current_user.tests_completed == "To Do":
+        pass
         # catch here and act upon that
-        # pass
+    
+    if current_user.id in game_interactions:
+        del game_interactions[current_user.id]
+    
+    if current_user.id in game_questions:
+        del game_questions[current_user.id]
+
     
     # this game questions
     questions=selected_anime.anime_questions.filter(
@@ -167,14 +175,14 @@ def get_game(request, game_anime):
         )[:QUESTIONSCOUNT]
     
 
-    if questions.count() != QUESTIONSCOUNT:
+    if questions.count() != QUESTIONSCOUNT :
         return Response({
             "info" : "no enough questions for the quiz",
         })
     
     serialized_questions = []
 
-    for question in questions:      
+    for question in questions:
         question_choices = [
             question.choice1,
             question.choice2,
@@ -192,9 +200,10 @@ def get_game(request, game_anime):
             "choice4" : question_choices[3],
             "id" : question.id
         })
-
+    
+    
     game_questions[current_user.id] = {}
-
+    
     for q in questions:
         game_questions[current_user.id][q.id] = q
 
@@ -211,7 +220,7 @@ def get_game(request, game_anime):
 def record_question_encounter(request, question_id):
 
     user = get_current_user(request)
-    
+        
     question = game_questions[user.id][question_id]
 
     if user.id not in game_interactions:
@@ -231,7 +240,7 @@ def record_question_encounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def submit_game(request):
     user = get_current_user(request)
@@ -259,8 +268,8 @@ def submit_game(request):
     user.save()
     
     # delete used cache from memory :
-    del game_questions[user.id]
     del game_interactions[user.id]
+    del game_questions[user.id]
 
     return Response({
         "info": "test submitted successfully",
@@ -274,7 +283,7 @@ def submit_game(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET","POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
@@ -335,7 +344,7 @@ def get_or_make_contribution(request):
         return JsonResponse({"info": e.args[0]})
 
 
-@login_required
+#@login_required
 @api_view(["GET","PUT"])
 def get_or_review_contribution(request):
     user = get_current_user(request)
@@ -403,7 +412,7 @@ def get_or_review_contribution(request):
         )
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_user_profile(request):
     user = get_current_user(request)
@@ -445,7 +454,7 @@ def get_user_profile(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def update_notifications(request):
     user = get_current_user(request)

@@ -1,5 +1,5 @@
 
-const Result = ({results, useranswers, questions, score,n_quiz_questions}) => {
+const Result = ({results, useranswers, questions, score}) => {
 
 const get_choice_class=(right_answer,user_answer,choice)=>{
   if (right_answer===choice){
@@ -16,7 +16,7 @@ const get_choice_class=(right_answer,user_answer,choice)=>{
   return (
     <div className="game">
     <h2>Resulsts</h2>
-    <h3>score  {score} / {n_quiz_questions} </h3> 
+    <h3>score  {score} / {5} </h3> 
     <br />  
       {questions.map((q,index)=>(
 

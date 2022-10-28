@@ -24,13 +24,14 @@ class User(base_models.User):
 
 @receiver(pre_save, sender=User)
 def update_user_points_level(sender, instance, **kwargs):
-    if instance.tests_completed != 0 and instance.tests_completed %10 ==0:
-        instance.points += 20 
-        CreateNotification(
-            receiver=instance,
-            notification="new achievement! you have completed 10 quizes, +20 points",
-        )
-    instance.level = CheckLevel(instance)
+    pass
+    # if instance.tests_completed != 0 and instance.tests_completed %10 ==0:
+    #     instance.points += 20 
+    #     CreateNotification(
+    #         receiver=instance,
+    #         notification="new achievement! you have completed 10 quizes, +20 points",
+    #     )
+    # instance.level = CheckLevel(instance)
    
 
 class Anime(base_models.Anime):

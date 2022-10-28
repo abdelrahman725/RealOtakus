@@ -26,7 +26,7 @@ const async_http_request = async ({ server = myserver, path = null, method = "GE
     
     const url = path ? `${server}/${path}` : server
 
-    if (method !== "GET") {
+    if (method !== "GET"){
 
         try {
             const response = await fetch(url, {
@@ -52,7 +52,7 @@ const async_http_request = async ({ server = myserver, path = null, method = "GE
         }
     }
 
-    else {
+    else{
         try {
             const response = await fetch(url)
             const result = await response.json()

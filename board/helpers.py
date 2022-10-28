@@ -33,7 +33,7 @@ def print_request_relevant_ips(request):
     print(f"SERVER_NAME : {request.META.get('SERVER_NAME')}\n")
 
 
-def CreateNotification(receiver,notification,kind):
+def CreateNotification(receiver,notification,kind=None):
     if receiver and not receiver.is_superuser:
         board.models.Notification.objects.create(
             owner=receiver,

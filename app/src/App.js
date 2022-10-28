@@ -95,9 +95,10 @@ function App(){
           setdarkmode = {setdarkmode}/> 
         <div className="spaced_div"></div>
         
-        <h1>{GameMode}</h1>
+        <h1 className="centered_div">{GameMode? "On": "off"}</h1>
 
       <Routes>
+        
         <Route path="/" element={ <Home dashboard_users={dashboard_users} user_data={user_data}/> }/>
         
         <Route path="/contribute" element={<Contribute all_animes_options={all_animes}/>}/>

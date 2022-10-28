@@ -39,7 +39,12 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
     setseconds(0)
     timer.start()
   }
-
+ 
+  const onChoice = (useranswer) => {
+    setselected(useranswer)
+    onselect(question.id, useranswer)
+  }
+ 
   const sendquestioninteraction = async () => {
     const attempt_response = await async_http_request({
       path: `interaction/${question.id}`,
@@ -55,13 +60,7 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
     !timeout && reset_timer()
   }, [Q_no])
 
-
-  const onChoice = (useranswer) => {
-    setselected(useranswer)
-    onselect(question.id, useranswer)
-  }
-
-  const timer = useTimer({ delay: 10000, callback: () => handletimeleft() });
+  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() });
 
 
   return (
