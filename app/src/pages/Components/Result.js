@@ -1,7 +1,7 @@
 import { GlobalStates } from "../../App"
 import { useContext } from "react"
 
-const Result = ({ results, useranswers, questions, score }) => {
+const Result = ({results, useranswers, questions, score }) => {
 
   const { N_Game_Questions } = useContext(GlobalStates)
   
@@ -20,7 +20,7 @@ const Result = ({ results, useranswers, questions, score }) => {
 
   return (
     <div className="game_container">
-      {Object.keys(results).length ?
+      {Object.keys(results).length>0 ?
 
         <div className="results">
             <h2>Score {score} / {N_Game_Questions} </h2> 

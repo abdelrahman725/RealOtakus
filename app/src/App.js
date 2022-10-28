@@ -3,7 +3,7 @@ import  NavBar from './pages/Components/NavBar'
 import  Home  from './pages/Home' 
 import  Contribute  from './pages/Contribute'
 import  UserContributions from './pages/UserContributions'
-import  QuizAnimes from './pages/GameView'
+import  GameView from './pages/GameView'
 import  QuestionsForReview  from './pages/QuestionsForReview'
 import  UserProfile  from './pages/Profile'
 import  Notifications  from './pages/Notifications'
@@ -62,7 +62,7 @@ function App(){
         return
       }
 
-      !result.user_data.country && fetch_user_country() 
+      //!result.user_data.country && fetch_user_country() 
       
       set_user_data(result.user_data)
       set_dashboard_users(result.leaderboard)
@@ -86,6 +86,7 @@ function App(){
   
   return(
     <GlobalStates.Provider value={{game_started, N_Game_Questions, setgame_started, set_user_data, set_info_message}}>
+    <div className="App">
 
       <NavBar 
         user={user_data}
@@ -105,7 +106,7 @@ function App(){
         
         <Route path="/mycontributions" element={<UserContributions />}/>
         
-        <Route path="/game" element={<QuizAnimes/>}/>
+        <Route path="/game" element={<GameView/>}/>
         
         <Route path="/review" element={<QuestionsForReview />}/>
         
@@ -121,6 +122,7 @@ function App(){
       </Routes>
 
       <Footer/>
+    </div>
     </GlobalStates.Provider>
     
   ) 

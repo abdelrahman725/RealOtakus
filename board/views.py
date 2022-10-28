@@ -31,7 +31,7 @@ game_interactions = {}
 for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
 def get_current_user(request):
-    return User.objects.get(username="sophia")
+    return User.objects.get(username="pablo")
     return request.user
 
 

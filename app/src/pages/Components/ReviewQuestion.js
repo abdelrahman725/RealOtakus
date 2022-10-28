@@ -11,11 +11,10 @@ const [feedback,setfeedback] = useState()
 const feedback_select = useRef(null)
 
 const feedback_options = [
-    { value: 1, label: 'invalid format' },
-    { value: 2, label: 'Q is not clear' },
-    { value: 3, label: 'wrong information' },
-    { value: 4, label: 'easy / predictable' },
-    { value: 5, label: 'choices are similar' }    
+    { value: 1, label: 'not clear / invalid' },
+    { value: 2, label: 'similar choices' },
+    { value: 3, label: 'too easy / predictable' },
+    { value: 4, label: 'wrong information' }    
 ]
 
 
@@ -35,7 +34,7 @@ const ReviewSubmission = (e,question)=>{
             }
         })
 
-        if(review_submission_response===null){
+        if (review_submission_response===null){
             return
         }
 
@@ -99,7 +98,7 @@ return (
         {reviewstate==="pendingstate" &&
             <form onSubmit={(e)=>ReviewSubmission(e,question.id)}>
 
-                 <div className="radios">
+                <div className="radios">
                     <label>
                         approve
                         <input

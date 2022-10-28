@@ -1,6 +1,7 @@
-.centered_div, .dashboard, .account, .account .profile, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game_container, .notifications, footer {
+.centered_div, .dashboard, .account, .account .profile, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game_container, .notifications {
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 100px;
   text-align: center;
 }
 
@@ -25,18 +26,6 @@ a {
 
 .submit_btn {
   background-color: #46BB5D;
-}
-
-.icon_basic, .navbar .icon {
-  cursor: pointer;
-  border-radius: 7px;
-  font-size: xx-large;
-  color: black;
-  color: #6e7174;
-}
-
-.icon_basic:hover, .navbar .icon:hover {
-  color: white;
 }
 
 .navbar {
@@ -68,6 +57,16 @@ a {
   margin: 0px 13px;
 }
 
+.navbar .icon {
+  cursor: pointer;
+  font-size: xx-large;
+  color: #6e7174;
+}
+
+.navbar .icon:hover {
+  color: white;
+}
+
 .navbar .logo {
   font-size: 30px;
   letter-spacing: 1px;
@@ -75,7 +74,7 @@ a {
 }
 
 .spaced_div {
-  margin-top: 90px;
+  margin-top: 70px;
 }
 
 .navigation_buttons {
@@ -228,7 +227,7 @@ a {
     margin-bottom: 20px;
   }
   .spaced_div {
-    margin-top: 150px;
+    margin-top: 110px;
   }
   .navigation_buttons {
     -webkit-box-align: center;
@@ -380,11 +379,28 @@ a {
 }
 
 .game_container {
-  max-width: 750px;
+  max-width: 1200px;
+}
+
+.game_container .timer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: large;
+}
+
+.game_container .timer .icon {
+  font-size: 26px;
 }
 
 .game_container .game_question {
-  margin: 15px;
+  margin: 25px;
 }
 
 .game_container .game_question .choice {
@@ -464,7 +480,15 @@ a {
 }
 
 footer {
-  margin-top: 100px;
-  margin-bottom: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 10px;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: #262F36;
+  color: white;
+  margin-top: auto;
 }
 /*# sourceMappingURL=App.css.map */

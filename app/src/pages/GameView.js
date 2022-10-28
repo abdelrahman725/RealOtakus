@@ -6,7 +6,7 @@ import Select from 'react-select'
 import { GlobalStates } from "../App"
 import {useState,useContext,useEffect,useRef} from 'react'
 
-const QuizAnimes = () => {
+const GameView = () => {
 
   const {N_Game_Questions, game_started, setgame_started, set_info_message} = useContext(GlobalStates)
   const [animesoptions,setanimesoptions] = useState()
@@ -106,24 +106,14 @@ const QuizAnimes = () => {
   }
 
    { game_started===true && 
-      <Game
-      questions={gamequestions}
-      setgamescore={setgamescore}
-      setquizresults={setquizresults}
-      setuseranswers={setuseranswers}
-      useranswers={useranswers}
-      />
+      <Game questions={gamequestions} setgamescore={setgamescore} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />
     }
 
    { game_started===false && 
-      <Result
-      results={quizresults}
-      useranswers={useranswers}
-      score={gamescore}
-      questions={gamequestions}/> 
+      <Result results={quizresults} useranswers={useranswers} score={gamescore} questions={gamequestions}/> 
    }
 
   </>
  )}
 
-export default QuizAnimes
+export default GameView

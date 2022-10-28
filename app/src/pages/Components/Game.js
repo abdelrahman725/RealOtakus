@@ -13,6 +13,7 @@ const Game = ({
 
   const { N_Game_Questions, setgame_started, set_user_data } = useContext(GlobalStates)
   const [index,setindex] = useState(0)
+  const [timeout,settimout] = useState(false)
        
   const SubmitGame = async()=>{
 
@@ -67,12 +68,22 @@ const Game = ({
 
   return(
     <div className="game_container">
-      <Question
-      question={questions[index]}
-      Q_no={index}
-      onselect={onAnswer}
-      questions_length={N_Game_Questions}
-      nextquestion={nextquestion}/>
+      <br />
+      
+      {timeout===false &&
+
+        <Question
+        question={questions[index]}
+        question_index={index}
+        onselect={onAnswer}
+        questions_length={N_Game_Questions}
+        timeout={timeout}
+        settimout={settimout}
+        nextquestion={nextquestion}/>
+      }
+
+      {timeout===true && <div>sorry time out</div>}
+
       <br />  
       <div className="game_buttons">
         

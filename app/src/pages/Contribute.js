@@ -151,14 +151,14 @@ const Contribute = ({all_animes_options}) => {
         <div className="contribution_form">
 
           <Select 
-              className="select_animes" 
-              placeholder="select anime"
-              isClearable= {true}
-              isLoading={!all_animes_options}
-              options={all_animes_options}
-              onChange={on_anime_select} 
-              value={anime}
-              ref={anime_select}
+            className="select_animes" 
+            placeholder="select anime"
+            isClearable= {true}
+            isLoading={!all_animes_options}
+            options={all_animes_options}
+            onChange={on_anime_select} 
+            value={anime}
+            ref={anime_select}
           />
             
           <br/> <br/>
@@ -222,7 +222,7 @@ const Contribute = ({all_animes_options}) => {
           </textarea><br />
           
           <input type="checkbox" className="checkbox" name="instructions" ref={checkbox} required/>
-          <label htmlFor="instructions"> I have read instructions</label>
+          <label htmlFor="instructions"> I understand Contribution Guidlines</label>
           <br /> <br />
           <button type="submit"  className="submit_btn" ref={submit_btn}>submit question</button>
 

@@ -1,14 +1,13 @@
 import async_http_request from "./AsyncRequest"
 import { useTimer } from "react-use-precision-timer"
-
+import { MdTimer } from "react-icons/md"
 import { useEffect, useState } from "react"
 
-const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) => {
+const Question = ({ question, onselect, question_index, questions_length, timeout ,settimout, nextquestion }) => {
 
   const [selected, setselected] = useState()
   const [minutes, setminutes] = useState(2)
   const [seconds, setseconds] = useState(0)
-  const [timeout, settimout] = useState(false)
 
   const handletimeleft = () => {
     if (seconds > 0) {
@@ -19,10 +18,10 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
 
       if (minutes === 0) {
 
-        if (Q_no === questions_length - 1) {
+        if (question_index === questions_length - 1) {
           settimout(true)
         }
-        timer.stop()
+        
         nextquestion()
       }
 
@@ -31,12 +30,11 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
         setseconds(59);
       }
     }
-
   }
 
   const reset_timer = () => {
-    setminutes(2)
-    setseconds(0)
+    setminutes(1)
+    setseconds(30)
     timer.start()
   }
  
@@ -54,50 +52,50 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
     console.log(attempt_response)
   }
 
-  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() });
+  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() })
   
   useEffect(() => {
-    sendquestioninteraction()
+  
     setselected()
+    sendquestioninteraction()
     !timeout && reset_timer()
-  }, [Q_no])
+
+    return ()=>{
+      timer.stop()
+    }
+  
+  }, [question_index])
 
 
   return (
-    <div className="game_question">
-
-      <h3> <span> time left :</span> {"0" + minutes}:{seconds < 10 && "0"}{seconds} </h3>
+    <div>      
       
-      <br />
+      <p className="timer"> <MdTimer className="icon"/> &nbsp;&nbsp;<strong> {"0" + minutes} : {seconds < 10 && "0"}{seconds} </strong> </p>
+      
+      <div className="game_question">
+        
+        <p className="question_title"> {question_index + 1}. <strong> {question.question} ? </strong> </p>
 
-      {!timeout ?
-
-        <div>
-          <p> {Q_no + 1}. <strong> {question.question} ? </strong> </p>
-
-          <div className={question.choice1 === selected ? "choice selected_choice" : "choice"}
-            onClick={() => onChoice(question.choice1)}>
-            {question.choice1}
-          </div>
-
-          <div className={question.choice2 === selected ? "choice selected_choice" : "choice"}
-            onClick={() => onChoice(question.choice2)}>
-            {question.choice2}
-          </div>
-
-          <div className={question.choice3 === selected ? "choice selected_choice" : "choice"}
-            onClick={() => onChoice(question.choice3)}>
-            {question.choice3}
-          </div>
-
-          <div className={question.choice4 === selected ? "choice selected_choice" : "choice"}
-            onClick={() => onChoice(question.choice4)}>
-            {question.choice4}
-          </div>
+        <div className={question.choice1 === selected ? "choice selected_choice" : "choice"}
+          onClick={() => onChoice(question.choice1)}>
+          {question.choice1}
         </div>
-        :
-        <p> <strong> Time out !</strong> </p>
-      }
+
+        <div className={question.choice2 === selected ? "choice selected_choice" : "choice"}
+          onClick={() => onChoice(question.choice2)}>
+          {question.choice2}
+        </div>
+
+        <div className={question.choice3 === selected ? "choice selected_choice" : "choice"}
+          onClick={() => onChoice(question.choice3)}>
+          {question.choice3}
+        </div>
+
+        <div className={question.choice4 === selected ? "choice selected_choice" : "choice"}
+          onClick={() => onChoice(question.choice4)}>
+          {question.choice4}
+        </div>
+      </div>
 
     </div>
   )

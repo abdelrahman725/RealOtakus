@@ -13,13 +13,14 @@ body{
 .centered_div{
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 100px;
   text-align: center; 
 }
-
 
 button, .pointer_cursor {
   cursor: pointer;
 }
+
 
 button{
   border-radius: $base_border_radius;
@@ -31,24 +32,15 @@ button{
   letter-spacing: 1px;
 }
 
+
 a{
   //color: white;
   text-decoration: none;
 }
 
+
 .submit_btn{
   background-color: $base_green_button_color;
-}
-
-.icon_basic{
-  cursor: pointer;
-  border-radius: $base_border_radius;
-  font-size:xx-large;
-  color: black;
-  color: #6e7174;
-  &:hover{
-    color: white;
-  }
 }
 
 .navbar{
@@ -70,7 +62,12 @@ a{
   }
 
   .icon{
-    @extend .icon_basic;
+    cursor: pointer;
+    font-size:xx-large;
+    color: #6e7174;  
+    &:hover{
+      color: white;
+    }
   }
 
   .logo{
@@ -83,7 +80,7 @@ a{
 
 
 .spaced_div{
-  margin-top: 90px;
+  margin-top: 70px;
 }
 
 
@@ -228,7 +225,7 @@ a{
   }
   
   .spaced_div{
-    margin-top: 150px;
+    margin-top: 110px;
   }
 
   .navigation_buttons {
@@ -388,13 +385,23 @@ a{
 }
 
 
-.game_container{
-  
+.game_container{  
   @extend .centered_div;
-  max-width: 750px;
+   max-width: 1200px;
+
+   .timer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size:large;
+    
+    .icon{
+      font-size:26px;
+    }
+   }
 
   .game_question{
-    margin: 15px;
+    margin: 25px;
 
     .choice {
       border-radius: $base_border_radius;
@@ -484,8 +491,12 @@ a{
   }
 }
 
+
 footer{
-  @extend .centered_div;
-  margin-top: 100px;
-  margin-bottom: 15px;
+  display: flex;
+  padding: 10px;
+  justify-content: center;
+  background-color: $base_div_backgroun_color;
+  color: white;
+  margin-top: auto;
 }
