@@ -30,10 +30,8 @@ game_interactions = {}
 
 for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
-react_user = User.objects.get(username="marawan")
-
 def get_current_user(request):
-    return react_user
+    return User.objects.get(username="sophia")
     return request.user
 
 
@@ -153,11 +151,13 @@ def get_game_animes(request):
 def get_game(request, game_anime):
     current_user = get_current_user(request)
     selected_anime = animes_dict[game_anime]
-    
+    print()
+    print(current_user.tests_started)
+    print()
     # To catch malicious or non-serious users
     if current_user.tests_started - current_user.tests_completed == "To Do":
         pass
-        # catch here and act upon that
+        #catch here and act upon that
     
     if current_user.id in game_interactions:
         del game_interactions[current_user.id]
@@ -245,7 +245,7 @@ def record_question_encounter(request, question_id):
 def submit_game(request):
     user = get_current_user(request)
     user_answers = request.data["answers"]
-
+ 
     game_score = 0
 
     for question_id,answer in user_answers.items():

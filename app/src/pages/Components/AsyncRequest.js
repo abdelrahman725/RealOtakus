@@ -1,4 +1,8 @@
 
+//export const domain = "192.168.1.8:8000"
+export const domain = "127.0.0.1:8000"
+const myserver = `http://${domain}`
+
 const getCookie =(name)=> {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -15,12 +19,7 @@ const getCookie =(name)=> {
     return cookieValue;
 }
 
-//export const domain = "192.168.1.8:8000"
-export const domain = "127.0.0.1:8000"
-
 const CsrfToken = getCookie('csrftoken')
-const myserver = `http://${domain}`
-
 
 const async_http_request = async ({ server = myserver, path = null, method = "GET", data = null } = {}) => {
     

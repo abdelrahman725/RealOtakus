@@ -31,6 +31,11 @@ button{
   letter-spacing: 1px;
 }
 
+a{
+  //color: white;
+  text-decoration: none;
+}
+
 .submit_btn{
   background-color: $base_green_button_color;
 }
@@ -71,7 +76,7 @@ button{
   .logo{
     font-size: 30px;
     letter-spacing: 1px;
-    color:white;
+    color: white;
   }
 
 }
@@ -384,15 +389,12 @@ button{
 
 
 .game_container{
-  margin: 10px;
-}
-
-.game{
   
   @extend .centered_div;
   max-width: 750px;
 
   .game_question{
+    margin: 15px;
 
     .choice {
       border-radius: $base_border_radius;

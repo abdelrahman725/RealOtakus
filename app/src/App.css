@@ -1,4 +1,4 @@
-.centered_div, .dashboard, .account, .account .profile, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game, .notifications, footer {
+.centered_div, .dashboard, .account, .account .profile, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game_container, .notifications, footer {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -17,6 +17,10 @@ button {
   font-weight: bold;
   padding: 10px 15px;
   letter-spacing: 1px;
+}
+
+a {
+  text-decoration: none;
 }
 
 .submit_btn {
@@ -376,14 +380,14 @@ button {
 }
 
 .game_container {
-  margin: 10px;
-}
-
-.game {
   max-width: 750px;
 }
 
-.game .game_question .choice {
+.game_container .game_question {
+  margin: 15px;
+}
+
+.game_container .game_question .choice {
   border-radius: 7px;
   background-color: white;
   margin-bottom: 15px;
@@ -392,17 +396,17 @@ button {
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
-.game .game_question .selected_choice {
+.game_container .game_question .selected_choice {
   background-color: #365FAA;
   color: white;
 }
 
-.game .game_question .rightchoice {
+.game_container .game_question .rightchoice {
   background-color: #00AD83;
   color: white;
 }
 
-.game .game_question .wrongchoice {
+.game_container .game_question .wrongchoice {
   background-color: #C41E3A;
   color: white;
 }

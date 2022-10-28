@@ -1,4 +1,6 @@
 import Game from "./Components/Game"
+import Result from "./Components/Result"
+
 import async_http_request from "./Components/AsyncRequest"
 import Select from 'react-select'
 import { GlobalStates } from "../App"
@@ -6,21 +8,22 @@ import {useState,useContext,useEffect,useRef} from 'react'
 
 const QuizAnimes = () => {
 
-  const {N_Game_Questions,setGameMode,set_info_message} = useContext(GlobalStates)
+  const {N_Game_Questions, game_started, setgame_started, set_info_message} = useContext(GlobalStates)
   const [animesoptions,setanimesoptions] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
-  const [gamestarted,setgamestarted] = useState(false)
+  const [quizresults,setquizresults] = useState({}) 
+  const [useranswers,setuseranswers] = useState({})
+  const [gamescore,setgamescore] = useState()
+
   const anime_select = useRef(null)
 
   // get selected anime questions
   const GetGame = async()=>{
+    
+    setquizresults({})
+    setuseranswers({})
 
-    // if ( localStorage.getItem("playing") === "1" ){
-    //   console.log("there is another ongoing game")
-    //   return
-    // }
-  
     const game  = await async_http_request({path:`getgame/${ selected_anime.value }`})
     
     if (game.info !== "ok"){
@@ -28,11 +31,9 @@ const QuizAnimes = () => {
       return
     }
     
-    setgamequestions(game.game_questions)
     setselected_anime()
-    setgamestarted(true)
-    setGameMode(true)    
-  
+    setgamequestions(game.game_questions)
+    setgame_started(true)
   }
 
   const on_anime_select=(selected)=> {
@@ -47,7 +48,8 @@ const QuizAnimes = () => {
     return true
   }  
 
-  useEffect(()=>{  
+  useEffect(()=>{
+
     async function GetAnimes(){
     
       setanimesoptions()
@@ -75,31 +77,52 @@ const QuizAnimes = () => {
     }
 
     GetAnimes()
+
+    return()=>{
+      setgame_started()
+    }
     
   },[])
 
  return (
   <>
-   { gamestarted ? <Game questions={gamequestions} setgamestarted={setgamestarted}/>
-    :
-    <div className="centered_div animeslist">
-      
-       <Select 
-        className="select_animes"
-        placeholder="select anime"
-        value={selected_anime}
-        isClearable= {true}
-        options={animesoptions}
-        isLoading={animesoptions?false:true}
-        onChange={on_anime_select}
-        isOptionDisabled={(option) => hide_anime(option.user_interactions, option.anime_questions)}
-        ref={anime_select}/>  
-        <br />
-        <button className="submit_btn" onClick={()=> selected_anime ? GetGame() : anime_select.current.focus()} >
-          Start Game 
-        </button>
+  { game_started===undefined &&
+    <div className="centered_div animeslist"> 
+      <Select 
+      className="select_animes"
+      placeholder="select anime"
+      value={selected_anime}
+      isClearable= {true}
+      options={animesoptions}
+      isLoading={animesoptions?false:true}
+      onChange={on_anime_select}
+      isOptionDisabled={(option) => hide_anime(option.user_interactions, option.anime_questions)}
+      ref={anime_select}/>  
+      <br />
+      <button className="submit_btn" onClick={()=> selected_anime ? GetGame() : anime_select.current.focus()} >
+        Start Game 
+      </button>
     </div>
+  }
+
+   { game_started===true && 
+      <Game
+      questions={gamequestions}
+      setgamescore={setgamescore}
+      setquizresults={setquizresults}
+      setuseranswers={setuseranswers}
+      useranswers={useranswers}
+      />
     }
+
+   { game_started===false && 
+      <Result
+      results={quizresults}
+      useranswers={useranswers}
+      score={gamescore}
+      questions={gamequestions}/> 
+   }
+
   </>
  )}
 

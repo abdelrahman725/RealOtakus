@@ -3,7 +3,7 @@ import  NavBar from './pages/Components/NavBar'
 import  Home  from './pages/Home' 
 import  Contribute  from './pages/Contribute'
 import  UserContributions from './pages/UserContributions'
-import  QuizAnimes from './pages/QuizAnimes'
+import  QuizAnimes from './pages/GameView'
 import  QuestionsForReview  from './pages/QuestionsForReview'
 import  UserProfile  from './pages/Profile'
 import  Notifications  from './pages/Notifications'
@@ -28,14 +28,14 @@ function App(){
   const [notifications,setnotifications] = useState([])
   const [number_of_unseen_notifications,setnumber_of_unseen_notifications] = useState(0)
   const [darkmode,setdarkmode] = useState(true)
-  const [GameMode,setGameMode] = useState(false)
+  const [game_started,setgame_started] = useState()
   const [info_message, set_info_message] = useState()
   const N_Game_Questions = 5   
 
   const { lastMessage,readyState } = useWebSocket(`ws://${domain}/ws/socket-server/`,{
     //Will attempt to reconnect on all close events, such as server shutting down
     onOpen: () => console.log('\n connection open \n\n'),
-    shouldReconnect: (closeEvent) => true,
+    shouldReconnect: () => true,
   })
   
   // listening for incoming realtime notifications 
@@ -85,17 +85,17 @@ function App(){
   },[])
   
   return(
-    <GlobalStates.Provider value={{GameMode, N_Game_Questions, setGameMode, set_user_data, set_info_message}}>
+    <GlobalStates.Provider value={{game_started, N_Game_Questions, setgame_started, set_user_data, set_info_message}}>
 
-        <NavBar 
-          user={user_data}
-          notifications_open = {false}
-          new_notifications={number_of_unseen_notifications} 
-          darkmode={darkmode}
-          setdarkmode = {setdarkmode}/> 
-        <div className="spaced_div"></div>
-        
-        <h1 className="centered_div">{GameMode? "On": "off"}</h1>
+      <NavBar 
+        user={user_data}
+        notifications_open = {false}
+        new_notifications={number_of_unseen_notifications} 
+        darkmode={darkmode}
+        setdarkmode = {setdarkmode}/> 
+      <div className="spaced_div"></div>
+      
+      <p>{info_message}</p>
 
       <Routes>
         
@@ -114,8 +114,7 @@ function App(){
         <Route path="/notifications" element={
           <Notifications all_notifications={notifications}
           unseen_count={number_of_unseen_notifications}
-          setnumber_of_unseen_notifications = {setnumber_of_unseen_notifications}/>}
-        />
+          setnumber_of_unseen_notifications = {setnumber_of_unseen_notifications}/>}/>
         
         <Route path="/about" element={<About />}/>
       

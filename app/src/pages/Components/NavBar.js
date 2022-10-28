@@ -21,11 +21,10 @@ return (
   <div className="navbar">
       
       <div className="left">
-        <div className="pointer_cursor logo" >
-          <Link to="/">
-            <strong className="logo_text">
-              <span>R</span>eal <span>O</span>takus
-            </strong> 
+
+        <div>
+          <Link to="/" className="logo">
+            <strong className="logo_text"> <span>R</span>eal <span>O</span>takus </strong> 
           </Link>
         </div>
         

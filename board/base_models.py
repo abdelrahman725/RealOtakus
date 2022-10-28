@@ -1,4 +1,3 @@
-from random import choices
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
@@ -78,7 +77,6 @@ class QuestionInteraction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="questions_interacted_with")
     question = models.ForeignKey(Question,on_delete=models.CASCADE, related_name="question_interactions")
     anime = models.ForeignKey(Anime,on_delete=models.PROTECT,related_name="anime_interactions")
-
     # None means no answer (always the case initially when recording the interaction)
     # but when calculating score None should be wrong answer
     correct_answer = models.BooleanField(null=True, default=None)

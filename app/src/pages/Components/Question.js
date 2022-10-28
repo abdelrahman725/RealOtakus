@@ -1,7 +1,7 @@
 import async_http_request from "./AsyncRequest"
 import { useTimer } from "react-use-precision-timer"
 
-import { useEffect, useState, } from "react"
+import { useEffect, useState } from "react"
 
 const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) => {
 
@@ -54,13 +54,13 @@ const Question = ({ question, onselect, Q_no, questions_length, nextquestion }) 
     console.log(attempt_response)
   }
 
+  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() });
+  
   useEffect(() => {
     sendquestioninteraction()
     setselected()
     !timeout && reset_timer()
   }, [Q_no])
-
-  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() });
 
 
   return (
