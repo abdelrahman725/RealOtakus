@@ -31,7 +31,7 @@ game_interactions = {}
 for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
 def get_current_user(request):
-    return User.objects.get(username="pablo")
+    return User.objects.get(username="otaku")
     return request.user
 
 
@@ -151,9 +151,7 @@ def get_game_animes(request):
 def get_game(request, game_anime):
     current_user = get_current_user(request)
     selected_anime = animes_dict[game_anime]
-    print()
-    print(current_user.tests_started)
-    print()
+
     # To catch malicious or non-serious users
     if current_user.tests_started - current_user.tests_completed == "To Do":
         pass
@@ -418,7 +416,7 @@ def get_user_profile(request):
     user = get_current_user(request)
 
     profile_data = ProfileDataSerializer(
-        User.objects.values("points","level","tests_started","tests_completed").annotate(
+        User.objects.values("points","level","tests_completed").annotate(
             n_questions_reviewed = Count("contributions_reviewed",distinct=True)
         ).annotate(
             n_approved_contributions = Count("contributions",filter=(Q(contributions__approved=True)),distinct=True)

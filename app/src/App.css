@@ -1,4 +1,4 @@
-.centered_div, .dashboard, .account, .account .profile, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game_container, .notifications {
+.centered_div, .dashboard, .account, .account .achievments, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game_container, .notifications {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 100px;
@@ -163,7 +163,7 @@ a {
   margin: 20px;
 }
 
-.account .profile {
+.account .achievments {
   width: 85%;
   color: white;
   background-color: #262F36;
@@ -173,20 +173,20 @@ a {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 
-.account .profile div {
-  margin-top: 20px;
-  margin-left: 50px;
-  margin-right: 50px;
+.account .achievments div {
+  margin-top: 30px;
 }
 
-.account .profile div p {
+.account .achievments div p {
   font-weight: bold;
   font-size: 35px;
 }
 
-.account .profile hr {
+.account .achievments hr {
   background-color: #353e45;
   border: none;
   border-radius: 10px;
@@ -241,13 +241,13 @@ a {
   .navigation_buttons button {
     width: 240px;
   }
-  .account .profile {
+  .account .achievments {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
   }
-  .account .profile hr {
+  .account .achievments hr {
     width: 80%;
     margin-bottom: 30px;
   }
@@ -259,6 +259,7 @@ a {
 
 .questions_container .canceledstate, .review_page .canceledstate {
   border-color: grey;
+  opacity: 50%;
 }
 
 .questions_container .pendingstate, .review_page .pendingstate {
@@ -344,14 +345,6 @@ a {
   background: white;
 }
 
-.review_page form .review_buttons {
-  margin-bottom: 10px;
-}
-
-.review_page form .review_buttons button {
-  margin-right: 20px;
-}
-
 .review_page form .question_feedback {
   margin-bottom: 20px;
   max-width: 300px;
@@ -374,8 +367,28 @@ a {
           justify-content: flex-start;
 }
 
-.review_question .choices {
-  margin-bottom: 10px;
+.review_question .question_contents {
+  padding: 15px;
+  margin: 10px;
+  margin-bottom: 30px;
+  border-radius: 7px;
+  background-color: whitesmoke;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+}
+
+.review_question .question_contents .choices {
+  padding-left: 15px;
+  margin-top: 30px;
+}
+
+.review_question .question_contents .choices p {
+  padding: 6px 0px 6px 12px;
+}
+
+.review_question .question_contents .choices .right_answer {
+  background-color: #c7f1dc;
+  border-radius: 7px;
 }
 
 .game_container {
@@ -418,12 +431,12 @@ a {
 }
 
 .game_container .game_question .rightchoice {
-  background-color: #00AD83;
+  background-color: #13cfa0;
   color: white;
 }
 
 .game_container .game_question .wrongchoice {
-  background-color: #C41E3A;
+  background-color: #c64e62;
   color: white;
 }
 

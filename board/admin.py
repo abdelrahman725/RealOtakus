@@ -12,12 +12,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
 from board.models import *
-from board.constants import COUNTRIES
+from board.constants import COUNTRIES, QUESTIONSCOUNT
 
 
 def to_local_date_time(utc_datetime):
   if utc_datetime:
-    return utc_datetime  + timedelta(minutes=120)
+    return utc_datetime + timedelta(minutes=120)
     local_tz = pytz.timezone('Africa/Cairo')
     return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
   return "N/A"
@@ -566,7 +566,7 @@ class UserAdmin(admin.ModelAdmin):
     #"email",
     "level",
     "points",
-    #"quiz_avg_score",
+    "quizes_score",
     #"tests_started",
     #"tests_completed",
     #"quiz_seriousness",
@@ -594,16 +594,16 @@ class UserAdmin(admin.ModelAdmin):
     query = super(UserAdmin, self).get_queryset(request)
     return query.exclude(is_superuser=True,pk=1)
   
-  def quiz_avg_score(self,obj):
+  def quizes_score(self,obj):
     if obj.questions_interacted_with.exists():
-      all_answers =  obj.questions_interacted_with.all().count()
+      all_answers =  QUESTIONSCOUNT * obj.tests_completed
       right_answers =  obj.questions_interacted_with.filter(correct_answer=True).count()
-      return f"{ right_answers / all_answers * 100} %"
+      return f"{round(right_answers /all_answers * 100) } %"
     return "N/A"
 
   def quiz_seriousness(self,obj):
-    if obj.tests_started >0:
-      return f"{ obj.tests_completed / obj.tests_started *100} %"
+    if obj.tests_started > 0:
+      return f"{ round( obj.tests_completed / obj.tests_started *100 )} %"
     return "N/A"
 
   def reviewer(self,obj):

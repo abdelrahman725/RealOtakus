@@ -66,7 +66,6 @@ const ReviewSubmission = (e,question)=>{
 }
 
 const handle_question_state = (e)=>{
-    
     const value  = parseInt(e.target.value)
     value ===1 && setfeedback()
     setquestion_state(value)
@@ -79,20 +78,18 @@ const on_feedback_selection = selected_option => {
 
 return (
     <div className={`review_question ${reviewstate}`}>
-        <p> <strong>{anime}</strong></p>
-        <div className="question"> 
-            {question.question}
-        </div>
-        
-        <div className="choices">
-            <p>right answer  {question.right_answer}</p>
-            wrong choices
-            <ul>   
-                <li> {question.choice1}</li>
-                <li> {question.choice2}</li>
-                <li> {question.choice3}</li>
-            </ul>
-            <hr />
+        <p className="question_anime"> <strong>{anime}</strong></p>
+
+        <div className="question_contents">
+
+            <p className="question">{question.question}</p>
+    
+            <div className="choices">
+                <p className="right_answer"> {question.right_answer}</p>
+                <p> {question.choice1}</p>
+                <p> {question.choice2}</p>
+                <p> {question.choice3}</p>                
+            </div>
         </div>
 
         {reviewstate==="pendingstate" &&

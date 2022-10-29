@@ -108,9 +108,9 @@ function App(){
         
         <Route path="/game" element={<GameView/>}/>
         
-        <Route path="/review" element={<QuestionsForReview />}/>
+        { user_data && user_data.is_reviewer && <Route path="/review" element={<QuestionsForReview />}/>}
         
-        <Route path="/profile" element={<UserProfile />}/>
+        <Route path="/profile" element={<UserProfile is_reviewer={ user_data && user_data.is_reviewer} />}/>
         
         <Route path="/notifications" element={
           <Notifications all_notifications={notifications}

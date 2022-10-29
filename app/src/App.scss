@@ -161,7 +161,7 @@ a{
   @extend .centered_div;
   margin: 20px;
 
-  .profile{
+  .achievments{
     width: 85%;
     @extend .centered_div;
     color: white;
@@ -169,12 +169,12 @@ a{
     border-radius: $base_border_radius;
     box-shadow: $base-shadow ;
     display: flex;  
+    padding-left: 50px;
+    padding-right: 50px;
 
     div{
-      margin-top: 20px;
-      margin-left: 50px;
-      margin-right: 50px;
-
+      margin-top: 30px; 
+ 
       p{
         font-weight: bold;
         font-size: 35px;
@@ -237,7 +237,7 @@ a{
  }
   
   .account{
-    .profile{
+    .achievments{
       flex-direction: column;
       hr{
         width: 80%;
@@ -256,6 +256,7 @@ a{
 
   .canceledstate{
     border-color: grey;
+    opacity: 50%;
   }
   
   .pendingstate{
@@ -351,14 +352,6 @@ a{
 
     }
 
-    .review_buttons{
-      margin-bottom: 10px;
-      button{
-        margin-right: 20px;
-      }
-
-    }
-    
     .question_feedback{
       margin-bottom: 20px;
       max-width: 300px;
@@ -379,9 +372,30 @@ a{
   margin-bottom: 110px;
   flex-direction: column;
   justify-content: flex-start;
-  .choices{
-    margin-bottom: 10px;
+  .question_contents{
+    padding: 15px;
+    margin:10px;
+    margin-bottom: 30px;
+    border-radius: $base_border_radius;
+    background-color: whitesmoke;
+    box-shadow: $base-shadow ;
+  
+    .choices{
+      padding-left: 15px;
+      margin-top: 30px;
+      p{
+        // top, right, bottom , left
+        padding: 6px 0px 6px 12px;
+      }
+      
+      .right_answer{
+         background-color: #c7f1dc;
+         border-radius: $base_border_radius;   
+      }
+    }
+
   }
+
 }
 
 
@@ -417,12 +431,12 @@ a{
     }
   
     .rightchoice{
-      background-color: #00AD83;
+      background-color: #13cfa0;
       color: white;
     }
   
     .wrongchoice{
-      background-color: #C41E3A;
+      background-color: #c64e62;
       color: white;
     }
     

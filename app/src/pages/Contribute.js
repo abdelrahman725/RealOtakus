@@ -80,7 +80,6 @@ const Contribute = ({all_animes_options}) => {
           choice2:"",
           choice3:"",
         }
-
     
     // removes leading and trailing spaces (for duplication checking and for form submission)
         const unique_choices = new Set()  
@@ -99,8 +98,8 @@ const Contribute = ({all_animes_options}) => {
           return false
         }
         
-        if (cleaned_question.question.length < 10){
-            console.log("question must be at least 10 characters length")
+        if (cleaned_question.question.length < 8){
+            console.log("question must be at least 8 characters length")
             question_ref.current.focus() 
             window.scrollTo({ top: 0, behavior: 'smooth' })
             return false

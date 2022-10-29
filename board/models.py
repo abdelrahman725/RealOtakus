@@ -23,15 +23,24 @@ class User(base_models.User):
 
 
 @receiver(pre_save, sender=User)
-def update_user_points_level(sender, instance, **kwargs):
-    pass
-    # if instance.tests_completed != 0 and instance.tests_completed %10 ==0:
-    #     instance.points += 20 
-    #     CreateNotification(
-    #         receiver=instance,
-    #         notification="new achievement! you have completed 10 quizes, +20 points",
-    #     )
-    # instance.level = CheckLevel(instance)
+def update_user_points_and_level(sender, instance, **kwargs):
+    
+    try:
+        previous_instance = User.objects.get(id=instance.id)
+        if instance.tests_completed > previous_instance.tests_completed and instance.tests_completed % 10 ==0 :
+
+            instance.points += 20 
+            CreateNotification(
+                receiver=instance,
+                notification="new achievement! you have completed 10 quizes, +20 points",
+            )
+
+        if instance.points > previous_instance.points:
+            instance.level = CheckLevel(instance)
+
+    except User.DoesNotExist:
+        pass
+
    
 
 class Anime(base_models.Anime):
@@ -70,14 +79,6 @@ def delete_chached_anime(sender, instance, **kwargs):
 
 
 class Question(base_models.Question):
-    
-    def clean(self, *args, **kwargs):
-        #if self.pk == None:
-            #question_validator(self.question)
-            #choices_integirty([self.right_answer,self.choice1,self.choice2,self.choice3])
-        super(Question, self).clean(*args, **kwargs)
-        
- 
     def __str__(self):
         if len(self.question) > 55:
             return f"{self.question[:55]}..."

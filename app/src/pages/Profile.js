@@ -1,11 +1,14 @@
 import async_http_request from "./Components/AsyncRequest"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import Interactions from "./Components/Interactions"
+import { GlobalStates } from "../App"
 import { FcOk } from 'react-icons/fc' 
 
 const UserProfile = ({is_reviewer}) => {
   
+  const { N_Game_Questions } = useContext(GlobalStates)
   const [user_data,set_user_data] = useState()
+  const [games_score_percentage,setgames_score_percentage]  = useState()
   const [user_interactions,setuser_interactions] = useState([])
 
   useEffect(()=>{
@@ -16,10 +19,22 @@ const UserProfile = ({is_reviewer}) => {
       if (profile_result===null){
         return
       }
-      console.log(profile_result.user_data)
+      
+      //console.log(profile_result.user_data)
+      
+      if (profile_result.user_data.tests_completed===0){
+        setgames_score_percentage(0)
+      }
+
+      else{
+        const user_right_answers = profile_result.user_interactions.reduce( (prev, interaction) => prev + interaction.right_answers, 0)
+        setgames_score_percentage(Math.round( (user_right_answers / (profile_result.user_data.tests_completed * N_Game_Questions) ) *100))
+      }
+
       set_user_data(profile_result.user_data)
       setuser_interactions(profile_result.user_interactions)
     }
+
     getProfileData() 
   
   },[])
@@ -29,16 +44,18 @@ const UserProfile = ({is_reviewer}) => {
 
       {user_data ?
         <div>
-          <div className="profile">
+          <h2>achievements</h2>
+          
+          <div className="achievments">
+          
             <div>
-              Tests started <p>{user_data.tests_started}</p>
+              Quizes Score <p> {games_score_percentage } %</p>
             </div>
             
             <hr />
             
             <div>
-              Tests completed
-              <p> {user_data.tests_completed}</p>
+              Tests completed <p> {user_data.tests_completed}</p>
             </div>
             
             <hr />
@@ -46,17 +63,14 @@ const UserProfile = ({is_reviewer}) => {
             <div>
               <FcOk/> Contributions <p> {user_data.n_approved_contributions}</p>
             </div>
+
             {is_reviewer && <hr /> }
-            {is_reviewer &&
-            <div>
-              Contributions reviewed
-              <p>{user_data.n_questions_reviewed}</p>
-            </div>
-            }
+            {is_reviewer && <div> Contributions reviewed <p>{user_data.n_questions_reviewed}</p></div>}          
           
           </div>
-          <br />
+
           { user_interactions.length > 0 &&  <Interactions interactions={user_interactions} />  } 
+        
         </div>
 
         :

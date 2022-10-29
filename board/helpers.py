@@ -1,6 +1,5 @@
 import re
 
-from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
@@ -93,7 +92,6 @@ def CheckLevel(user):
 
 
 def check_empty_string(value):
-
     if re.search(r'^\s+$',value):        
         raise ValidationError(
             _('no empty strings allowed')
@@ -104,9 +102,9 @@ def question_validator(value):
     
     check_empty_string(value)
 
-    if len(value) < 10:
+    if len(value) < 8:
         raise ValidationError(
-            _('question must be at leat 10 characters length'),
+            _('question must be at leat 8 characters length'),
             code="invalid question length"
         )
 

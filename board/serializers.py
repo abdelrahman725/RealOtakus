@@ -24,7 +24,6 @@ class ProfileDataSerializer(serializers.ModelSerializer):
     fields = (
       'points',
       'level',
-      'tests_started',
       'tests_completed',
       'n_questions_reviewed',
       'n_approved_contributions'

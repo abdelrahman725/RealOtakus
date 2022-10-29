@@ -3,7 +3,6 @@ import React from 'react'
 const Interactions = ({interactions}) => {
   return (
     <>
-
       <h2>interactions</h2>
 
       <table className="dashboard interactions">
