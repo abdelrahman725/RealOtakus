@@ -1,49 +1,77 @@
-{% load static %}
-{% load socialaccount %}
+{% load static %} 
+{% load socialaccount %} 
 {% load account %}
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-   <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge">  -->
-   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">   
-   <link href="{% static 'board/styles.css' %}" rel="stylesheet"> 
-  <script src="{% static 'board/index.js' %}"></script> 
-  <title>Real Otakus</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge">  -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link href="{% static 'board/styles.css' %}" rel="stylesheet" />
+    <script src="{% static 'board/index.js' %}"></script>
+    <title>Real Otakus</title>
+  </head>
 
-<body >
-  <h1>so you are a real otaku ?</h1>
-
-  <div class="about">
-      <p class="intro">
-        Real otakus is the first platform for otakus (anime fans)
-        who are ready to participate in challenging and mind blowing questions  
+  <body>
+    <h1 class="title_color">Real Otakus</h1>
+    
+    <div class="header_container">
+      <h2 class="title_color">so you are a real Otaku ?</h2>
+      <p>
+        first platform for real anime fans who are ready to
+        participate in challenging and mind blowing questions
       </p>
+    </div>
+
+    <div class="content_container">
       
-      <h2>what can you do</h2>
-        <p>take a quiz in your favorite anime</p>
-        <p>see where you stand from other otakus compeititors</p>
-        <p>review others contributed questions</p>
-        <p>contribute by creating questions</p>
-  </div>
+      <div class="about_container">
+        <h3 class="title_color">what can you do</h3>
+          <p>test your self by taking quizes in your favorite animes</p>
+          <p>Contribute a new question so other otakus can test themselves</p>
+          <p>become a reviewr by reviewing other users contributed questions !</p>
+      </div>
 
-  <form action="{%url 'login_url' %}" method="post" >
-      {% csrf_token %}
-      <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus><br>
-      <input type="password" name="password" placeholder=" passsword" autocomplete="off" required><br>
-      <input type="submit" value="Sign in" class="formbtn">
-  </form>
-  <br>
+      <div class="forms_container">
 
-  <div class="form">  
-    <button type="button" id="authenticate" class="google_login" value="{% provider_login_url 'google' %}">
-      continue with google
-    </button>
-  </div>
-  
-</body>
-            
+        <h3 class="title_color">are you Ready ?</h3>
+        <button type="button" id="authenticate" class="google_login" value="{% provider_login_url 'google' %}">
+          Continue with Google
+        </button>
+
+      <!-- Login Form -->
+        <div id ="login_form" class="form" >
+          <form action="{%url 'login_url' %}" method="post">
+            {% csrf_token %}
+            <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus/>
+            <br/><br>
+            <input type="password" name="password" placeholder=" passsword" autocomplete="off" required /> 
+            <br/> <br>
+            <input type="submit" value="Log in" />
+          </form>
+          <p class="link">new here ?&nbsp; <a href="" id="to_register_form"> <strong>Sign up</strong></a></p>
+        </div>
+
+      <!-- Register Form -->
+        <div id ="register_form" class="form" hidden="true">
+          <form  action="{%url 'register_url' %}" method="post" >
+            {% csrf_token %}
+            <input type="text" id="register_name" name="username" placeholder="username" autocomplete="off" required />
+            <br/><br>
+            <input type="email"  name="email" placeholder="email" required />
+            <br/><br>
+            <input type="password" name="password" placeholder = "passsword" autocomplete="off" required /> 
+            <br/> <br>
+            <input type="submit" value="Create account"/>
+          </form>
+          <p class="link">already have account? &nbsp; <a href="" id="to_login_form"> <strong>Log in</strong> </a></p>
+        </div>
+
+      </div>
+     
+    </div>
+    
+  </body>
 </html>
-
+  

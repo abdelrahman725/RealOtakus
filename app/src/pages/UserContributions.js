@@ -3,46 +3,54 @@ import async_http_request from "./Components/AsyncRequest"
 import { useState, useEffect } from "react"
 
 const UserContributions = () => {
-
-  const [approved_contributions,set_approved_contributions]= useState([])
-  const [pending_contributions,set_pending_contributions]= useState([])
-  const [rejected_contributions,set_rejected_contributions]= useState([])
-  const [n_contributions,set_n_contributions] = useState()
+  const [contributions,setcontributions] = useState({})
+  const [n_contributions,set_n_contributions] =useState() 
   
   useEffect(()=>{
 
     async function get_contributions(){
 
-      const contributions  = await async_http_request({path:"get_make_contribution"})
-      if (contributions===null){
+      const contributions  = await async_http_request({ path : "get_make_contribution" })
+      if (contributions===null)
         return
-      }
-
-      set_n_contributions(contributions.length)
-      
-      contributions.map((contribution) =>  {
-          contribution.approved===null  && set_pending_contributions(pending =>   [...pending,  contribution])
-          contribution.approved===false && set_rejected_contributions(rejected => [...rejected, contribution])
-          contribution.approved===true  && set_approved_contributions(approved => [...approved, contribution])  
+            
+      const contributions_dict = {}
+      contributions.map( ( contribution ) => {
+        if (contribution.question.anime.anime_name in contributions_dict){
+          contributions_dict[contribution.question.anime.anime_name] = [...contributions_dict[contribution.question.anime.anime_name], contribution]
+        }
+        else{
+          contributions_dict[contribution.question.anime.anime_name]  = [contribution]
+        }
       })
-        
+      
+      setcontributions(contributions_dict)
+      set_n_contributions(contributions.length)
+
     }
 
-    get_contributions()}
+    get_contributions()
+  }
   
   ,[])
 
 return (
     
     <div className="questions_container">
-        <h2>{n_contributions && n_contributions} contributions</h2>
+        <h2>{n_contributions && n_contributions} Contributions for {Object.keys(contributions).length} animes</h2>
         
-        {pending_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
-        
-        {approved_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
-        
-        {rejected_contributions.map((c,index)=> <ContributedQuestion contribution={c} key={index} /> )}
-                
+        {Object.keys(contributions).length > 0 &&
+          Object.keys(contributions).map((anime,index) => (
+            <div className="user_anime_contributions" key={index}>
+              <p className="anime">{anime} &nbsp;<strong>{contributions[anime].length}</strong></p>
+              <div>
+                {contributions[anime].map((each_contribution,index)=>(
+                  <ContributedQuestion key={index} contribution={each_contribution}/>
+                ))}
+              </div>
+            </div>
+          ))
+        }
     </div> 
   )
 }

@@ -52,7 +52,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     console.log(attempt_response)
   }
 
-  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() })
+  const timer = useTimer({ delay: 10000, callback : () => handletimeleft() })
   
   useEffect(() => {
   
@@ -76,22 +76,22 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
         
         <p className="question_title"> {question_index + 1}. <strong> {question.question} ? </strong> </p>
 
-        <div className={question.choice1 === selected ? "choice selected_choice" : "choice"}
+        <div className={question.choice1 === selected ? "choice selected_choice" : "choice pointer_cursor"}
           onClick={() => onChoice(question.choice1)}>
           {question.choice1}
         </div>
 
-        <div className={question.choice2 === selected ? "choice selected_choice" : "choice"}
+        <div className={question.choice2 === selected ? "choice selected_choice" : "choice pointer_cursor"}
           onClick={() => onChoice(question.choice2)}>
           {question.choice2}
         </div>
 
-        <div className={question.choice3 === selected ? "choice selected_choice" : "choice"}
+        <div className={question.choice3 === selected ? "choice selected_choice" : "choice pointer_cursor"}
           onClick={() => onChoice(question.choice3)}>
           {question.choice3}
         </div>
 
-        <div className={question.choice4 === selected ? "choice selected_choice" : "choice"}
+        <div className={question.choice4 === selected ? "choice selected_choice" : "choice pointer_cursor"}
           onClick={() => onChoice(question.choice4)}>
           {question.choice4}
         </div>

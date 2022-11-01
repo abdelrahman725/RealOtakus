@@ -8,7 +8,7 @@ import {useState,useContext,useEffect,useRef} from 'react'
 
 const GameView = () => {
 
-  const {N_Game_Questions, game_started, setgame_started, set_info_message} = useContext(GlobalStates)
+  const {SelectStyles, N_Game_Questions, game_started, setgame_started, set_info_message} = useContext(GlobalStates)
   const [animesoptions,setanimesoptions] = useState()
   const [gamequestions,setgamequestions] = useState()
   const [selected_anime,setselected_anime] = useState()
@@ -89,6 +89,7 @@ const GameView = () => {
   { game_started===undefined &&
     <div className="centered_div animeslist"> 
       <Select 
+      styles={SelectStyles}
       className="select_animes"
       placeholder="select anime"
       value={selected_anime}
@@ -106,11 +107,11 @@ const GameView = () => {
   }
 
    { game_started===true && 
-      <Game questions={gamequestions} setgamescore={setgamescore} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />
-    }
+    <Game questions={gamequestions} setgamescore={setgamescore} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />
+   }
 
    { game_started===false && 
-      <Result results={quizresults} useranswers={useranswers} score={gamescore} questions={gamequestions}/> 
+    <Result results={quizresults} useranswers={useranswers} score={gamescore} questions={gamequestions}/> 
    }
 
   </>

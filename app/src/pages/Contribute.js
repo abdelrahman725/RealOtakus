@@ -1,12 +1,13 @@
 import async_http_request from "./Components/AsyncRequest"
 import Select from 'react-select'
-import {  useState, useRef,useContext, useEffect } from "react"
+import { useState, useRef, useContext, useEffect } from "react"
 import { GlobalStates } from "../App"
 
 const Contribute = ({all_animes_options}) => {
-
-  const {set_info_message} = useContext(GlobalStates)
+  
+  const {set_info_message,SelectStyles} = useContext(GlobalStates)
   const [anime,setanime]= useState()  
+  const [submitted,setsubmitted] = useState(false)
   
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
@@ -28,8 +29,12 @@ const Contribute = ({all_animes_options}) => {
     choice3:"",
   })
 
-  const handle_form_change = (e)=> {    
+  const handle_form_change = (e)=> { 
+     
     const{name,value} = e.target
+    if (name==="question"){
+      question_ref.current.style.outlineColor="#2684FF"
+    }
 
     if (value.match(leading_space) != null || value.match(extra_space) != null || value.match(excluded_symbols) != null) {
       console.log("this input is not allowed")
@@ -43,8 +48,10 @@ const Contribute = ({all_animes_options}) => {
     
       e.preventDefault() 
       
-      const SendContribution = async(cleaned_question)=>
-      {
+      const submit_contribution = async(cleaned_question)=> {
+        
+        setsubmitted(true)
+
         const submit_contribution  = await async_http_request({
           path:"get_make_contribution",
           method:"POST",
@@ -54,13 +61,25 @@ const Contribute = ({all_animes_options}) => {
           }
         })
         
-        set_info_message(submit_contribution.info)
-    
-      // clear form after submission 
-        for (const key in Question)
-          setQuestion(prev => ({...prev,[key]:""}))
-        
         window.scrollTo({ top: 0, behavior: 'smooth' })
+
+        setsubmitted(false)
+        
+        set_info_message(submit_contribution.info)
+        console.log(submit_contribution)
+
+    
+        if (submit_contribution.state === "conflict"){
+          question_ref.current.style.outlineColor="red"  
+          question_ref.current.focus()
+          return
+        }
+
+      
+        // clear form after submission 
+        for (const key in Question){
+          setQuestion(prev => ({...prev,[key]:""}))
+        }
         setanime(null)
         checkbox.current.checked = false
       }
@@ -111,9 +130,9 @@ const Contribute = ({all_animes_options}) => {
         }  
 
         document.activeElement.blur()
-        SendContribution(cleaned_question)
+        submit_contribution(cleaned_question)
       }
-
+      
       validate_contribution_form_then_submit()  
   }
 
@@ -131,12 +150,20 @@ const Contribute = ({all_animes_options}) => {
       }
     }
     
+    else{
+      window.onbeforeunload= null
+    }
+
+  },[Question.question])
+
+  useEffect(()=>{
+
     return()=>{
       window.onbeforeunload = null
       set_info_message()   
     } 
 
-  },[Question.question])
+  },[])
 
   return (
     <div className="centered_div contribution">
@@ -150,19 +177,20 @@ const Contribute = ({all_animes_options}) => {
         <div className="contribution_form">
 
           <Select 
-            className="select_animes" 
-            placeholder="select anime"
-            isClearable= {true}
-            isLoading={!all_animes_options}
-            options={all_animes_options}
-            onChange={on_anime_select} 
-            value={anime}
-            ref={anime_select}
+          styles={SelectStyles}
+          className="select_animes" 
+          placeholder="select anime"
+          isClearable= {true}
+          isLoading={!all_animes_options}
+          options={all_animes_options}
+          onChange={on_anime_select} 
+          value={anime}
+          ref={anime_select}
           />
             
           <br/> <br/>
           
-          <textarea name="question" 
+          <textarea name="question"
             typeof="text"
             placeholder = "what is the question ?" 
             cols="30" rows="3" 
@@ -223,7 +251,8 @@ const Contribute = ({all_animes_options}) => {
           <input type="checkbox" className="checkbox" name="instructions" ref={checkbox} required/>
           <label htmlFor="instructions"> I understand Contribution Guidlines</label>
           <br /> <br />
-          <button type="submit"  className="submit_btn" ref={submit_btn}>submit question</button>
+
+          {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn} >submit question</button> : "loading..." }
 
         </div>
 

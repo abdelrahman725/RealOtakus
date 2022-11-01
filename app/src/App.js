@@ -31,7 +31,14 @@ function App(){
   const [game_started,setgame_started] = useState()
   const [info_message, set_info_message] = useState()
   const N_Game_Questions = 5   
-
+  
+  const SelectStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      padding: 15,
+    })
+  }
+      
   const { lastMessage,readyState } = useWebSocket(`ws://${domain}/ws/socket-server/`,{
     //Will attempt to reconnect on all close events, such as server shutting down
     onOpen: () => console.log('\n connection open \n\n'),
@@ -51,7 +58,6 @@ function App(){
     }
   }, [lastMessage, setnotifications]);
 
-
   useEffect(()=>{
 
     async function get_home_data(){
@@ -63,7 +69,7 @@ function App(){
       }
 
       //!result.user_data.country && fetch_user_country() 
-      
+
       set_user_data(result.user_data)
       set_dashboard_users(result.leaderboard)
       setnumber_of_unseen_notifications(result.notifications.filter(n => !n.seen).length)
@@ -85,7 +91,7 @@ function App(){
   },[])
   
   return(
-    <GlobalStates.Provider value={{game_started, N_Game_Questions, setgame_started, set_user_data, set_info_message}}>
+    <GlobalStates.Provider value={{SelectStyles, game_started, N_Game_Questions, setgame_started, set_user_data, set_info_message}}>
     <div className="App">
 
       <NavBar 
@@ -96,7 +102,7 @@ function App(){
         setdarkmode = {setdarkmode}/> 
       <div className="spaced_div"></div>
       
-      <p>{info_message}</p>
+      <div className="info_msg"> <strong>{info_message}</strong> </div>
 
       <Routes>
         

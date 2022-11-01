@@ -8,7 +8,7 @@ import { MdQuiz } from 'react-icons/md'
 import { FaEye } from 'react-icons/fa'
 
 const Home = ({user_data, dashboard_users}) => {
-       
+
 return (
 
   <div className="home">
@@ -42,7 +42,7 @@ return (
 
     </div>
     
-    <TheDashBoard dashboard_users={dashboard_users} current_user= {user_data && user_data.id} /> 
+    <TheDashBoard dashboard_users = {dashboard_users} current_user= {user_data && user_data.id} /> 
   
   </div>
  )

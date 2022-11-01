@@ -17,6 +17,7 @@ const Game = ({
        
   const SubmitGame = async()=>{
 
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     setgame_started(false)
 
     const game_results = await async_http_request({
@@ -31,7 +32,6 @@ const Game = ({
       answers[question.id] = question.right_answer
     ))
     
-    window.scrollTo({ top: 0, behavior: 'smooth' })
     setquizresults(answers)
     setgamescore(game_results.score)
     set_user_data(prev => ({...prev, points : prev.points + game_results.score }))    
@@ -71,7 +71,6 @@ const Game = ({
       <br />
       
       {timeout===false &&
-
         <Question
         question={questions[index]}
         question_index={index}

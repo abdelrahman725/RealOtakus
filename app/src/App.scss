@@ -1,13 +1,15 @@
 
-$base_div_backgroun_color  : #262F36;
-$base_green_button_color : #46BB5D;
+$base_div_backgroun_color : #262F36;
+$base_green_button_color  : #46BB5D;
 $base-shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
 
 body{
   //background-color: #202225;
-  //background-color: #dfe5ea;
+  //background-color: #e9edf1;
 }
+
+
 
 
 .centered_div{
@@ -42,6 +44,7 @@ a{
 .submit_btn{
   background-color: $base_green_button_color;
 }
+
 
 .navbar{
   background-color: $base_div_backgroun_color;
@@ -80,9 +83,12 @@ a{
 
 
 .spaced_div{
-  margin-top: 70px;
+  margin-top: 90px;
 }
 
+.info_msg{
+  text-align: center;
+}
 
 .navigation_buttons{
   display: flex;
@@ -138,58 +144,40 @@ a{
   }
 
   td{ padding:  20px   18px; }
-   
+ 
 }
 
 
 .leaderboard{
   width: 65%;
-  .top_competitor{
-    position: relative;
-    right: 5px;
-  }
 
   .top_competitor_icon{
-    margin-right: 2px;
     color: #FFD700;
-    font-size: large;
+    float:left;
   }
-  
+
+  .current_user{
+    background-color: #3e4f5b;
+  }
 }
 
 .account{
   @extend .centered_div;
   margin: 20px;
-
-  .achievments{
-    width: 85%;
-    @extend .centered_div;
-    color: white;
-    background-color: $base_div_backgroun_color;
-    border-radius: $base_border_radius;
-    box-shadow: $base-shadow ;
-    display: flex;  
-    padding-left: 50px;
-    padding-right: 50px;
-
-    div{
-      margin-top: 30px; 
- 
-      p{
-        font-weight: bold;
-        font-size: 35px;
-      }
-    }
-    hr{
-      background-color: #353e45;
-      border: none;
-      border-radius: 10px;
-      padding:5px;
-    }
-  }
   
+  .insights{
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    div{
+      padding: 20px;
+    }
+
+  }
+
   .interactions{
-    width: 85%;
+    width: 80%;
+    td{ padding:  30px   18px; }
   }
 
 }
@@ -225,7 +213,7 @@ a{
   }
   
   .spaced_div{
-    margin-top: 110px;
+    margin-top: 135px;
   }
 
   .navigation_buttons {
@@ -237,12 +225,9 @@ a{
  }
   
   .account{
-    .achievments{
-      flex-direction: column;
-      hr{
-        width: 80%;
-        margin-bottom: 30px;
-      }   
+    .interactions{
+      width: 100%;
+
     }
   }
 
@@ -251,8 +236,12 @@ a{
 
 .questions_container{
 
+
   @extend .centered_div;
-  margin: 10px;
+  margin: 20px;
+  .user_anime_contributions{
+    padding: 20px;
+  }
 
   .canceledstate{
     border-color: grey;
@@ -401,7 +390,8 @@ a{
 
 .game_container{  
   @extend .centered_div;
-   max-width: 1200px;
+  width: 90%; 
+  max-width: 1000px;
 
    .timer{
     display: flex;
@@ -415,7 +405,17 @@ a{
    }
 
   .game_question{
-    margin: 25px;
+    hr{
+      background-color: black;
+      border-radius: $base_border_radius;
+      box-shadow: $base-shadow;
+      outline: none;
+      border: none;
+      margin: 100px 0px;
+      opacity: 30%;
+      padding: 5px;
+
+    }
 
     .choice {
       border-radius: $base_border_radius;
@@ -474,6 +474,7 @@ a{
 
 }
 
+
 .select_animes{
   margin-left: auto;
   margin-right: auto;
@@ -496,12 +497,18 @@ a{
     padding-bottom: 25px;
     box-shadow: $base-shadow ;
     position: relative;
+    
+    &:hover{
+      background-color: rgb(206, 200, 200);
+
+    }
    
     .notification_time{
       position: absolute;
       bottom: 0px;
       font-size: small;
     }
+  
   }
 }
 

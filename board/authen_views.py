@@ -11,25 +11,22 @@ from board.models import *
 def user_register(request):
 
   if request.method == "POST":
-    username = request.POST["registerusername"]
-    email    = request.POST["email"]
-    # to do check email
-    password = request.POST["registerpassword"]
-    confirmed_password= request.POST["confirmpassword"]
-    if password != confirmed_password:
-      messages.warning(request, 'must match')
 
-    else:
-      try:
-        user = User.objects.create_user(
-          username=username,
-          password=password,
-          email=email
-        )
-        user.save()
-        login(request, user)
-      except IntegrityError:
-        messages.warning(request, 'username already exists')
+    username = request.POST["username"]
+    email  = request.POST["email"]
+    password = request.POST["password"]
+    
+    # to do check email
+    try:
+      user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password
+      )
+      user.save()
+      login(request, user)
+    except IntegrityError:
+      messages.warning(request, 'username already exists')
 
   return redirect("/")
 
@@ -38,7 +35,7 @@ def user_login(request):
   if request.method == "POST":
     username = request.POST["username"]
     password= request.POST["password"]
-    user = authenticate(request,username=username,password=password)
+    user = authenticate(request, username=username, password=password)
     if user is not None:
       login(request,user)
     else:

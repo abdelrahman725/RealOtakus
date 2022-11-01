@@ -5,6 +5,7 @@ const Interactions = ({interactions}) => {
     <>
       <h2>interactions</h2>
 
+      {Object.keys(interactions).length > 0 && 
       <table className="dashboard interactions">
         <thead>
           <tr>
@@ -15,20 +16,17 @@ const Interactions = ({interactions}) => {
         </thead>
         
         <tbody>  
-
-          {interactions.map((interaction, index) => (  
+          {Object.keys(interactions).map((anime ,index) => (
             <tr key={index}>
-              <td>{interaction.anime_name}</td>
-              <td>{interaction.right_answers}</td>
-              <td>{interaction.not_right_answers}</td>
+              <td>{anime}</td>
+              <td>{interactions[anime].correct}</td>
+              <td>{interactions[anime].not_correct}</td>
             </tr>
-              
           ))}
-        
         </tbody>
     
       </table>
-      
+      }
     </>
   )
 }

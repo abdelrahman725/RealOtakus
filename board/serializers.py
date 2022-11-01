@@ -36,6 +36,7 @@ class LeaderBoradSerializer(serializers.ModelSerializer):
   class Meta:  
     model = User
     fields = (
+      'id',
       'username',
       'points',
       'level',
@@ -103,26 +104,14 @@ class AnimeInteractionsSerializer(serializers.ModelSerializer):
     )
 
 
-# class UserInteractionSerializer(serializers.ModelSerializer):
-#   anime = AnimeSerializer()
+class InteractionsSerializer(serializers.ModelSerializer):
+  anime = AnimeSerializer()
   
-#   class Meta:
-#     model = QuestionInteraction
-#     fields = (
-#       "anime",
-#       "correct_answer"
-#     )
-
-class UserInteractionSerializer(serializers.ModelSerializer):
-  right_answers = serializers.IntegerField()
-  not_right_answers = serializers.IntegerField()
-
   class Meta:
-    model = Anime
+    model = QuestionInteraction
     fields = (
-      "anime_name",
-      "right_answers",
-      "not_right_answers"
+      "anime",
+      "correct_answer"
     )
 
 

@@ -1,16 +1,24 @@
+$base_green_button_color  : #46BB5D;
+$base-shadow :0.5px 0.5px 3px 0.1px grey;
+$base_border_radius : 7px;
+$base_button_radius : 4px;
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  cursor: default;
+  
   margin:15px;
   overflow-y: scroll;
+  font-size: larger;
+  cursor: default;
+
+  background-color:#d4e1ea;
 }
 
 *{
@@ -27,7 +35,7 @@ input[type="submit"], button{
     
   padding: 12px 16px 12px 42px;
   border: none;
-  border-radius: 3px;
+  border-radius: $base_button_radius;
   box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
   
   color: #757575;
@@ -56,4 +64,83 @@ input[type="submit"], button{
       0 0 0 3px #c8dafc;
   }
    
+}
+
+.title_color{
+  color: #3e4f5b;
+}
+
+.header_container{
+  text-align: center;
+}
+
+
+.content_container{
+  display: flex;
+  justify-content: space-around ;
+  flex-wrap: wrap;
+  
+  div{
+    margin-top: 50px;
+  }
+  
+  .forms_container{
+    text-align: center;
+    margin-bottom: 100px;
+    box-shadow: $base-shadow;
+    border-radius: $base_border_radius;
+    background-color: white;
+    width: 600px;
+    
+    .form{
+
+      form{
+        margin-bottom: 40px;
+      }
+      
+      input{
+        border-radius: $base_button_radius;   
+        padding: 10px;
+        font-size: 16px;
+
+        &:focus{
+          outline: #76a8e9 solid 2px;   
+        }
+        
+        &:not(input[type=submit]){ 
+          border :0.1px solid rgb(191, 186, 186);
+          width: 300px;
+        }
+        
+        &[type=submit]{
+          width: 65%;
+          color: white;
+          font-weight: bold;
+          border: none;
+          font-size: 18px;
+          background-color: $base_green_button_color;
+        }
+        
+        &[type=submit]:hover {
+          box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
+        }
+        
+      }
+
+      .link{
+        font-size: smaller;
+        a{
+          text-decoration: none;
+          color: #508bd8;
+        }
+      }
+    }
+ 
+  }
+
+  .about_container{
+    
+
+  }
+
 }

@@ -46,7 +46,7 @@ const Result = ({results, useranswers, questions, score }) => {
                     {q.choice4}
                   </div>
       
-                  <hr style={{margin:"100px 0px"}}/>
+                  <hr/>
               </div>
                 
             ))}

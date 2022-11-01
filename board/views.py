@@ -3,7 +3,6 @@ from time import sleep
 
 from django.db import connection, IntegrityError
 from django.shortcuts import render
-from django.forms import ValidationError
 from django.db.models import Count, Avg, Q
 from django.http import JsonResponse
 from django.shortcuts import redirect
@@ -31,8 +30,8 @@ game_interactions = {}
 for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
 
 def get_current_user(request):
-    return User.objects.get(username="otaku")
     return request.user
+    return User.objects.get(username="andrea")
 
 
 def get_or_query_anime(anime : int):   
@@ -58,7 +57,7 @@ def react_app(request):
     return render(request, "board/home.html")
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
@@ -116,7 +115,7 @@ def get_home_data(request):
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def get_game_animes(request):
     user = get_current_user(request) 
@@ -146,7 +145,7 @@ def get_game_animes(request):
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
     current_user = get_current_user(request)
@@ -238,7 +237,7 @@ def record_question_encounter(request, question_id):
     )
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def submit_game(request):
     user = get_current_user(request)
@@ -281,7 +280,7 @@ def submit_game(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-#@login_required
+@login_required
 @api_view(["GET","POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
@@ -296,13 +295,14 @@ def get_or_make_contribution(request):
     try:
         anime = get_or_query_anime(int(request.data["anime"]))
     except:
-        return JsonResponse({"anime doesn't exist"})
+        return JsonResponse({"info":"anime doesn't exist"})
 
     QuestionOBject = request.data["question"]
 
     is_anime_reviewr = anime in user.animes_to_review.all()   
 
     try:
+        sleep(1)
         new_question = Question.objects.create(
             anime=anime,
             active=is_anime_reviewr,
@@ -324,25 +324,21 @@ def get_or_make_contribution(request):
             return JsonResponse({
                 "info": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"
             })
-                
-        # sleep(1)
+                        
         return Response(
             {"info": f"your question submission for {anime} has been received and waits approval"}, 
             status = status.HTTP_201_CREATED
         )
-        #return JsonResponse()
 
     except IntegrityError as e:
         if 'UNIQUE constraint' in str(e.args):
-            return JsonResponse({"info": "sorry this question already exist"})
+            return JsonResponse({"info":"this question already exists","state": "conflict"})
 
         return JsonResponse({"info": e.args}) 
-    
-    except ValidationError as e:
-        return JsonResponse({"info": e.args[0]})
 
 
-#@login_required
+
+@login_required
 @api_view(["GET","PUT"])
 def get_or_review_contribution(request):
     user = get_current_user(request)
@@ -410,7 +406,7 @@ def get_or_review_contribution(request):
         )
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def get_user_profile(request):
     user = get_current_user(request)
@@ -423,36 +419,18 @@ def get_user_profile(request):
         ).get(id=user.id)
     )
 
-    # user_interactions = UserInteractionSerializer(
-    #     user.questions_interacted_with.select_related("anime"),
-    #     many=True
-    # )
-
-    user_interactions = UserInteractionSerializer(
-        Anime.objects.filter(id__in=user.questions_interacted_with.values("anime")).annotate(
-            right_answers=Count("anime_interactions", filter=(
-                    Q(anime_interactions__correct_answer=True, anime_interactions__user=user)
-                ),
-                distinct=True
-            )
-        ).annotate(
-            not_right_answers=Count("anime_interactions", filter=((
-                ~Q(anime_interactions__correct_answer=True)) 
-                & (Q(anime_interactions__user=user)
-                )),
-                distinct=True
-            )
-        ),
+    user_interactions = InteractionsSerializer(
+        user.questions_interacted_with.select_related("anime"),
         many=True
     )
-       
+
     return Response({
         "user_data": profile_data.data,
-        "user_interactions" : user_interactions.data,
+        "interactions" : user_interactions.data,
     })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def update_notifications(request):
     user = get_current_user(request)

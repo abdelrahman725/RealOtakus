@@ -1,11 +1,6 @@
 import Competitor from "./Competitor"
-import { GlobalStates } from "../Home"
-import { useEffect,useState,useContext } from "react"
-
 
 const TheDashBoard = ({ dashboard_users, current_user }) => {
-
-  //const {set_info_message} = useContext(GlobalStates)
 
 return (
   <div className="dashboard_container">
@@ -25,13 +20,11 @@ return (
       </thead>
       
       <tbody>  
-
         {dashboard_users?dashboard_users.map((competitor,index)=> (
-          
           <Competitor
-            is_logged_in_user={current_user===competitor.id}
             key={index}
             index={index}
+            current_user ={current_user ===competitor.id}
             name={competitor.username}
             points={competitor.points}
             level={competitor.level}

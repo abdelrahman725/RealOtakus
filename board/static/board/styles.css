@@ -4,9 +4,11 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: default;
   margin: 15px;
   overflow-y: scroll;
+  font-size: larger;
+  cursor: default;
+  background-color: #d4e1ea;
 }
 
 * {
@@ -25,7 +27,7 @@ input[type="submit"], button {
   transition: background-color .3s, box-shadow .3s, -webkit-box-shadow .3s;
   padding: 12px 16px 12px 42px;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
           box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
   color: #757575;
@@ -51,5 +53,79 @@ input[type="submit"], button {
   outline: none;
   -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 0 3px #c8dafc;
           box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 0 3px #c8dafc;
+}
+
+.title_color {
+  color: #3e4f5b;
+}
+
+.header_container {
+  text-align: center;
+}
+
+.content_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.content_container div {
+  margin-top: 50px;
+}
+
+.content_container .forms_container {
+  text-align: center;
+  margin-bottom: 100px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  border-radius: 7px;
+  background-color: white;
+  width: 600px;
+}
+
+.content_container .forms_container .form form {
+  margin-bottom: 40px;
+}
+
+.content_container .forms_container .form input {
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.content_container .forms_container .form input:focus {
+  outline: #76a8e9 solid 2px;
+}
+
+.content_container .forms_container .form input:not(input[type=submit]) {
+  border: 0.1px solid #bfbaba;
+  width: 300px;
+}
+
+.content_container .forms_container .form input[type=submit] {
+  width: 65%;
+  color: white;
+  font-weight: bold;
+  border: none;
+  font-size: 18px;
+  background-color: #46BB5D;
+}
+
+.content_container .forms_container .form input[type=submit]:hover {
+  -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.content_container .forms_container .form .link {
+  font-size: smaller;
+}
+
+.content_container .forms_container .form .link a {
+  text-decoration: none;
+  color: #508bd8;
 }
 /*# sourceMappingURL=styles.css.map */
