@@ -80,7 +80,7 @@ const Contribute = ({all_animes_options}) => {
         for (const key in Question){
           setQuestion(prev => ({...prev,[key]:""}))
         }
-        setanime(null)
+        //setanime(null)
         checkbox.current.checked = false
       }
       

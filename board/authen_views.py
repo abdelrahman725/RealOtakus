@@ -1,8 +1,8 @@
 from django.db import IntegrityError
 from django.contrib import messages
-from django.urls import reverse
-from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import redirect
+from  django.contrib.auth.password_validation import validate_password 
 
 from board.helpers import login_required
 from board.models import *
@@ -13,21 +13,20 @@ def user_register(request):
   if request.method == "POST":
 
     username = request.POST["username"]
-    email  = request.POST["email"]
-    password = request.POST["password"]
-    
-    # to do check email
+    email = request.POST["email"]
+    user_password = request.POST["password"]    
+  
     try:
       user = User.objects.create_user(
         username=username,
         email=email,
-        password=password
+        password=user_password
       )
       user.save()
       login(request, user)
     except IntegrityError:
-      messages.warning(request, 'username already exists')
-
+      messages.error(request, 'username already exists')
+    
   return redirect("/")
 
 

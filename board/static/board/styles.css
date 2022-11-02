@@ -79,53 +79,63 @@ input[type="submit"], button {
 
 .content_container .forms_container {
   text-align: center;
-  margin-bottom: 100px;
+  margin-bottom: 300px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
   border-radius: 7px;
   background-color: white;
+  padding: 10px;
   width: 600px;
 }
 
-.content_container .forms_container .form form {
+.content_container .forms_container form {
   margin-bottom: 40px;
 }
 
-.content_container .forms_container .form input {
+.content_container .forms_container form input {
   border-radius: 4px;
   padding: 10px;
   font-size: 16px;
 }
 
-.content_container .forms_container .form input:focus {
+.content_container .forms_container form input:focus {
   outline: #76a8e9 solid 2px;
 }
 
-.content_container .forms_container .form input:not(input[type=submit]) {
+.content_container .forms_container form input:not(input[type=submit]) {
   border: 0.1px solid #bfbaba;
   width: 300px;
 }
 
-.content_container .forms_container .form input[type=submit] {
+.content_container .forms_container form input[type=submit] {
   width: 65%;
   color: white;
   font-weight: bold;
   border: none;
   font-size: 18px;
   background-color: #46BB5D;
+  margin-top: 20px;
 }
 
-.content_container .forms_container .form input[type=submit]:hover {
+.content_container .forms_container form input[type=submit]:hover {
   -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
           box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-.content_container .forms_container .form .link {
+.content_container .forms_container .link {
   font-size: smaller;
 }
 
-.content_container .forms_container .form .link a {
+.content_container .forms_container .link a {
   text-decoration: none;
   color: #508bd8;
+}
+
+.content_container .forms_container .messages {
+  color: #df4242;
+  font-size: smaller;
+  height: 2px;
+  position: relative;
+  top: 20px;
 }
 /*# sourceMappingURL=styles.css.map */

@@ -37,20 +37,21 @@ const UserContributions = () => {
 return (
     
     <div className="questions_container">
-        <h2>{n_contributions && n_contributions} Contributions for {Object.keys(contributions).length} animes</h2>
-        
-        {Object.keys(contributions).length > 0 &&
-          Object.keys(contributions).map((anime,index) => (
-            <div className="user_anime_contributions" key={index}>
-              <p className="anime">{anime} &nbsp;<strong>{contributions[anime].length}</strong></p>
-              <div>
-                {contributions[anime].map((each_contribution,index)=>(
-                  <ContributedQuestion key={index} contribution={each_contribution}/>
-                ))}
-              </div>
+      
+      {/* <h2>{n_contributions && n_contributions} Contributions for {Object.keys(contributions).length} animes</h2> */}
+      
+      {Object.keys(contributions).length > 0 &&
+        Object.keys(contributions).map((anime,index) => (
+          <div className="user_anime_contributions" key={index}>
+            <p className="anime">{anime} &nbsp;<strong>{contributions[anime].length}</strong></p>
+            <div>
+              {contributions[anime].map((each_contribution,index)=>(
+                <ContributedQuestion key={index} contribution={each_contribution}/>
+              ))}
             </div>
-          ))
-        }
+          </div>
+        ))
+      }
     </div> 
   )
 }

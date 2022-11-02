@@ -136,9 +136,7 @@ AUTH_USER_MODEL = "board.User"
 # `allauth` specific authentication methods, such as login by e-mail
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    # 'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
 
 
 # Password validation

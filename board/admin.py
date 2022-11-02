@@ -459,7 +459,7 @@ class QuestionAdmin(admin.ModelAdmin):
     ("anime",admin.RelatedOnlyFieldListFilter),
   )
   
-  search_fields   =  ("question",)
+  search_fields   =  ("question","anime__anime_name")
 
   def contributor(self,obj):
     try:
@@ -547,6 +547,8 @@ class UserAdmin(admin.ModelAdmin):
 
   autocomplete_fields = ['animes_to_review']
   
+  list_display_links = ("username",)
+
   readonly_fields =  (
     #"level",
     "points",
@@ -560,16 +562,16 @@ class UserAdmin(admin.ModelAdmin):
   )
 
   list_display = (
-    "username",
     "id",
-    "last_login",
-    #"email",
-    "level",
+    "username",
     "points",
+    #"last_login",
+    #"email",
+    "tests_started",
+    "tests_completed",
+    #"level",
     "quizes_score",
-    #"tests_started",
-    #"tests_completed",
-    #"quiz_seriousness",
+    "quiz_seriousness",
     #"password",
     "contributions",
     "questions_reviewed",
@@ -595,15 +597,15 @@ class UserAdmin(admin.ModelAdmin):
     return query.exclude(is_superuser=True,pk=1)
   
   def quizes_score(self,obj):
-    if obj.questions_interacted_with.exists():
+    if obj.tests_completed > 0:
       all_answers =  QUESTIONSCOUNT * obj.tests_completed
       right_answers =  obj.questions_interacted_with.filter(correct_answer=True).count()
-      return f"{round(right_answers /all_answers * 100) } %"
+      return f"{round(right_answers / all_answers * 100) } %"
     return "N/A"
 
   def quiz_seriousness(self,obj):
     if obj.tests_started > 0:
-      return f"{ round( obj.tests_completed / obj.tests_started *100 )} %"
+      return f"{ round(obj.tests_completed / obj.tests_started * 100)} %"
     return "N/A"
 
   def reviewer(self,obj):

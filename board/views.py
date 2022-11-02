@@ -19,7 +19,7 @@ from board.constants import *
 # to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed
 # for q in connection.queries : print(f"\n\n { q } \n\n")
 
-#status.HTTP_429_TOO_MANY_REQUESTS
+# status.HTTP_429_TOO_MANY_REQUESTS
 
 animes_dict = {}
 
@@ -27,14 +27,16 @@ game_questions = {}
 
 game_interactions = {}
 
-for anime in Anime.objects.all(): animes_dict[anime.pk] = anime
+for anime in Anime.objects.all():
+    animes_dict[anime.pk] = anime
+
 
 def get_current_user(request):
     return request.user
     return User.objects.get(username="andrea")
 
 
-def get_or_query_anime(anime : int):   
+def get_or_query_anime(anime: int):
     try:
         return animes_dict[anime]
     except KeyError:
@@ -61,14 +63,14 @@ def react_app(request):
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
-    
+
     if request.method == "POST":
         user.country = request.data["country"]
         user.save()
         return Response({
-            "info":"country saved"
-            },
-            status= status.HTTP_201_CREATED
+            "info": "country saved"
+        },
+            status=status.HTTP_201_CREATED
         )
 
     basic_user_data = SimpleUserDataSerializer(
@@ -82,7 +84,7 @@ def get_home_data(request):
     ).data
 
     basic_user_data["is_reviewer"] = user.animes_to_review.exists()
-    
+
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(),
         many=True
@@ -90,24 +92,19 @@ def get_home_data(request):
 
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
 
-    # users sorted by their scores in non-increasing order where their score is >= avg_score and !=0 
-    #avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
-
-    # top_competitors = User.objects.annotate(
-    #     n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    # ).filter(points__gte= avg_score).order_by("-points")
-
+    # leaderboard users sorted by their scores in non-increasing order where their score is > avg_score and !=0
+    avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
+    print(avg_score)
     top_competitors = User.objects.annotate(
         n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    ).exclude(username="admin").order_by("-points")
+    ).filter(points__gt=avg_score).order_by("-points")
 
     LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
 
-        
     return Response({
         "user_data": basic_user_data,
         "notifications": serialized_notifications.data,
-        "animes":all_animes.data,
+        "animes": all_animes.data,
         "leaderboard": LeaderBorad.data
     })
 
@@ -118,8 +115,8 @@ def get_home_data(request):
 @login_required
 @api_view(["GET"])
 def get_game_animes(request):
-    user = get_current_user(request) 
-    
+    user = get_current_user(request)
+
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True).annotate(
             n_user_interactions=Count(
@@ -127,19 +124,22 @@ def get_game_animes(request):
                 filter=(Q(anime_interactions__user=user)),
                 distinct=True
             )).annotate(
-                n_active_questions= Count(
+                n_active_questions=Count(
                     "anime_questions",
                     filter=(
-                     #Q(anime_questions__active=True),
-                     #Q(contribution__contributor=user,contribution__reviewer=user)
+                        Q(anime_questions__active=True)
+                        &
+                        ~Q(anime_questions__contribution__contributor=user)
+                        &
+                        ~Q(anime_questions__contribution__reviewer=user)
                     ),
                     distinct=True
                 )
-            ),
+        ),
         many=True
     )
-    #sleep(1)
-    
+    # sleep(1)
+
     return Response({
         "animes": game_animes.data
     })
@@ -154,29 +154,31 @@ def get_game(request, game_anime):
     # To catch malicious or non-serious users
     if current_user.tests_started - current_user.tests_completed == "To Do":
         pass
-        #catch here and act upon that
-    
+        # catch here and act upon that
+
     if current_user.id in game_interactions:
         del game_interactions[current_user.id]
-    
+
     if current_user.id in game_questions:
         del game_questions[current_user.id]
 
-    
     # this game questions
-    questions=selected_anime.anime_questions.filter(
-            ~Q(contribution__contributor=current_user, contribution__reviewer=current_user),
-            #active=True
-        ).exclude(
-            pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
-        )[:QUESTIONSCOUNT]
-    
+    questions = selected_anime.anime_questions.filter(
+        (~Q(contribution__contributor=current_user)
+        & 
+        ~Q(contribution__reviewer=current_user)
+        ),
+        active=True
+    ).exclude(
+        pk__in=current_user.questions_interacted_with.values_list(
+            'question__pk', flat=True)
+    )[:QUESTIONSCOUNT]
 
-    if questions.count() != QUESTIONSCOUNT :
+    if questions.count() != QUESTIONSCOUNT:
         return Response({
-            "info" : "no enough questions for the quiz",
+            "info": "no enough questions for the quiz",
         })
-    
+
     serialized_questions = []
 
     for question in questions:
@@ -188,28 +190,27 @@ def get_game(request, game_anime):
         ]
 
         random.shuffle(question_choices)
-        
+
         serialized_questions.append({
             "question": question.question,
-            "choice1" : question_choices[0],
-            "choice2" : question_choices[1],
-            "choice3" : question_choices[2],
-            "choice4" : question_choices[3],
-            "id" : question.id
+            "choice1": question_choices[0],
+            "choice2": question_choices[1],
+            "choice3": question_choices[2],
+            "choice4": question_choices[3],
+            "id": question.id
         })
-    
-    
+
     game_questions[current_user.id] = {}
-    
+
     for q in questions:
         game_questions[current_user.id][q.id] = q
 
-    current_user.tests_started +=1
+    current_user.tests_started += 1
     current_user.save()
 
-    return Response({   
-        "info" : "ok",
-        "game_questions" : serialized_questions
+    return Response({
+        "info": "ok",
+        "game_questions": serialized_questions
     })
 
 
@@ -217,7 +218,7 @@ def get_game(request, game_anime):
 def record_question_encounter(request, question_id):
 
     user = get_current_user(request)
-        
+
     question = game_questions[user.id][question_id]
 
     if user.id not in game_interactions:
@@ -225,15 +226,15 @@ def record_question_encounter(request, question_id):
 
     game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
         user=user,
-        question = question,
-        anime = question.anime,
+        question=question,
+        anime=question.anime,
     )
 
     return Response(
         {
-          "info" : "1 question interaction recorded",
+            "info": "1 question interaction recorded",
         },
-        status = status.HTTP_201_CREATED
+        status=status.HTTP_201_CREATED
     )
 
 
@@ -242,37 +243,38 @@ def record_question_encounter(request, question_id):
 def submit_game(request):
     user = get_current_user(request)
     user_answers = request.data["answers"]
- 
+
     game_score = 0
 
-    for question_id,answer in user_answers.items():
-        question_id = int(question_id)  
+    for question_id, answer in user_answers.items():
+        question_id = int(question_id)
         interaction = game_interactions[user.id][question_id]
-        
-        if answer ==  game_questions[user.id][question_id].right_answer:
-            game_score += 1 
+
+        if answer == game_questions[user.id][question_id].right_answer:
+            game_score += 1
             interaction.correct_answer = True
-        
-        else :
+
+        else:
             interaction.correct_answer = False
-        
+
         interaction.save()
 
-    right_answers = AnswersSerializer(game_questions[user.id].values(), many=True)
-    
+    right_answers = AnswersSerializer(
+        game_questions[user.id].values(), many=True)
+
     user.tests_completed += 1
-    user.points += game_score 
+    user.points += game_score
     user.save()
-    
+
     # delete used cache from memory :
     del game_interactions[user.id]
     del game_questions[user.id]
 
     return Response({
         "info": "test submitted successfully",
-        "score": game_score, 
+        "score": game_score,
         "level": user.level,
-        "right_answers" :right_answers.data
+        "right_answers": right_answers.data
     })
 
 
@@ -281,7 +283,7 @@ def submit_game(request):
 
 
 @login_required
-@api_view(["GET","POST"])
+@api_view(["GET", "POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
 
@@ -295,18 +297,18 @@ def get_or_make_contribution(request):
     try:
         anime = get_or_query_anime(int(request.data["anime"]))
     except:
-        return JsonResponse({"info":"anime doesn't exist"})
+        return JsonResponse({"info": "anime doesn't exist"})
 
     QuestionOBject = request.data["question"]
 
-    is_anime_reviewr = anime in user.animes_to_review.all()   
+    is_anime_reviewr = anime in user.animes_to_review.all()
 
     try:
         sleep(1)
         new_question = Question.objects.create(
             anime=anime,
             active=is_anime_reviewr,
-            question= QuestionOBject["question"], 
+            question=QuestionOBject["question"],
             right_answer=QuestionOBject["rightanswer"],
             choice1=QuestionOBject["choice1"],
             choice2=QuestionOBject["choice2"],
@@ -314,73 +316,71 @@ def get_or_make_contribution(request):
         )
 
         Contribution.objects.create(
-            contributor = user,
-            question = new_question,
-            reviewer = user if is_anime_reviewr else None,
-            approved = True if is_anime_reviewr else None
+            contributor=user,
+            question=new_question,
+            reviewer=user if is_anime_reviewr else None,
+            approved=True if is_anime_reviewr else None
         )
 
         if is_anime_reviewr:
             return JsonResponse({
                 "info": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"
             })
-                        
+
         return Response(
-            {"info": f"your question submission for {anime} has been received and waits approval"}, 
-            status = status.HTTP_201_CREATED
+            {"info": f"your question submission for {anime} has been received and waits approval"},
+            status=status.HTTP_201_CREATED
         )
 
     except IntegrityError as e:
         if 'UNIQUE constraint' in str(e.args):
-            return JsonResponse({"info":"this question already exists","state": "conflict"})
+            return JsonResponse({"info": "this question already exists", "state": "conflict"})
 
-        return JsonResponse({"info": e.args}) 
-
+        return JsonResponse({"info": e.args})
 
 
 @login_required
-@api_view(["GET","PUT"])
+@api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
     user = get_current_user(request)
-    
+
     if request.method == "GET":
         animes = user.animes_to_review.all()
-    
+
         questions = QuestionSerializer(
             Question.objects.filter(
-                    ~Q(contribution__contributor=user),
-                    anime__in=animes,
-                    contribution__isnull=False,
-                    contribution__approved__isnull=True,
+                ~Q(contribution__contributor=user),
+                anime__in=animes,
+                contribution__isnull=False,
+                contribution__approved__isnull=True,
             ).select_related("anime").order_by("id"),
             many=True
         )
-        
+
         sleep(0.5)
-        
+
         return Response({
-            "questions" :questions.data,
+            "questions": questions.data,
         })
-    
-    
+
     review_state = request.data["state"]
     q_id = int(request.data["question"])
     feedback = request.data["feedback"]
 
     try:
         question = Question.objects.get(pk=q_id)
-        
-        if  question.contribution.approved != None:
+
+        if question.contribution.approved != None:
             return Response(
-                {"info":"question has been reviewed by another reviewer"},
+                {"info": "question has been reviewed by another reviewer"},
                 status=status.HTTP_409_CONFLICT
             )
 
         if feedback:
             question.contribution.reviewer_feedback = feedback
-        
+
         question.contribution.reviewer = user
-        
+
         sleep(1)
 
         if review_state == 1:
@@ -388,20 +388,20 @@ def get_or_review_contribution(request):
             question.contribution.save()
 
             return Response({
-                "info":"question is approved successfully"
-            })    
+                "info": "question is approved successfully"
+            })
 
         if review_state == 0:
             question.contribution.approved = False
             question.contribution.save()
-            
+
             return Response({
-                "info":"question is rejected successfully"
+                "info": "question is rejected successfully"
             })
-        
+
     except Question.DoesNotExist:
         return Response(
-            {"info" : "this question doesn't exist anymore, probably is deleted"},
+            {"info": "this question doesn't exist anymore, probably is deleted"},
             status=status.HTTP_410_GONE
         )
 
@@ -412,10 +412,11 @@ def get_user_profile(request):
     user = get_current_user(request)
 
     profile_data = ProfileDataSerializer(
-        User.objects.values("points","level","tests_completed").annotate(
-            n_questions_reviewed = Count("contributions_reviewed",distinct=True)
+        User.objects.values("points", "level", "tests_completed").annotate(
+            n_questions_reviewed=Count("contributions_reviewed", distinct=True)
         ).annotate(
-            n_approved_contributions = Count("contributions",filter=(Q(contributions__approved=True)),distinct=True)
+            n_approved_contributions=Count("contributions", filter=(
+                Q(contributions__approved=True)), distinct=True)
         ).get(id=user.id)
     )
 
@@ -426,7 +427,7 @@ def get_user_profile(request):
 
     return Response({
         "user_data": profile_data.data,
-        "interactions" : user_interactions.data,
+        "interactions": user_interactions.data,
     })
 
 
@@ -435,11 +436,12 @@ def get_user_profile(request):
 def update_notifications(request):
     user = get_current_user(request)
 
-    user.getnotifications.filter(pk__in=request.data["notifications"]).update(seen=True)
-    
+    user.getnotifications.filter(
+        pk__in=request.data["notifications"]).update(seen=True)
+
     return Response(
         {
-          "info":f"notifications state of {request.user.username} are updated successfully"
+            "info": f"notifications state of {request.user.username} are updated successfully"
         },
         status=status.HTTP_201_CREATED
     )
@@ -447,7 +449,7 @@ def update_notifications(request):
 
 # @api_view(["GET"])
 # def animes_questions_api_service(requst, anime_id, n_questions):
-    
+
 #     anime = get_or_query_anime(anime_id)
 
 #     serialized_questions = QuestionsApiService(

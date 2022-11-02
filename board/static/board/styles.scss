@@ -21,9 +21,7 @@ body {
   background-color:#d4e1ea;
 }
 
-*{
-  box-sizing: border-box;
-}
+*{ box-sizing: border-box;}
 
 input[type="submit"], button{
   cursor: pointer;
@@ -86,61 +84,60 @@ input[type="submit"], button{
   
   .forms_container{
     text-align: center;
-    margin-bottom: 100px;
+    margin-bottom: 300px;
     box-shadow: $base-shadow;
     border-radius: $base_border_radius;
     background-color: white;
+    padding: 10px;
     width: 600px;
     
-    .form{
-
-      form{
-        margin-bottom: 40px;
-      }
+    form{
+      margin-bottom: 40px;
       
       input{
-        border-radius: $base_button_radius;   
-        padding: 10px;
-        font-size: 16px;
-
-        &:focus{
-          outline: #76a8e9 solid 2px;   
-        }
-        
-        &:not(input[type=submit]){ 
-          border :0.1px solid rgb(191, 186, 186);
-          width: 300px;
-        }
-        
-        &[type=submit]{
-          width: 65%;
-          color: white;
-          font-weight: bold;
-          border: none;
-          font-size: 18px;
-          background-color: $base_green_button_color;
-        }
-        
-        &[type=submit]:hover {
-          box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
-        }
-        
+      border-radius: $base_button_radius;   
+      padding: 10px;
+      font-size: 16px;
+      
+      &:focus{
+        outline: #76a8e9 solid 2px;   
       }
-
-      .link{
-        font-size: smaller;
-        a{
-          text-decoration: none;
-          color: #508bd8;
-        }
+      
+      &:not(input[type=submit]){ 
+        border :0.1px solid rgb(191, 186, 186);
+        width: 300px;
+      }
+      
+      &[type=submit]{
+        width: 65%;
+        color: white;
+        font-weight: bold;
+        border: none;
+        font-size: 18px;
+        background-color: $base_green_button_color;
+        margin-top: 20px;
+      }
+      
+      &[type=submit]:hover {
+        box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
       }
     }
- 
-  }
+    }
 
-  .about_container{
-    
-
+    .link{
+      font-size: smaller;
+      a{
+        text-decoration: none;
+        color: #508bd8;
+      }
+    } 
+    .messages{
+      color: rgb(223, 66, 66);
+      font-size: smaller;
+      height: 2px;
+      position: relative;
+      top: 20px;
+    }
   }
 
 }

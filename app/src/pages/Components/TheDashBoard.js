@@ -11,11 +11,11 @@ return (
     
       <thead>
         <tr>
-          <th> name </th>
-          <th> score </th>
-          <th> level </th>
-          <th> contributions </th>
-          <th> country </th>
+          <th> Otaku </th>
+          <th> Score </th>
+          <th> Level </th>
+          <th> Contributions </th>
+          <th> Country </th>
         </tr>
       </thead>
       

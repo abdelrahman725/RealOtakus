@@ -40,11 +40,6 @@ code {
 }
  
 ::-webkit-scrollbar-thumb {
-  background: #2e2e2e;
-  border-radius:4px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
   background: #3e4f5b;
+  border-radius:4px;
 }

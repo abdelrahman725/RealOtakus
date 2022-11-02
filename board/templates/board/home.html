@@ -35,41 +35,51 @@
 
       <div class="forms_container">
 
-        <h3 class="title_color">are you Ready ?</h3>
-        <button type="button" id="authenticate" class="google_login" value="{% provider_login_url 'google' %}">
-          Continue with Google
-        </button>
+          <h3 class="title_color">are you Ready ?</h3>
+          <button type="button" id="authenticate" class="google_login" value="{% provider_login_url 'google' %}">
+            Continue with Google
+          </button>    
+         
+          <p class="messages">
+            {% if messages %}
+            {% for msg in messages  %}
+              <span id="info_message">{{msg}}</span>
+            {% endfor %}
+            {% endif %}
+          
+          </p>
+        <!-- Login Form -->
+          <div id ="login_form">
+            <form action="{%url 'login_url' %}" method="post">
+              {% csrf_token %}
+              <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus/>
+              <br/><br>
+              <input type="password" name="password" placeholder=" passsword" autocomplete="off" required /> 
+              <br/> <br>
+              <input type="submit" value="Log in" />
+            </form>
+            <p class="link">new here ?&nbsp; <a href="" id="to_register_form"> <strong>Sign up</strong></a></p>
+          </div>
 
-      <!-- Login Form -->
-        <div id ="login_form" class="form" >
-          <form action="{%url 'login_url' %}" method="post">
-            {% csrf_token %}
-            <input type="text" id="login_name" name="username" placeholder="username" autocomplete="off" required autofocus/>
-            <br/><br>
-            <input type="password" name="password" placeholder=" passsword" autocomplete="off" required /> 
-            <br/> <br>
-            <input type="submit" value="Log in" />
-          </form>
-          <p class="link">new here ?&nbsp; <a href="" id="to_register_form"> <strong>Sign up</strong></a></p>
-        </div>
-
-      <!-- Register Form -->
-        <div id ="register_form" class="form" hidden="true">
-          <form  action="{%url 'register_url' %}" method="post" >
-            {% csrf_token %}
-            <input type="text" id="register_name" name="username" placeholder="username" autocomplete="off" required />
-            <br/><br>
-            <input type="email"  name="email" placeholder="email" required />
-            <br/><br>
-            <input type="password" name="password" placeholder = "passsword" autocomplete="off" required /> 
-            <br/> <br>
-            <input type="submit" value="Create account"/>
-          </form>
-          <p class="link">already have account? &nbsp; <a href="" id="to_login_form"> <strong>Log in</strong> </a></p>
-        </div>
-
+        <!-- Register Form -->
+          <div id ="register_form">
+            <form  action="{%url 'register_url' %}" method="post" >
+              {% csrf_token %}
+              <input type="text" id="register_name" name="username" placeholder="username" autocomplete="off" required  />
+              <br/><br>
+              <input type="email" name="email" placeholder="email" />
+              <br/><br>
+              <input type="password" id="pass1" name="password" placeholder = "passsword" autocomplete="off" required minlength="3"/> 
+              <br/> <br>
+              <input type="password" id="pass2" placeholder = "confirm passsword" autocomplete="off" required minlength="3"/> 
+              <br/> <br> 
+              <input type="submit" value="Create account" />
+            </form>
+            <p class="link">already have account? &nbsp; <a href="" id="to_login_form"> <strong>Log in</strong> </a></p>
+          </div>
+    
       </div>
-     
+      
     </div>
     
   </body>

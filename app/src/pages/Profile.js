@@ -41,7 +41,7 @@ const UserProfile = ({is_reviewer}) => {
 
       console.log(interactions_dict)
 
-      if (profile_result.user_data.tests_completed===0){
+      if (profile_result.user_data.tests_completed === 0){
         setgames_score_percentage(0)
       }
       else{

@@ -77,6 +77,7 @@ const GameView = () => {
     }
 
     GetAnimes()
+    anime_select.current.focus()
 
     return()=>{
       setgame_started()
