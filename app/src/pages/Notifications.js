@@ -49,7 +49,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
   
   return (
     <div className="notifications">
-        {all_notifications.length>0?all_notifications.map((noti,index)=>(
+        {all_notifications.length > 0 ? all_notifications.map((noti,index)=>(
           <EachNotification key={index} noti={noti.notification} time={noti.time} kind={noti.kind} onclick={change_route} />
           )): 
           <p>no activity yet</p>

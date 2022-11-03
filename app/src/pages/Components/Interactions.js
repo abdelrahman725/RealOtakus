@@ -3,9 +3,7 @@ import React from 'react'
 const Interactions = ({interactions}) => {
   return (
     <>
-      <h2>interactions</h2>
-
-      {Object.keys(interactions).length > 0 && 
+      <h2>interactions</h2> 
       <table className="dashboard interactions">
         <thead>
           <tr>
@@ -24,9 +22,7 @@ const Interactions = ({interactions}) => {
             </tr>
           ))}
         </tbody>
-    
       </table>
-      }
     </>
   )
 }

@@ -36,7 +36,15 @@ function App(){
     option: (provided, state) => ({
       ...provided,
       padding: 15,
+    }),
+    menuList: (base) => ({
+      ...base,
+      "::-webkit-scrollbar": {
+        display : "none",
+        width   : "0px"
+      }
     })
+  
   }
       
   const { lastMessage,readyState } = useWebSocket(`ws://${domain}/ws/socket-server/`,{
@@ -80,7 +88,7 @@ function App(){
       result.animes.map((anime) => 
         formated_animes.push({
           value:anime.id,
-          label:anime.anime_name,
+          label:anime.anime_name
         })
       )
 

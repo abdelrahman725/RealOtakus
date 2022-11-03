@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 from django.utils import timezone
 
-from board.constants import LEVELS 
+from board.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
 import board.models
 
 
@@ -45,7 +45,7 @@ def notify_reviewers(anime):
     for reviewer in anime.reviewers.all():
         CreateNotification(
             receiver=reviewer,
-            notification= f"new question for {anime.anime_name} and needs review, check your profile",
+            notification= f"new question for {anime.anime_name} and needs review",
             kind="R"
         )
 
@@ -67,28 +67,29 @@ def notify_user_of_contribution_state(contribution):
         contribution.question.save()
 
         CreateNotification(
-                receiver=contribution.contributor,
-                notification=f"Congratulations! your contribution for {contribution.question.anime} is approvd",
-                kind="A"
-            )
+            receiver=contribution.contributor,
+            notification=f"Congratulations! your contribution for {contribution.question.anime} is approvd",
+            kind="A"
+        )
 
     if contribution.approved == False:
         CreateNotification(
-                receiver=contribution.contributor,
-                notification=f"Sorry, your last contribution for {contribution.question.anime} is rejected",
-                kind="F"
-            )
+            receiver=contribution.contributor,
+            notification=f"Sorry, your last contribution for {contribution.question.anime} is rejected",
+            kind="F"
+        )
   
 
-def CheckLevel(user):
-    for level in reversed(LEVELS):    
-        if user.points >= LEVELS[level] and LEVELS[level] != 0:
-            CreateNotification(
-                receiver=user,
-                notification= f"Level up to {level}, good job"
-            )
-            return level
-    return user.level 
+def get_user_new_level(user):
+    if user.points >= LEVELS[REALOTAKU] :
+        return REALOTAKU
+
+    if user.points >= LEVELS[ADVANCED] :
+        return ADVANCED
+    
+    if user.points >= LEVELS[INTERMEDIATE]:
+        return INTERMEDIATE
+    return None
 
 
 def check_empty_string(value):
@@ -122,12 +123,6 @@ def choices_integirty(choices):
             _('question choices must be unique'),code="choices_integrity_error"
         )
 
-
-def ValidatePassword(password):
-    return True
-    if len(str(password)) >= 3:
-        return True
-    return False
 
 
 def login_required(f):

@@ -13,7 +13,9 @@ const UserContributions = () => {
       const contributions  = await async_http_request({ path : "get_make_contribution" })
       if (contributions===null)
         return
-            
+      
+      console.log(contributions)
+      
       const contributions_dict = {}
       contributions.map( ( contribution ) => {
         if (contribution.question.anime.anime_name in contributions_dict){
@@ -37,11 +39,9 @@ const UserContributions = () => {
 return (
     
     <div className="questions_container">
-      
-      {/* <h2>{n_contributions && n_contributions} Contributions for {Object.keys(contributions).length} animes</h2> */}
-      
-      {Object.keys(contributions).length > 0 &&
-        Object.keys(contributions).map((anime,index) => (
+      {n_contributions > 0 &&
+       <div>
+        {Object.keys(contributions).map((anime,index) => (
           <div className="user_anime_contributions" key={index}>
             <p className="anime">{anime} &nbsp;<strong>{contributions[anime].length}</strong></p>
             <div>
@@ -50,8 +50,11 @@ return (
               ))}
             </div>
           </div>
-        ))
+        ))}
+      </div>
       }
+      { n_contributions === 0 && "no contributions" }
+      { n_contributions === undefined && "loading..." }
     </div> 
   )
 }

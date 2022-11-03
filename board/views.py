@@ -94,7 +94,12 @@ def get_home_data(request):
 
     # leaderboard users sorted by their scores in non-increasing order where their score is > avg_score and !=0
     avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
-    print(avg_score)
+    
+    if not avg_score:
+        avg_score = 0
+    # to delte
+    avg_score = -1
+
     top_competitors = User.objects.annotate(
         n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
     ).filter(points__gt=avg_score).order_by("-points")
@@ -153,15 +158,14 @@ def get_game(request, game_anime):
 
     # To catch malicious or non-serious users
     if current_user.tests_started - current_user.tests_completed == "To Do":
-        pass
+        # for example we can do the following check (not perfect obviously)
+        if current_user.tests_started - current_user.tests_completed > 5:
+            pass
         # catch here and act upon that
 
-    if current_user.id in game_interactions:
-        del game_interactions[current_user.id]
-
-    if current_user.id in game_questions:
-        del game_questions[current_user.id]
-
+    game_questions[current_user.id] = {}
+    game_interactions[current_user.id] = {}
+    
     # this game questions
     questions = selected_anime.anime_questions.filter(
         (~Q(contribution__contributor=current_user)
@@ -200,8 +204,6 @@ def get_game(request, game_anime):
             "id": question.id
         })
 
-    game_questions[current_user.id] = {}
-
     for q in questions:
         game_questions[current_user.id][q.id] = q
 
@@ -220,9 +222,6 @@ def record_question_encounter(request, question_id):
     user = get_current_user(request)
 
     question = game_questions[user.id][question_id]
-
-    if user.id not in game_interactions:
-        game_interactions[user.id] = {}
 
     game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
         user=user,
@@ -243,9 +242,17 @@ def record_question_encounter(request, question_id):
 def submit_game(request):
     user = get_current_user(request)
     user_answers = request.data["answers"]
+    print(user_answers)
+
+    if len(game_interactions[user.id]) != QUESTIONSCOUNT:
+        # big issue
+        # to do here as there are 5 api requests responsbile for recording the user_question interaction
+        # and no one of them should fail because the current view depends on them
+        pass
 
     game_score = 0
 
+    # to do here ! as we should only depend on game_questions as it's more reliable
     for question_id, answer in user_answers.items():
         question_id = int(question_id)
         interaction = game_interactions[user.id][question_id]
@@ -264,6 +271,14 @@ def submit_game(request):
 
     user.tests_completed += 1
     user.points += game_score
+   
+    if user.tests_completed % 10 ==0:
+        user.points +=20
+        CreateNotification(
+            receiver=user,
+            notification="new achievement! you have completed 10 quizes, +20 points",
+        )
+   
     user.save()
 
     # delete used cache from memory :

@@ -103,7 +103,7 @@ input[type="submit"], button {
 }
 
 .content_container .forms_container form input:not(input[type=submit]) {
-  border: 0.1px solid #bfbaba;
+  border: 0.1px solid #656461;
   width: 300px;
 }
 

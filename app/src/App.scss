@@ -10,8 +10,6 @@ body{
 }
 
 
-
-
 .centered_div{
   margin-left: auto;
   margin-right: auto;
@@ -404,20 +402,25 @@ a{
     }
    }
 
+  .question_x{
+    user-select: none;
+  }
+
   .game_question{
     hr{
-      background-color: black;
+      background-color: $base_div_backgroun_color;
       border-radius: $base_border_radius;
       box-shadow: $base-shadow;
       outline: none;
       border: none;
       margin: 100px 0px;
-      opacity: 30%;
+      opacity: 80%;
       padding: 5px;
 
     }
 
     .choice {
+      @extend .pointer_cursor;
       border-radius: $base_border_radius;
       background-color: white;
       margin-bottom: 15px;

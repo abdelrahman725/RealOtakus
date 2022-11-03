@@ -5,7 +5,7 @@ import { GlobalStates } from "../App"
 import { FcOk } from 'react-icons/fc' 
 
 const UserProfile = ({is_reviewer}) => {
-  
+
   const { N_Game_Questions } = useContext(GlobalStates)
   const [user_data,set_user_data] = useState()
   const [games_score_percentage,setgames_score_percentage]  = useState()
@@ -81,7 +81,7 @@ const UserProfile = ({is_reviewer}) => {
           
           </div>
 
-          <Interactions interactions={user_interactions} />  
+           { Object.getOwnPropertyNames(user_interactions).length > 0 && <Interactions interactions={user_interactions} /> }
         
         </div>
 

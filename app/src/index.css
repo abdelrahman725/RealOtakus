@@ -13,6 +13,7 @@ body {
   margin:0;
   padding:0;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 *{ box-sizing: border-box;}
@@ -30,7 +31,7 @@ code {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 15px;
+  width: 10px;
 }
 
 /* Track */

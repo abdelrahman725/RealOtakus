@@ -30,7 +30,9 @@ const QuestionsForReview = () => {
         set_info_message("network error")
         return
       }
-      
+
+      console.log(questions_result.questions)
+
       if (cancled ===false){
         const animes_set = new Set()
 

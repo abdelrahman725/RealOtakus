@@ -12,7 +12,7 @@ from board import base_models
 from board.helpers import choices_integirty
 from board.helpers import question_validator
 from board.helpers import CreateNotification
-from board.helpers import CheckLevel
+from board.helpers import get_user_new_level
 from board.helpers import notify_reviewers
 from board.helpers import notify_user_of_contribution_state
 
@@ -24,24 +24,14 @@ class User(base_models.User):
 
 @receiver(pre_save, sender=User)
 def update_user_points_and_level(sender, instance, **kwargs):
+    new_level = get_user_new_level(instance)
     
-    try:
-        previous_instance = User.objects.get(id=instance.id)
-        if instance.tests_completed > previous_instance.tests_completed and instance.tests_completed % 10 ==0 :
-
-            instance.points += 20 
-            CreateNotification(
-                receiver=instance,
-                notification="new achievement! you have completed 10 quizes, +20 points",
-            )
-
-        if instance.points > previous_instance.points:
-            instance.level = CheckLevel(instance)
-
-    except User.DoesNotExist:
-        pass
-
-   
+    if new_level and new_level != instance.level:
+        instance.level = new_level
+        CreateNotification(
+            receiver=instance,
+            notification=f"Congratulations! level up to {new_level}"
+        )   
 
 class Anime(base_models.Anime):
     
@@ -70,7 +60,6 @@ def chache_new_created_anime(sender, instance, created, **kwargs):
         from board.views import animes_dict
         if animes_dict :  animes_dict[instance.id] = instance
 
-   
 
 @receiver(pre_delete, sender=Anime)
 def delete_chached_anime(sender, instance, **kwargs):
@@ -89,7 +78,7 @@ class Question(base_models.Question):
 def protect_active_questions(sender, instance, **kwargs):
     if instance.active == True:
         raise ValidationError(
-                _('production questions can not be deleted')
+            _('production questions can not be deleted')
         )
 
 
@@ -111,7 +100,6 @@ def contribution_reviewed(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Contribution)
 def post_contribution_creation(sender, instance, created, **kwargs):
-    
     if created and instance.contributor != instance.reviewer:
         async_notification = threading.Thread(
             target=notify_reviewers,

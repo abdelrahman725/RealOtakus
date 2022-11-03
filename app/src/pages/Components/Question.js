@@ -72,26 +72,26 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
       
       <p className="timer"> <MdTimer className="icon"/> &nbsp;&nbsp;<strong> {"0" + minutes} : {seconds < 10 && "0"}{seconds} </strong> </p>
       
-      <div className="game_question">
+      <div className="game_question question_x">
         
         <p className="question_title"> {question_index + 1}. <strong> {question.question} ? </strong> </p>
 
-        <div className={question.choice1 === selected ? "choice selected_choice" : "choice pointer_cursor"}
+        <div className={question.choice1 === selected ? "choice selected_choice" : "choice"}
           onClick={() => onChoice(question.choice1)}>
           {question.choice1}
         </div>
 
-        <div className={question.choice2 === selected ? "choice selected_choice" : "choice pointer_cursor"}
+        <div className={question.choice2 === selected ? "choice selected_choice" : "choice"}
           onClick={() => onChoice(question.choice2)}>
           {question.choice2}
         </div>
 
-        <div className={question.choice3 === selected ? "choice selected_choice" : "choice pointer_cursor"}
+        <div className={question.choice3 === selected ? "choice selected_choice" : "choice"}
           onClick={() => onChoice(question.choice3)}>
           {question.choice3}
         </div>
 
-        <div className={question.choice4 === selected ? "choice selected_choice" : "choice pointer_cursor"}
+        <div className={question.choice4 === selected ? "choice selected_choice" : "choice"}
           onClick={() => onChoice(question.choice4)}>
           {question.choice4}
         </div>

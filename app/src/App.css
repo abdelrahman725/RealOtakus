@@ -5,7 +5,7 @@
   text-align: center;
 }
 
-button, .pointer_cursor {
+button, .pointer_cursor, .game_container .game_question .choice {
   cursor: pointer;
 }
 
@@ -401,15 +401,22 @@ a {
   font-size: 26px;
 }
 
+.game_container .question_x {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
 .game_container .game_question hr {
-  background-color: black;
+  background-color: #262F36;
   border-radius: 7px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
   outline: none;
   border: none;
   margin: 100px 0px;
-  opacity: 30%;
+  opacity: 80%;
   padding: 5px;
 }
 

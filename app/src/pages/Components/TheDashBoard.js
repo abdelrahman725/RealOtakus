@@ -20,7 +20,7 @@ return (
       </thead>
       
       <tbody>  
-        {dashboard_users?dashboard_users.map((competitor,index)=> (
+        {dashboard_users.map((competitor,index)=> (
           <Competitor
             key={index}
             index={index}
@@ -30,14 +30,7 @@ return (
             level={competitor.level}
             contributions={competitor.n_contributions}
             country = {competitor.country}/>
-            )):
-          
-          <Competitor
-            name={"________"}
-            points={"________"}
-            level={"________"}
-            contributions={"________"}
-            country = {null}/>
+            ))
         }
 
       </tbody>

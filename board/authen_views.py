@@ -12,8 +12,8 @@ def user_register(request):
 
   if request.method == "POST":
 
-    username = request.POST["username"]
-    email = request.POST["email"]
+    username = request.POST["username"].strip()
+    email = request.POST["email"].strip()
     user_password = request.POST["password"]    
   
     try:
@@ -25,7 +25,7 @@ def user_register(request):
       user.save()
       login(request, user)
     except IntegrityError:
-      messages.error(request, 'username already exists')
+      messages.error(request, 'username already exists !')
     
   return redirect("/")
 
