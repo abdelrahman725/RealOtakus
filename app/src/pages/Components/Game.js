@@ -8,7 +8,7 @@ const Game = ({
   useranswers,
   setuseranswers,
   setquizresults,
-  setgamescore
+  setgame_score
 }) => {
 
   const { N_Game_Questions, setgame_started, set_user_data } = useContext(GlobalStates)
@@ -26,15 +26,18 @@ const Game = ({
       data   : {"answers" : useranswers}
     })
     
-    const answers = {}    
-
-    game_results.right_answers.map((question)=>(
-      answers[question.id] = question.right_answer
-    ))
+    const answers = {}   
+    let score = 0
     
+    game_results.right_answers.map((question)=>((
+      answers[question.id] = question.right_answer,
+      question.right_answer === useranswers[question.id]  && ( score+=1 )
+      
+    )))
+
+    //set_user_data(prev => ({...prev, points : prev.points + score }))   
+    setgame_score(score)
     setquizresults(answers)
-    setgamescore(game_results.score)
-    set_user_data(prev => ({...prev, points : prev.points + game_results.score }))    
   }
   
   const onAnswer = (id, each_new_answer)=> {
@@ -68,21 +71,17 @@ const Game = ({
 
   return(
     <div className="game_container">
-      <br />
+      <br/>
       
-      {timeout===false &&
-        <Question
-        question={questions[index]}
-        question_index={index}
-        onselect={onAnswer}
-        questions_length={N_Game_Questions}
-        timeout={timeout}
-        settimout={settimout}
-        nextquestion={nextquestion}/>
-      }
-
-      {timeout===true && <div>sorry time out</div>}
-
+      <Question
+      question={questions[index]}
+      question_index={index}
+      onselect={onAnswer}
+      questions_length={N_Game_Questions}
+      timeout={timeout}
+      settimout={settimout}
+      nextquestion={nextquestion}/>
+    
       <br />  
       <div className="game_buttons">
         

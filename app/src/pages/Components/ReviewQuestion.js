@@ -53,6 +53,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
         }
 
         if (question_state !== 0 && question_state !==1){
+            console.log("error! a review state is required for the review (approve/decline)")
             return
         }
 

@@ -35,11 +35,10 @@ const UserProfile = ({is_reviewer}) => {
           }
         }
         
-        if (n.correct_answer===true)
+        if (n.correct_answer === true)
           n_user_correct_answers +=1
       })
 
-      console.log(interactions_dict)
 
       if (profile_result.user_data.tests_completed === 0){
         setgames_score_percentage(0)
@@ -48,8 +47,8 @@ const UserProfile = ({is_reviewer}) => {
         setgames_score_percentage( Math.round( (n_user_correct_answers / (profile_result.user_data.tests_completed * N_Game_Questions) ) *100))
       }
 
-      set_user_data(profile_result.user_data)
       setuser_interactions(interactions_dict)
+      set_user_data(profile_result.user_data)
     }
 
     getProfileData() 
@@ -57,34 +56,38 @@ const UserProfile = ({is_reviewer}) => {
   },[])
 
   return (
-    <div className="account">
-
+    <div className="account_container">
       {user_data ?
-        <div>
-          <h2>achievements</h2>
+        <div className="account">
           
-          <div className="insights">
-      
-            <div>
-              Tests Score <p> {games_score_percentage } %</p>
-            </div>
+          <div>
+            <h2>Progress</h2>
             
-            <div>
-              Tests completed <p> {user_data.tests_completed}</p>
-            </div>
-                       
-            <div>
-              <FcOk/> Contributions <p> {user_data.n_approved_contributions}</p>
-            </div>
+            <div className="progress"> 
+                <div>
+                  <span>Score</span> <p> {user_data.points} </p>
+                </div>
+                
+                <div>
+                  <span>Tests Score </span><p> {games_score_percentage } %</p>
+                </div>
+                
+                <div>
+                <span>Tests completed</span> <p> {user_data.tests_completed}</p>
+                </div>
+                          
+                <div>
+                  <span>Contributions</span> <FcOk/>  <p> {user_data.n_approved_contributions}</p>
+                </div>
 
-            {is_reviewer && <div> Contributions reviewed <p>{user_data.n_questions_reviewed}</p></div>}          
+                {is_reviewer && <div><span> Contributions reviewed </span> <p>{user_data.n_questions_reviewed}</p></div>}          
+            </div>
           
           </div>
 
-           { Object.getOwnPropertyNames(user_interactions).length > 0 && <Interactions interactions={user_interactions} /> }
+          <Interactions interactions={user_interactions} /> 
         
         </div>
-
         :
         <strong>loading</strong> 
       }

@@ -23,7 +23,6 @@ return (
         {dashboard_users.map((competitor,index)=> (
           <Competitor
             key={index}
-            index={index}
             current_user ={current_user ===competitor.id}
             name={competitor.username}
             points={competitor.points}
@@ -36,7 +35,7 @@ return (
       </tbody>
     
     </table>
-            
+    <p>show more ...</p>   
   </div> 
   )
 }

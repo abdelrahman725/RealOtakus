@@ -2,9 +2,9 @@ import React from 'react'
 
 const Interactions = ({interactions}) => {
   return (
-    <>
+    <div className="interactions">
       <h2>interactions</h2> 
-      <table className="dashboard interactions">
+      <table className="dashboard">
         <thead>
           <tr>
             <th> anime</ th>
@@ -23,7 +23,7 @@ const Interactions = ({interactions}) => {
           ))}
         </tbody>
       </table>
-    </>
+    </div>
   )
 }
 

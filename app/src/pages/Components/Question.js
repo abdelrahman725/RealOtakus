@@ -1,10 +1,12 @@
 import async_http_request from "./AsyncRequest"
+import { GlobalStates } from "../../App"
 import { useTimer } from "react-use-precision-timer"
 import { MdTimer } from "react-icons/md"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 
 const Question = ({ question, onselect, question_index, questions_length, timeout ,settimout, nextquestion }) => {
-
+  
+  const { set_info_message } = useContext(GlobalStates)
   const [selected, setselected] = useState()
   const [minutes, setminutes] = useState(2)
   const [seconds, setseconds] = useState(0)
@@ -39,6 +41,10 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
   }
  
   const onChoice = (useranswer) => {
+    if (timeout===true){
+      return
+    }
+    
     setselected(useranswer)
     onselect(question.id, useranswer)
   }
@@ -52,7 +58,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     console.log(attempt_response)
   }
 
-  const timer = useTimer({ delay: 10000, callback : () => handletimeleft() })
+  const timer = useTimer({ delay: 100, callback : () => handletimeleft() })
   
   useEffect(() => {
   
@@ -72,11 +78,11 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
       
       <p className="timer"> <MdTimer className="icon"/> &nbsp;&nbsp;<strong> {"0" + minutes} : {seconds < 10 && "0"}{seconds} </strong> </p>
       
-      <div className="game_question question_x">
+      <div className={`game_question ${timeout?"disabled_question":"question_x"}`}>
         
         <p className="question_title"> {question_index + 1}. <strong> {question.question} ? </strong> </p>
 
-        <div className={question.choice1 === selected ? "choice selected_choice" : "choice"}
+        <div disabled={true} className={question.choice1 === selected ? "choice selected_choice" : "choice"}
           onClick={() => onChoice(question.choice1)}>
           {question.choice1}
         </div>

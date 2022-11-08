@@ -32,8 +32,8 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
+    return User.objects.get(username="otaku")
     return request.user
-    return User.objects.get(username="andrea")
 
 
 def get_or_query_anime(anime: int):
@@ -59,7 +59,7 @@ def react_app(request):
     return render(request, "board/home.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
@@ -97,7 +97,8 @@ def get_home_data(request):
     
     if not avg_score:
         avg_score = 0
-    # to delte
+    
+    # to delete later
     avg_score = -1
 
     top_competitors = User.objects.annotate(
@@ -117,7 +118,7 @@ def get_home_data(request):
 # -------------------------------------- Quiz related endpoints ----------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game_animes(request):
     user = get_current_user(request)
@@ -150,7 +151,7 @@ def get_game_animes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
     current_user = get_current_user(request)
@@ -196,7 +197,7 @@ def get_game(request, game_anime):
         random.shuffle(question_choices)
 
         serialized_questions.append({
-            "question": question.question,
+            "question":question.question,
             "choice1": question_choices[0],
             "choice2": question_choices[1],
             "choice3": question_choices[2],
@@ -204,8 +205,8 @@ def get_game(request, game_anime):
             "id": question.id
         })
 
-    for q in questions:
-        game_questions[current_user.id][q.id] = q
+        game_questions[current_user.id][question.id] = question
+
 
     current_user.tests_started += 1
     current_user.save()
@@ -221,14 +222,12 @@ def record_question_encounter(request, question_id):
 
     user = get_current_user(request)
 
-    question = game_questions[user.id][question_id]
-
     game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
         user=user,
-        question=question,
-        anime=question.anime,
-    )
-
+        question=game_questions[user.id][question_id],
+        anime=game_questions[user.id][question_id].anime,
+    )  
+  
     return Response(
         {
             "info": "1 question interaction recorded",
@@ -237,42 +236,44 @@ def record_question_encounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def submit_game(request):
     user = get_current_user(request)
     user_answers = request.data["answers"]
-    print(user_answers)
 
-    if len(game_interactions[user.id]) != QUESTIONSCOUNT:
-        # big issue
-        # to do here as there are 5 api requests responsbile for recording the user_question interaction
-        # and no one of them should fail because the current view depends on them
-        pass
+    for question_id in game_questions[user.id]:
+        current_qustion = game_questions[user.id][question_id]
+        user_answered_correctly = None
+     
+        string_question_id = str(question_id)
+        if string_question_id in user_answers:
+            user_answered_correctly = user_answers[string_question_id] == current_qustion.right_answer
+            if user_answered_correctly == True:
+                user.points += 1
+        
+        try:
+            QuestionInteraction.objects.create(
+                user=user,
+                question=current_qustion,
+                anime=current_qustion.anime,
+                correct_answer= user_answered_correctly
+            )
 
-    game_score = 0
+        except IntegrityError:
+            if user_answered_correctly != None:
+                game_interactions[user.id][question_id].correct_answer = user_answered_correctly
+                game_interactions[user.id][question_id].save()
 
-    # to do here ! as we should only depend on game_questions as it's more reliable
-    for question_id, answer in user_answers.items():
-        question_id = int(question_id)
-        interaction = game_interactions[user.id][question_id]
-
-        if answer == game_questions[user.id][question_id].right_answer:
-            game_score += 1
-            interaction.correct_answer = True
-
-        else:
-            interaction.correct_answer = False
-
-        interaction.save()
 
     right_answers = AnswersSerializer(
-        game_questions[user.id].values(), many=True)
+        game_questions[user.id].values(),
+        many=True
+    )
 
     user.tests_completed += 1
-    user.points += game_score
    
-    if user.tests_completed % 10 ==0:
+    if user.tests_completed % 10 == 0:
         user.points +=20
         CreateNotification(
             receiver=user,
@@ -287,7 +288,6 @@ def submit_game(request):
 
     return Response({
         "info": "test submitted successfully",
-        "score": game_score,
         "level": user.level,
         "right_answers": right_answers.data
     })
@@ -297,7 +297,7 @@ def submit_game(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
@@ -354,7 +354,7 @@ def get_or_make_contribution(request):
         return JsonResponse({"info": e.args})
 
 
-@login_required
+#@login_required
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
     user = get_current_user(request)
@@ -421,7 +421,7 @@ def get_or_review_contribution(request):
         )
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_user_profile(request):
     user = get_current_user(request)
@@ -446,7 +446,7 @@ def get_user_profile(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def update_notifications(request):
     user = get_current_user(request)

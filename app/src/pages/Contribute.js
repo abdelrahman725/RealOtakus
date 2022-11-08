@@ -67,14 +67,12 @@ const Contribute = ({all_animes_options}) => {
         
         set_info_message(submit_contribution.info)
         console.log(submit_contribution)
-
     
         if (submit_contribution.state === "conflict"){
           question_ref.current.style.outlineColor="red"  
           question_ref.current.focus()
           return
         }
-
       
         // clear form after submission 
         for (const key in Question){

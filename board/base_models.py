@@ -62,7 +62,7 @@ class Question(models.Model):
 
 class Contribution(models.Model):
     question = models.OneToOneField(Question, on_delete=models.SET_NULL,null=True, related_name="contribution")
-    contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,related_name="contributions")
+    contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="contributions")
     approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
     reviewer_feedback = models.CharField(max_length=100,null=True, blank=True)

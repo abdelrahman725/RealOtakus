@@ -14,7 +14,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
   }
   
   const change_route = (kind)=>{
-    naviage_routes( kind && notification_kind_to_path[kind] ) 
+    kind && naviage_routes(notification_kind_to_path[kind] ) 
   }
 
   useEffect(()=>{
@@ -25,7 +25,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
       // clears unseen_notifcations count after user view them
       setnumber_of_unseen_notifications(0)
         
-    //update notifications state fronend and backend (which are seen by the user in the  UI) from unseen to seen   
+    //update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
       const unseen_notifications = []
       
       all_notifications.map((n)=>

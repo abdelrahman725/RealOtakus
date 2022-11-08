@@ -14,7 +14,7 @@ const GameView = () => {
   const [selected_anime,setselected_anime] = useState()
   const [quizresults,setquizresults] = useState({}) 
   const [useranswers,setuseranswers] = useState({})
-  const [gamescore,setgamescore] = useState()
+  const [game_score,setgame_score] = useState()
 
   const anime_select = useRef(null)
 
@@ -108,11 +108,11 @@ const GameView = () => {
   }
 
    { game_started===true && 
-    <Game questions={gamequestions} setgamescore={setgamescore} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />
+    <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />
    }
 
    { game_started===false && 
-    <Result results={quizresults} useranswers={useranswers} score={gamescore} questions={gamequestions}/> 
+    <Result results={quizresults} useranswers={useranswers} questions={gamequestions} score={game_score}/> 
    }
 
   </>
