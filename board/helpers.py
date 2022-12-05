@@ -45,7 +45,7 @@ def notify_reviewers(anime):
     for reviewer in anime.reviewers.all():
         CreateNotification(
             receiver=reviewer,
-            notification= f"new question for {anime.anime_name} and needs review",
+            notification= anime.anime_name,
             kind="R"
         )
 
@@ -68,14 +68,14 @@ def notify_user_of_contribution_state(contribution):
 
         CreateNotification(
             receiver=contribution.contributor,
-            notification=f"Congratulations! your contribution for {contribution.question.anime} is approvd",
+            notification=contribution.question.anime,
             kind="A"
         )
 
     if contribution.approved == False:
         CreateNotification(
             receiver=contribution.contributor,
-            notification=f"Sorry, your last contribution for {contribution.question.anime} is rejected",
+            notification=contribution.question.anime,
             kind="F"
         )
   

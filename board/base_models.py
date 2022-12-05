@@ -8,8 +8,6 @@ from board.constants import *
 class Anime(models.Model):
     anime_name = models.CharField(max_length=50, unique=True)
     active = models.BooleanField(default=False)
-    url = models.CharField(max_length=300, default="/", blank=True)
-    #url= models.URLField()
 
     class Meta:
         abstract = True
@@ -65,7 +63,19 @@ class Contribution(models.Model):
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="contributions")
     approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
-    reviewer_feedback = models.CharField(max_length=100,null=True, blank=True)
+    
+    reviewer_feedback = models.CharField(
+        choices=(
+            ("not clear","not clear"),
+            ("similar choices","similar choices"),
+            ("too easy","too easy"),
+            ("wrong information","wrong information")
+        ),
+        max_length=50,
+        null=True,
+        blank=True
+    )
+
     date_created = models.DateTimeField(default=timezone.now)
     date_reviewed = models.DateTimeField(null=True,blank=True) 
     

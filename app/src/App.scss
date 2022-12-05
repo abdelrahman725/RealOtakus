@@ -1,6 +1,10 @@
 
 $base_div_backgroun_color : #262F36;
 $base_green_button_color  : #46BB5D;
+$base_approved_color: #46BB5D;
+$base_pending_color: rgb(230, 171, 63);
+$base_rejected_color: #E76450;
+
 $base-shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
 
@@ -9,12 +13,28 @@ body{
   //background-color: #e9edf1;
 }
 
-
 .centered_div{
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
   text-align: center; 
+}
+
+.base_box_window{
+  background-color: $base_div_backgroun_color;
+  text-align: center;
+  padding: 10px;
+  left: 0; 
+  right: 0; 
+  top: 0;
+  margin-left: auto; 
+  margin-right: auto; 
+  margin-top: 250px;
+  color:white;
+  border-radius: $base_border_radius;
+  box-shadow: $base-shadow;
+  position: absolute;
+  z-index: 2;
 }
 
 button, .pointer_cursor {
@@ -43,11 +63,10 @@ a{
   background-color: $base_green_button_color;
 }
 
-
 .navbar{
   background-color: $base_div_backgroun_color;
   color: white;
-  padding:15px;
+  padding:20px;
   position:fixed;
   top:0;
   width:100%;
@@ -62,6 +81,10 @@ a{
     margin:  0px 10px; 
   }
   
+  .n_notifications{
+    width: 12px;
+  }
+
   .icon{
     cursor: pointer;
     color: #6e7174;  
@@ -83,33 +106,23 @@ a{
 
 }
 
+
 .faded_background{
   opacity: 50%;
 }
+
 
 .spaced_div{
   margin-top: 90px;
 }
 
+
 .info_container{
-  //display: none;
-  background-color: $base_div_backgroun_color;
-  text-align: center;
-  padding: 10px;
-  left: 0; 
-  right: 0; 
-  top: 0;
-  margin-left: auto; 
-  margin-right: auto; 
-  margin-top: 250px;
-  color:white;
-  border-radius: $base_border_radius;
-  box-shadow: $base-shadow;
-  position: absolute;
-  z-index: 2;
+  @extend .base_box_window;
   width: 70%;
   max-width: 500px;
   height: 300px;
+  
   .close_icon{
     @extend .pointer_cursor;
     color:  #6e7174;
@@ -122,11 +135,12 @@ a{
 
   p{
     padding: 10px;
-    font-size: larger;
+    font-size: large;
     padding-top: 35px;
   }
 
 }
+
 
 .navigation_buttons{
   display: flex;
@@ -172,6 +186,9 @@ a{
      padding: 20px;
      font-size: medium;
   }
+  .user_order_head{
+    padding: 0px;
+  }
   
   tr{
     border-bottom: 1.5px solid #3e4d58;
@@ -181,11 +198,19 @@ a{
     border-bottom: none;
   }
 
-  td{ padding:  20px   18px; } 
+  td{
+     padding: 20px 18px; 
+  } 
+  .user_order{
+    padding: 0px;
+    padding-left: 15px;
+  }
 }
 
+
 .dashboard_container{
-  
+  margin-top: 70px;
+  margin-bottom: 70px;  
   text-align: center;
 
   .leaderboard{
@@ -203,42 +228,60 @@ a{
 
 }
 
+
 .account_container{
 
   text-align: center;
   margin: 20px;
   
-  .account{ 
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  margin-top: 30px;
-  
-  .progress{
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+  .base_container_properties{
     font-size: large;
     background-color: $base_div_backgroun_color;
     color: white;
     border-radius: $base_border_radius;
     box-shadow: $base-shadow;
-    
-    div{
-      padding:40px;
-      padding-left: 50px;
-      padding-right: 50px;
-      span{
-        font-size: larger;
-      }
-    }
   }
   
-  .interactions{
-    td{
-      padding:  30px;
+  .profile_panel{
+    @extend .base_container_properties;
+    padding: 50px;
+    margin:  60px 20px;
+    font-size: x-large;
+    display: flex;
+    justify-content: space-around;
+    span{
+      font-size: xx-large;
     }
   }
+
+  .flex_container{
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin-top: 30px;
+
+    .progress{
+      @extend .base_container_properties;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    
+      div{
+        padding:40px;
+        padding-left: 50px;
+        padding-right: 50px;
+        span{
+          font-size: larger;
+        }
+      }
+    }
+  
+    .interactions{
+      td{
+        padding:  30px;
+      }
+    }
 
   }
 
@@ -274,7 +317,7 @@ a{
   }
   
   .spaced_div{
-    margin-top: 135px;
+    margin-top: 155px;
   }
 
   .navigation_buttons {
@@ -297,9 +340,39 @@ a{
 
 .questions_container{
 
-
   @extend .centered_div;
   margin: 20px;
+
+  .contributions_summary{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 15px;
+ 
+    .contribution_state{
+      padding: 10px;
+      .circle{
+        border-radius: 50%;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        position: relative;
+        top: 5px;
+        margin-right: 7px;
+      }
+      .approved{
+        background-color: $base_approved_color;
+      }
+      .pending{
+        background-color: $base_pending_color;
+      }
+      .rejected{
+        background-color:$base_rejected_color;
+      }
+
+      margin-right: 50px;
+    }
+  }
+
   .user_anime_contributions{
     padding: 20px;
   }
@@ -310,15 +383,15 @@ a{
   }
   
   .pendingstate{
-    border-color:rgb(230, 171, 63);
+    border-color:$base_pending_color;
   }
     
   .declinestate{
-    border-color: #E76450;
+    border-color: $base_rejected_color;
   }
   
   .approvestate{
-    border-color:#4ecd91;
+    border-color:$base_approved_color;
   }
 
 }
@@ -327,7 +400,6 @@ a{
 .question_basic{
   @extend .centered_div;
   background-color: white;
-  display: flex;  
   border-left: solid 20px;
   border-radius: $base_border_radius;
   box-shadow: $base-shadow ;
@@ -337,10 +409,20 @@ a{
   text-align: left;
 }
 
-
-.contributed_question{
+.user_contributed_question{
   @extend .question_basic;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  
+  div{
+    padding-top: 1px; 
+    padding-left: 15px; 
+  }
+  .date_created{
+    font-size: smaller;
+    position: relative;
+    top:10px;
+  }
+
 }
 
 
@@ -449,6 +531,14 @@ a{
 }
 
 
+.start_game{
+  margin-top: 40px;
+
+  p{
+    margin-top: 60px;
+  }
+}
+
 .game_container{
   @extend .centered_div;
   width: 90%; 
@@ -544,6 +634,22 @@ a{
       outline: none;
     }
 
+    .checkbox_container{
+      margin-top: 10px;
+      margin-bottom: 25px;
+      .guidlines_link{
+        color: #0e4b9b;
+      }
+      &:hover{
+        text-decoration: underline;
+      }
+    }
+
+
+    .submit_container{
+      height: 60px;
+    }
+
   }
 
 }
@@ -586,6 +692,37 @@ a{
   }
 }
 
+.about{
+  padding: 20px;
+  text-align: left;
+  font-size: larger;
+  div{
+    margin-bottom: 70px;
+  }
+
+  .icon{
+    font-size: 26px;
+  }
+ 
+  a{
+    text-decoration: none;
+    color:black;
+    margin-right: 40px;
+    margin-left: 4px;
+  }
+  
+  .community_links{
+    display: flex;
+    flex-wrap: wrap;
+    span{
+      font-size: 21px;
+      position: relative;
+      font-family: 'Courier New', Courier, monospace;
+      bottom: 6px;
+    }
+
+  }
+}
 
 footer{
   display: flex;
@@ -595,4 +732,9 @@ footer{
   color: white;
   margin-top: auto;
   width: 100%;
+}
+
+
+.testy{
+  display: flex;
 }

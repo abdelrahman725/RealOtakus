@@ -50,21 +50,19 @@ const Game = ({
 
   useEffect(() =>{
     
-    window.onbeforeunload = ()=>{
-      return true
-    }
+    // window.onbeforeunload = ()=>{
+    //   return true
+    // }
     
     document.onvisibilitychange =()=>{
       if (document.visibilityState === "hidden"){
-        console.log("leaving quiz")
         setgame_started()
       }
-      console.log(document.visibilityState)
     }
         
     return () => {
       document.onvisibilitychange = null
-      window.onbeforeunload = null
+      //window.onbeforeunload = null
     }
       
   }, [])
@@ -72,7 +70,6 @@ const Game = ({
   return(
     <div className="game_container">
       <br/>
-      
       <Question
       question={questions[index]}
       question_index={index}
@@ -81,16 +78,15 @@ const Game = ({
       timeout={timeout}
       settimout={settimout}
       nextquestion={nextquestion}/>
-    
       <br />  
       <div className="game_buttons">
-        
         {index===N_Game_Questions-1 ?
           <button onClick={SubmitGame} className="submit_btn"> Submit </button>
         : 
           <button onClick={nextquestion} style={{backgroundColor: "#365FAA"}}> next </button>            
         }
       </div>
+      <br />
     </div>
   )
 }

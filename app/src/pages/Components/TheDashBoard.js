@@ -5,12 +5,13 @@ const TheDashBoard = ({ dashboard_users, current_user }) => {
 return (
   <div className="dashboard_container">
   
-    <h1 style={{textAlign:"center"}}>Top Competitors</h1>
+    <h1 style={{textAlign:"center"}}>Top Otakus</h1>
   
     <table className="dashboard leaderboard">
     
       <thead>
         <tr>
+          <th className="user_order_head"></th>
           <th> Otaku </th>
           <th> Score </th>
           <th> Level </th>
@@ -23,6 +24,7 @@ return (
         {dashboard_users.map((competitor,index)=> (
           <Competitor
             key={index}
+            index={index}
             current_user ={current_user ===competitor.id}
             name={competitor.username}
             points={competitor.points}
@@ -35,7 +37,7 @@ return (
       </tbody>
     
     </table>
-    <p>show more ...</p>   
+    {/* <p>show more ...</p>    */}
   </div> 
   )
 }

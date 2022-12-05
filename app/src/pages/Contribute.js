@@ -1,18 +1,19 @@
 import async_http_request from "./Components/AsyncRequest"
 import Select from 'react-select'
 import { useState, useRef, useContext, useEffect } from "react"
+import { useNavigate,Link } from "react-router-dom"
 import { GlobalStates } from "../App"
 
 const Contribute = ({all_animes_options}) => {
   
   const {set_info_message,SelectStyles} = useContext(GlobalStates)
   const [anime,setanime]= useState()  
-  const [submitted,setsubmitted] = useState(false)
-  
+  const [submitted,setsubmitted] = useState(false)  
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
   const checkbox = useRef(null)
+  const naviage_routes = useNavigate()
   
   // ensure
   const  letters_exist = /[a-z]/ig
@@ -61,19 +62,20 @@ const Contribute = ({all_animes_options}) => {
           }
         })
         
+        console.log(submit_contribution)
+        
         window.scrollTo({ top: 0, behavior: 'smooth' })
 
         setsubmitted(false)
         
         set_info_message(submit_contribution.info)
-        console.log(submit_contribution)
-    
+                
         if (submit_contribution.state === "conflict"){
           question_ref.current.style.outlineColor="red"  
           question_ref.current.focus()
           return
         }
-      
+     
         // clear form after submission 
         for (const key in Question){
           setQuestion(prev => ({...prev,[key]:""}))
@@ -89,7 +91,7 @@ const Contribute = ({all_animes_options}) => {
           window.scrollTo({ top: 0, behavior: 'smooth' })
           return false;
         }
-        
+   
         const cleaned_question = {
           question:"",
           rightanswer:"",
@@ -184,10 +186,8 @@ const Contribute = ({all_animes_options}) => {
           onChange={on_anime_select} 
           value={anime}
           ref={anime_select}
-          />
-            
+          />            
           <br/> <br/>
-          
           <textarea name="question"
             typeof="text"
             placeholder = "what is the question ?" 
@@ -246,11 +246,18 @@ const Contribute = ({all_animes_options}) => {
             >
           </textarea><br />
           
-          <input type="checkbox" className="checkbox" name="instructions" ref={checkbox} required/>
-          <label htmlFor="instructions"> I understand Contribution Guidlines</label>
-          <br /> <br />
-
-          {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn} >submit question</button> : "loading..." }
+          <div className="checkbox_container">
+            <input type="checkbox" className="checkbox" name="instructions" ref={checkbox} required/>
+            <label htmlFor="instructions" >
+              <Link className="guidlines_link" to="/about">
+                I understand Contribution Guidlines
+              </Link>
+            </label>
+          </div>
+          
+          <div className="submit_container">
+            {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn} >submit question</button> : "loading..." }
+          </div>
 
         </div>
 

@@ -1,7 +1,8 @@
-const Competitor = ({name, points, level, country, contributions, current_user}) => {
+const Competitor = ({index,name, points, level, country, contributions, current_user}) => {
 
   return (
     <tr className={current_user ? "current_user":""}>
+      <td className="user_order">{ index+1 }</td>
       <td>{ name }</td>
       <td>{ points }</td>
       <td>{ level }</td>

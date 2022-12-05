@@ -1,15 +1,13 @@
 import async_http_request from "./AsyncRequest"
-import { GlobalStates } from "../../App"
 import { useTimer } from "react-use-precision-timer"
 import { MdTimer } from "react-icons/md"
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useState } from "react"
 
 const Question = ({ question, onselect, question_index, questions_length, timeout ,settimout, nextquestion }) => {
   
-  const { set_info_message } = useContext(GlobalStates)
   const [selected, setselected] = useState()
-  const [minutes, setminutes] = useState(2)
-  const [seconds, setseconds] = useState(0)
+  const [minutes, setminutes] = useState(1)
+  const [seconds, setseconds] = useState(40)
 
   const handletimeleft = () => {
     if (seconds > 0) {
@@ -36,7 +34,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
 
   const reset_timer = () => {
     setminutes(1)
-    setseconds(30)
+    setseconds(40)
     timer.start()
   }
  
@@ -58,7 +56,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     console.log(attempt_response)
   }
 
-  const timer = useTimer({ delay: 100, callback : () => handletimeleft() })
+  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() })
   
   useEffect(() => {
   

@@ -9,8 +9,6 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from board import base_models
-from board.helpers import choices_integirty
-from board.helpers import question_validator
 from board.helpers import CreateNotification
 from board.helpers import get_user_new_level
 from board.helpers import notify_reviewers

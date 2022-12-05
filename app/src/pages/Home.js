@@ -22,7 +22,7 @@ return (
 
         <Link to="game">
           <button>
-            <MdQuiz className="icon"/> Start Quiz
+            <MdQuiz className="icon"/> Take Quiz
           </button> 
         </Link>
 

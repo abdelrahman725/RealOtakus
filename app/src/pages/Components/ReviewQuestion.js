@@ -13,9 +13,9 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
   const feedback_select = useRef(null)
 
   const feedback_options = [
-    { value: 1, label: 'not clear / invalid' },
-    { value: 2, label: 'similar choices' },
-    { value: 3, label: 'too easy / predictable' },
+    { value: 1, label: 'not clear' },
+    { value: 2, label: 'choices are similar' },
+    { value: 3, label: 'too easy' },
     { value: 4, label: 'wrong information' }    
   ]
 
@@ -35,7 +35,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
             }
         })
 
-        if (review_submission_response===null){
+        if (review_submission_response === null){
             return
         }
 
@@ -50,21 +50,21 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
             setreviewstate(prev => ({...prev,[question]:`${question_state=== 1 ? "approve" : "decline" }state`}))
         }
     
-        }
+    }
 
-        if (question_state !== 0 && question_state !==1){
-            console.log("error! a review state is required for the review (approve/decline)")
-            return
-        }
+    if (question_state !== 0 && question_state !==1){
+        console.log("error! a review state is required for the review (approve/decline)")
+        return
+    }
 
-        if (question_state === 0 &&  !feedback){
-            feedback_select.current.focus()
-            return
-        }  
+    if (question_state === 0 &&  !feedback){
+        feedback_select.current.focus()
+        return
+    }  
 
-        setinfo()
-        set_review_submitted(true)
-        SubmitReview(question)
+    setinfo()
+    set_review_submitted(true)
+    SubmitReview(question)
   }
 
   const handle_question_state = (e)=>{
@@ -81,7 +81,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
   return (
     <div className={`review_question ${reviewstate}`}>
         <p className="question_anime"> <strong>{anime}</strong></p>
-
+        <p>date here</p>
         <div className="question_contents">
             <p className="question">{question.question}</p>
             <div className="choices">

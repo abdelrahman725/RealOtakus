@@ -32,7 +32,7 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
-    return User.objects.get(username="otaku")
+    return User.objects.get(username="pablo")
     return request.user
 
 
@@ -95,12 +95,8 @@ def get_home_data(request):
     # leaderboard users sorted by their scores in non-increasing order where their score is > avg_score and !=0
     avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
     
-    if not avg_score:
-        avg_score = 0
+    if not avg_score : avg_score = 0
     
-    # to delete later
-    avg_score = -1
-
     top_competitors = User.objects.annotate(
         n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
     ).filter(points__gt=avg_score).order_by("-points")
@@ -115,8 +111,7 @@ def get_home_data(request):
     })
 
 
-# -------------------------------------- Quiz related endpoints ----------------------------------------
-# ------------------------------------------------------------------------------------------------------
+# -------------------------------------- 4 Quiz related endpoints ----------------------------------------
 
 #@login_required
 @api_view(["GET"])
@@ -159,7 +154,7 @@ def get_game(request, game_anime):
 
     # To catch malicious or non-serious users
     if current_user.tests_started - current_user.tests_completed == "To Do":
-        # for example we can do the following check (not perfect obviously)
+        # for example we can do the following check (not perfect though)
         if current_user.tests_started - current_user.tests_completed > 5:
             pass
         # catch here and act upon that
@@ -181,7 +176,7 @@ def get_game(request, game_anime):
 
     if questions.count() != QUESTIONSCOUNT:
         return Response({
-            "info": "no enough questions for the quiz",
+            "info": "sorry no enough questions for the quiz",
         })
 
     serialized_questions = []
@@ -251,20 +246,20 @@ def submit_game(request):
             user_answered_correctly = user_answers[string_question_id] == current_qustion.right_answer
             if user_answered_correctly == True:
                 user.points += 1
+
+        if question_id in game_interactions[user.id]:
+            if user_answered_correctly != None:
+                game_interactions[user.id][question_id].correct_answer = user_answered_correctly
+                game_interactions[user.id][question_id].save()
+            
         
-        try:
+        else:
             QuestionInteraction.objects.create(
                 user=user,
                 question=current_qustion,
                 anime=current_qustion.anime,
                 correct_answer= user_answered_correctly
             )
-
-        except IntegrityError:
-            if user_answered_correctly != None:
-                game_interactions[user.id][question_id].correct_answer = user_answered_correctly
-                game_interactions[user.id][question_id].save()
-
 
     right_answers = AnswersSerializer(
         game_questions[user.id].values(),
@@ -282,7 +277,7 @@ def submit_game(request):
    
     user.save()
 
-    # delete used cache from memory :
+    # delete current user related game questions from memory :
     del game_interactions[user.id]
     del game_questions[user.id]
 
@@ -292,9 +287,8 @@ def submit_game(request):
         "right_answers": right_answers.data
     })
 
+# ------------------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------------
 
 
 #@login_required
@@ -339,11 +333,11 @@ def get_or_make_contribution(request):
 
         if is_anime_reviewr:
             return JsonResponse({
-                "info": f"you have contributed a new question for {anime}! it's approved since you are a reviewer of that anime"
+                "info": f"Thanks for you contribution, it's approved since you are a reviewer of that anime"
             })
 
         return Response(
-            {"info": f"your question submission for {anime} has been received and waits approval"},
+            {"info": f"Thanks for you contribution, your submission will be reviewed soon"},
             status=status.HTTP_201_CREATED
         )
 
@@ -463,7 +457,7 @@ def update_notifications(request):
 
 
 # @api_view(["GET"])
-# def animes_questions_api_service(requst, anime_id, n_questions):
+# def api_animes_questions(requst, anime_id, n_questions):
 
 #     anime = get_or_query_anime(anime_id)
 

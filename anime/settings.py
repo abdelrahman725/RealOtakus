@@ -30,10 +30,9 @@ SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost","127.0.0.1",]
+# should be removed in production !
+ALLOWED_HOSTS = ["*"]
 
-for i in range(2,12):
-    ALLOWED_HOSTS.append(f"192.168.1.{i}")
 
 # Application definition
 
@@ -68,19 +67,9 @@ CHANNEL_LAYERS = {
 
 
 SITE_ID = 1
+
 CORS_ALLOW_CREDENTIALS = True
-
-CORS_ALLOWED_ORIGINS = [
-     "http://localhost:3000",
-     "http://127.0.0.1:3000",
-     
-     "http://127.0.0.1:8000",
-     "https://127.0.0.1:8000",
-
-     "http://localhost:8000",
-     "https://localhost:8000"
-]
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

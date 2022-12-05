@@ -3,15 +3,17 @@ import async_http_request from "./Components/AsyncRequest"
 import Select from 'react-select'
 import { useState, useEffect,useRef,useContext } from "react"
 import { GlobalStates } from "../App"
+import {useLocation} from 'react-router-dom';
 
 const QuestionsForReview = () => {
 
-  const {set_info_message} = useContext(GlobalStates)
+  const {set_info_message,SelectStyles} = useContext(GlobalStates)
   const [questions,setquestions]= useState()
-  const [selected_anime,setselected_anime]= useState()
   const [reviewstates,setreviewstates]= useState({})
   const [animes_options,setanimes_options]= useState([])
   const anime_select = useRef(null)
+  const location = useLocation()
+  const [selected_anime,setselected_anime]= useState()
 
   const handle_questions_filter=(selected)=> {
     setselected_anime(selected)
@@ -19,19 +21,18 @@ const QuestionsForReview = () => {
   }
   
 
-  useEffect(()=>{
-      
+  useEffect(()=>{      
     let cancled = false
+    setselected_anime(location.state) 
 
     async function fetch_questions(){
-
       const questions_result  = await async_http_request({ path:"get_review_contribution" })
       if (questions_result===null){
         set_info_message("network error")
         return
       }
 
-      console.log(questions_result.questions)
+      //console.log(questions_result.questions)
 
       if (cancled ===false){
         const animes_set = new Set()
@@ -44,8 +45,7 @@ const QuestionsForReview = () => {
           )
         })
 
-        setquestions(questions_result.questions)  
-      
+        setquestions(questions_result.questions)   
       } 
     }
     
@@ -61,21 +61,22 @@ const QuestionsForReview = () => {
 
   return (
     <div className="review_page">
-      
       <h2 className="title">
         <span>{questions && questions.length}</span> contributions need review
       </h2>
       <br />
  
       <Select
-        className="select_animes"
-        placeholder="filter questions"
-        isClearable={true} 
-        isLoading={!questions}
-        options={animes_options}
-        onChange={handle_questions_filter} 
-        ref={anime_select}
-        />
+      value={selected_anime}
+      styles={SelectStyles}
+      className="select_animes"
+      placeholder="filter questions"
+      isClearable={true} 
+      isLoading={!questions}
+      options={animes_options}
+      onChange={handle_questions_filter} 
+      ref={anime_select}
+      />
     
         <br />  <br />
 

@@ -1,8 +1,26 @@
-.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .contributed_question, .review_question, .game_container, .notifications {
+.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .review_question, .game_container, .notifications {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
   text-align: center;
+}
+
+.base_box_window, .info_container {
+  background-color: #262F36;
+  text-align: center;
+  padding: 10px;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 250px;
+  color: white;
+  border-radius: 7px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  position: absolute;
+  z-index: 2;
 }
 
 button, .pointer_cursor, .info_container .close_icon, .game_container .question_x .choice {
@@ -31,7 +49,7 @@ a {
 .navbar {
   background-color: #262F36;
   color: white;
-  padding: 15px;
+  padding: 20px;
   position: fixed;
   top: 0;
   width: 100%;
@@ -55,6 +73,10 @@ a {
       -ms-flex-direction: row;
           flex-direction: row;
   margin: 0px 10px;
+}
+
+.navbar .n_notifications {
+  width: 12px;
 }
 
 .navbar .icon, .navbar .nav_icon {
@@ -85,21 +107,6 @@ a {
 }
 
 .info_container {
-  background-color: #262F36;
-  text-align: center;
-  padding: 10px;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 250px;
-  color: white;
-  border-radius: 7px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  position: absolute;
-  z-index: 2;
   width: 70%;
   max-width: 500px;
   height: 300px;
@@ -117,7 +124,7 @@ a {
 
 .info_container p {
   padding: 10px;
-  font-size: larger;
+  font-size: large;
   padding-top: 35px;
 }
 
@@ -176,6 +183,10 @@ a {
   font-size: medium;
 }
 
+.dashboard .user_order_head {
+  padding: 0px;
+}
+
 .dashboard tr {
   border-bottom: 1.5px solid #3e4d58;
 }
@@ -185,10 +196,17 @@ a {
 }
 
 .dashboard td {
-  padding: 20px   18px;
+  padding: 20px 18px;
+}
+
+.dashboard .user_order {
+  padding: 0px;
+  padding-left: 15px;
 }
 
 .dashboard_container {
+  margin-top: 70px;
+  margin-bottom: 70px;
   text-align: center;
 }
 
@@ -210,7 +228,31 @@ a {
   margin: 20px;
 }
 
-.account_container .account {
+.account_container .base_container_properties, .account_container .profile_panel, .account_container .flex_container .progress {
+  font-size: large;
+  background-color: #262F36;
+  color: white;
+  border-radius: 7px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+}
+
+.account_container .profile_panel {
+  padding: 50px;
+  margin: 60px 20px;
+  font-size: x-large;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.account_container .profile_panel span {
+  font-size: xx-large;
+}
+
+.account_container .flex_container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -222,7 +264,7 @@ a {
   margin-top: 30px;
 }
 
-.account_container .account .progress {
+.account_container .flex_container .progress {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -230,25 +272,20 @@ a {
       justify-content: space-around;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  font-size: large;
-  background-color: #262F36;
-  color: white;
-  border-radius: 7px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  margin-bottom: 60px;
 }
 
-.account_container .account .progress div {
+.account_container .flex_container .progress div {
   padding: 40px;
   padding-left: 50px;
   padding-right: 50px;
 }
 
-.account_container .account .progress div span {
+.account_container .flex_container .progress div span {
   font-size: larger;
 }
 
-.account_container .account .interactions td {
+.account_container .flex_container .interactions td {
   padding: 30px;
 }
 
@@ -282,7 +319,7 @@ a {
     margin-bottom: 20px;
   }
   .spaced_div {
-    margin-top: 135px;
+    margin-top: 155px;
   }
   .navigation_buttons {
     -webkit-box-align: center;
@@ -305,6 +342,42 @@ a {
   margin: 20px;
 }
 
+.questions_container .contributions_summary, .review_page .contributions_summary {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-left: 15px;
+}
+
+.questions_container .contributions_summary .contribution_state, .review_page .contributions_summary .contribution_state {
+  padding: 10px;
+  margin-right: 50px;
+}
+
+.questions_container .contributions_summary .contribution_state .circle, .review_page .contributions_summary .contribution_state .circle {
+  border-radius: 50%;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 5px;
+  margin-right: 7px;
+}
+
+.questions_container .contributions_summary .contribution_state .approved, .review_page .contributions_summary .contribution_state .approved {
+  background-color: #46BB5D;
+}
+
+.questions_container .contributions_summary .contribution_state .pending, .review_page .contributions_summary .contribution_state .pending {
+  background-color: #e6ab3f;
+}
+
+.questions_container .contributions_summary .contribution_state .rejected, .review_page .contributions_summary .contribution_state .rejected {
+  background-color: #E76450;
+}
+
 .questions_container .user_anime_contributions, .review_page .user_anime_contributions {
   padding: 20px;
 }
@@ -323,14 +396,11 @@ a {
 }
 
 .questions_container .approvestate, .review_page .approvestate {
-  border-color: #4ecd91;
+  border-color: #46BB5D;
 }
 
-.question_basic, .contributed_question, .review_question {
+.question_basic, .user_contributed_question, .review_question {
   background-color: white;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   border-left: solid 20px;
   border-radius: 7px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
@@ -341,8 +411,19 @@ a {
   text-align: left;
 }
 
-.contributed_question {
-  margin-bottom: 20px;
+.user_contributed_question {
+  margin-bottom: 30px;
+}
+
+.user_contributed_question div {
+  padding-top: 1px;
+  padding-left: 15px;
+}
+
+.user_contributed_question .date_created {
+  font-size: smaller;
+  position: relative;
+  top: 10px;
 }
 
 .review_page form label {
@@ -443,6 +524,14 @@ a {
   border-radius: 7px;
 }
 
+.start_game {
+  margin-top: 40px;
+}
+
+.start_game p {
+  margin-top: 60px;
+}
+
 .game_container {
   width: 90%;
   max-width: 1000px;
@@ -539,6 +628,23 @@ a {
   outline: none;
 }
 
+.contribution .contribution_form .checkbox_container {
+  margin-top: 10px;
+  margin-bottom: 25px;
+}
+
+.contribution .contribution_form .checkbox_container .guidlines_link {
+  color: #0e4b9b;
+}
+
+.contribution .contribution_form .checkbox_container:hover {
+  text-decoration: underline;
+}
+
+.contribution .contribution_form .submit_container {
+  height: 60px;
+}
+
 .select_animes {
   margin-left: auto;
   margin-right: auto;
@@ -573,6 +679,42 @@ a {
   font-size: small;
 }
 
+.about {
+  padding: 20px;
+  text-align: left;
+  font-size: larger;
+}
+
+.about div {
+  margin-bottom: 70px;
+}
+
+.about .icon, .about .navbar .nav_icon, .navbar .about .nav_icon {
+  font-size: 26px;
+}
+
+.about a {
+  text-decoration: none;
+  color: black;
+  margin-right: 40px;
+  margin-left: 4px;
+}
+
+.about .community_links {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.about .community_links span {
+  font-size: 21px;
+  position: relative;
+  font-family: 'Courier New', Courier, monospace;
+  bottom: 6px;
+}
+
 footer {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -585,5 +727,11 @@ footer {
   color: white;
   margin-top: auto;
   width: 100%;
+}
+
+.testy {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 /*# sourceMappingURL=App.css.map */

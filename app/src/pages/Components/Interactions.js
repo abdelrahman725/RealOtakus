@@ -3,7 +3,7 @@ import React from 'react'
 const Interactions = ({interactions}) => {
   return (
     <div className="interactions">
-      <h2>interactions</h2> 
+      <h2>Games</h2> 
       <table className="dashboard">
         <thead>
           <tr>

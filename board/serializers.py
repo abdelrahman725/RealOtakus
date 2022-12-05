@@ -75,7 +75,6 @@ class ContributionSerializer(serializers.ModelSerializer):
     fields = (
       "approved",
       "date_created",
-      "date_reviewed",
       "reviewer_feedback",
       "question"
     ) 

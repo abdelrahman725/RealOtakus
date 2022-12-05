@@ -77,7 +77,7 @@ const GameView = () => {
     }
 
     GetAnimes()
-    anime_select.current.focus()
+    //anime_select.current.focus()
 
     return()=>{
       setgame_started()
@@ -87,8 +87,8 @@ const GameView = () => {
 
  return (
   <>
-  { game_started===undefined &&
-    <div className="centered_div animeslist"> 
+   { game_started===undefined &&
+    <div className="centered_div start_game">       
       <Select 
       styles={SelectStyles}
       className="select_animes"
@@ -102,10 +102,11 @@ const GameView = () => {
       ref={anime_select}/>  
       <br />
       <button className="submit_btn" onClick={()=> selected_anime ? GetGame() : anime_select.current.focus()} >
-        Start Game 
+        Start 
       </button>
+      <p> <strong>Note</strong>  :  after start do not leave quiz view (e.g. switch tabs)</p>
     </div>
-  }
+   }
 
    { game_started===true && 
     <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />

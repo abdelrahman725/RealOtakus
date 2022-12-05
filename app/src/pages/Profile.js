@@ -4,7 +4,7 @@ import Interactions from "./Components/Interactions"
 import { GlobalStates } from "../App"
 import { FcOk } from 'react-icons/fc' 
 
-const UserProfile = ({is_reviewer}) => {
+const UserProfile = ({username,is_reviewer}) => {
 
   const { N_Game_Questions } = useContext(GlobalStates)
   const [user_data,set_user_data] = useState()
@@ -55,19 +55,19 @@ const UserProfile = ({is_reviewer}) => {
   
   },[])
 
-  return (
-    <div className="account_container">
-      {user_data ?
-        <div className="account">
+  if (user_data){
+    return (
+      <div className="account_container">
+        <div className="profile_panel">
           
+            <div>Level &nbsp;&nbsp; <span>{user_data.level}</span></div>
+          
+            <div>Score &nbsp;&nbsp;&nbsp; <span>{user_data.points}</span></div>
+        </div>
+        <div className="flex_container">  
           <div>
             <h2>Progress</h2>
-            
             <div className="progress"> 
-                <div>
-                  <span>Score</span> <p> {user_data.points} </p>
-                </div>
-                
                 <div>
                   <span>Tests Score </span><p> {games_score_percentage } %</p>
                 </div>
@@ -82,16 +82,16 @@ const UserProfile = ({is_reviewer}) => {
 
                 {is_reviewer && <div><span> Contributions reviewed </span> <p>{user_data.n_questions_reviewed}</p></div>}          
             </div>
-          
           </div>
-
           <Interactions interactions={user_interactions} /> 
-        
         </div>
-        :
-        <strong>loading</strong> 
-      }
-    
+      </div>
+    )
+  }
+
+  return (
+    <div className="account_container">
+      loading...
     </div>
   )
 }

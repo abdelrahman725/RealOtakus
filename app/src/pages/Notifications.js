@@ -3,18 +3,23 @@ import async_http_request from "./Components/AsyncRequest"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_notifications }) => {
+const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_notifications }) =>{
 
   const naviage_routes = useNavigate()
-  
+
   const notification_kind_to_path = {
     "R" : "/review",
     "A" : "/mycontributions",
     "F" : "/mycontributions"
   }
   
-  const change_route = (kind)=>{
-    kind && naviage_routes(notification_kind_to_path[kind] ) 
+  const change_route = (kind,filtered_anime)=>{
+    if (kind){
+      naviage_routes(
+        notification_kind_to_path[kind],
+        {state: {value:filtered_anime, label:filtered_anime}}
+      ) 
+    }
   }
 
   useEffect(()=>{
@@ -22,7 +27,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
       if (unseen_count <= 0)
         return
 
-      // clears unseen_notifcations count after user view them
+      // clears unseen_notifcations count when user sees them
       setnumber_of_unseen_notifications(0)
         
     //update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
@@ -32,25 +37,33 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
         !n.seen  && unseen_notifications.push(n.id)
       )
 
-      const UpdateNotificationsState = async()=>{
-
+      const update_notifications_state = async()=>{
+      
         const notifications_updated_response = await async_http_request({
           path :"update_notifications",
           method:"PUT",
-          data : {"notifications": unseen_notifications}
+          data : {
+            "notifications" : unseen_notifications
+          }
         })
       
         console.log(notifications_updated_response)
       }
 
-      UpdateNotificationsState()
+      update_notifications_state()
     
   },[all_notifications])
   
   return (
     <div className="notifications">
         {all_notifications.length > 0 ? all_notifications.map((noti,index)=>(
-          <EachNotification key={index} noti={noti.notification} time={noti.time} kind={noti.kind} onclick={change_route} />
+          <EachNotification 
+          key={index} 
+          time={noti.time}
+          notification= {noti.notification}
+          kind={noti.kind}
+          navigate={change_route} 
+          />
           )): 
           <p>no activity yet</p>
         } 
