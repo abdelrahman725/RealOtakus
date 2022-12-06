@@ -73,6 +73,7 @@ class ContributionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Contribution
     fields = (
+      "id",
       "approved",
       "date_created",
       "reviewer_feedback",

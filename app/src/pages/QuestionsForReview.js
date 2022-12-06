@@ -8,7 +8,7 @@ import {useLocation} from 'react-router-dom';
 const QuestionsForReview = () => {
 
   const {set_info_message,SelectStyles} = useContext(GlobalStates)
-  const [questions,setquestions]= useState()
+  const [contributors_contributions,set_contributors_contributions]= useState()
   const [reviewstates,setreviewstates]= useState({})
   const [animes_options,setanimes_options]= useState([])
   const anime_select = useRef(null)
@@ -25,19 +25,20 @@ const QuestionsForReview = () => {
     let cancled = false
     setselected_anime(location.state) 
 
-    async function fetch_questions(){
-      const questions_result  = await async_http_request({ path:"get_review_contribution" })
-      if (questions_result===null){
+    async function fetch_contributions(){
+      const contributions_result  = await async_http_request({ path:"get_review_contribution" })
+      if (contributions_result===null){
         set_info_message("network error")
         return
       }
 
-      //console.log(questions_result.questions)
+      console.log(contributions_result.questions)
 
       if (cancled ===false){
+
         const animes_set = new Set()
 
-        questions_result.questions.map((question) => animes_set.add(question.anime.anime_name))
+        contributions_result.questions.map((contribution) => animes_set.add(contribution.question.anime.anime_name))
 
         animes_set.forEach(anime => {
           setanimes_options(
@@ -45,11 +46,11 @@ const QuestionsForReview = () => {
           )
         })
 
-        setquestions(questions_result.questions)   
+        set_contributors_contributions(contributions_result.questions)   
       } 
     }
     
-    fetch_questions()
+    fetch_contributions()
     
     return ()=>{
       setanimes_options([])
@@ -62,7 +63,8 @@ const QuestionsForReview = () => {
   return (
     <div className="review_page">
       <h2 className="title">
-        <span>{questions && questions.length}</span> contributions need review
+        <span>{contributors_contributions && contributors_contributions.length} </span>
+        contributions need review
       </h2>
       <br />
  
@@ -72,32 +74,25 @@ const QuestionsForReview = () => {
       className="select_animes"
       placeholder="filter questions"
       isClearable={true} 
-      isLoading={!questions}
+      isLoading={!contributors_contributions}
       options={animes_options}
       onChange={handle_questions_filter} 
       ref={anime_select}
       />
     
-        <br />  <br />
+      <br />  <br />
 
-      {questions&&questions.map((q,index)=>(        
-        !selected_anime? 
-          <ReviewQuestion 
-            setreviewstate={setreviewstates}
-            reviewstate={reviewstates[q.id]?reviewstates[q.id]:"pendingstate"} 
-            anime={q.anime.anime_name}
-            question={q}
-            key={index}
-          />
-        :
-          selected_anime.value===q.anime.anime_name&&
-          <ReviewQuestion 
-            setreviewstate={setreviewstates}
-            reviewstate={reviewstates[q.id]?reviewstates[q.id]:"pendingstate"} 
-            anime={q.anime.anime_name}
-            question={q} 
-            key={index}
-          />      
+      {contributors_contributions&&contributors_contributions.map((cont,index)=>(  
+        (selected_anime===null || selected_anime.value===cont.question.anime.anime_name) &&
+        <ReviewQuestion 
+          setreviewstate={setreviewstates}
+          reviewstate={reviewstates[cont.id]?reviewstates[cont.id]:"pendingstate"} 
+          anime={cont.question.anime.anime_name}
+          id={cont.id}
+          question={cont.question}
+          date={cont.date_created} 
+          key={index}
+        />      
           
      ))}
     </div>

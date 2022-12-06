@@ -356,59 +356,50 @@ def get_or_review_contribution(request):
     if request.method == "GET":
         animes = user.animes_to_review.all()
 
-        questions = QuestionSerializer(
-            Question.objects.filter(
-                ~Q(contribution__contributor=user),
-                anime__in=animes,
-                contribution__isnull=False,
-                contribution__approved__isnull=True,
-            ).select_related("anime").order_by("id"),
+        contributed_questions = ContributionSerializer(
+            Contribution.objects.filter(
+                ~Q(contributor=user),
+                question__anime__in=animes,
+                approved__isnull=True,
+            ).select_related("question").select_related("question__anime").order_by("id"),
             many=True
         )
-
-        sleep(0.5)
-
+      
         return Response({
-            "questions": questions.data,
+            "questions": contributed_questions.data,
         })
 
     review_state = request.data["state"]
-    q_id = int(request.data["question"])
-    feedback = request.data["feedback"]
-
+ 
     try:
-        question = Question.objects.get(pk=q_id)
+        contribution = Contribution.objects.get(pk=int(request.data["contribution"]))
 
-        if question.contribution.approved != None:
+        if contribution.approved != None:
             return Response(
                 {"info": "question has been reviewed by another reviewer"},
                 status=status.HTTP_409_CONFLICT
             )
 
-        if feedback:
-            question.contribution.reviewer_feedback = feedback
-
-        question.contribution.reviewer = user
-
-        sleep(1)
+        contribution.reviewer = user
+        contribution.reviewer_feedback = request.data["feedback"]
 
         if review_state == 1:
-            question.contribution.approved = True
-            question.contribution.save()
+            contribution.approved = True
+            contribution.save()
 
             return Response({
                 "info": "question is approved successfully"
             })
 
         if review_state == 0:
-            question.contribution.approved = False
-            question.contribution.save()
+            contribution.approved = False
+            contribution.save()
 
             return Response({
                 "info": "question is rejected successfully"
             })
 
-    except Question.DoesNotExist:
+    except Contribution.DoesNotExist:
         return Response(
             {"info": "this question doesn't exist anymore, probably is deleted"},
             status=status.HTTP_410_GONE

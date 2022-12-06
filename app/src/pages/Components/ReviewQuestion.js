@@ -2,8 +2,9 @@ import async_http_request from './AsyncRequest'
 import Select from 'react-select'
 import { useState, useRef, useContext} from "react"
 import { GlobalStates } from '../../App'
+import get_local_date from './LocalDate'
 
-const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
+const ReviewQuestion = ({id, question, anime, date, reviewstate, setreviewstate}) => {
 
   const { SelectStyles } = useContext(GlobalStates)
   const [question_state,setquestion_state] = useState()
@@ -19,17 +20,17 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
     { value: 4, label: 'wrong information' }    
   ]
 
-  const ReviewSubmission = (e,question)=>{
+  const pre_submit_review = (e)=>{
     
     e.preventDefault()
 
-    const SubmitReview = async(question)=>{
+    const submit_review = async()=>{
         
         const review_submission_response  = await async_http_request({
             path:"get_review_contribution",
             method:"PUT",
             data :{
-                "question":question,
+                "contribution":id,
                 "state": question_state,
                 "feedback":feedback ? feedback.label:null 
             }
@@ -41,19 +42,19 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 
         if (review_submission_response instanceof Response){
             const conflict_result = await review_submission_response.json()
-            setreviewstate(prev => ({...prev,[question]:"canceledstate"}))
+            setreviewstate(prev => ({...prev,[id]:"canceledstate"}))
             setinfo(conflict_result.info)
         } 
 
         else {
             setinfo(review_submission_response.info)
-            setreviewstate(prev => ({...prev,[question]:`${question_state=== 1 ? "approve" : "decline" }state`}))
+            setreviewstate(prev => ({...prev,[id]:`${question_state=== 1 ? "approve" : "decline" }state`}))
         }
     
     }
 
     if (question_state !== 0 && question_state !==1){
-        console.log("error! a review state is required for the review (approve/decline)")
+        console.log("error! a review decision is required for the review (approve/decline)")
         return
     }
 
@@ -64,7 +65,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 
     setinfo()
     set_review_submitted(true)
-    SubmitReview(question)
+    submit_review()
   }
 
   const handle_question_state = (e)=>{
@@ -81,7 +82,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
   return (
     <div className={`review_question ${reviewstate}`}>
         <p className="question_anime"> <strong>{anime}</strong></p>
-        <p>date here</p>
+        <p>{get_local_date(date)}</p>
         <div className="question_contents">
             <p className="question">{question.question}</p>
             <div className="choices">
@@ -94,7 +95,7 @@ const ReviewQuestion = ({anime, question, reviewstate, setreviewstate}) => {
 
         {reviewstate==="pendingstate" &&
 
-         <form onSubmit={(e)=>ReviewSubmission(e,question.id)}>
+         <form onSubmit={(e)=>pre_submit_review(e)}>
             <div className="radios">
                 <label>
                     approve
