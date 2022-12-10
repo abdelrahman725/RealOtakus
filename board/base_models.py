@@ -63,7 +63,6 @@ class Contribution(models.Model):
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="contributions")
     approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
-    
     reviewer_feedback = models.CharField(
         choices=(
             ("not clear","not clear"),

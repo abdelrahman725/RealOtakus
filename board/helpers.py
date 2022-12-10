@@ -55,7 +55,7 @@ def notify_user_of_contribution_state(contribution):
     contribution.date_reviewed = timezone.now()
 
     if contribution.reviewer == None:
-        contribution.reviewer = board.models.User.objects.get(pk=1,is_superuser=True) 
+        contribution.reviewer = board.models.User.objects.get(is_superuser=True) 
     
     if contribution.approved == True:
 

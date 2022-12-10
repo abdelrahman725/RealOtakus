@@ -1,11 +1,9 @@
-
 $base_div_backgroun_color : #262F36;
 $base_green_button_color  : #46BB5D;
 $base_approved_color: #46BB5D;
 $base_pending_color: rgb(230, 171, 63);
 $base_rejected_color: #E76450;
-
-$base-shadow :0.5px 0.5px 3px 0.1px grey;
+$base_shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
 
 body{
@@ -32,7 +30,7 @@ body{
   margin-top: 250px;
   color:white;
   border-radius: $base_border_radius;
-  box-shadow: $base-shadow;
+  box-shadow: $base_shadow;
   position: absolute;
   z-index: 2;
 }
@@ -179,7 +177,7 @@ a{
   border-collapse: collapse;
   color: white; 
   background-color: $base_div_backgroun_color;
-  box-shadow: $base-shadow ;
+  box-shadow: $base_shadow ;
 
   th{ 
      border-bottom: 6px solid #3e4d58; 
@@ -212,6 +210,9 @@ a{
   margin-top: 70px;
   margin-bottom: 70px;  
   text-align: center;
+  .leaderboard_title{
+    font-size: 22px;
+  }
 
   .leaderboard{
     width: 65%;
@@ -233,53 +234,44 @@ a{
 
   text-align: center;
   margin: 20px;
-  
-  .base_container_properties{
-    font-size: large;
-    background-color: $base_div_backgroun_color;
-    color: white;
-    border-radius: $base_border_radius;
-    box-shadow: $base-shadow;
-  }
-  
-  .profile_panel{
-    @extend .base_container_properties;
-    padding: 50px;
-    margin:  60px 20px;
-    font-size: x-large;
-    display: flex;
-    justify-content: space-around;
-    span{
-      font-size: xx-large;
-    }
-  }
 
   .flex_container{
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     flex-wrap: wrap;
-    margin-top: 30px;
+    margin-top: 60px;
 
     .progress{
-      @extend .base_container_properties;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      margin-bottom: 60px;
-    
-      div{
-        padding:40px;
-        padding-left: 50px;
-        padding-right: 50px;
-        span{
-          font-size: larger;
+      width: 100%;
+      padding: 20px;
+      margin-bottom: 100px;
+      font-size: large;
+      background-color: $base_div_backgroun_color;
+      color: white;
+      border-radius: $base_border_radius;
+      box-shadow: $base_shadow;
+      
+      .data_row{
+        display: flex;
+        justify-content: space-between;
+        
+        div{
+          padding: 30px;
+        }
+
+        div:last-child{
+          font-weight: 500;
+          transform: scale(1.2);
+          color: #249090;
         }
       }
+    
+
     }
   
     .interactions{
       td{
-        padding:  30px;
+        padding: 40px;
       }
     }
 
@@ -293,17 +285,19 @@ a{
   }
 }
 
-@media screen and(max-width: 620px){
+@media screen and(max-width: 550px){
   
-
   .leaderboard{
     font-size: 12px;
   
     td{ padding:  12px 7px; }
   
     th{ padding: 15px 7px;  font-size: x-small}
+    
+    img{
+      transform: scale(0.7);
+    }
   }
-
 }
 
 @media screen and(max-width: 900px){
@@ -402,7 +396,7 @@ a{
   background-color: white;
   border-left: solid 20px;
   border-radius: $base_border_radius;
-  box-shadow: $base-shadow ;
+  box-shadow: $base_shadow ;
   max-width: 800px;
   padding:5px 10px;
   padding-bottom: 10px;
@@ -429,6 +423,38 @@ a{
 .review_page{
   @extend .questions_container;
   
+}
+
+.each_question_for_review_container{
+  @extend .question_basic;
+  margin-bottom: 110px;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  .question_contents{
+    padding: 15px;
+    margin:10px;
+    margin-bottom: 30px;
+    border-radius: $base_border_radius;
+    background-color: whitesmoke;
+    box-shadow: $base_shadow ;
+  
+    .choices{
+      padding-left: 15px;
+      margin-top: 30px;
+      p{
+        // top, right, bottom , left
+        padding: 6px 0px 6px 12px;
+      }
+      
+      .right_answer{
+         background-color: #c7f1dc;
+         border-radius: $base_border_radius;   
+      }
+    }
+
+  }
+
   form {
 
     label{
@@ -494,122 +520,105 @@ a{
       font-weight: lighter;
       background-color: #365FAA;
     }
+  }
+
+  .submit_container{
+    height: 30px
   } 
 
 }
 
 
-.review_question{
-  @extend .question_basic;
-  margin-bottom: 110px;
-  flex-direction: column;
-  justify-content: flex-start;
-  .question_contents{
-    padding: 15px;
-    margin:10px;
-    margin-bottom: 30px;
-    border-radius: $base_border_radius;
-    background-color: whitesmoke;
-    box-shadow: $base-shadow ;
+
+.game_view_container{
+
+  .preg_game_start{
+    // to do b2a
+  }
   
-    .choices{
-      padding-left: 15px;
-      margin-top: 30px;
-      p{
-        // top, right, bottom , left
-        padding: 6px 0px 6px 12px;
+
+  .game_container{
+    @extend .centered_div;
+    width: 90%; 
+    max-width: 1000px;
+
+    .timer{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size:large;
+      
+      .icon{
+        font-size:26px;
+      }
+    }
+      
+    .question_x{
+      user-select: none;
+      .choice{
+        @extend .pointer_cursor;
+      }
+    }
+
+    .disabled_question{
+      user-select: none;
+      cursor: default;
+      opacity: 40%;
+    }
+    
+    .game_question{
+      hr{
+        background-color: $base_div_backgroun_color;
+        border-radius: $base_border_radius;
+        box-shadow: $base_shadow;
+        outline: none;
+        border: none;
+        margin: 100px 0px;
+        opacity: 80%;
+        padding: 5px;
+
+      }
+
+      .choice {
+        border-radius: $base_border_radius;
+        background-color: white;
+        margin-bottom: 15px;
+        padding:20px 15px;  
+        box-shadow: $base_shadow ;
+      }
+    
+      .selected_choice{
+        background-color: #365FAA;
+        color: white;
+      }
+    
+      .rightchoice{
+        background-color: #13cfa0;
+        color: white;
+      }
+    
+      .wrongchoice{
+        background-color: #c64e62;
+        color: white;
       }
       
-      .right_answer{
-         background-color: #c7f1dc;
-         border-radius: $base_border_radius;   
-      }
     }
 
   }
 
 }
-
-
-.start_game{
-  margin-top: 40px;
-
-  p{
-    margin-top: 60px;
-  }
-}
-
-.game_container{
-  @extend .centered_div;
-  width: 90%; 
-  max-width: 1000px;
-
-   .timer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size:large;
-    
-    .icon{
-      font-size:26px;
-    }
-   }
-     
-  .question_x{
-    user-select: none;
-    .choice{
-      @extend .pointer_cursor;
-    }
-  }
-
-  .disabled_question{
-    user-select: none;
-    cursor: default;
-    opacity: 40%;
-  }
-  
-  .game_question{
-    hr{
-      background-color: $base_div_backgroun_color;
-      border-radius: $base_border_radius;
-      box-shadow: $base-shadow;
-      outline: none;
-      border: none;
-      margin: 100px 0px;
-      opacity: 80%;
-      padding: 5px;
-
-    }
-
-    .choice {
-      border-radius: $base_border_radius;
-      background-color: white;
-      margin-bottom: 15px;
-      padding:20px 15px;  
-      box-shadow: $base-shadow ;
-    }
-  
-    .selected_choice{
-      background-color: #365FAA;
-      color: white;
-    }
-  
-    .rightchoice{
-      background-color: #13cfa0;
-      color: white;
-    }
-  
-    .wrongchoice{
-      background-color: #c64e62;
-      color: white;
-    }
-    
-  }
-
-}
-
 
 .contribution{
+
+  margin-bottom: 60px;
+  
+  .guidlines_link{
+    margin-left: 5px;
+    color: #0e4b9b;
+    &:hover{
+      text-decoration: underline;
+    }
+  }
   
   .contribution_form{  
     
@@ -629,23 +638,7 @@ a{
       outline: #2684FF solid 2.1px;
       border-color: white;
     }
-
-    .checkbox:checked{
-      outline: none;
-    }
-
-    .checkbox_container{
-      margin-top: 10px;
-      margin-bottom: 25px;
-      .guidlines_link{
-        color: #0e4b9b;
-      }
-      &:hover{
-        text-decoration: underline;
-      }
-    }
-
-
+ 
     .submit_container{
       height: 60px;
     }
@@ -675,7 +668,7 @@ a{
     padding:0px 10px;
     padding-top: 10px;
     padding-bottom: 25px;
-    box-shadow: $base-shadow ;
+    box-shadow: $base_shadow ;
     position: relative;
     
     &:hover{
@@ -693,11 +686,13 @@ a{
 }
 
 .about{
-  padding: 20px;
+  padding: 10px 30px 10px 30px;
   text-align: left;
   font-size: larger;
+  line-height: 32px;
+
   div{
-    margin-bottom: 70px;
+    margin-bottom: 60px;
   }
 
   .icon{
@@ -722,6 +717,7 @@ a{
     }
 
   }
+
 }
 
 footer{
@@ -732,9 +728,4 @@ footer{
   color: white;
   margin-top: auto;
   width: 100%;
-}
-
-
-.testy{
-  display: flex;
 }

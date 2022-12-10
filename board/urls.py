@@ -7,7 +7,7 @@ from board.views import *
 
 
 urlpatterns = [
-
+# main paths
     path('',react_app),
     path('register/',user_register, name="register_url"),
     path('login/',user_login, name="login_url"),
@@ -26,7 +26,7 @@ urlpatterns = [
     path('gethomedata',get_home_data),
     path('getgameanimes',get_game_animes),
     path('getgame/<int:game_anime>',get_game),
-    path('getprofile',get_user_profile),
+    path('getprofile',get_user_interactions),
     path('get_review_contribution',get_or_review_contribution),
     path('get_make_contribution',get_or_make_contribution),
     path('interaction/<int:question_id>',record_question_encounter),

@@ -8,39 +8,78 @@ const About = () => {
     <div className="centered_div about">
       <div>
         <h2>About</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras auctor eros fermentum faucibus iaculis. Cras eget dui id turpis tincidunt auctor. Aliquam erat volutpat. In non erat elit. Praesent vulputate est et rhoncus lobortis. Morbi mollis ante ut felis convallis consectetur. Integer ornare sapien magna, non maximus nisi imperdiet non. Donec tincidunt iaculis lectus eu hendrerit. Proin vel posuere lectus. Nulla ac nisi pretium, volutpat elit a, facilisis nibh</p>
+        <p>
+          Real Otaku is a platform for anime enthusiasts and fans founded in 2022 by <strong>my name</strong>,
+          it's about contributing anime questions and participate in games
+          where you answer questions contributed by others,
+          one can also be a reviewr of the incoming contributions
+          if he/she is eligible.
+        </p>
       </div>
-      
-      <div id="section">
-        <h2>Contribution Guidelines</h2>
-        <p>Integer fringilla augue congue accumsan accumsan. Aliquam in vulputate ligula. Vestibulum rutrum dui ac egestas accumsan. Nunc sed lorem vel purus vulputate lobortis in ut nisi. Praesent eget maximus ligula, nec sodales turpis. Nullam sed neque interdum, condimentum mi in, hendrerit urna. Vestibulum vitae turpis dolor. In risus mi, fringilla vitae eros sit amet, finibus scelerisque odio. Donec sed semper enim, nec vehicula purus.</p>
-      
-        <h3>what to do</h3>
-        <p>to do ...</p>
-      
-        <h3>what not to do</h3>
-        <p>to do ...</p>
-      </div>
-      
+
       <div>
-        <h2>Support</h2>
+        <h2>Contribution Guidelines</h2>
+        <p>
+          As we always prefer quality questions over quantity
+          we have some rules and constraints when it comes to questions shown in tests,
+          always keep in mind that the goal of questions is not
+          to test whether the person has watched the entire anime
+          or if he remembers everything happend but to test whether the person
+          truly understood the events, the characters, their developemnt throughout the anime, their personalities and goals,
+          the plot twists ..etc. <br /> 
+          A question like <strong> Do you think character X would kill character Y if he has the chance ? </strong>
+          
+          is a really good example as it requires the person to have a good understanding of character X.<br /><br />
+          so in order to make sure that your contributed question
+          gets approved make sure to follow the following rules :
+        </p>
+
+        <ul>
+          <li>avoid trivia/too easy questions.</li>
+          <li>your question should not be solely depend on memorizing things like (dates, characters names, places).</li>
+          <li>try to avoid questions based on your personal opinion or theory. </li>
+          <li>make sure to make 4 distinguishable choices.</li >
+          <li>the 3 wrong choices must not have any common pattern,
+            in other words, the right choice shouldn't be too obvious at first glance,
+            so the question experience is more interesting/challenging.
+          </li>
+        </ul>
+
+        <h3>Trivia/bad questions &#128577;</h3>
+        <ul>
+          <li>(Attack on Titans) What was the name of Eren's mother ?</li>
+          <li>(Dragon Ball) What species of fighters does Goku belong to ?</li>
+        </ul>
+
+        <h3>Good questions &#128512;</h3>
+        <ul>
+          <li>(One Piece) Why most people don't know about wano ?</li>
+          <li>(Attack on Titans) In season 4, During detention of zeke yeager by Levi, why did Levi specifically choose a place like the forest ?</li>
+        </ul>
+
+      </div>
+
+      <div>
+        <h2>Buy us a cup of Coffee </h2>
         <a href="https://www.buymeacoffee.com">
-          <FaDonate className="icon"/> 
+          <FaDonate className="icon" />
         </a>
       </div>
 
       <div>
         <h2>Stay in touch</h2>
+
         <div className="community_links">
 
           <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank">
-            <BsGithub className="icon" /> <span>Github</span> 
+            <BsGithub className="icon" /> <span>Github</span>
           </a>
 
           <a href="https://twitter.com" target="_blank">
-            <SlSocialTwitter className ="icon"/> <span>Twitter</span> 
+            <SlSocialTwitter className="icon" /> <span>Twitter</span>
           </a>
         </div>
+
       </div>
     </div>
   )

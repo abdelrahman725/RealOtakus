@@ -28,14 +28,18 @@ const Game = ({
     
     const answers = {}   
     let score = 0
-    
+
     game_results.right_answers.map((question)=>((
       answers[question.id] = question.right_answer,
       question.right_answer === useranswers[question.id]  && ( score+=1 )
       
     )))
 
-    //set_user_data(prev => ({...prev, points : prev.points + score }))   
+    set_user_data(prev => ({
+      ...prev, 
+      points : prev.points + score,
+      tests_completed : prev.tests_completed+1 ,
+    }))   
     setgame_score(score)
     setquizresults(answers)
   }

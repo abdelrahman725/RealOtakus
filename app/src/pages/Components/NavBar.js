@@ -6,7 +6,6 @@ import { MdDarkMode } from 'react-icons/md'
 import { HiOutlineSun } from 'react-icons/hi'
 
 import { Link } from 'react-router-dom'
-import { domain } from './AsyncRequest'
 
 const NavBar = ({
   user,
@@ -39,10 +38,7 @@ const NavBar = ({
         <div className="right">
           <div>
             <Link to="profile">
-              <div className="icon">
-                <BsPersonFill className="nav_icon"/> 
-                <span className="username">{user.username}</span>
-              </div>
+              <BsPersonFill className="nav_icon"/> 
             </Link>
           </div>
 
@@ -63,7 +59,6 @@ const NavBar = ({
           </div>
 
           <div>
-            {/* <MdLogout className="nav_icon" onClick={() => window.location.href = `http://${domain}/logout`} /> */}
             <MdLogout className="nav_icon" onClick={() => window.location.href = `/logout`} />
           </div>
 

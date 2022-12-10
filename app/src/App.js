@@ -132,7 +132,7 @@ function App(){
             
             { user_data && user_data.is_reviewer && <Route path="/review" element={<QuestionsForReview />}/>}
             
-            <Route path="/profile" element={<UserProfile username={ user_data && user_data.username} is_reviewer={ user_data && user_data.is_reviewer} />}/>
+            <Route path="/profile" element={<UserProfile user_data={user_data} />}/>
             
             <Route path="/notifications" element={
               <Notifications all_notifications={notifications}
@@ -144,7 +144,7 @@ function App(){
 
         </div>
         
-        {/* <Footer/> */}
+        <Footer/>
       
       </div>
     </GlobalStates.Provider>

@@ -47,10 +47,11 @@ const UserContributions = () => {
 return (
     
     <div className="questions_container">
+      <h2>{n_contributions} Total contributions</h2>
       {n_contributions > 0 &&
       <div>
         <div className="contributions_summary">
-         
+        
           <div className="contribution_state">
             <div className="circle approved"></div> {n_approved_contributions} approved
           </div>
@@ -63,8 +64,8 @@ return (
           <div className="contribution_state">
             <div className="circle rejected"></div>  {n_rejected_contributions} rejected
           </div>
-          
         </div>
+
         {Object.keys(contributions).map((anime,index) => (
           <div className="user_anime_contributions" key={index}>
             <p className="anime">{anime} &nbsp;<strong>{contributions[anime].length}</strong></p>

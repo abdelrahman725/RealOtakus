@@ -16,7 +16,7 @@ from board.models import *
 from board.serializers import *
 from board.constants import *
 
-# to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed
+# user the following to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed
 # for q in connection.queries : print(f"\n\n { q } \n\n")
 
 # status.HTTP_429_TOO_MANY_REQUESTS
@@ -32,8 +32,8 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
-    return User.objects.get(username="pablo")
     return request.user
+    return User.objects.get(username="user")
 
 
 def get_or_query_anime(anime: int):
@@ -59,7 +59,7 @@ def react_app(request):
     return render(request, "board/home.html")
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
@@ -73,17 +73,20 @@ def get_home_data(request):
             status=status.HTTP_201_CREATED
         )
 
-    basic_user_data = SimpleUserDataSerializer(
+    user_data = UserDataSerializer(
         User.objects.values(
             "id",
             "username",
             "points",
             "level",
+            "tests_started",
+            "tests_completed",
+            "level",
             "country",
         ).get(id=user.id)
     ).data
 
-    basic_user_data["is_reviewer"] = user.animes_to_review.exists()
+    user_data["is_reviewer"] = user.animes_to_review.exists()
 
     serialized_notifications = NotificationsSerializer(
         user.getnotifications.all(),
@@ -95,16 +98,17 @@ def get_home_data(request):
     # leaderboard users sorted by their scores in non-increasing order where their score is > avg_score and !=0
     avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
     
+    print(avg_score)
     if not avg_score : avg_score = 0
     
     top_competitors = User.objects.annotate(
         n_contributions=Count("contributions",filter=(Q(contributions__approved=True)))
-    ).filter(points__gt=avg_score).order_by("-points")
+    ).filter(points__gte=avg_score).order_by("-points")
 
     LeaderBorad = LeaderBoradSerializer(top_competitors, many=True)
 
     return Response({
-        "user_data": basic_user_data,
+        "user_data": user_data,
         "notifications": serialized_notifications.data,
         "animes": all_animes.data,
         "leaderboard": LeaderBorad.data
@@ -113,7 +117,7 @@ def get_home_data(request):
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def get_game_animes(request):
     user = get_current_user(request)
@@ -139,14 +143,13 @@ def get_game_animes(request):
         ),
         many=True
     )
-    # sleep(1)
 
     return Response({
         "animes": game_animes.data
     })
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
     current_user = get_current_user(request)
@@ -170,8 +173,7 @@ def get_game(request, game_anime):
         ),
         active=True
     ).exclude(
-        pk__in=current_user.questions_interacted_with.values_list(
-            'question__pk', flat=True)
+        pk__in=current_user.questions_interacted_with.values_list('question__pk', flat=True)
     )[:QUESTIONSCOUNT]
 
     if questions.count() != QUESTIONSCOUNT:
@@ -231,7 +233,7 @@ def record_question_encounter(request, question_id):
     )
 
 
-#@login_required
+@login_required
 @api_view(["POST"])
 def submit_game(request):
     user = get_current_user(request)
@@ -277,7 +279,7 @@ def submit_game(request):
    
     user.save()
 
-    # delete current user related game questions from memory :
+# delete current user related game questions from memory
     del game_interactions[user.id]
     del game_questions[user.id]
 
@@ -291,7 +293,7 @@ def submit_game(request):
 
 
 
-#@login_required
+@login_required
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
@@ -313,7 +315,6 @@ def get_or_make_contribution(request):
     is_anime_reviewr = anime in user.animes_to_review.all()
 
     try:
-        sleep(1)
         new_question = Question.objects.create(
             anime=anime,
             active=is_anime_reviewr,
@@ -348,7 +349,7 @@ def get_or_make_contribution(request):
         return JsonResponse({"info": e.args})
 
 
-#@login_required
+@login_required
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
     user = get_current_user(request)
@@ -364,12 +365,14 @@ def get_or_review_contribution(request):
             ).select_related("question").select_related("question__anime").order_by("id"),
             many=True
         )
-      
+
+        n_reviewed_contributions = user.contributions_reviewed.count()
+
         return Response({
             "questions": contributed_questions.data,
+            "n_reviewed_contributions" : n_reviewed_contributions
         })
 
-    review_state = request.data["state"]
  
     try:
         contribution = Contribution.objects.get(pk=int(request.data["contribution"]))
@@ -380,8 +383,11 @@ def get_or_review_contribution(request):
                 status=status.HTTP_409_CONFLICT
             )
 
+        review_state = request.data["state"]
         contribution.reviewer = user
         contribution.reviewer_feedback = request.data["feedback"]
+        
+        sleep(1)
 
         if review_state == 1:
             contribution.approved = True
@@ -406,32 +412,22 @@ def get_or_review_contribution(request):
         )
 
 
-#@login_required
+@login_required
 @api_view(["GET"])
-def get_user_profile(request):
+def get_user_interactions(request):
     user = get_current_user(request)
-
-    profile_data = ProfileDataSerializer(
-        User.objects.values("points", "level", "tests_completed").annotate(
-            n_questions_reviewed=Count("contributions_reviewed", distinct=True)
-        ).annotate(
-            n_approved_contributions=Count("contributions", filter=(
-                Q(contributions__approved=True)), distinct=True)
-        ).get(id=user.id)
-    )
-
+  
     user_interactions = InteractionsSerializer(
         user.questions_interacted_with.select_related("anime"),
         many=True
     )
 
     return Response({
-        "user_data": profile_data.data,
         "interactions": user_interactions.data,
     })
 
 
-#@login_required
+@login_required
 @api_view(["PUT"])
 def update_notifications(request):
     user = get_current_user(request)

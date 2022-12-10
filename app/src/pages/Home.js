@@ -1,11 +1,8 @@
-
 import TheDashBoard from "./Components/TheDashBoard"
 import { Link } from 'react-router-dom'
 
-import { FcIdea } from 'react-icons/fc'
-import { FcDatabase } from 'react-icons/fc'
-import { MdQuiz } from 'react-icons/md'
-import { FaEye } from 'react-icons/fa'
+import { FcIdea, FcDatabase } from 'react-icons/fc'
+import { MdQuiz, MdOutlineRateReview } from 'react-icons/md'
 
 const Home = ({ user_data, dashboard_users }) => {
 
@@ -35,7 +32,7 @@ return (
         {user_data && user_data.is_reviewer &&  
         <Link to="review">
           <button>
-            <FaEye className="icon"/> Review Contributions
+            <MdOutlineRateReview className="icon"/> Review Contributions
           </button>
         </Link>} 
     </div>

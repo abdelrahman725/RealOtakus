@@ -2,7 +2,7 @@ from rest_framework import serializers
 from board.models import *
 
 
-class SimpleUserDataSerializer(serializers.ModelSerializer):
+class UserDataSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = (
@@ -10,23 +10,9 @@ class SimpleUserDataSerializer(serializers.ModelSerializer):
       'username',
       'points',
       'level',
-      'country'
-    )
-
-
-class ProfileDataSerializer(serializers.ModelSerializer):
-  
-  n_questions_reviewed = serializers.IntegerField()
-  n_approved_contributions = serializers.IntegerField()
-
-  class Meta:
-    model = User
-    fields = (
-      'points',
-      'level',
+      'tests_started',
       'tests_completed',
-      'n_questions_reviewed',
-      'n_approved_contributions'
+      'country'
     )
 
 

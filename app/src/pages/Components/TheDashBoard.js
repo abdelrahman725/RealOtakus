@@ -5,7 +5,7 @@ const TheDashBoard = ({ dashboard_users, current_user }) => {
 return (
   <div className="dashboard_container">
   
-    <h1 style={{textAlign:"center"}}>Top Otakus</h1>
+    <h1 className="leaderboard_title"> Leaderboard</h1>
   
     <table className="dashboard leaderboard">
     

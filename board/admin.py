@@ -1,7 +1,6 @@
-from time import sleep
 import math
 import pytz
-from datetime import  timedelta
+from datetime import timedelta
 
 from django.contrib.sessions.models import Session
 from django.utils import timezone
@@ -594,7 +593,7 @@ class UserAdmin(admin.ModelAdmin):
   
   def get_queryset(self, request):    
     query = super(UserAdmin, self).get_queryset(request)
-    return query.exclude(is_superuser=True,pk=1)
+    return query.exclude(is_superuser=True)
   
   def quizes_score(self,obj):
     if obj.tests_completed > 0:
