@@ -1,4 +1,4 @@
-.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container .game_container, .notifications {
+.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container, .notifications {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
@@ -522,6 +522,11 @@ a {
   height: 30px;
 }
 
+.game_view_container .exit_msg {
+  color: #dc334f;
+  padding: 20px;
+}
+
 .game_view_container .game_container {
   width: 90%;
   max-width: 1000px;
@@ -666,9 +671,8 @@ a {
 }
 
 .about {
-  padding: 10px 30px 10px 30px;
+  padding: 10px 25px 10px 25px;
   text-align: left;
-  font-size: larger;
   line-height: 32px;
 }
 
@@ -706,13 +710,21 @@ footer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: 10px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  background-color: #262F36;
+  padding: 20px;
   color: white;
   margin-top: auto;
   width: 100%;
+  font-size: smaller;
+}
+
+footer a {
+  padding: 10px;
+  margin-left: 25px;
+  margin-right: 25px;
 }
 /*# sourceMappingURL=App.css.map */

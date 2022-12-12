@@ -1,5 +1,5 @@
 import { GlobalStates } from "../../App"
-import { useContext, } from "react"
+import { useContext } from "react"
 
 const Result = ({ results, useranswers, questions, score }) => {
 
@@ -28,7 +28,7 @@ const Result = ({ results, useranswers, questions, score }) => {
           {questions.map((q, index) => (
             <div className="game_question" key={index}>
 
-              <p>  <strong>{q.question}? </strong>  </p>
+              <p> <strong>{q.question}? </strong> </p>
 
               <div className={get_choice_class(results[q.id], useranswers[q.id], q.choice1)}>
                 {q.choice1}
@@ -54,7 +54,7 @@ const Result = ({ results, useranswers, questions, score }) => {
         </div>
         :
         <div className="loading">
-           fetching results...
+          fetching results...
         </div>
       }
     </div>

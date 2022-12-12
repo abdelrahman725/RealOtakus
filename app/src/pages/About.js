@@ -26,11 +26,12 @@ const About = () => {
           to test whether the person has watched the entire anime
           or if he remembers everything happend but to test whether the person
           truly understood the events, the characters, their developemnt throughout the anime, their personalities and goals,
-          the plot twists ..etc. <br /> 
-          A question like <strong> Do you think character X would kill character Y if he has the chance ? </strong>
+          the plot twists ..etc. <br />
           
+          A question like <strong> Do you think character X would kill character Y if he has the chance ? </strong>
           is a really good example as it requires the person to have a good understanding of character X.<br /><br />
-          so in order to make sure that your contributed question
+          
+          So in order to make sure that your contributed question
           gets approved make sure to follow the following rules :
         </p>
 
@@ -61,7 +62,7 @@ const About = () => {
 
       <div>
         <h2>Buy us a cup of Coffee </h2>
-        <a href="https://www.buymeacoffee.com">
+        <a href="https://www.buymeacoffee.com" target="_blank" rel="noreferrer">
           <FaDonate className="icon" />
         </a>
       </div>
@@ -71,11 +72,11 @@ const About = () => {
 
         <div className="community_links">
 
-          <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank">
+          <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank" rel="noreferrer">
             <BsGithub className="icon" /> <span>Github</span>
           </a>
 
-          <a href="https://twitter.com" target="_blank">
+          <a href="https://twitter.com" target="_blank" rel="noreferrer">
             <SlSocialTwitter className="icon" /> <span>Twitter</span>
           </a>
         </div>

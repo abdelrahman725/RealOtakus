@@ -47,22 +47,21 @@ const UserContributions = () => {
 return (
     
     <div className="questions_container">
-      <h2>{n_contributions} Total contributions</h2>
       {n_contributions > 0 &&
       <div>
+        <h2>Total of {n_contributions} Contributions</h2>
         <div className="contributions_summary">
         
           <div className="contribution_state">
-            <div className="circle approved"></div> {n_approved_contributions} approved
+            <div className="circle approved"></div>{n_approved_contributions} approved
           </div>
 
           <div className="contribution_state">
-            <div className="circle pending"></div>
-            {n_pending_contributions} pending
+            <div className="circle pending"></div>{n_pending_contributions} pending
           </div>          
 
           <div className="contribution_state">
-            <div className="circle rejected"></div>  {n_rejected_contributions} rejected
+            <div className="circle rejected"></div>{n_rejected_contributions} rejected
           </div>
         </div>
 

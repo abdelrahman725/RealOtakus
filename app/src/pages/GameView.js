@@ -15,6 +15,7 @@ const GameView = () => {
   const [quizresults, setquizresults] = useState({})
   const [useranswers, setuseranswers] = useState({})
   const [game_score, setgame_score] = useState()
+  const [exit_game, set_exit_game] = useState(false)
 
   const anime_select = useRef(null)
 
@@ -54,6 +55,7 @@ const GameView = () => {
 
   useEffect(() => {
 
+
     async function get_available_animes_for_tests() {
 
       setanimesoptions()
@@ -77,7 +79,6 @@ const GameView = () => {
       )
 
       setanimesoptions(animes_array)
-
     }
 
     get_available_animes_for_tests()
@@ -92,7 +93,14 @@ const GameView = () => {
   return (
     <div className="game_view_container">
       {game_started === undefined &&
-        <div className="centered_div">
+        <div>
+          <br />
+          {exit_game &&
+            <div className="exit_msg">
+              Sorry your quiz is canceled because you left the page, you shouldn't do so
+            </div>
+          }
+          <br />
           <Select
             styles={SelectStyles}
             className="select_animes"
@@ -108,12 +116,11 @@ const GameView = () => {
           <button className="submit_btn" onClick={() => selected_anime ? GetGame() : anime_select.current.focus()} >
             Start
           </button>
-          <p> <strong>Note</strong>  :  after start do not leave quiz view (e.g. switch tabs)</p>
         </div>
       }
 
       {game_started === true &&
-        <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} />
+        <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} set_exit_game={set_exit_game} />
       }
 
       {game_started === false &&

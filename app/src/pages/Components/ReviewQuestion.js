@@ -137,7 +137,6 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
                             value={feedback}
                             onChange={on_feedback_selection}
                             ref={feedback_select}
-                            isMulti={false}
                         />
                     }
                     <div className="submit_container">

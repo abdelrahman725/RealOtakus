@@ -8,7 +8,8 @@ const Game = ({
   useranswers,
   setuseranswers,
   setquizresults,
-  setgame_score
+  setgame_score,
+  set_exit_game
 }) => {
 
   const { N_Game_Questions, setgame_started, set_user_data } = useContext(GlobalStates)
@@ -44,7 +45,7 @@ const Game = ({
     setquizresults(answers)
   }
   
-  const onAnswer = (id, each_new_answer)=> {
+  const onChoiceSelect = (id, each_new_answer)=> {
     const new_answers = useranswers
     new_answers[id] = each_new_answer
     setuseranswers(new_answers)
@@ -54,19 +55,20 @@ const Game = ({
 
   useEffect(() =>{
     
-    // window.onbeforeunload = ()=>{
-    //   return true
-    // }
+    window.onbeforeunload = ()=>{
+      return true
+    }
     
     document.onvisibilitychange =()=>{
       if (document.visibilityState === "hidden"){
+        set_exit_game(true)
         setgame_started()
       }
     }
         
     return () => {
       document.onvisibilitychange = null
-      //window.onbeforeunload = null
+      window.onbeforeunload = null
     }
       
   }, [])
@@ -77,7 +79,7 @@ const Game = ({
       <Question
       question={questions[index]}
       question_index={index}
-      onselect={onAnswer}
+      onselect={onChoiceSelect}
       questions_length={N_Game_Questions}
       timeout={timeout}
       settimout={settimout}
@@ -90,6 +92,7 @@ const Game = ({
           <button onClick={nextquestion} style={{backgroundColor: "#365FAA"}}> next </button>            
         }
       </div>
+      <p> Do not leave current page (e.g. switch tabs), your progress will be lost</p>
       <br />
     </div>
   )

@@ -529,8 +529,14 @@ a{
 }
 
 
-
 .game_view_container{
+
+  @extend .centered_div;
+
+  .exit_msg{
+    color: #dc334f;
+    padding: 20px
+  }
 
   .preg_game_start{
     // to do b2a
@@ -685,10 +691,10 @@ a{
   }
 }
 
+
 .about{
-  padding: 10px 30px 10px 30px;
+  padding: 10px 25px 10px 25px;
   text-align: left;
-  font-size: larger;
   line-height: 32px;
 
   div{
@@ -720,12 +726,20 @@ a{
 
 }
 
+
 footer{
   display: flex;
-  padding: 10px;
+  flex-wrap: wrap;
   justify-content: center;
-  background-color: $base_div_backgroun_color;
+  padding: 20px;
   color: white;
   margin-top: auto;
   width: 100%;
+  font-size: smaller;
+
+  a{
+    padding: 10px;
+    margin-left: 25px;
+    margin-right: 25px;
+  }
 }

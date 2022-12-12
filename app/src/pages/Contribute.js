@@ -142,7 +142,7 @@ const Contribute = ({ all_animes_options }) => {
   useEffect(() => {
 
     if (Question.question) {
-      window.onbeforeunload = (e) => {
+      window.onbeforeunload = () => {
         return true
       }
     }
@@ -250,7 +250,7 @@ const Contribute = ({ all_animes_options }) => {
           </textarea><br />
 
           <div className="submit_container">
-            {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn} >submit question</button> : "loading..."}
+            {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn}> submit question</button> : "loading..."}
           </div>
 
         </div>

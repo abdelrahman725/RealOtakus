@@ -570,7 +570,7 @@ class UserAdmin(admin.ModelAdmin):
     "tests_completed",
     #"level",
     "quizes_score",
-    "quiz_seriousness",
+    "quiz_completion",
     #"password",
     "contributions",
     "questions_reviewed",
@@ -602,7 +602,7 @@ class UserAdmin(admin.ModelAdmin):
       return f"{round(right_answers / all_answers * 100) } %"
     return "N/A"
 
-  def quiz_seriousness(self,obj):
+  def quiz_completion(self,obj):
     if obj.tests_started > 0:
       return f"{ round(obj.tests_completed / obj.tests_started * 100)} %"
     return "N/A"

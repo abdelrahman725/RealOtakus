@@ -15,8 +15,11 @@
 </head>
 
 <body>
-  <h1 class="title_color">Real Otakus</h1>
-
+  
+  <h1 class="title_color">
+    Real Otakus
+  </h1>
+  
   <div class="header_container">
     <h2 class="title_color">so you are a real Otaku ?</h2>
     <p>
@@ -44,11 +47,11 @@
       <p class="messages">
         {% if messages %}
         {% for msg in messages %}
-        <span id="info_message">{{msg}}</span>
+          <span id="info_message">{{msg}}</span>
         {% endfor %}
         {% endif %}
-
       </p>
+
       <!-- Login Form -->
       <div id="login_form">
         <form action="{%url 'login_url' %}" method="post">
@@ -86,6 +89,25 @@
     </div>
 
   </div>
+      
+  <footer>
+    <a href="" target="_blank" rel="noreferrer">
+      Github
+    </a>
+    
+    <a href="" target="_blank" rel="noreferrer">
+      Contact us
+    </a>
+
+    <a href="" target="_blank" rel="noreferrer">
+      Support
+    </a>
+    
+    <a href="" target="_blank" rel="noreferrer">
+      Privacy policy
+    </a>
+   
+  </footer>
 
 </body>
 

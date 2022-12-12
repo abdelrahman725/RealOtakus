@@ -33,7 +33,7 @@ for anime in Anime.objects.all():
 
 def get_current_user(request):
     return request.user
-    return User.objects.get(username="user")
+    return User.objects.get(username="jilan")
 
 
 def get_or_query_anime(anime: int):
@@ -98,7 +98,6 @@ def get_home_data(request):
     # leaderboard users sorted by their scores in non-increasing order where their score is > avg_score and !=0
     avg_score = User.objects.exclude(points=0).aggregate(Avg('points'))['points__avg']
     
-    print(avg_score)
     if not avg_score : avg_score = 0
     
     top_competitors = User.objects.annotate(

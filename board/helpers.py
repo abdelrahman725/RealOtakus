@@ -92,38 +92,6 @@ def get_user_new_level(user):
     return None
 
 
-def check_empty_string(value):
-    if re.search(r'^\s+$',value):        
-        raise ValidationError(
-            _('no empty strings allowed')
-        )
-
-
-def question_validator(value):
-    
-    check_empty_string(value)
-
-    if len(value) < 8:
-        raise ValidationError(
-            _('question must be at leat 8 characters length'),
-            code="invalid question length"
-        )
-
-
-def choices_integirty(choices):
-
-    unique_choices = set()
-
-    for choice in choices:
-        check_empty_string(choice)
-        unique_choices.add(choice)
-
-    if len(unique_choices) < len(choices):
-         raise ValidationError(
-            _('question choices must be unique'),code="choices_integrity_error"
-        )
-
-
 
 def login_required(f):
     def wraper(request, *args, **kwargs):
@@ -133,3 +101,34 @@ def login_required(f):
             requested_endpoint = f(request, *args, **kwargs)
             return requested_endpoint
     return wraper
+
+# def check_empty_string(value):
+#     if re.search(r'^\s+$',value):        
+#         raise ValidationError(
+#             _('no empty strings allowed')
+#         )
+
+
+# def question_validator(value):
+    
+#     check_empty_string(value)
+
+#     if len(value) < 8:
+#         raise ValidationError(
+#             _('question must be at leat 8 characters length'),
+#             code="invalid question length"
+#         )
+
+
+# def choices_integirty(choices):
+
+#     unique_choices = set()
+
+#     for choice in choices:
+#         check_empty_string(choice)
+#         unique_choices.add(choice)
+
+#     if len(unique_choices) < len(choices):
+#          raise ValidationError(
+#             _('question choices must be unique'),code="choices_integrity_error"
+#         )
