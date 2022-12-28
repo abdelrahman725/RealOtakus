@@ -84,7 +84,8 @@ class Contribution(base_models.Contribution):
     def __str__(self) -> str:
         return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime if self.question else 'an anime'}"
 
-   
+
+
 @receiver(pre_save, sender=Contribution)
 def contribution_reviewed(sender, instance, **kwargs):
     if instance.pk != None and instance.approved != None and instance.date_reviewed == None:   
@@ -107,8 +108,7 @@ def post_contribution_creation(sender, instance, created, **kwargs):
   
 
 class QuestionInteraction(base_models.QuestionInteraction):
-    def __str__(self) -> str:
-        return f" {self.user} interacted with a question on {self.question.anime.anime_name}"
+    pass
 
 
 class Notification(base_models.Notification):

@@ -72,7 +72,10 @@ a {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  margin: 0px 10px;
+}
+
+.navbar .right div {
+  margin: 0px 20px;
 }
 
 .navbar .n_notifications {
@@ -277,59 +280,6 @@ a {
 
 .account_container .flex_container .interactions td {
   padding: 40px;
-}
-
-@media screen and (max-width: 372px) {
-  textarea {
-    width: 90%;
-  }
-}
-
-@media screen and (max-width: 550px) {
-  .leaderboard {
-    font-size: 12px;
-  }
-  .leaderboard td {
-    padding: 12px 7px;
-  }
-  .leaderboard th {
-    padding: 15px 7px;
-    font-size: x-small;
-  }
-  .leaderboard img {
-    -webkit-transform: scale(0.7);
-            transform: scale(0.7);
-  }
-}
-
-@media screen and (max-width: 900px) {
-  .navbar {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
-  .navbar .left {
-    margin-bottom: 20px;
-  }
-  .spaced_div {
-    margin-top: 155px;
-  }
-  .navigation_buttons {
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
-  .navigation_buttons button {
-    width: 240px;
-  }
-  .account .interactions {
-    width: 100%;
-  }
 }
 
 .questions_container, .review_page {
@@ -565,16 +515,8 @@ a {
   opacity: 40%;
 }
 
-.game_view_container .game_container .game_question hr {
-  background-color: #262F36;
-  border-radius: 7px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  outline: none;
-  border: none;
-  margin: 100px 0px;
-  opacity: 80%;
-  padding: 5px;
+.game_view_container .game_container .game_question {
+  line-height: 1.6;
 }
 
 .game_view_container .game_container .game_question .choice {
@@ -599,6 +541,10 @@ a {
 .game_view_container .game_container .game_question .wrongchoice {
   background-color: #c64e62;
   color: white;
+}
+
+.game_view_container .game_container .result_question {
+  margin-bottom: 150px;
 }
 
 .contribution {
@@ -633,7 +579,13 @@ a {
 }
 
 .contribution .contribution_form .submit_container {
-  height: 60px;
+  margin-top: 10px;
+  height: 50px;
+}
+
+.contribution .contribution_form .invalid_input {
+  color: crimson;
+  margin-bottom: 6px;
 }
 
 .select_animes {
@@ -673,7 +625,7 @@ a {
 .about {
   padding: 10px 25px 10px 25px;
   text-align: left;
-  line-height: 32px;
+  line-height: 1.8;
 }
 
 .about div {
@@ -726,5 +678,58 @@ footer a {
   padding: 10px;
   margin-left: 25px;
   margin-right: 25px;
+}
+
+@media screen and (max-width: 500px) {
+  .contribution textarea {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .leaderboard {
+    font-size: 12px;
+  }
+  .leaderboard td {
+    padding: 12px 7px;
+  }
+  .leaderboard th {
+    padding: 15px 7px;
+    font-size: x-small;
+  }
+  .leaderboard img {
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .navbar {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .navbar .left {
+    margin-bottom: 20px;
+  }
+  .spaced_div {
+    margin-top: 155px;
+  }
+  .navigation_buttons {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .navigation_buttons button {
+    width: 240px;
+  }
+  .account .interactions {
+    width: 100%;
+  }
 }
 /*# sourceMappingURL=App.css.map */

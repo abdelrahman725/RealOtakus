@@ -60,7 +60,7 @@ def notify_user_of_contribution_state(contribution):
     if contribution.approved == True:
 
         if contribution.contributor: 
-            contribution.contributor.points+=10
+            contribution.contributor.points += 10
             contribution.contributor.save()
 
         contribution.question.active = True

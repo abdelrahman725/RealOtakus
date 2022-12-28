@@ -31,7 +31,7 @@ return (
             level={competitor.level}
             contributions={competitor.n_contributions}
             country = {competitor.country}/>
-            ))
+          ))
         }
 
       </tbody>

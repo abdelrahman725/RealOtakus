@@ -22,6 +22,7 @@ const GameView = () => {
   // get selected anime questions
   const GetGame = async () => {
 
+    setgame_started(true)
     setquizresults({})
     setuseranswers({})
 
@@ -34,7 +35,7 @@ const GameView = () => {
 
     setselected_anime()
     setgamequestions(game.game_questions)
-    setgame_started(true)
+
     set_user_data(prev => ({
       ...prev,
       tests_started: prev.tests_started + 1,
@@ -54,7 +55,6 @@ const GameView = () => {
   }
 
   useEffect(() => {
-
 
     async function get_available_animes_for_tests() {
 

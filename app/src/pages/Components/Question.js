@@ -3,8 +3,8 @@ import { useTimer } from "react-use-precision-timer"
 import { MdTimer } from "react-icons/md"
 import { useEffect, useState } from "react"
 
-const Question = ({ question, onselect, question_index, questions_length, timeout ,settimout, nextquestion }) => {
-  
+const Question = ({ question, onselect, question_index, questions_length, timeout, settimout, nextquestion }) => {
+
   const [selected, setselected] = useState()
   const [minutes, setminutes] = useState(1)
   const [seconds, setseconds] = useState(40)
@@ -21,7 +21,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
         if (question_index === questions_length - 1) {
           settimout(true)
         }
-        
+
         nextquestion()
       }
 
@@ -37,16 +37,16 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     setseconds(40)
     timer.start()
   }
- 
+
   const onChoice = (useranswer) => {
-    if (timeout===true){
+    if (timeout === true) {
       return
     }
-    
+
     setselected(useranswer)
     onselect(question.id, useranswer)
   }
- 
+
   const sendquestioninteraction = async () => {
     const attempt_response = await async_http_request({
       path: `interaction/${question.id}`,
@@ -56,29 +56,29 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     console.log(attempt_response)
   }
 
-  const timer = useTimer({ delay: 1000, callback : () => handletimeleft() })
-  
+  const timer = useTimer({ delay: 1000, callback: () => handletimeleft() })
+
   useEffect(() => {
-  
+
     setselected()
     sendquestioninteraction()
     !timeout && reset_timer()
 
-    return ()=>{
+    return () => {
       timer.stop()
     }
-  
+
   }, [question_index])
 
 
   return (
-    <div>      
-      
-      <p className="timer"> <MdTimer className="icon"/> &nbsp;&nbsp;<strong> {"0" + minutes} : {seconds < 10 && "0"}{seconds} </strong> </p>
-      
-      <div className={`game_question ${timeout?"disabled_question":"question_x"}`}>
-        
-        <p className="question_title"> {question_index + 1}. <strong> {question.question} ? </strong> </p>
+    <div>
+
+      <p className="timer"> <MdTimer className="icon" /> &nbsp;&nbsp;<strong> {"0" + minutes} : {seconds < 10 && "0"}{seconds} </strong> </p>
+
+      <div className={`game_question ${timeout ? "disabled_question" : "question_x"}`}>
+
+        <p> {question_index + 1}. <strong> {question.question} ? </strong> </p>
 
         <div disabled={true} className={question.choice1 === selected ? "choice selected_choice" : "choice"}
           onClick={() => onChoice(question.choice1)}>

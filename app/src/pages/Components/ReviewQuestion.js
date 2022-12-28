@@ -40,10 +40,11 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
                 return
             }
 
-            if (review_submission_response instanceof Response) {
-                const conflict_result = await review_submission_response.json()
+            console.log(review_submission_response)
+
+            if (review_submission_response.state === "invalid") {
                 setreviewstate(prev => ({ ...prev, [id]: "canceledstate" }))
-                setinfo(conflict_result.info)
+                setinfo(review_submission_response.info)
             }
 
             else {
@@ -54,7 +55,7 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
         }
 
         if (question_state !== 0 && question_state !== 1) {
-            console.log("error! a review decision is required for the review (approve/decline)")
+            console.log("error! a review decision is required for the contribution (approve/decline)")
             return
         }
 

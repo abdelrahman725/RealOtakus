@@ -1,3 +1,4 @@
+
 $base_div_backgroun_color : #262F36;
 $base_green_button_color  : #46BB5D;
 $base_approved_color: #46BB5D;
@@ -6,10 +7,6 @@ $base_rejected_color: #E76450;
 $base_shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
 
-body{
-  //background-color: #202225;
-  //background-color: #e9edf1;
-}
 
 .centered_div{
   margin-left: auto;
@@ -76,7 +73,12 @@ a{
   div{
     display: flex;
     flex-direction: row;
-    margin:  0px 10px; 
+  }
+
+  .right{
+    div{
+      margin:  0px 20px; 
+    }
   }
   
   .n_notifications{
@@ -275,58 +277,6 @@ a{
       }
     }
 
-  }
-
-}
-
-@media screen and(max-width: 372px){
-  textarea{
-    width: 90%;
-  }
-}
-
-@media screen and(max-width: 550px){
-  
-  .leaderboard{
-    font-size: 12px;
-  
-    td{ padding:  12px 7px; }
-  
-    th{ padding: 15px 7px;  font-size: x-small}
-    
-    img{
-      transform: scale(0.7);
-    }
-  }
-}
-
-@media screen and(max-width: 900px){
-
-  .navbar{
-    flex-direction: column;
-
-    .left{
-      margin-bottom: 20px;
-    }
-  }
-  
-  .spaced_div{
-    margin-top: 155px;
-  }
-
-  .navigation_buttons {
-    align-items: center;
-    flex-direction: column;   
-    button {
-     width: 240px;
-   }
- }
-  
-  .account{
-    .interactions{
-      width: 100%;
-
-    }
   }
 
 }
@@ -573,18 +523,9 @@ a{
     }
     
     .game_question{
-      hr{
-        background-color: $base_div_backgroun_color;
-        border-radius: $base_border_radius;
-        box-shadow: $base_shadow;
-        outline: none;
-        border: none;
-        margin: 100px 0px;
-        opacity: 80%;
-        padding: 5px;
 
-      }
-
+      line-height: 1.6;
+   
       .choice {
         border-radius: $base_border_radius;
         background-color: white;
@@ -608,6 +549,10 @@ a{
         color: white;
       }
       
+    }
+
+    .result_question{
+      margin-bottom: 150px;
     }
 
   }
@@ -646,7 +591,13 @@ a{
     }
  
     .submit_container{
-      height: 60px;
+      margin-top: 10px;
+      height: 50px;
+    }
+
+    .invalid_input{
+      color: crimson;
+      margin-bottom: 6px;
     }
 
   }
@@ -695,7 +646,7 @@ a{
 .about{
   padding: 10px 25px 10px 25px;
   text-align: left;
-  line-height: 32px;
+  line-height: 1.8;
 
   div{
     margin-bottom: 60px;
@@ -742,4 +693,58 @@ footer{
     margin-left: 25px;
     margin-right: 25px;
   }
+}
+
+@media screen and(max-width: 500px){
+  .contribution{
+    textarea{
+      width: 90%;
+    }
+  }
+}
+
+@media screen and(max-width: 550px){
+  
+  .leaderboard{
+    font-size: 12px;
+  
+    td{ padding:  12px 7px; }
+  
+    th{ padding: 15px 7px;  font-size: x-small}
+    
+    img{
+      transform: scale(0.7);
+    }
+  }
+}
+
+@media screen and(max-width: 900px){
+
+  .navbar{
+    flex-direction: column;
+
+    .left{
+      margin-bottom: 20px;
+    }
+  }
+  
+  .spaced_div{
+    margin-top: 155px;
+  }
+
+  .navigation_buttons {
+    align-items: center;
+    flex-direction: column;   
+    button {
+     width: 240px;
+   }
+ }
+  
+  .account{
+    .interactions{
+      width: 100%;
+
+    }
+  }
+
 }

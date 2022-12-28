@@ -1,7 +1,7 @@
 import { IoMdNotifications } from 'react-icons/io'
 import { BsPersonFill } from 'react-icons/bs'
-import { MdDarkMode, MdLogout } from 'react-icons/md'
 import { FiInfo } from 'react-icons/fi'
+import { MdDarkMode, MdLogout } from 'react-icons/md'
 import { HiOutlineSun } from 'react-icons/hi'
 
 import { Link } from 'react-router-dom'
@@ -21,13 +21,13 @@ const NavBar = ({
       <div className="left">
         <div>
           <Link to="/" className="logo">
-            <strong className="logo_text"> <span>R</span>eal <span>O</span>takus </strong>
+            <strong className="logo_text">Real Otakus</strong> &nbsp;
           </Link>
         </div>
 
         <div>
           <Link to="about">
-            <FiInfo className="nav_icon"/>
+            <FiInfo className="nav_icon" />
           </Link>
         </div>
 
@@ -37,14 +37,14 @@ const NavBar = ({
         <div className="right">
           <div>
             <Link to="profile">
-              <BsPersonFill className="nav_icon"/> 
+              <BsPersonFill className="nav_icon" />
             </Link>
           </div>
 
           <div className="notification">
-            <strong className="n_notifications" 
-            style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden"}}>
-             {new_notifications}
+            <strong className="n_notifications"
+              style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
+              {new_notifications}
             </strong>
 
             <Link to="notifications">
@@ -52,10 +52,10 @@ const NavBar = ({
             </Link>
           </div>
 
-          <div>
+          {/* <div>
             {darkmode &&  <HiOutlineSun className="nav_icon" onClick={() => setdarkmode(false)} />}
             {!darkmode && <MdDarkMode className="nav_icon" onClick={() => setdarkmode(true)} />}
-          </div>
+          </div> */}
 
           <div>
             <MdLogout className="nav_icon" onClick={() => window.location.href = `/logout`} />

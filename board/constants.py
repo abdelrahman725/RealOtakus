@@ -10,9 +10,9 @@ REALOTAKU = "realOtaku"
 # levels_to_points mapper, shows points users should get to reach each level
 LEVELS = {
     BEGINNER: 0,
-    INTERMEDIATE: 200,
-    ADVANCED: 500,
-    REALOTAKU: 1000
+    INTERMEDIATE: 150,
+    ADVANCED: 600,
+    REALOTAKU: 2000
 }
 
 LEVELS_CHOICES = [(level,level) for level in LEVELS]

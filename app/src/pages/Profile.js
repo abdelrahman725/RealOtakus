@@ -63,33 +63,38 @@ const UserProfile = ({ user_data }) => {
             <div className="progress">
 
               <div className="data_row">
-                <div> username</div>
+                <div>Username</div>
                 <div>{user_data.username}</div>
               </div>
 
               <div className="data_row">
-                <div> Score</div>
+                <div>Email</div>
+                <div>{user_data.email}</div>
+              </div>
+
+              <div className="data_row">
+                <div>Score</div>
                 <div>{user_data.points}</div>
               </div>
 
               <div className="data_row">
-                <div> Level</div>
+                <div>Level</div>
                 <div> {user_data.level}</div>
               </div>
 
               <div className="data_row">
-                <div> Tests Score</div>
-                <div> {games_score_percentage} %</div>
+                <div>Tests Score</div>
+                <div>{games_score_percentage} %</div>
               </div>
 
               <div className="data_row">
-                <div> Tests Started</div>
-                <div>{user_data.tests_started} </div>
+                <div>Tests Started</div>
+                <div>{user_data.tests_started}</div>
               </div>
 
               <div className="data_row">
-                <div> Tests Completed</div>
-                <div> {user_data.tests_completed} </div>
+                <div>Tests Completed</div>
+                <div>{user_data.tests_completed}</div>
               </div>
 
             </div>

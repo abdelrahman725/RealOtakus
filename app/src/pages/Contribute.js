@@ -6,9 +6,13 @@ import { GlobalStates } from "../App"
 
 const Contribute = ({ all_animes_options }) => {
 
-  const { set_info_message, SelectStyles } = useContext(GlobalStates)
+  const { SelectStyles } = useContext(GlobalStates)
   const [anime, setanime] = useState()
+  const [response_msg, set_response_msg] = useState()
+  const [question_info, set_question_info] = useState()
+  const [choices_info, set_choices_info] = useState()
   const [submitted, setsubmitted] = useState(false)
+
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
@@ -62,23 +66,29 @@ const Contribute = ({ all_animes_options }) => {
 
       console.log(submit_contribution)
 
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-
       setsubmitted(false)
 
-      set_info_message(submit_contribution.info)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
 
-      if (submit_contribution.state === "conflict") {
+      if (submit_contribution.info === "conflict") {
         question_ref.current.style.outlineColor = "red"
         question_ref.current.focus()
+        set_question_info("Sorry, This question already exists")
         return
+      }
+
+      if (submit_contribution.reviewer === true) {
+        set_response_msg("Thanks for your Contribution !")
+      }
+
+      if (submit_contribution.reviewer === false) {
+        set_response_msg("Thanks for your Contribution ! it will be reviewed soon")
       }
 
       // clear form after submission 
       for (const key in Question) {
         setQuestion(prev => ({ ...prev, [key]: "" }))
       }
-      //setanime(null)
     }
 
     const validate_contribution_form_then_submit = () => {
@@ -86,7 +96,7 @@ const Contribute = ({ all_animes_options }) => {
       if (!anime) {
         anime_select.current.focus()
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        return false;
+        return false
       }
 
       const cleaned_question = {
@@ -97,7 +107,7 @@ const Contribute = ({ all_animes_options }) => {
         choice3: "",
       }
 
-      // removes leading and trailing spaces (for duplication checking and for form submission)
+      // removes leading and trailing spaces (to check for duplicates)
       const unique_choices = new Set()
       for (const key in Question) {
         const trimmed_value = Question[key].trim()
@@ -105,29 +115,30 @@ const Contribute = ({ all_animes_options }) => {
         cleaned_question[key] = trimmed_value
       }
 
-      const letters_exist_match = cleaned_question.question.match(letters_exist)
+      // const letters_exist_match = cleaned_question.question.match(letters_exist)
+      // if (letters_exist_match == null || letters_exist_match.length < 2) {
+      //   window.scrollTo({ top: 0, behavior: 'smooth' })
+      //   set_question_info("question should have letters")
+      //   question_ref.current.focus()
+      //   return false
+      // }
 
-      if (letters_exist_match == null || letters_exist_match.length < 2) {
-        console.log("question shoud contain at least 2 letters")
-        question_ref.current.focus()
+      if (cleaned_question.question.length < 7) {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        return false
-      }
-
-      if (cleaned_question.question.length < 8) {
-        console.log("question must be at least 8 characters length")
+        set_question_info("question must be at least 7 characters length")
         question_ref.current.focus()
-        window.scrollTo({ top: 0, behavior: 'smooth' })
         return false
       }
 
       if (unique_choices.size !== 4) {
-        console.log("each choice must be unique")
-        return false
+        set_choices_info("each choice must be unique !")
+        return
       }
-
-      document.activeElement.blur()
+      set_response_msg()
       submit_contribution(cleaned_question)
+      document.activeElement.blur()
+      set_choices_info()
+      set_question_info()
     }
 
     validate_contribution_form_then_submit()
@@ -157,7 +168,6 @@ const Contribute = ({ all_animes_options }) => {
 
     return () => {
       window.onbeforeunload = null
-      set_info_message()
     }
 
   }, [])
@@ -165,9 +175,10 @@ const Contribute = ({ all_animes_options }) => {
   return (
     <div className="centered_div contribution">
 
-      <h1>contribute a quesion </h1>
+      <h1>Contribute a quesion</h1>
+
       <p>
-        please first make sure you have read
+        first make sure you have read
         <Link className="guidlines_link" to="/about">
           Contribution Guidlines
         </Link>
@@ -175,6 +186,8 @@ const Contribute = ({ all_animes_options }) => {
 
       <br />
 
+      {response_msg && <h3>{response_msg}</h3>}
+      
       <form onSubmit={handle_form_submission} >
 
         <div className="contribution_form">
@@ -190,11 +203,15 @@ const Contribute = ({ all_animes_options }) => {
             value={anime}
             ref={anime_select}
           />
-          <br /> <br />
+
+          <br />
+
+          <div className="invalid_input">{question_info}</div>
+
           <textarea name="question"
             typeof="text"
             placeholder="what is the question ?"
-            cols="30" rows="3"
+            cols="40" rows="3"
             maxLength="350"
             required
             value={Question.question}
@@ -206,7 +223,7 @@ const Contribute = ({ all_animes_options }) => {
           <textarea name="rightanswer"
             typeof="text"
             placeholder="right answer"
-            cols="30" rows="3"
+            cols="40" rows="3"
             maxLength="150"
             required
             value={Question.rightanswer}
@@ -216,10 +233,12 @@ const Contribute = ({ all_animes_options }) => {
 
           <h3>choices <span style={{ fontWeight: "lighter" }}>(wrong answers)</span> </h3>
 
+          <div className="invalid_input">{choices_info}</div>
+
           <textarea name="choice1"
             typeof="text"
             placeholder="choice 1"
-            cols="30" rows="3"
+            cols="40" rows="3"
             maxLength="150"
             required
             value={Question.choice1}
@@ -230,7 +249,7 @@ const Contribute = ({ all_animes_options }) => {
           <textarea name="choice2"
             typeof="text"
             placeholder="choice 2"
-            cols="30" rows="3"
+            cols="40" rows="3"
             maxLength="150"
             required
             value={Question.choice2}
@@ -241,7 +260,7 @@ const Contribute = ({ all_animes_options }) => {
           <textarea name="choice3"
             typeof="text"
             placeholder="choice 3"
-            cols="30" rows="3"
+            cols="40" rows="3"
             maxLength="150"
             required
             value={Question.choice3}

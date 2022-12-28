@@ -38,12 +38,13 @@ const About = () => {
         <ul>
           <li>avoid trivia/too easy questions.</li>
           <li>your question should not be solely depend on memorizing things like (dates, characters names, places).</li>
-          <li>try to avoid questions based on your personal opinion or theory. </li>
+          <li>try to avoid questions that are based on your personal opinion or theory. </li>
           <li>make sure to make 4 distinguishable choices.</li >
           <li>the 3 wrong choices must not have any common pattern,
             in other words, the right choice shouldn't be too obvious at first glance,
             so the question experience is more interesting/challenging.
           </li>
+          <li>your question must be in a valid english format (e.g. not a gibberish text) otherwise you will immediately get banned from the platform. </li>
         </ul>
 
         <h3>Trivia/bad questions &#128577;</h3>

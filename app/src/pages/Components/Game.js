@@ -13,87 +13,93 @@ const Game = ({
 }) => {
 
   const { N_Game_Questions, setgame_started, set_user_data } = useContext(GlobalStates)
-  const [index,setindex] = useState(0)
-  const [timeout,settimout] = useState(false)
-       
-  const SubmitGame = async()=>{
+  const [index, setindex] = useState(0)
+  const [timeout, settimout] = useState(false)
+
+  const SubmitGame = async () => {
 
     window.scrollTo({ top: 0, behavior: 'smooth' })
     setgame_started(false)
 
     const game_results = await async_http_request({
-      path   : "submitgame",
-      method : "POST",
-      data   : {"answers" : useranswers}
+      path: "submitgame",
+      method: "POST",
+      data: { "answers": useranswers }
     })
-    
-    const answers = {}   
+
+    const answers = {}
     let score = 0
 
-    game_results.right_answers.map((question)=>((
+    game_results.right_answers.map((question) => ((
       answers[question.id] = question.right_answer,
-      question.right_answer === useranswers[question.id]  && ( score+=1 )
-      
+      question.right_answer === useranswers[question.id] && (score += 1)
+
     )))
 
     set_user_data(prev => ({
-      ...prev, 
-      points : prev.points + score,
-      tests_completed : prev.tests_completed+1 ,
-    }))   
+      ...prev,
+      points: prev.points + score,
+      tests_completed: prev.tests_completed + 1,
+    }))
     setgame_score(score)
     setquizresults(answers)
   }
-  
-  const onChoiceSelect = (id, each_new_answer)=> {
+
+  const onChoiceSelect = (id, each_new_answer) => {
     const new_answers = useranswers
     new_answers[id] = each_new_answer
     setuseranswers(new_answers)
   }
 
-  const nextquestion =()=> index < N_Game_Questions-1 && setindex(index+1)  
+  const nextquestion = () => index < N_Game_Questions - 1 && setindex(index + 1)
 
-  useEffect(() =>{
-    
-    window.onbeforeunload = ()=>{
+  useEffect(() => {
+
+    window.onbeforeunload = () => {
       return true
     }
-    
-    document.onvisibilitychange =()=>{
-      if (document.visibilityState === "hidden"){
+
+    document.onvisibilitychange = () => {
+      if (document.visibilityState === "hidden") {
         set_exit_game(true)
         setgame_started()
       }
     }
-        
+
     return () => {
       document.onvisibilitychange = null
       window.onbeforeunload = null
     }
-      
+
   }, [])
 
-  return(
+  return (
     <div className="game_container">
-      <br/>
-      <Question
-      question={questions[index]}
-      question_index={index}
-      onselect={onChoiceSelect}
-      questions_length={N_Game_Questions}
-      timeout={timeout}
-      settimout={settimout}
-      nextquestion={nextquestion}/>
-      <br />  
-      <div className="game_buttons">
-        {index===N_Game_Questions-1 ?
-          <button onClick={SubmitGame} className="submit_btn"> Submit </button>
-        : 
-          <button onClick={nextquestion} style={{backgroundColor: "#365FAA"}}> next </button>            
-        }
-      </div>
-      <p> Do not leave current page (e.g. switch tabs), your progress will be lost</p>
-      <br />
+      {questions ?
+        <div>
+          <br />
+          <Question
+            question={questions[index]}
+            question_index={index}
+            onselect={onChoiceSelect}
+            questions_length={N_Game_Questions}
+            timeout={timeout}
+            settimout={settimout}
+            nextquestion={nextquestion} />
+          <br />
+          <div className="game_buttons">
+            {index === N_Game_Questions - 1 ?
+              <button onClick={SubmitGame} className="submit_btn"> Submit </button>
+              :
+              <button onClick={nextquestion} style={{ backgroundColor: "#365FAA" }}> next </button>
+            }
+          </div>
+          <br />
+          <p> Do not leave current page (e.g. switch tabs), your progress will be lost</p>
+          <br />
+        </div>
+        : "loading quiz..."
+      }
     </div>
   )
 }

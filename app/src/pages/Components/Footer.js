@@ -1,24 +1,23 @@
 import React from 'react'
-import { domain } from './AsyncRequest'
 
 const Footer = () => {
   return (
     <footer>
-      <a href={domain} target="_blank" rel="noreferrer">
+      <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank" rel="noreferrer">
         Github
       </a>
 
-      <a href={domain} target="_blank" rel="noreferrer">
-        Contact us
+      <a href="https://twitter.com" target="_blank" rel="noreferrer">
+        Twitter
       </a>
 
-      <a href={domain} target="_blank" rel="noreferrer">
+      <a href="/#" target="_blank" rel="noreferrer">
         Support
       </a>
 
-      <a href={domain} target="_blank" rel="noreferrer">
+      {/* <a href={domain} target="_blank" rel="noreferrer">
         Privacy policy
-      </a>
+      </a> */}
     </footer>
   )
 }

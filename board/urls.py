@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 
 from board.authen_views import user_logout 
 from board.authen_views import user_register
@@ -14,15 +14,15 @@ urlpatterns = [
     path('logout/',user_logout),
 
 # react router paths (views only)
-    path('game/',react_view),  
-    path('contribute/',react_view),
-    path('mycontributions/',react_view),
-    path('review/',react_view),
-    path('profile/',react_view),
-    path('notifications/',react_view),
-    path('about/',react_view),
+    path('game/',react_route_page),  
+    path('contribute/',react_route_page),
+    path('mycontributions/',react_route_page),
+    path('review/',react_route_page),
+    path('profile/',react_route_page),
+    path('notifications/',react_route_page),
+    path('about/',react_route_page),
     
-# rest api endpoints
+# DRF api endpoints
     path('gethomedata',get_home_data),
     path('getgameanimes',get_game_animes),
     path('getgame/<int:game_anime>',get_game),

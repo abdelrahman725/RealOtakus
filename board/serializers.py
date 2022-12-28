@@ -8,6 +8,7 @@ class UserDataSerializer(serializers.ModelSerializer):
     fields = (
       'id',
       'username',
+      'email',
       'points',
       'level',
       'tests_started',

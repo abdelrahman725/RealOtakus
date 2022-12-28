@@ -9,7 +9,7 @@ const QuestionsForReview = () => {
 
   const { set_info_message, SelectStyles } = useContext(GlobalStates)
   const [contributors_contributions, set_contributors_contributions] = useState()
-  const [n_reviewed_contributions,set_n_reviewed_contributions] = useState()
+  const [n_reviewed_contributions, set_n_reviewed_contributions] = useState()
   const [reviewstates, setreviewstates] = useState({})
   const [animes_options, setanimes_options] = useState([])
   const anime_select = useRef(null)
@@ -44,7 +44,7 @@ const QuestionsForReview = () => {
             prev => [...prev, { value: anime, label: anime }]
           )
         })
-        
+
         set_n_reviewed_contributions(contributions_result.n_reviewed_contributions)
         set_contributors_contributions(contributions_result.questions)
       }

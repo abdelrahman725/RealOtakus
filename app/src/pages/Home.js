@@ -6,41 +6,41 @@ import { MdQuiz, MdOutlineRateReview } from 'react-icons/md'
 
 const Home = ({ user_data, dashboard_users }) => {
 
-return (
+  return (
 
-  <div className="home">
-    
-    <div className="navigation_buttons"> 
+    <div className="home">
+
+      <div className="navigation_buttons">
         <Link to="contribute">
           <button>
-            <FcIdea className="icon"/> Contribute
-          </button> 
+            <FcIdea className="icon" /> Contribute
+          </button>
         </Link>
 
         <Link to="game">
           <button>
-            <MdQuiz className="icon"/> Take Quiz
-          </button> 
+            <MdQuiz className="icon" /> Take Quiz
+          </button>
         </Link>
 
         <Link to="mycontributions">
           <button>
-            <FcDatabase className="icon"/> My Contributions
-          </button> 
+            <FcDatabase className="icon" /> My Contributions
+          </button>
         </Link>
 
-        {user_data && user_data.is_reviewer &&  
-        <Link to="review">
-          <button>
-            <MdOutlineRateReview className="icon"/> Review Contributions
-          </button>
-        </Link>} 
+        {user_data && user_data.is_reviewer &&
+          <Link to="review">
+            <button>
+              <MdOutlineRateReview className="icon" /> Review Contributions
+            </button>
+          </Link>}
+      </div>
+
+      {dashboard_users && dashboard_users.length > 0 && <TheDashBoard dashboard_users={dashboard_users} current_user={user_data && user_data.id} />}
+
     </div>
-    
-    { dashboard_users && dashboard_users.length > 0 && <TheDashBoard dashboard_users = {dashboard_users} current_user= {user_data && user_data.id} /> }
-  
-  </div>
- )
+  )
 }
 
 export default Home
