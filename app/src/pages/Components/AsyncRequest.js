@@ -1,6 +1,6 @@
 
-export const domain = "192.168.1.8:8000"
-//export const domain = "127.0.0.1:8000"
+//export const domain = "192.168.1.8:8000"
+export const domain = "127.0.0.1:8000"
 const myserver = `http://${domain}`
 
 const getCookie = (name) => {

@@ -32,7 +32,7 @@ const Home = ({ user_data, dashboard_users }) => {
         {user_data && user_data.is_reviewer &&
           <Link to="review">
             <button>
-              <MdOutlineRateReview className="icon" /> Review Contributions
+              <MdOutlineRateReview className="icon" /> Review
             </button>
           </Link>}
       </div>

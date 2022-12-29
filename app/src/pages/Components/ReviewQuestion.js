@@ -4,7 +4,7 @@ import { useState, useRef, useContext } from "react"
 import { GlobalStates } from '../../App'
 import get_local_date from './LocalDate'
 
-const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate }) => {
+const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate, set_n_reviewed_contributions, feedback_options }) => {
 
     const { SelectStyles } = useContext(GlobalStates)
     const [question_state, setquestion_state] = useState()
@@ -13,12 +13,6 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
     const [feedback, setfeedback] = useState()
     const feedback_select = useRef(null)
 
-    const feedback_options = [
-        { value: 1, label: 'not clear' },
-        { value: 2, label: 'similar choices' },
-        { value: 3, label: 'too easy' },
-        { value: 4, label: 'wrong information' }
-    ]
 
     const pre_submit_review = (e) => {
 
@@ -50,6 +44,7 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
             else {
                 setinfo(review_submission_response.info)
                 setreviewstate(prev => ({ ...prev, [id]: `${question_state === 1 ? "approve" : "decline"}state` }))
+                set_n_reviewed_contributions(prev => prev + 1)
             }
 
         }
@@ -83,7 +78,7 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
     return (
         <div className={`each_question_for_review_container ${reviewstate}`}>
             <p className="question_anime"> <strong>{anime}</strong></p>
-            <p>{get_local_date(date)}</p>
+            <p className="date_created">{get_local_date(date)}</p>
             <div className="question_contents">
                 <p className="question">{question.question}</p>
                 <div className="choices">
@@ -141,7 +136,7 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
                         />
                     }
                     <div className="submit_container">
-                        {!review_submitted ? <button type="submit">Submit</button> : "loading"}
+                        {!review_submitted ?  <button type="submit">Submit</button> : "loading"}
                     </div>
 
                 </form>

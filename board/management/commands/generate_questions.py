@@ -5,7 +5,11 @@ from django.utils import timezone
 from datetime import  datetime
 from django.core.management.base import BaseCommand
 
-from board.models import *
+from board.models import User
+from board.models import Anime
+from board.models import Contribution
+from board.models import Question
+
 
 class Command(BaseCommand):
 

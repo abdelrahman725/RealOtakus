@@ -98,7 +98,10 @@ const Game = ({
           <p> Do not leave current page (e.g. switch tabs), your progress will be lost</p>
           <br />
         </div>
-        : "loading quiz..."
+        :
+        <div className="loading_div">
+          loading quiz ...
+        </div>
       }
     </div>
   )

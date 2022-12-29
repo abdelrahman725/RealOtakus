@@ -59,6 +59,7 @@ const UserProfile = ({ user_data }) => {
     return (
       <div className="account_container">
         <div className="flex_container">
+        
           <div>
             <div className="progress">
 
@@ -99,7 +100,9 @@ const UserProfile = ({ user_data }) => {
 
             </div>
           </div>
+        
           <Interactions interactions={user_interactions} />
+        
         </div>
       </div>
     )
@@ -107,7 +110,9 @@ const UserProfile = ({ user_data }) => {
 
   return (
     <div className="account_container">
-      loading...
+      <div className="loading_div">
+        loading ...
+      </div>
     </div>
   )
 }

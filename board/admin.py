@@ -10,7 +10,13 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
-from board.models import *
+from board.models import User
+from board.models import Anime
+from board.models import Contribution
+from board.models import Question
+from board.models import QuestionInteraction
+from board.models import Notification 
+
 from board.constants import COUNTRIES, QUESTIONSCOUNT
 
 

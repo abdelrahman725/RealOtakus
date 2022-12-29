@@ -10,9 +10,6 @@ class NotificationConsumer(WebsocketConsumer):
         current_user = self.scope["user"]
         self.room_name = "notifications"
         self.room_group_name = "notifications_group_"+str(current_user.id)
-        # for user linus only
-        #self.room_group_name= "notifications_group_54"
-
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name)

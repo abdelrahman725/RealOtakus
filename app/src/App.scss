@@ -58,6 +58,11 @@ a{
   background-color: $base_green_button_color;
 }
 
+.loading_div{
+  margin-top: 150px;
+  font-size: larger;
+}
+
 .navbar{
   background-color: $base_div_backgroun_color;
   color: white;
@@ -102,6 +107,11 @@ a{
     font-size: 30px;
     letter-spacing: 1px;
     color: white;
+  }
+
+  .about_icon{
+    position: relative;
+    top: 2px;
   }
 
 }
@@ -290,10 +300,11 @@ a{
   .contributions_summary{
     display: flex;
     flex-wrap: wrap;
-    margin-left: 15px;
+    margin-left: 10px;
  
     .contribution_state{
       padding: 10px;
+
       .circle{
         border-radius: 50%;
         display: inline-block;
@@ -303,17 +314,20 @@ a{
         top: 5px;
         margin-right: 7px;
       }
+      
       .approved{
         background-color: $base_approved_color;
       }
+      
       .pending{
         background-color: $base_pending_color;
       }
+      
       .rejected{
         background-color:$base_rejected_color;
       }
 
-      margin-right: 50px;
+      margin-right: 25px;
     }
   }
 
@@ -361,6 +375,7 @@ a{
     padding-top: 1px; 
     padding-left: 15px; 
   }
+  
   .date_created{
     font-size: smaller;
     position: relative;
@@ -372,7 +387,7 @@ a{
 
 .review_page{
   @extend .questions_container;
-  
+
 }
 
 .each_question_for_review_container{
@@ -380,11 +395,16 @@ a{
   margin-bottom: 110px;
   flex-direction: column;
   justify-content: flex-start;
+  
+  .date_created{
+    font-size: smaller;
+  }
 
   .question_contents{
-    padding: 15px;
+    padding: 10px;
     margin:10px;
     margin-bottom: 30px;
+    line-height: 1.6;
     border-radius: $base_border_radius;
     background-color: whitesmoke;
     box-shadow: $base_shadow ;
@@ -695,15 +715,20 @@ footer{
   }
 }
 
-@media screen and(max-width: 500px){
-  .contribution{
-    textarea{
-      width: 90%;
-    }
-  }
-}
 
 @media screen and(max-width: 550px){
+  
+  .navbar{
+    flex-direction: column;
+    
+    .left{
+      margin-bottom: 20px;
+    }
+  }
+  
+  .spaced_div{
+    margin-top: 155px;
+  }
   
   .leaderboard{
     font-size: 12px;
@@ -716,29 +741,24 @@ footer{
       transform: scale(0.7);
     }
   }
-}
 
-@media screen and(max-width: 900px){
-
-  .navbar{
-    flex-direction: column;
-
-    .left{
-      margin-bottom: 20px;
+  .contribution{
+    textarea{
+      width: 85%;
     }
   }
   
-  .spaced_div{
-    margin-top: 155px;
-  }
+}
 
+@media screen and(max-width: 900px){
+  
   .navigation_buttons {
     align-items: center;
     flex-direction: column;   
     button {
      width: 240px;
    }
- }
+  }
   
   .account{
     .interactions{

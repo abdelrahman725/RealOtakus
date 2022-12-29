@@ -1,6 +1,11 @@
 from django.core.management.base import BaseCommand
 
-from board.models import *
+from board.models import User
+from board.models import Contribution
+from board.models import Question
+from board.models import QuestionInteraction
+from board.models import Notification 
+
 from board.constants import BEGINNER
 
 # script for reseting state of the database by deleting any data used in testing (manual or automatic)

@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
-from board.constants import *
+from board.constants import COUNTRY_CHOICES
+from board.constants import MAX_LEVEL_LENGTH 
+from board.constants import LEVELS_CHOICES
+from board.constants import BEGINNER
 
 
 class Anime(models.Model):

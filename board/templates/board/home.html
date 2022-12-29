@@ -52,7 +52,7 @@
         {% endif %}
       </p>
 
-      <!-- Login Form -->
+    <!-- Login Form -->
       <div id="login_form">
         <form action="{%url 'login_url' %}" method="post">
           {% csrf_token %}
@@ -66,14 +66,14 @@
         <p class="link">new here ?&nbsp; <a href="" id="to_register_form"> <strong>Sign up</strong></a></p>
       </div>
 
-      <!-- Register Form -->
+    <!-- Register Form -->
       <div id="register_form">
         <form action="{%url 'register_url' %}" method="post">
           {% csrf_token %}
           <input type="text" class="valid_input" id="register_name" name="username" placeholder="username"
             autocomplete="off" required minlength="5" maxlength="16" />
           <br /><br>
-          <input type="text" class="valid_input" name="email" placeholder="email" />
+          <input type="text" class="valid_input" name="email" placeholder="email" required/>
           <br /><br>
           <input type="password" class="valid_input passwords" id="pass1" name="password" placeholder="passsword"
             autocomplete="off" required minlength="3" />
@@ -102,11 +102,7 @@
     <a href="" target="_blank" rel="noreferrer">
       Support
     </a>
-    
-    {% comment %} <a href="" target="_blank" rel="noreferrer">
-      Privacy policy
-    </a> {% endcomment %}
-   
+
   </footer>
 
 </body>

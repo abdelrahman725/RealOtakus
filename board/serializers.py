@@ -1,6 +1,11 @@
-from rest_framework import serializers
-from board.models import *
+from board.models import User
+from board.models import Anime
+from board.models import Contribution
+from board.models import Question
+from board.models import QuestionInteraction
+from board.models import Notification
 
+from rest_framework import serializers
 
 class UserDataSerializer(serializers.ModelSerializer):
   class Meta:
@@ -35,7 +40,10 @@ class LeaderBoradSerializer(serializers.ModelSerializer):
 class AnimeSerializer(serializers.ModelSerializer):
   class Meta:
     model = Anime
-    fields = ("id","anime_name")
+    fields = (
+      "id",
+      "anime_name"
+    )
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -114,7 +122,7 @@ class NotificationsSerializer(serializers.ModelSerializer):
     )
     
 
-class QuestionsApiService(serializers.ModelSerializer):
+class QuestionApi(serializers.ModelSerializer):
   class Meta:
     model = Question
     fields = (

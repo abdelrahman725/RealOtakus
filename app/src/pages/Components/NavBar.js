@@ -27,7 +27,7 @@ const NavBar = ({
 
         <div>
           <Link to="about">
-            <FiInfo className="nav_icon" />
+            <FiInfo className="nav_icon about_icon" />
           </Link>
         </div>
 

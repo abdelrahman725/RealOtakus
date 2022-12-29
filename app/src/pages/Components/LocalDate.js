@@ -3,7 +3,7 @@
 // 2.convert the 24 hours format to am/pm format with a popular format
 const months_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-const get_local_date = (utc_time, include_time=false) => {
+const get_local_date = (utc_time, include_time = false) => {
 
     const date_time = new Date(utc_time)
 

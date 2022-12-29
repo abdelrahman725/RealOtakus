@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 
 from board.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
+
 import board.models
 
 

@@ -46,6 +46,11 @@ a {
   background-color: #46BB5D;
 }
 
+.loading_div {
+  margin-top: 150px;
+  font-size: larger;
+}
+
 .navbar {
   background-color: #262F36;
   color: white;
@@ -99,6 +104,11 @@ a {
   font-size: 30px;
   letter-spacing: 1px;
   color: white;
+}
+
+.navbar .about_icon {
+  position: relative;
+  top: 2px;
 }
 
 .faded_background {
@@ -292,12 +302,12 @@ a {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  margin-left: 15px;
+  margin-left: 10px;
 }
 
 .questions_container .contributions_summary .contribution_state, .review_page .contributions_summary .contribution_state {
   padding: 10px;
-  margin-right: 50px;
+  margin-right: 25px;
 }
 
 .questions_container .contributions_summary .contribution_state .circle, .review_page .contributions_summary .contribution_state .circle {
@@ -381,10 +391,15 @@ a {
           justify-content: flex-start;
 }
 
+.each_question_for_review_container .date_created {
+  font-size: smaller;
+}
+
 .each_question_for_review_container .question_contents {
-  padding: 15px;
+  padding: 10px;
   margin: 10px;
   margin-bottom: 30px;
+  line-height: 1.6;
   border-radius: 7px;
   background-color: whitesmoke;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
@@ -680,13 +695,19 @@ footer a {
   margin-right: 25px;
 }
 
-@media screen and (max-width: 500px) {
-  .contribution textarea {
-    width: 90%;
-  }
-}
-
 @media screen and (max-width: 550px) {
+  .navbar {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .navbar .left {
+    margin-bottom: 20px;
+  }
+  .spaced_div {
+    margin-top: 155px;
+  }
   .leaderboard {
     font-size: 12px;
   }
@@ -701,21 +722,12 @@ footer a {
     -webkit-transform: scale(0.7);
             transform: scale(0.7);
   }
+  .contribution textarea {
+    width: 85%;
+  }
 }
 
 @media screen and (max-width: 900px) {
-  .navbar {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
-  .navbar .left {
-    margin-bottom: 20px;
-  }
-  .spaced_div {
-    margin-top: 155px;
-  }
   .navigation_buttons {
     -webkit-box-align: center;
         -ms-flex-align: center;

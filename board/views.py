@@ -2,18 +2,32 @@ import random
 from time import sleep
 
 from django.db import connection, IntegrityError
-from django.shortcuts import render
 from django.db.models import Count, Avg, Q
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import status
 
-from board.helpers import login_required
-from board.models import *
-from board.serializers import *
-from board.constants import *
+from board.models import User
+from board.models import Anime
+from board.models import Contribution
+from board.models import Question
+from board.models import QuestionInteraction
+ 
+from board.serializers import UserDataSerializer
+from board.serializers import LeaderBoradSerializer
+from board.serializers import AnimeSerializer
+from board.serializers import QuestionInteraction
+from board.serializers import ContributionSerializer
+from board.serializers import AnimeInteractionsSerializer
+from board.serializers import NotificationsSerializer
+from board.serializers import AnswersSerializer
+from board.serializers import InteractionsSerializer
+
+from board.helpers import login_required, CreateNotification
+
+from board.constants import QUESTIONSCOUNT
 
 # used to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed :
 # for q in connection.queries : print(f"\n\n { q } \n\n")
@@ -31,8 +45,8 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
-    return request.user
     return User.objects.get(username="pablo")
+    return request.user
 
 
 def get_or_query_anime(anime: int):
@@ -57,7 +71,7 @@ def react_app(request):
     return render(request, "board/home.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
@@ -117,7 +131,7 @@ def get_home_data(request):
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game_animes(request):
     user = get_current_user(request)
@@ -149,11 +163,13 @@ def get_game_animes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
     current_user = get_current_user(request)
     selected_anime = animes_dict[game_anime]
+    
+    #sleep(1)
 
     game_questions[current_user.id] = {}
     game_interactions[current_user.id] = {}
@@ -171,7 +187,7 @@ def get_game(request, game_anime):
         (~Q(contribution__contributor=current_user)
          &
          ~Q(contribution__reviewer=current_user)
-         ),
+        ),
         active=True
     ).exclude(
         pk__in=current_user.questions_interacted_with.values_list(
@@ -242,7 +258,7 @@ def record_question_encounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def submit_game(request):
     user = get_current_user(request)
@@ -300,7 +316,7 @@ def submit_game(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
@@ -350,17 +366,20 @@ def get_or_make_contribution(request):
 
 
 
-@login_required
+#@login_required
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
+    
     user = get_current_user(request)
 
     if request.method == "GET":
+
+        animes_for_user_to_review = user.animes_to_review.all()
         
         contributed_questions = ContributionSerializer(
             Contribution.objects.filter(
                 ~Q(contributor=user),
-                question__anime__in=user.animes_to_review.all(),
+                question__anime__in=animes_for_user_to_review,
                 approved__isnull=True,
             ).select_related("question").select_related("question__anime").order_by("id"),
             many=True
@@ -417,11 +436,11 @@ def get_or_review_contribution(request):
         })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_user_interactions(request):
     user = get_current_user(request)
-
+    
     user_interactions = InteractionsSerializer(
         user.questions_interacted_with.select_related("anime"),
         many=True
@@ -432,7 +451,7 @@ def get_user_interactions(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def update_notifications(request):
     user = get_current_user(request)
@@ -454,7 +473,7 @@ def update_notifications(request):
 
 #     anime = get_or_query_anime(anime_id)
 
-#     serialized_questions = QuestionsApiService(
+#     serialized_questions = QuestionApi(
 #         anime.anime_questions.filter(active=True)[:n_questions],
 #         many=True
 #     )

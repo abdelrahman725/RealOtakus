@@ -2,7 +2,8 @@ import random
 
 from django.core.management.base import BaseCommand
 
-from board.models import *
+from board.models import User
+
 from board.constants import COUNTRIES, LEVELS
 
 class Command(BaseCommand):

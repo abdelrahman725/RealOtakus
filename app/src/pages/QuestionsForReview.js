@@ -20,9 +20,17 @@ const QuestionsForReview = () => {
     setselected_anime(selected)
     anime_select.current.blur()
   }
+ 
+  const review_feedback_options = [
+    { value: 1, label: 'not clear' },
+    { value: 2, label: 'similar choices' },
+    { value: 3, label: 'too easy' },
+    { value: 4, label: 'wrong information' }
+  ]
 
   useEffect(() => {
     let cancled = false
+
     setselected_anime(location.state)
 
     async function fetch_contributions() {
@@ -31,7 +39,6 @@ const QuestionsForReview = () => {
         set_info_message("network error")
         return
       }
-
 
       if (cancled === false) {
 
@@ -62,6 +69,7 @@ const QuestionsForReview = () => {
 
   return (
     <div className="review_page">
+
       <h2 className="title">
         <span>
           {contributors_contributions ?
@@ -70,11 +78,11 @@ const QuestionsForReview = () => {
               :
               contributors_contributions.length
             :
-            "..."
+            ""
           }
-        </span>  Contributions need review
+        </span>  Contributions to review
       </h2>
-      <p> you have successfully reviewed {n_reviewed_contributions} questions</p>
+      <p> {n_reviewed_contributions} contributions have been reviewed</p>
       <br />
 
       <Select
@@ -96,6 +104,8 @@ const QuestionsForReview = () => {
         <ReviewQuestion
           setreviewstate={setreviewstates}
           reviewstate={reviewstates[cont.id] ? reviewstates[cont.id] : "pendingstate"}
+          feedback_options = {review_feedback_options}
+          set_n_reviewed_contributions={set_n_reviewed_contributions}
           anime={cont.question.anime.anime_name}
           id={cont.id}
           question={cont.question}

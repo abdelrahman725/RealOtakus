@@ -85,7 +85,6 @@ class Contribution(base_models.Contribution):
         return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime if self.question else 'an anime'}"
 
 
-
 @receiver(pre_save, sender=Contribution)
 def contribution_reviewed(sender, instance, **kwargs):
     if instance.pk != None and instance.approved != None and instance.date_reviewed == None:   

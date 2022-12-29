@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from  django.contrib.auth.password_validation import validate_password 
 
 from board.helpers import login_required
-from board.models import *
+from board.models import User
 
 
 def user_register(request):

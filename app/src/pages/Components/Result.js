@@ -52,8 +52,8 @@ const Result = ({ results, useranswers, questions, score }) => {
 
         </div>
         :
-        <div className="loading">
-          fetching results...
+        <div className="loading_div">
+          fetching results ...
         </div>
       }
     </div>
