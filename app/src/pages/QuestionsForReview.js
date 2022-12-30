@@ -12,15 +12,15 @@ const QuestionsForReview = () => {
   const [n_reviewed_contributions, set_n_reviewed_contributions] = useState()
   const [reviewstates, setreviewstates] = useState({})
   const [animes_options, setanimes_options] = useState([])
-  const anime_select = useRef(null)
-  const location = useLocation()
   const [selected_anime, setselected_anime] = useState()
+  const location = useLocation()
+  const anime_select = useRef(null)
 
   const handle_questions_filter = (selected) => {
     setselected_anime(selected)
     anime_select.current.blur()
   }
- 
+
   const review_feedback_options = [
     { value: 1, label: 'not clear' },
     { value: 2, label: 'similar choices' },
@@ -35,6 +35,7 @@ const QuestionsForReview = () => {
 
     async function fetch_contributions() {
       const contributions_result = await async_http_request({ path: "get_review_contribution" })
+
       if (contributions_result === null) {
         set_info_message("network error")
         return
@@ -70,50 +71,57 @@ const QuestionsForReview = () => {
   return (
     <div className="review_page">
 
-      <h2 className="title">
-        <span>
-          {contributors_contributions ?
-            selected_anime ?
-              contributors_contributions.filter(cont => selected_anime.value === cont.question.anime.anime_name).length
-              :
-              contributors_contributions.length
-            :
-            ""
-          }
-        </span>  Contributions to review
-      </h2>
-      <p> {n_reviewed_contributions} contributions have been reviewed</p>
-      <br />
+      {contributors_contributions ?
+        <div>
+          <h2 className="title">
+            <span>
+              {
+                selected_anime ?
+                  contributors_contributions.filter(cont => selected_anime.value === cont.question.anime.anime_name).length
+                  :
+                  contributors_contributions.length
+              }
+            </span>  Contributions to review
+          </h2>
 
-      <Select
-        value={selected_anime}
-        styles={SelectStyles}
-        className="select_animes"
-        placeholder="filter questions"
-        isClearable={true}
-        isLoading={!contributors_contributions}
-        options={animes_options}
-        onChange={handle_questions_filter}
-        ref={anime_select}
-      />
+          <p> you have reviewed {n_reviewed_contributions} contributions </p>
+          <br />
 
-      <br />  <br />
+          <Select
+            isDisabled={contributors_contributions.length === 0}
+            value={selected_anime}
+            styles={SelectStyles}
+            className="react_select"
+            placeholder="filter by anime"
+            isClearable={true}
+            options={animes_options}
+            onChange={handle_questions_filter}
+            ref={anime_select}
+          />
 
-      {contributors_contributions && contributors_contributions.map((cont, index) => (
-        (selected_anime === null || selected_anime.value === cont.question.anime.anime_name) &&
-        <ReviewQuestion
-          setreviewstate={setreviewstates}
-          reviewstate={reviewstates[cont.id] ? reviewstates[cont.id] : "pendingstate"}
-          feedback_options = {review_feedback_options}
-          set_n_reviewed_contributions={set_n_reviewed_contributions}
-          anime={cont.question.anime.anime_name}
-          id={cont.id}
-          question={cont.question}
-          date={cont.date_created}
-          key={index}
-        />
+          <br />  <br />
 
-      ))}
+          {contributors_contributions && contributors_contributions.map((cont, index) => (
+            (selected_anime === null || selected_anime.value === cont.question.anime.anime_name) &&
+            <ReviewQuestion
+              setreviewstate={setreviewstates}
+              reviewstate={reviewstates[cont.id] ? reviewstates[cont.id] : "pendingstate"}
+              feedback_options={review_feedback_options}
+              set_n_reviewed_contributions={set_n_reviewed_contributions}
+              anime={cont.question.anime.anime_name}
+              id={cont.id}
+              question={cont.question}
+              date={cont.date_created}
+              key={index}
+            />
+
+          ))}
+        </div>
+        :
+        <div className="loading_div">
+          loading contributions...
+        </div>
+      }
     </div>
   )
 }

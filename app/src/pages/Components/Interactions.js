@@ -3,7 +3,7 @@ import React from 'react'
 const Interactions = ({ interactions }) => {
   return (
     <div className="interactions">
-      <h2>Games insights</h2>
+      <h2>Tests insights</h2>
       {Object.keys(interactions).length > 0 ?
         <table className="dashboard">
           <thead>

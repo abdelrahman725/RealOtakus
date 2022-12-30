@@ -40,6 +40,7 @@ const GameView = () => {
       ...prev,
       tests_started: prev.tests_started + 1,
     }))
+
   }
 
   const on_anime_select = (selected) => {
@@ -103,7 +104,7 @@ const GameView = () => {
           <br />
           <Select
             styles={SelectStyles}
-            className="select_animes"
+            className="react_select"
             placeholder="select anime"
             value={selected_anime}
             isClearable={true}

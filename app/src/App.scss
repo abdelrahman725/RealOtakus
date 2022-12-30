@@ -1,8 +1,7 @@
 
 $base_div_backgroun_color : #262F36;
-$base_green_button_color  : #46BB5D;
-$base_approved_color: #46BB5D;
-$base_pending_color: rgb(230, 171, 63);
+$base_green_color: #46BB5D;
+$base_pending_color: rgb(240, 186, 86);
 $base_rejected_color: #E76450;
 $base_shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
@@ -49,17 +48,19 @@ button{
 
 
 a{
-  //color: white;
   text-decoration: none;
 }
 
 
 .submit_btn{
-  background-color: $base_green_button_color;
+  background-color: $base_green_color;
+  &:hover{
+    background-color: #217131;
+  }
 }
 
 .loading_div{
-  margin-top: 150px;
+  margin-top: 100px;
   font-size: larger;
 }
 
@@ -291,49 +292,75 @@ a{
 
 }
 
+.user_contributions{
+  @extend .centered_div;
+
+  .contributions_states_buttons{
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-right: 20px;
+    padding: 10px;
+    
+    button{
+      margin: 10px;
+      font-size: 15px;
+    }
+
+    .clicked_all{
+      color: black;
+      background-color: rgb(208, 204, 204);
+    }
+
+    .clicked_approved{
+      background-color:  #217131;
+    }
+    
+    .clicked_pending{
+      background-color:  rgb(168, 120, 32);
+    }
+
+    .clicked_rejected{
+      background-color:  #8c2b1c;
+    }
+    
+    .all{
+      color: black;
+      &:hover{
+        @extend .clicked_all;
+      }
+    }
+ 
+    .approved{
+      background-color: $base_green_color;
+      &:hover{
+        @extend .clicked_approved;
+      }
+    }
+    
+    .pending{
+      background-color: $base_pending_color;
+      &:hover{
+        @extend .clicked_pending;
+      }
+    }
+    
+    .rejected{
+      background-color:$base_rejected_color;
+      &:hover{
+        @extend .clicked_rejected;
+      }
+    }
+
+  }
+  
+}
 
 .questions_container{
 
   @extend .centered_div;
-  margin: 20px;
-
-  .contributions_summary{
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: 10px;
- 
-    .contribution_state{
-      padding: 10px;
-
-      .circle{
-        border-radius: 50%;
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        position: relative;
-        top: 5px;
-        margin-right: 7px;
-      }
-      
-      .approved{
-        background-color: $base_approved_color;
-      }
-      
-      .pending{
-        background-color: $base_pending_color;
-      }
-      
-      .rejected{
-        background-color:$base_rejected_color;
-      }
-
-      margin-right: 25px;
-    }
-  }
-
-  .user_anime_contributions{
-    padding: 20px;
-  }
+  margin: 20px;  
 
   .canceledstate{
     border-color: grey;
@@ -349,7 +376,7 @@ a{
   }
   
   .approvestate{
-    border-color:$base_approved_color;
+    border-color:$base_green_color;
   }
 
 }
@@ -367,9 +394,10 @@ a{
   text-align: left;
 }
 
+
 .user_contributed_question{
   @extend .question_basic;
-  margin-bottom: 30px;
+  margin-bottom: 80px;
   
   div{
     padding-top: 1px; 
@@ -387,7 +415,6 @@ a{
 
 .review_page{
   @extend .questions_container;
-
 }
 
 .each_question_for_review_container{
@@ -413,7 +440,6 @@ a{
       padding-left: 15px;
       margin-top: 30px;
       p{
-        // top, right, bottom , left
         padding: 6px 0px 6px 12px;
       }
       
@@ -509,7 +535,7 @@ a{
   }
 
   .preg_game_start{
-    // to do b2a
+    // to do
   }
   
 
@@ -625,7 +651,7 @@ a{
 }
 
 
-.select_animes{
+.react_select{
   margin-left: auto;
   margin-right: auto;
   width:250px;
@@ -729,7 +755,7 @@ footer{
   .spaced_div{
     margin-top: 155px;
   }
-  
+
   .leaderboard{
     font-size: 12px;
   
@@ -763,7 +789,6 @@ footer{
   .account{
     .interactions{
       width: 100%;
-
     }
   }
 

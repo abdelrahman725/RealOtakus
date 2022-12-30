@@ -3,6 +3,7 @@ const ContributedQuestion = ({ contribution }) => {
 
   return (
     <div className={`user_contributed_question ${contribution.approved === true ? "approvestate" : contribution.approved === false ? "declinestate" : "pendingstate"}`}>
+      <p><strong>{contribution.question.anime.anime_name}</strong></p>
       <p>{contribution.question.question}</p>
       <div>
         <p>{contribution.question.right_answer}</p>

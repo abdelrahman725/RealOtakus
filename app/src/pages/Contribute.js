@@ -18,7 +18,7 @@ const Contribute = ({ all_animes_options }) => {
   const anime_select = useRef(null)
 
   // ensure
-  const letters_exist = /[a-z]/ig
+  //const letters_exist = /[a-z]/ig
   // reject
   const leading_space = /^\s+/
   const extra_space = /\s{2,}/
@@ -63,6 +63,9 @@ const Contribute = ({ all_animes_options }) => {
           "anime": anime.value
         }
       })
+
+      if (submit_contribution === null)
+        return
 
       console.log(submit_contribution)
 
@@ -187,14 +190,14 @@ const Contribute = ({ all_animes_options }) => {
       <br />
 
       {response_msg && <h3>{response_msg}</h3>}
-      
+
       <form onSubmit={handle_form_submission} >
 
         <div className="contribution_form">
 
           <Select
             styles={SelectStyles}
-            className="select_animes"
+            className="react_select"
             placeholder="select anime"
             isClearable={true}
             isLoading={!all_animes_options}

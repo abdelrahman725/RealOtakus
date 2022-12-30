@@ -1,4 +1,4 @@
-.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container, .notifications {
+.centered_div, .dashboard, .user_contributions, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container, .notifications {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
@@ -46,8 +46,12 @@ a {
   background-color: #46BB5D;
 }
 
+.submit_btn:hover {
+  background-color: #217131;
+}
+
 .loading_div {
-  margin-top: 150px;
+  margin-top: 100px;
   font-size: larger;
 }
 
@@ -292,48 +296,59 @@ a {
   padding: 40px;
 }
 
-.questions_container, .review_page {
-  margin: 20px;
-}
-
-.questions_container .contributions_summary, .review_page .contributions_summary {
+.user_contributions .contributions_states_buttons {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  margin-left: 10px;
-}
-
-.questions_container .contributions_summary .contribution_state, .review_page .contributions_summary .contribution_state {
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin-right: 20px;
   padding: 10px;
-  margin-right: 25px;
 }
 
-.questions_container .contributions_summary .contribution_state .circle, .review_page .contributions_summary .contribution_state .circle {
-  border-radius: 50%;
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  position: relative;
-  top: 5px;
-  margin-right: 7px;
+.user_contributions .contributions_states_buttons button {
+  margin: 10px;
+  font-size: 15px;
 }
 
-.questions_container .contributions_summary .contribution_state .approved, .review_page .contributions_summary .contribution_state .approved {
+.user_contributions .contributions_states_buttons .clicked_all, .user_contributions .contributions_states_buttons .all:hover {
+  color: black;
+  background-color: #d0cccc;
+}
+
+.user_contributions .contributions_states_buttons .clicked_approved, .user_contributions .contributions_states_buttons .approved:hover {
+  background-color: #217131;
+}
+
+.user_contributions .contributions_states_buttons .clicked_pending, .user_contributions .contributions_states_buttons .pending:hover {
+  background-color: #a87820;
+}
+
+.user_contributions .contributions_states_buttons .clicked_rejected, .user_contributions .contributions_states_buttons .rejected:hover {
+  background-color: #8c2b1c;
+}
+
+.user_contributions .contributions_states_buttons .all {
+  color: black;
+}
+
+.user_contributions .contributions_states_buttons .approved {
   background-color: #46BB5D;
 }
 
-.questions_container .contributions_summary .contribution_state .pending, .review_page .contributions_summary .contribution_state .pending {
-  background-color: #e6ab3f;
+.user_contributions .contributions_states_buttons .pending {
+  background-color: #f0ba56;
 }
 
-.questions_container .contributions_summary .contribution_state .rejected, .review_page .contributions_summary .contribution_state .rejected {
+.user_contributions .contributions_states_buttons .rejected {
   background-color: #E76450;
 }
 
-.questions_container .user_anime_contributions, .review_page .user_anime_contributions {
-  padding: 20px;
+.questions_container, .review_page {
+  margin: 20px;
 }
 
 .questions_container .canceledstate, .review_page .canceledstate {
@@ -342,7 +357,7 @@ a {
 }
 
 .questions_container .pendingstate, .review_page .pendingstate {
-  border-color: #e6ab3f;
+  border-color: #f0ba56;
 }
 
 .questions_container .declinestate, .review_page .declinestate {
@@ -366,7 +381,7 @@ a {
 }
 
 .user_contributed_question {
-  margin-bottom: 30px;
+  margin-bottom: 80px;
 }
 
 .user_contributed_question div {
@@ -603,7 +618,7 @@ a {
   margin-bottom: 6px;
 }
 
-.select_animes {
+.react_select {
   margin-left: auto;
   margin-right: auto;
   width: 250px;
