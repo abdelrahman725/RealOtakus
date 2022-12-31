@@ -1,26 +1,30 @@
 import ContributedQuestion from "./Components/ContributedQuestion"
 import async_http_request from "./Components/AsyncRequest"
 import { useState, useEffect } from "react"
+import { useLocation } from 'react-router-dom'
 
 const UserContributions = () => {
 
   const [contributions, setcontributions] = useState()
   const [n_contributions, set_n_contributions] = useState()
   const [selected_contribution_state, set_selected_contribution_state] = useState(1)
+  const location = useLocation()
 
-  const filter_by_state = (selected_state) => {
 
-    set_selected_contribution_state(selected_state)
+  useEffect(() => {
 
-    if (selected_state === 1) {
-      set_n_contributions(contributions.length)
+    if (contributions) {
+
+      if (selected_contribution_state === 1) {
+        set_n_contributions(contributions.length)
+      }
+
+      else {
+        set_n_contributions(contributions.filter(c => c.approved === selected_contribution_state).length)
+      }
     }
 
-    else {
-      set_n_contributions(contributions.filter(c => c.approved === selected_state).length)
-    }
-  }
-
+  }, [selected_contribution_state])
 
   useEffect(() => {
 
@@ -31,7 +35,8 @@ const UserContributions = () => {
         return
 
       setcontributions(fetched_contributions)
-      set_n_contributions(fetched_contributions.length)
+      location.state !== null ? set_selected_contribution_state(location.state) : set_n_contributions(fetched_contributions.length)
+
     }
 
     get_contributions()
@@ -49,30 +54,35 @@ const UserContributions = () => {
 
             <div className="contributions_states_buttons">
 
-              <button className={selected_contribution_state === 1 ? "clicked_all" : "all"}
-                onClick={() => filter_by_state(1)}>
+              <button className={`all darker_on_hover ${selected_contribution_state === 1 && "darker_background"}`}
+                onClick={() => set_selected_contribution_state(1)}>
                 All
               </button>
 
-              <button className={selected_contribution_state === true ? "clicked_approved" : "approved"}
-                onClick={() => filter_by_state(true)}>
+              <button className={`approved darker_on_hover ${selected_contribution_state === true && "darker_background"}`}
+                onClick={() => set_selected_contribution_state(true)}>
                 approved
               </button>
 
-              <button className={selected_contribution_state === null ? "clicked_pending" : "pending"}
-                onClick={() => filter_by_state(null)}>
+              <button className={`pending darker_on_hover ${selected_contribution_state === null && "darker_background"}`}
+                onClick={() => set_selected_contribution_state(null)}>
                 pending
               </button>
 
-              <button className={selected_contribution_state === false ? "clicked_rejected" : "rejected"}
-                onClick={() => filter_by_state(false)}>
+              <button className={`rejected darker_on_hover ${selected_contribution_state === false && "darker_background"}`}
+                onClick={() => set_selected_contribution_state(false)}>
                 rejected
               </button>
 
             </div>
 
             <h2>
-              {n_contributions}  Contributions
+              <span className="n_contributions">{n_contributions}</span>
+              {selected_contribution_state === 1 && " total "}
+              {selected_contribution_state === true && " approved "}
+              {selected_contribution_state === false && " rejected "}
+              {selected_contribution_state === null && " pending "}
+              Contributions
             </h2>
 
             <div className="questions_container">
@@ -85,7 +95,7 @@ const UserContributions = () => {
 
           </div>
           :
-          <div className="loading_div">no contributions </div>
+          <div className="loading_div">no contributions yet</div>
 
         : <div className="loading_div">loading...</div>
       }

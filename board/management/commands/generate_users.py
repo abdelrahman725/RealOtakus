@@ -3,11 +3,13 @@ import random
 from django.core.management.base import BaseCommand
 
 from board.models import User
+from board.models import Anime
 
-from board.constants import COUNTRIES, LEVELS
+from board.constants import COUNTRIES
 
 class Command(BaseCommand):
-    help = "generate random authentic Users (otakus) for testing purposes"
+
+    help = "generate random  Users for testing purposes"
    
     def add_arguments(self, parser):
 
@@ -23,17 +25,19 @@ class Command(BaseCommand):
         
         print(f"\n\n generating {n_users} users...\n")
 
-        #animes = Anime.objects.all()
-        #animes_to_review = random.sample(list(animes),random.randint(0,animes.count()))
+        animes = Anime.objects.all()
 
         for i in range(n_users):
 
-            level = random.choice(list(LEVELS))
-            User.objects.create( 
-                username=f"user_{i}",
-                country=random.choice(list(COUNTRIES)),
-                level= level,
-                points =  LEVELS[level] + random.randint(1,950)
+            user = User.objects.create_user( 
+                username=f"user_{i+1}",
+                email=f"user_{i+1}@example.com",
+                password="password",
+                country=random.choice(list(COUNTRIES))
             )
-      
+            
+            # make first user reviewer of all animes
+            if i==0:
+                user.animes_to_review.add(*animes)
+
         print("\n Done \n")

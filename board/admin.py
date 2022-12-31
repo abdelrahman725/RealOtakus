@@ -468,6 +468,8 @@ class QuestionAdmin(admin.ModelAdmin):
 
   def contributor(self,obj):
     try:
+      if obj.contribution.contributor == None:
+        return "DELETED"
       return obj.contribution.contributor
     except Contribution.DoesNotExist:
       return "admin"
@@ -544,7 +546,7 @@ class UserAdmin(admin.ModelAdmin):
     "tests_started",
     "tests_completed",
     "animes_to_review",
-    #"password",
+    "password",
     "last_login",
     "date_joined",
     "is_active"

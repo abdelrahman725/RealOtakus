@@ -53,7 +53,7 @@ function App() {
 
   }
 
-  const { lastMessage, readyState } = useWebSocket(`ws://${domain}/ws/socket-server/`, {
+  const { lastMessage } = useWebSocket(`ws://${domain}/ws/socket-server/`, {
     //Will attempt to reconnect on all close events, such as server shutting down
     onOpen: () => console.log('\n connection open \n\n'),
     shouldReconnect: () => true,
@@ -62,7 +62,9 @@ function App() {
   // listening for incoming realtime notifications 
   useEffect(() => {
     if (lastMessage !== null) {
+
       const new_data = JSON.parse(lastMessage.data)
+      
       if (new_data.payload) {
         console.log(new_data.payload)
         setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
@@ -70,7 +72,7 @@ function App() {
       }
 
     }
-  }, [lastMessage, setnotifications]);
+  }, [lastMessage, setnotifications])
 
   useEffect(() => {
 
@@ -115,8 +117,6 @@ function App() {
           darkmode={darkmode}
           setdarkmode={setdarkmode}
         />
-
-        <div className="spaced_div"></div>
 
         {info_message && <InfoMessage msg={info_message} close={close_info_panel} />}
 

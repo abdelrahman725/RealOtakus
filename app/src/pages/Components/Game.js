@@ -19,6 +19,7 @@ const Game = ({
   const SubmitGame = async () => {
 
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
     setgame_started(false)
 
     const game_results = await async_http_request({
@@ -91,7 +92,7 @@ const Game = ({
             {index === N_Game_Questions - 1 ?
               <button onClick={SubmitGame} className="submit_btn"> Submit </button>
               :
-              <button onClick={nextquestion} style={{ backgroundColor: "#365FAA" }}> next </button>
+              <button onClick={nextquestion} className="next_btn darker_on_hover"> next </button>
             }
           </div>
           <br />

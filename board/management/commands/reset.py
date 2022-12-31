@@ -6,15 +6,13 @@ from board.models import Question
 from board.models import QuestionInteraction
 from board.models import Notification 
 
-from board.constants import BEGINNER
-
 # script for reseting state of the database by deleting any data used in testing (manual or automatic)
 # Note : don't use in production !
 
 
 class Command(BaseCommand):
 
-    help = "delete all created data during testing except active questions"
+    help = "delete all users and their data created during development except active questions"
 
     def handle(self, *args, **options):
 
@@ -27,23 +25,14 @@ class Command(BaseCommand):
 
 
         admin = User.objects.get(username="admin", is_superuser=True)
-        users = User.objects.exclude(pk=admin.pk)
+
+        User.objects.exclude(pk=admin.pk).delete()
         
         Notification.objects.all().delete()
-
-        users.filter(username__istartswith="user_").delete()
-
-
-        for user in users:
-            user.points = 0
-            user.level = BEGINNER
-            user.tests_started = 0
-            user.tests_completed = 0
-            user.save()
   
-
         Question.objects.filter(contribution__isnull=False).update(active=False)
-        Question.objects.filter(contribution__isnull=False,active=False).delete()
+
+        Question.objects.filter(contribution__isnull=False, active=False).delete()
         
         Contribution.objects.all().delete()
      

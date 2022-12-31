@@ -35,28 +35,31 @@ button, .pointer_cursor {
   cursor: pointer;
 }
 
+.darker_background{
+  filter: brightness(70%);
+}
+
+.darker_on_hover:hover{
+  filter: brightness(70%);
+}
 
 button{
   border-radius: $base_border_radius;
   color: white;
-  transition:  0.3s;
+  transition: 0.4s;
   border: none;
   font-weight: bold;
   padding: 10px 15px;
   letter-spacing: 1px;
 }
 
-
 a{
   text-decoration: none;
 }
 
-
 .submit_btn{
   background-color: $base_green_color;
-  &:hover{
-    background-color: #217131;
-  }
+  @extend .darker_on_hover;
 }
 
 .loading_div{
@@ -68,10 +71,7 @@ a{
   background-color: $base_div_backgroun_color;
   color: white;
   padding:20px;
-  position:fixed;
-  top:0;
-  width:100%;
-  z-index:3;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -121,12 +121,6 @@ a{
 .faded_background{
   opacity: 50%;
 }
-
-
-.spaced_div{
-  margin-top: 90px;
-}
-
 
 .info_container{
   @extend .base_box_window;
@@ -294,63 +288,38 @@ a{
 
 .user_contributions{
   @extend .centered_div;
+  
+  .n_contributions{
+    position: relative;
+    top: 1.5px;
+  }
 
   .contributions_states_buttons{
-
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-end;
-    margin-right: 20px;
     padding: 10px;
+    margin-bottom: 30px;
     
     button{
-      margin: 10px;
+      margin: 12px;
+      padding: 11px 15px;
       font-size: 15px;
-    }
-
-    .clicked_all{
-      color: black;
-      background-color: rgb(208, 204, 204);
-    }
-
-    .clicked_approved{
-      background-color:  #217131;
-    }
-    
-    .clicked_pending{
-      background-color:  rgb(168, 120, 32);
-    }
-
-    .clicked_rejected{
-      background-color:  #8c2b1c;
     }
     
     .all{
       color: black;
-      &:hover{
-        @extend .clicked_all;
-      }
     }
  
     .approved{
       background-color: $base_green_color;
-      &:hover{
-        @extend .clicked_approved;
-      }
     }
     
     .pending{
       background-color: $base_pending_color;
-      &:hover{
-        @extend .clicked_pending;
-      }
     }
     
     .rejected{
       background-color:$base_rejected_color;
-      &:hover{
-        @extend .clicked_rejected;
-      }
     }
 
   }
@@ -512,9 +481,7 @@ a{
     }
 
     button{
-      padding: 5px 10px;
-      font-weight: lighter;
-      background-color: #365FAA;
+       padding: 7px 11px;
     }
   }
 
@@ -534,10 +501,6 @@ a{
     padding: 20px
   }
 
-  .preg_game_start{
-    // to do
-  }
-  
 
   .game_container{
     @extend .centered_div;
@@ -599,6 +562,10 @@ a{
 
     .result_question{
       margin-bottom: 150px;
+    }
+
+    .next_btn{
+      background-color: #365FAA;
     }
 
   }
@@ -671,12 +638,11 @@ a{
     padding:0px 10px;
     padding-top: 10px;
     padding-bottom: 25px;
-    box-shadow: $base_shadow ;
+    box-shadow: $base_shadow;
     position: relative;
     
     &:hover{
-      background-color: rgb(206, 200, 200);
-
+      filter:brightness(90%);
     }
    
     .notification_time{
@@ -746,16 +712,15 @@ footer{
   
   .navbar{
     flex-direction: column;
-    
+    padding:15px;
     .left{
-      margin-bottom: 20px;
+      margin-bottom: 12px;
     }
   }
   
-  .spaced_div{
-    margin-top: 155px;
+  .navigation_buttons{
   }
-
+  
   .leaderboard{
     font-size: 12px;
   
@@ -772,6 +737,10 @@ footer{
     textarea{
       width: 85%;
     }
+  }
+  
+  .contributions_states_buttons{
+    flex-direction: column;
   }
   
 }

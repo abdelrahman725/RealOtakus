@@ -28,12 +28,20 @@ const QuestionsForReview = () => {
     { value: 4, label: 'wrong information' }
   ]
 
+  const filter_questions = (anime) => {
+    if (selected_anime) {
+      return selected_anime.value === anime
+    }
+    return true
+  }
+
   useEffect(() => {
     let cancled = false
 
-    setselected_anime(location.state)
+    location.state && setselected_anime(location.state)
 
     async function fetch_contributions() {
+
       const contributions_result = await async_http_request({ path: "get_review_contribution" })
 
       if (contributions_result === null) {
@@ -43,15 +51,11 @@ const QuestionsForReview = () => {
 
       if (cancled === false) {
 
-        const animes_set = new Set()
-
-        contributions_result.questions.map((contribution) => animes_set.add(contribution.question.anime.anime_name))
-
-        animes_set.forEach(anime => {
+        contributions_result.animes.map((each_anime) => (
           setanimes_options(
-            prev => [...prev, { value: anime, label: anime }]
+            prev => [...prev, { value: each_anime.anime_name, label: each_anime.anime_name }]
           )
-        })
+        ))
 
         set_n_reviewed_contributions(contributions_result.n_reviewed_contributions)
         set_contributors_contributions(contributions_result.questions)
@@ -81,10 +85,9 @@ const QuestionsForReview = () => {
                   :
                   contributors_contributions.length
               }
-            </span>  Contributions to review
+            </span>  Questions to review
           </h2>
 
-          <p> you have reviewed {n_reviewed_contributions} contributions </p>
           <br />
 
           <Select
@@ -92,17 +95,18 @@ const QuestionsForReview = () => {
             value={selected_anime}
             styles={SelectStyles}
             className="react_select"
-            placeholder="filter by anime"
+            placeholder={`filter ${animes_options.length} animes`}
             isClearable={true}
             options={animes_options}
             onChange={handle_questions_filter}
             ref={anime_select}
           />
 
+          <p> you have reviewed {n_reviewed_contributions} contributions </p>
           <br />  <br />
 
-          {contributors_contributions && contributors_contributions.map((cont, index) => (
-            (selected_anime === null || selected_anime.value === cont.question.anime.anime_name) &&
+          {contributors_contributions.map((cont, index) => (
+            (filter_questions(cont.question.anime.anime_name)) &&
             <ReviewQuestion
               setreviewstate={setreviewstates}
               reviewstate={reviewstates[cont.id] ? reviewstates[cont.id] : "pendingstate"}
@@ -116,6 +120,7 @@ const QuestionsForReview = () => {
             />
 
           ))}
+
         </div>
         :
         <div className="loading_div">

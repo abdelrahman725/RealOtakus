@@ -27,11 +27,21 @@ button, .pointer_cursor, .info_container .close_icon, .game_view_container .game
   cursor: pointer;
 }
 
+.darker_background {
+  -webkit-filter: brightness(70%);
+          filter: brightness(70%);
+}
+
+.darker_on_hover:hover, .submit_btn:hover {
+  -webkit-filter: brightness(70%);
+          filter: brightness(70%);
+}
+
 button {
   border-radius: 7px;
   color: white;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border: none;
   font-weight: bold;
   padding: 10px 15px;
@@ -46,10 +56,6 @@ a {
   background-color: #46BB5D;
 }
 
-.submit_btn:hover {
-  background-color: #217131;
-}
-
 .loading_div {
   margin-top: 100px;
   font-size: larger;
@@ -59,10 +65,7 @@ a {
   background-color: #262F36;
   color: white;
   padding: 20px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 3;
+  margin-bottom: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -117,10 +120,6 @@ a {
 
 .faded_background {
   opacity: 50%;
-}
-
-.spaced_div {
-  margin-top: 90px;
 }
 
 .info_container {
@@ -296,39 +295,26 @@ a {
   padding: 40px;
 }
 
+.user_contributions .n_contributions {
+  position: relative;
+  top: 1.5px;
+}
+
 .user_contributions .contributions_states_buttons {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
-  margin-right: 20px;
   padding: 10px;
+  margin-bottom: 30px;
 }
 
 .user_contributions .contributions_states_buttons button {
-  margin: 10px;
+  margin: 12px;
+  padding: 11px 15px;
   font-size: 15px;
-}
-
-.user_contributions .contributions_states_buttons .clicked_all, .user_contributions .contributions_states_buttons .all:hover {
-  color: black;
-  background-color: #d0cccc;
-}
-
-.user_contributions .contributions_states_buttons .clicked_approved, .user_contributions .contributions_states_buttons .approved:hover {
-  background-color: #217131;
-}
-
-.user_contributions .contributions_states_buttons .clicked_pending, .user_contributions .contributions_states_buttons .pending:hover {
-  background-color: #a87820;
-}
-
-.user_contributions .contributions_states_buttons .clicked_rejected, .user_contributions .contributions_states_buttons .rejected:hover {
-  background-color: #8c2b1c;
 }
 
 .user_contributions .contributions_states_buttons .all {
@@ -493,9 +479,7 @@ a {
 }
 
 .each_question_for_review_container form button {
-  padding: 5px 10px;
-  font-weight: lighter;
-  background-color: #365FAA;
+  padding: 7px 11px;
 }
 
 .each_question_for_review_container .submit_container {
@@ -577,6 +561,10 @@ a {
   margin-bottom: 150px;
 }
 
+.game_view_container .game_container .next_btn {
+  background-color: #365FAA;
+}
+
 .contribution {
   margin-bottom: 60px;
 }
@@ -643,7 +631,8 @@ a {
 }
 
 .notifications .notification:hover {
-  background-color: #cec8c8;
+  -webkit-filter: brightness(90%);
+          filter: brightness(90%);
 }
 
 .notifications .notification .notification_time {
@@ -716,12 +705,10 @@ footer a {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
+    padding: 15px;
   }
   .navbar .left {
-    margin-bottom: 20px;
-  }
-  .spaced_div {
-    margin-top: 155px;
+    margin-bottom: 12px;
   }
   .leaderboard {
     font-size: 12px;
@@ -739,6 +726,12 @@ footer a {
   }
   .contribution textarea {
     width: 85%;
+  }
+  .contributions_states_buttons {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
   }
 }
 

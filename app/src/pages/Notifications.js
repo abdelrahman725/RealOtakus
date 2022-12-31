@@ -14,12 +14,26 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
   }
 
   const change_route = (kind, filtered_anime) => {
-    if (kind) {
+    if (kind === null)
+      return
+
+    if (kind === "R") {
       naviage_routes(
         notification_kind_to_path[kind],
         { state: { value: filtered_anime, label: filtered_anime } }
       )
+      return
     }
+
+    if (kind === "A" || kind === "F") {
+      naviage_routes(
+        notification_kind_to_path[kind],
+        { state: kind === "A" }
+      )
+      return
+    }
+
+    naviage_routes(notification_kind_to_path[kind])
   }
 
   useEffect(() => {

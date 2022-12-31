@@ -1,5 +1,4 @@
 import random
-from time import sleep
 
 from django.db import connection, IntegrityError
 from django.db.models import Count, Avg, Q
@@ -29,8 +28,9 @@ from board.helpers import login_required, CreateNotification
 
 from board.constants import QUESTIONSCOUNT
 
-# used to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed :
+# to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed : 
 # for q in connection.queries : print(f"\n\n { q } \n\n")
+
 
 # status.HTTP_429_TOO_MANY_REQUESTS
 
@@ -46,7 +46,7 @@ for anime in Anime.objects.all():
 
 def get_current_user(request):
     return request.user
-    return User.objects.get(username="pablo")
+    return User.objects.get(username="andrea")
 
 
 def get_or_query_anime(anime: int):
@@ -333,7 +333,7 @@ def get_or_make_contribution(request):
     is_anime_reviewr = anime in user.animes_to_review.all()
     
     try:
-        new_question = Question.objects.create(
+        contributed_question = Question.objects.create(
             anime=anime,
             active=is_anime_reviewr,
             question=question_object["question"],
@@ -345,7 +345,7 @@ def get_or_make_contribution(request):
 
         Contribution.objects.create(
             contributor=user,
-            question=new_question,
+            question=contributed_question,
             reviewer=user if is_anime_reviewr else None,
             approved=True if is_anime_reviewr else None
         )
@@ -383,10 +383,13 @@ def get_or_review_contribution(request):
             many=True
         )
 
+        animes = AnimeSerializer(animes_for_user_to_review, many=True)
+        
         n_reviewed_contributions = user.contributions_reviewed.count()
 
         return Response({
             "questions": contributed_questions.data,
+            "animes" : animes.data,
             "n_reviewed_contributions": n_reviewed_contributions
         })
 

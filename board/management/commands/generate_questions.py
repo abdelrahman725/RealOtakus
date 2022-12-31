@@ -13,7 +13,7 @@ from board.models import Question
 
 class Command(BaseCommand):
 
-    help = "generate random authentic questions for testing purposes"
+    help = "generate random contributed questions for testing purposes"
    
     def add_arguments(self, parser):
 
@@ -47,7 +47,6 @@ class Command(BaseCommand):
             end = timezone.now()
             return start + (end - start) * random.random()
         
-   
         def generate_question(anime,question):
             return Question.objects.create(    
                 anime = anime,
@@ -65,13 +64,17 @@ class Command(BaseCommand):
                     contributor=contributor,
                     date_created = random_date()
             )
-
-
-        print(f"\n\n Creating {n_questions} questions...\n")
+        
         
         animes = Anime.objects.all()
         
         all_users = User.objects.exclude(is_superuser=True)
+
+        if all_users.count() == 0:
+            print("\nplease generate users first\n")
+            return
+
+        print(f"\n\n Creating {n_questions} questions...\n")
         
         for i in range(q_iterator, q_iterator + n_questions):
 

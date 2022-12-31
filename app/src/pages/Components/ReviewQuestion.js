@@ -136,7 +136,7 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
                         />
                     }
                     <div className="submit_container">
-                        {!review_submitted ?  <button type="submit">Submit</button> : "loading"}
+                        {!review_submitted ? <button type="submit" className="submit_btn">Submit</button> : "loading"}
                     </div>
 
                 </form>
