@@ -10,7 +10,6 @@ const UserContributions = () => {
   const [selected_contribution_state, set_selected_contribution_state] = useState(1)
   const location = useLocation()
 
-
   useEffect(() => {
 
     if (contributions) {

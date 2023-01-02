@@ -1,3 +1,9 @@
+
+# python virtual environment
 venv/
-/db.sqlite3
+
+# Database
+*.sqlite3
+
+# a git script
 /git-filter-repo

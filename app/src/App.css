@@ -61,6 +61,10 @@ a {
   font-size: larger;
 }
 
+.disabled_div {
+  pointer-events: none;
+}
+
 .navbar {
   background-color: #262F36;
   color: white;
@@ -486,13 +490,18 @@ a {
   height: 30px;
 }
 
-.game_view_container .exit_msg {
+.game_view_container .pre_game_start_container {
+  margin-top: 50px;
+}
+
+.game_view_container .info_msg {
   color: #dc334f;
   padding: 20px;
 }
 
 .game_view_container .game_container {
   width: 90%;
+  margin-top: 50px;
   max-width: 1000px;
 }
 
@@ -559,6 +568,10 @@ a {
 
 .game_view_container .game_container .result_question {
   margin-bottom: 150px;
+}
+
+.game_view_container .game_container .game_buttons {
+  margin: 30px 0px;
 }
 
 .game_view_container .game_container .next_btn {

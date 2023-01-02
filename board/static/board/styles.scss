@@ -1,3 +1,4 @@
+
 $base_green_button_color  : #46BB5D;
 $base-shadow :0.5px 0.5px 3px 0.1px grey;
 $base_border_radius : 7px;
@@ -96,42 +97,46 @@ input[type="submit"], button{
       margin-bottom: 40px;
       
       input{
-      border-radius: $base_button_radius;   
-      padding: 10px;
-      font-size: 16px;
+        border-radius: $base_button_radius;   
+        padding: 10px;
+        font-size: 16px;
       
-      &:focus{
-        outline: #76a8e9 solid 2px;   
+        &:focus{
+          outline: #76a8e9 solid 2px;   
+        }
+        
+        &:not(input[type=submit]){ 
+          border :0.1px solid rgb(101, 100, 97);
+          width: 300px;
+          margin-bottom: 20px;
+        }
+        
+        &[type=submit]{
+          width: 65%;
+          color: white;
+          font-weight: bold;
+          border: none;
+          font-size: 18px;
+          background-color: $base_green_button_color;
+          margin-top: 20px;
+        }
+        
+        &[type=submit]:hover {
+          box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
+        }
       }
-      
-      &:not(input[type=submit]){ 
-        border :0.1px solid rgb(101, 100, 97);
-        width: 300px;
-      }
-      
-      &[type=submit]{
-        width: 65%;
-        color: white;
-        font-weight: bold;
-        border: none;
-        font-size: 18px;
-        background-color: $base_green_button_color;
-        margin-top: 20px;
-      }
-      
-      &[type=submit]:hover {
-        box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
-      }
-    }
     }
 
     .link{
       font-size: smaller;
+  
       a{
         text-decoration: none;
         color: #508bd8;
       }
+  
     } 
+    
     .messages{
       color: rgb(223, 66, 66);
       font-size: smaller;
@@ -157,4 +162,5 @@ footer{
     margin-left: 25px;
     margin-right: 25px;
   }
+
 }

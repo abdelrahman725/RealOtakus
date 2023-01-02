@@ -2,7 +2,7 @@ from django.db import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
-from  django.contrib.auth.password_validation import validate_password 
+#from  django.contrib.auth.password_validation import validate_password 
 
 from board.helpers import login_required
 from board.models import User
@@ -14,16 +14,22 @@ def user_register(request):
 
     username = request.POST["username"].strip()
     email = request.POST["email"].strip()
-    user_password = request.POST["password"]    
+    user_password = request.POST["password"]
+    
+    if not user_password:
+      messages.error(request, 'password is required !')
+      return redirect("/")
   
     try:
-      user = User.objects.create_user(
+      new_user = User.objects.create_user(
         username=username,
         email=email,
         password=user_password
       )
-      user.save()
-      login(request, user)
+
+      new_user.save()
+      login(request, new_user)
+    
     except IntegrityError:
       messages.error(request, 'username already exists !')
     
@@ -35,10 +41,13 @@ def user_login(request):
     username = request.POST["username"]
     password= request.POST["password"]
     user = authenticate(request, username=username, password=password)
+   
     if user is not None:
       login(request,user)
+   
     else:
       messages.error(request, 'wrong username or password')
+  
   return redirect("/")
 
 

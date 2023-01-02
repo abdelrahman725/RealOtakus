@@ -12,13 +12,13 @@ const Home = ({ user_data, dashboard_users }) => {
       <div className="navigation_buttons">
         <Link to="contribute">
           <button>
-            <FcIdea className="icon" /> Contribute
+            <FcIdea className="icon" />Contribute
           </button>
         </Link>
 
         <Link to="game">
           <button>
-            <MdQuiz className="icon" /> Take Quiz
+            <MdQuiz className="icon" />Take Quiz
           </button>
         </Link>
 
@@ -33,7 +33,8 @@ const Home = ({ user_data, dashboard_users }) => {
             <button>
               <MdOutlineRateReview className="icon" /> Review
             </button>
-          </Link>}
+          </Link>
+        }
       </div>
 
       {dashboard_users && dashboard_users.length > 0 && <TheDashBoard dashboard_users={dashboard_users} current_user={user_data && user_data.id} />}

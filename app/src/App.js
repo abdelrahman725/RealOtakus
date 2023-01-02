@@ -27,10 +27,10 @@ function App() {
   const [dashboard_users, set_dashboard_users] = useState()
   const [all_animes, setall_animes] = useState()
   const [notifications, setnotifications] = useState([])
-  const [number_of_unseen_notifications, setnumber_of_unseen_notifications] = useState(0)
   const [darkmode, setdarkmode] = useState(true)
-  const [game_started, setgame_started] = useState()
+  const [game_started, setgame_started] = useState(null)
   const [info_message, set_info_message] = useState()
+  const [number_of_unseen_notifications, setnumber_of_unseen_notifications] = useState(0)
   const N_Game_Questions = 5
 
   const close_info_panel = () => {
@@ -64,7 +64,7 @@ function App() {
     if (lastMessage !== null) {
 
       const new_data = JSON.parse(lastMessage.data)
-      
+
       if (new_data.payload) {
         console.log(new_data.payload)
         setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
@@ -114,6 +114,7 @@ function App() {
           user={user_data}
           notifications_open={false}
           new_notifications={number_of_unseen_notifications}
+          game_started = {game_started}
           darkmode={darkmode}
           setdarkmode={setdarkmode}
         />

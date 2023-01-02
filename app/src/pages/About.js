@@ -9,7 +9,7 @@ const About = () => {
       <div>
         <h2>About</h2>
         <p>
-          Real Otaku is a platform for anime enthusiasts and fans founded in 2022 by <strong>my name</strong>,
+          Real Otaku is a platform for anime enthusiasts and fans founded in 2023 by <strong>my name</strong>,
           it's about contributing anime questions and participate in games
           where you answer questions contributed by others,
           one can also be a reviewr of the incoming contributions

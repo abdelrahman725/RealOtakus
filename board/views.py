@@ -46,7 +46,7 @@ for anime in Anime.objects.all():
 
 def get_current_user(request):
     return request.user
-    return User.objects.get(username="andrea")
+    return User.objects.get(username="user_4")
 
 
 def get_or_query_anime(anime: int):

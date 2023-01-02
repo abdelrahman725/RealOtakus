@@ -8,14 +8,14 @@ import { useState, useContext, useEffect, useRef } from 'react'
 
 const GameView = () => {
 
-  const { SelectStyles, N_Game_Questions, game_started, setgame_started, set_info_message, set_user_data } = useContext(GlobalStates)
+  const { SelectStyles, N_Game_Questions, game_started, setgame_started, set_user_data } = useContext(GlobalStates)
   const [animesoptions, setanimesoptions] = useState()
   const [gamequestions, setgamequestions] = useState()
   const [selected_anime, setselected_anime] = useState()
   const [quizresults, setquizresults] = useState({})
   const [useranswers, setuseranswers] = useState({})
   const [game_score, setgame_score] = useState()
-  const [exit_game, set_exit_game] = useState(false)
+  const [game_info, set_game_info] = useState()
 
   const anime_select = useRef(null)
 
@@ -23,6 +23,7 @@ const GameView = () => {
   const GetGame = async () => {
 
     setgame_started(true)
+    setgamequestions()
     setquizresults({})
     setuseranswers({})
 
@@ -30,6 +31,8 @@ const GameView = () => {
 
     if (game.info !== "ok") {
       console.log(game.info)
+      set_game_info(game.info)
+      setgame_started(null)
       return
     }
 
@@ -57,14 +60,11 @@ const GameView = () => {
 
   useEffect(() => {
 
-    async function get_available_animes_for_tests() {
-
-      setanimesoptions()
+    async function get_available_quiz_animes() {
 
       const quiz_animes_result = await async_http_request({ path: "getgameanimes" })
 
       if (quiz_animes_result === null) {
-        set_info_message("network error")
         return
       }
 
@@ -82,25 +82,19 @@ const GameView = () => {
       setanimesoptions(animes_array)
     }
 
-    get_available_animes_for_tests()
-    //anime_select.current.focus()
+    get_available_quiz_animes()
 
     return () => {
-      setgame_started()
+      setgame_started(null)
     }
 
   }, [])
 
   return (
     <div className="game_view_container">
-      {game_started === undefined &&
-        <div>
-          <br />
-          {exit_game &&
-            <div className="exit_msg">
-              Sorry your quiz is canceled because you left the page, you shouldn't do so
-            </div>
-          }
+      {game_started === null &&
+        
+        <div className="pre_game_start_container">
           <br />
           <Select
             styles={SelectStyles}
@@ -113,7 +107,11 @@ const GameView = () => {
             onChange={on_anime_select}
             isOptionDisabled={(option) => hide_anime(option.user_interactions, option.anime_questions)}
             ref={anime_select} />
+
           <br />
+
+          {game_info && <div className="info_msg">{game_info}</div>}
+
           <button className="submit_btn" onClick={() => selected_anime ? GetGame() : anime_select.current.focus()} >
             Start
           </button>
@@ -121,7 +119,7 @@ const GameView = () => {
       }
 
       {game_started === true &&
-        <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} set_exit_game={set_exit_game} />
+        <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} set_game_info={set_game_info} />
       }
 
       {game_started === false &&
