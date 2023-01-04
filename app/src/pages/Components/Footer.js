@@ -15,6 +15,10 @@ const Footer = () => {
         Support
       </a>
 
+      <a href="/#" target="_blank" rel="noreferrer">
+        privacy policy
+      </a>
+
     </footer>
   )
 }

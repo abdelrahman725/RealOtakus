@@ -1,49 +1,48 @@
-
-$base_div_backgroun_color : #262F36;
-$base_green_color: #46BB5D;
+$base_div_background_color: #262f36;
+$base_green_color: #46bb5d;
 $base_pending_color: rgb(240, 186, 86);
-$base_rejected_color: #E76450;
-$base_shadow :0.5px 0.5px 3px 0.1px grey;
-$base_border_radius : 7px;
+$base_rejected_color: #e76450;
+$base_shadow: 0.5px 0.5px 3px 0.1px grey;
+$base_border_radius: 7px;
 
-
-.centered_div{
+.centered_div {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
-  text-align: center; 
+  text-align: center;
 }
 
-.base_box_window{
-  background-color: $base_div_backgroun_color;
+.base_box_window {
+  background-color: $base_div_background_color;
   text-align: center;
   padding: 10px;
-  left: 0; 
-  right: 0; 
+  left: 0;
+  right: 0;
   top: 0;
-  margin-left: auto; 
-  margin-right: auto; 
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 250px;
-  color:white;
+  color: white;
   border-radius: $base_border_radius;
   box-shadow: $base_shadow;
   position: absolute;
   z-index: 2;
 }
 
-button, .pointer_cursor {
+button,
+.pointer_cursor {
   cursor: pointer;
 }
 
-.darker_background{
+.darker_background {
   filter: brightness(70%);
 }
 
-.darker_on_hover:hover{
+.darker_on_hover:hover {
   filter: brightness(70%);
 }
 
-button{
+button {
   border-radius: $base_border_radius;
   color: white;
   transition: 0.4s;
@@ -53,383 +52,357 @@ button{
   letter-spacing: 1px;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
-.submit_btn{
-  background-color: $base_green_color;
+.submit_btn {
   @extend .darker_on_hover;
+  background-color: $base_green_color;
 }
 
-.loading_div{
+.loading_div {
   margin-top: 100px;
   font-size: larger;
 }
 
-.disabled_div{
+.disabled_div {
   pointer-events: none;
-  filter:brightness(60%);
+  filter: brightness(60%);
 }
 
-.navbar{
-  background-color: $base_div_backgroun_color;
+.navbar {
+  background-color: $base_div_background_color;
   color: white;
-  padding:20px;
+  padding: 20px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
   align-items: center;
 
-  div{
+  div {
     display: flex;
     flex-direction: row;
   }
 
-  .right{
-    div{
-      margin:  0px 20px; 
+  .right {
+    div {
+      margin: 0px 20px;
     }
   }
 
-  
-  .n_notifications{
+  .n_notifications {
     width: 12px;
   }
 
-  .icon{
+  .icon {
     cursor: pointer;
-    color: #6e7174;  
-    &:hover{
+    color: #6e7174;
+    &:hover {
       color: white;
     }
   }
-  
-  .nav_icon{
+
+  .nav_icon {
     @extend .icon;
-    font-size:xx-large;
+    font-size: xx-large;
   }
 
-  .logo{
+  .logo {
     font-size: 30px;
     letter-spacing: 1px;
     color: white;
   }
 
-  .about_icon{
+  .about_icon {
     position: relative;
     top: 2px;
   }
-
 }
 
-
-.faded_background{
+.faded_background {
   opacity: 50%;
 }
 
-.info_container{
+.info_container {
   @extend .base_box_window;
   width: 70%;
   max-width: 500px;
   height: 300px;
-  
-  .close_icon{
+
+  .close_icon {
     @extend .pointer_cursor;
-    color:  #6e7174;
+    color: #6e7174;
     float: right;
     font-size: xx-large;
-    &:hover{
-      color:white
+    &:hover {
+      color: white;
     }
   }
 
-  p{
+  p {
     padding: 10px;
     font-size: large;
     padding-top: 35px;
   }
-
 }
 
-
-.navigation_buttons{
+.navigation_buttons {
   display: flex;
   justify-content: center;
- 
+
   button {
     width: 170px;
     margin-left: 10px;
     margin-right: 10px;
-    margin-bottom: 7px; 
+    margin-bottom: 7px;
     padding: 0px 10px;
     height: 55px;
-    background-color: $base_div_backgroun_color;
+    background-color: $base_div_background_color;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    &:hover{
+    &:hover {
       transform: scale(1.04);
     }
 
-    .icon{
+    .icon {
       margin-right: 3px;
       font-size: x-large;
     }
-  
   }
-  
 }
 
-
-.dashboard{
+.dashboard {
   @extend .centered_div;
-  transition:  1s;
+  transition: 1s;
   border-radius: $base_border_radius;
   border-collapse: collapse;
-  color: white; 
-  background-color: $base_div_backgroun_color;
-  box-shadow: $base_shadow ;
+  color: white;
+  background-color: $base_div_background_color;
+  box-shadow: $base_shadow;
 
-  th{ 
-     border-bottom: 6px solid #3e4d58; 
-     padding: 20px;
-     font-size: medium;
+  th {
+    border-bottom: 6px solid #3e4d58;
+    padding: 20px;
+    font-size: medium;
   }
-  .user_order_head{
+  .user_order_head {
     padding: 0px;
   }
-  
-  tr{
+
+  tr {
     border-bottom: 1.5px solid #3e4d58;
   }
-  
-  tbody tr:last-child{
+
+  tbody tr:last-child {
     border-bottom: none;
   }
 
-  td{
-     padding: 20px 18px; 
-  } 
-  .user_order{
+  td {
+    padding: 20px 18px;
+  }
+  .user_order {
     padding: 0px;
     padding-left: 15px;
   }
 }
 
-
-.dashboard_container{
+.dashboard_container {
   margin-top: 70px;
-  margin-bottom: 70px;  
+  margin-bottom: 70px;
   text-align: center;
-  
-  .leaderboard_title{
+
+  .leaderboard_title {
     font-size: 22px;
   }
 
-  .leaderboard{
+  .leaderboard {
     width: 65%;
 
-    .top_competitor_icon{
-      color: #FFD700;
-      float:left;
+    .top_competitor_icon {
+      color: #ffd700;
+      float: left;
     }
 
-    .current_user{
+    .current_user {
       background-color: #3e4f5b;
     }
   }
-
 }
 
-
-.account_container{
-
+.account_container {
   text-align: center;
   margin: 20px;
 
-  .flex_container{
+  .flex_container {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
     margin-top: 60px;
 
-    .progress{
+    .progress {
       width: 100%;
       padding: 20px;
       margin-bottom: 100px;
       font-size: large;
-      background-color: $base_div_backgroun_color;
+      background-color: $base_div_background_color;
       color: white;
       border-radius: $base_border_radius;
       box-shadow: $base_shadow;
-      
-      .data_row{
+
+      .data_row {
         display: flex;
         justify-content: space-between;
-        
-        div{
+
+        div {
           padding: 30px;
         }
 
-        div:last-child{
+        div:last-child {
           font-weight: 500;
           transform: scale(1.2);
           color: #249090;
         }
       }
-    
-
     }
-  
-    .interactions{
-      td{
+
+    .interactions {
+      td {
         padding: 40px;
       }
     }
-
   }
-
 }
 
-.user_contributions{
+.user_contributions {
   @extend .centered_div;
-  
-  .n_contributions{
+
+  .n_contributions {
     position: relative;
     top: 1.5px;
   }
 
-  .contributions_states_buttons{
+  .contributions_states_buttons {
     display: flex;
     justify-content: flex-end;
     padding: 10px;
     margin-bottom: 30px;
-    
-    button{
+
+    button {
       margin: 12px;
       padding: 11px 15px;
       font-size: 15px;
     }
-    
-    .all{
+
+    .all {
       color: black;
     }
- 
-    .approved{
+
+    .approved {
       background-color: $base_green_color;
     }
-    
-    .pending{
+
+    .pending {
       background-color: $base_pending_color;
     }
-    
-    .rejected{
-      background-color:$base_rejected_color;
-    }
 
+    .rejected {
+      background-color: $base_rejected_color;
+    }
   }
-  
 }
 
-.questions_container{
-
+.questions_container {
   @extend .centered_div;
-  margin: 20px;  
+  margin: 20px;
 
-  .canceledstate{
+  .canceledstate {
     border-color: grey;
     opacity: 50%;
   }
-  
-  .pendingstate{
-    border-color:$base_pending_color;
+
+  .pendingstate {
+    border-color: $base_pending_color;
   }
-    
-  .declinestate{
+
+  .declinestate {
     border-color: $base_rejected_color;
   }
-  
-  .approvestate{
-    border-color:$base_green_color;
-  }
 
+  .approvestate {
+    border-color: $base_green_color;
+  }
 }
 
-  
-.question_basic{
+.question_basic {
   @extend .centered_div;
   background-color: white;
   border-left: solid 20px;
   border-radius: $base_border_radius;
-  box-shadow: $base_shadow ;
+  box-shadow: $base_shadow;
   max-width: 800px;
-  padding:5px 10px;
+  padding: 5px 10px;
   padding-bottom: 10px;
   text-align: left;
 }
 
-
-.user_contributed_question{
+.user_contributed_question {
   @extend .question_basic;
   margin-bottom: 80px;
-  
-  div{
-    padding-top: 1px; 
-    padding-left: 15px; 
+
+  div {
+    padding-top: 1px;
+    padding-left: 15px;
   }
-  
-  .date_created{
+
+  .date_created {
     font-size: smaller;
     position: relative;
-    top:10px;
+    top: 10px;
   }
-
 }
 
-
-.review_page{
+.review_page {
   @extend .questions_container;
 }
 
-.each_question_for_review_container{
+.each_question_for_review_container {
   @extend .question_basic;
   margin-bottom: 110px;
   flex-direction: column;
   justify-content: flex-start;
-  
-  .date_created{
+
+  .date_created {
     font-size: smaller;
   }
 
-  .question_contents{
+  .question_contents {
     padding: 10px;
-    margin:10px;
+    margin: 10px;
     margin-bottom: 30px;
     line-height: 1.6;
     border-radius: $base_border_radius;
     background-color: whitesmoke;
-    box-shadow: $base_shadow ;
-  
-    .choices{
+    box-shadow: $base_shadow;
+
+    .choices {
       padding-left: 15px;
       margin-top: 30px;
-      p{
+      p {
         padding: 6px 0px 6px 12px;
       }
-      
-      .right_answer{
-         background-color: #c7f1dc;
-         border-radius: $base_border_radius;   
+
+      .right_answer {
+        background-color: #c7f1dc;
+        border-radius: $base_border_radius;
       }
     }
-
   }
 
   form {
-
-    label{
+    label {
       margin-right: 20px;
       display: inline-block;
       position: relative;
@@ -437,12 +410,12 @@ a{
       margin-bottom: 12px;
       font-size: large;
 
-      input{
+      input {
         position: absolute;
         opacity: 0;
       }
-      
-      span{
+
+      span {
         cursor: pointer;
         position: absolute;
         top: 0;
@@ -453,25 +426,25 @@ a{
         border-radius: 50%;
       }
 
-      input:checked ~ .approve_checkmark{
+      input:checked ~ .approve_checkmark {
         background-color: #1aa590;
       }
-      
-      input:checked ~ .decline_checkmark{
+
+      input:checked ~ .decline_checkmark {
         background-color: #f36421;
       }
 
-      span:after{
+      span:after {
         content: "";
         position: absolute;
         display: none;
       }
 
-      input:checked ~ span:after{
+      input:checked ~ span:after {
         display: block;
       }
 
-      span:after{
+      span:after {
         top: 9px;
         left: 9px;
         width: 8px;
@@ -479,234 +452,215 @@ a{
         border-radius: 50%;
         background: white;
       }
-
-
     }
 
-    .question_feedback{
+    .question_feedback {
       margin-bottom: 20px;
       max-width: 300px;
     }
 
-    button{
-       padding: 7px 11px;
+    button {
+      padding: 7px 11px;
     }
   }
 
-  .submit_container{
-    height: 30px
-  } 
-
+  .submit_container {
+    height: 30px;
+  }
 }
 
-
-.game_view_container{
-
+.game_view_container {
   @extend .centered_div;
 
-  .pre_game_start_container{
+  .pre_game_start_container {
     margin-top: 50px;
   }
 
-  .info_msg{
+  .info_msg {
     color: #dc334f;
-    padding: 20px
+    padding: 20px;
   }
 
-  .game_container{
+  .game_container {
     @extend .centered_div;
-    width: 90%; 
+    width: 90%;
     margin-top: 50px;
     max-width: 1000px;
 
-    .timer{
+    .timer {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size:large;
-      
-      .icon{
-        font-size:26px;
+      font-size: large;
+
+      .icon {
+        font-size: 26px;
       }
     }
-      
-    .question_x{
+
+    .question_x {
       user-select: none;
-      .choice{
+      .choice {
         @extend .pointer_cursor;
       }
     }
 
-    .disabled_question{
+    .disabled_question {
       user-select: none;
       cursor: default;
       opacity: 40%;
     }
-    
-    .game_question{
 
+    .game_question {
       line-height: 1.6;
-   
+
       .choice {
         border-radius: $base_border_radius;
         background-color: white;
         margin-bottom: 15px;
-        padding:20px 15px;  
-        box-shadow: $base_shadow ;
+        padding: 20px 15px;
+        box-shadow: $base_shadow;
       }
-    
-      .selected_choice{
-        background-color: #365FAA;
+
+      .selected_choice {
+        background-color: #365faa;
         color: white;
       }
-    
-      .rightchoice{
+
+      .rightchoice {
         background-color: #13cfa0;
         color: white;
       }
-    
-      .wrongchoice{
+
+      .wrongchoice {
         background-color: #c64e62;
         color: white;
       }
-      
     }
 
-    .result_question{
+    .result_question {
       margin-bottom: 150px;
     }
 
-    .game_buttons{
+    .game_buttons {
       margin: 30px 0px;
     }
 
-    .next_btn{
-      background-color: #365FAA;
+    .next_btn {
+      background-color: #365faa;
     }
-
   }
-
 }
 
-.contribution{
-
+.contribution {
   margin-bottom: 60px;
-  
-  .guidlines_link{
+
+  .guidlines_link {
     margin-left: 5px;
     color: #0e4b9b;
-    &:hover{
+    &:hover {
       text-decoration: underline;
     }
   }
-  
-  .contribution_form{  
-    
-    textarea{
-      padding:10px;
+
+  .contribution_form {
+    textarea {
+      padding: 10px;
       border-radius: $base_border_radius;
       font-size: large;
       resize: none;
       outline: none;
       margin-bottom: 14px;
-      &:first-of-type{
+      &:first-of-type {
         height: 120px;
       }
     }
 
-    button:focus, textarea:focus{
-      outline: #2684FF solid 2.1px;
+    button:focus,
+    textarea:focus {
+      outline: #2684ff solid 2.1px;
       border-color: white;
     }
- 
-    .submit_container{
+
+    .submit_container {
       margin-top: 10px;
       height: 50px;
     }
 
-    .invalid_input{
+    .invalid_input {
       color: crimson;
       margin-bottom: 6px;
     }
-
   }
-
 }
 
-
-.react_select{
+.react_select {
   margin-left: auto;
   margin-right: auto;
-  width:250px;
+  width: 250px;
 }
 
-
-.notifications{
+.notifications {
   @extend .centered_div;
   max-width: 650px;
-  
-  .notification{  
+
+  .notification {
     border-radius: $base_border_radius;
     background-color: white;
     text-align: left;
     margin: 10px;
     margin-bottom: 40px;
-    padding:0px 10px;
+    padding: 0px 10px;
     padding-top: 10px;
     padding-bottom: 25px;
     box-shadow: $base_shadow;
     position: relative;
-    
-    &:hover{
-      filter:brightness(90%);
+
+    &:hover {
+      filter: brightness(90%);
     }
-   
-    .notification_time{
+
+    .notification_time {
       position: absolute;
       bottom: 0px;
       font-size: small;
     }
-  
   }
 }
 
-
-.about{
+.about {
   padding: 10px 25px 10px 25px;
   text-align: left;
   line-height: 1.8;
 
-  div{
+  div {
     margin-bottom: 60px;
   }
 
-  .icon{
+  .icon {
     font-size: 26px;
   }
- 
-  a{
+
+  a {
     text-decoration: none;
-    color:black;
+    color: black;
     margin-right: 40px;
     margin-left: 4px;
   }
-  
-  .community_links{
+
+  .community_links {
     display: flex;
     flex-wrap: wrap;
-    span{
+    span {
       font-size: 21px;
       position: relative;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: "Courier New", Courier, monospace;
       bottom: 6px;
     }
-
   }
-
 }
 
-
-footer{
+footer {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -716,67 +670,65 @@ footer{
   width: 100%;
   font-size: smaller;
 
-  a{
+  a {
     padding: 10px;
     margin-left: 25px;
     margin-right: 25px;
   }
 }
 
-
-@media screen and(max-width: 550px){
-  
-  .navbar{
+@media screen and(max-width: 550px) {
+  .navbar {
     flex-direction: column;
-    padding:15px;
-    .left{
+    padding: 15px;
+    .left {
       margin-bottom: 12px;
     }
   }
-  
-  .navigation_buttons{
-  
+
+  .navigation_buttons {
   }
-  
-  .leaderboard{
+
+  .leaderboard {
     font-size: 12px;
-  
-    td{ padding:  12px 7px; }
-  
-    th{ padding: 15px 7px;  font-size: x-small}
-    
-    img{
+
+    td {
+      padding: 12px 7px;
+    }
+
+    th {
+      padding: 15px 7px;
+      font-size: x-small;
+    }
+
+    img {
       transform: scale(0.7);
     }
   }
 
-  .contribution{
-    textarea{
+  .contribution {
+    textarea {
       width: 85%;
     }
   }
-  
-  .contributions_states_buttons{
+
+  .contributions_states_buttons {
     flex-direction: column;
   }
-  
 }
 
-@media screen and(max-width: 900px){
-  
+@media screen and(max-width: 900px) {
   .navigation_buttons {
     align-items: center;
-    flex-direction: column;   
+    flex-direction: column;
     button {
-     width: 240px;
-   }
-  }
-  
-  .account{
-    .interactions{
-      width: 100%;
+      width: 240px;
     }
   }
 
+  .account {
+    .interactions {
+      width: 100%;
+    }
+  }
 }
-

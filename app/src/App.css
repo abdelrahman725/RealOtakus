@@ -6,7 +6,7 @@
 }
 
 .base_box_window, .info_container {
-  background-color: #262F36;
+  background-color: #262f36;
   text-align: center;
   padding: 10px;
   left: 0;
@@ -23,7 +23,10 @@
   z-index: 2;
 }
 
-button, .pointer_cursor, .info_container .close_icon, .game_view_container .game_container .question_x .choice {
+button,
+.pointer_cursor,
+.info_container .close_icon,
+.game_view_container .game_container .question_x .choice {
   cursor: pointer;
 }
 
@@ -53,7 +56,7 @@ a {
 }
 
 .submit_btn {
-  background-color: #46BB5D;
+  background-color: #46bb5d;
 }
 
 .loading_div {
@@ -68,7 +71,7 @@ a {
 }
 
 .navbar {
-  background-color: #262F36;
+  background-color: #262f36;
   color: white;
   padding: 20px;
   margin-bottom: 20px;
@@ -166,7 +169,7 @@ a {
   margin-bottom: 7px;
   padding: 0px 10px;
   height: 55px;
-  background-color: #262F36;
+  background-color: #262f36;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -194,7 +197,7 @@ a {
   border-radius: 7px;
   border-collapse: collapse;
   color: white;
-  background-color: #262F36;
+  background-color: #262f36;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
@@ -241,7 +244,7 @@ a {
 }
 
 .dashboard_container .leaderboard .top_competitor_icon {
-  color: #FFD700;
+  color: #ffd700;
   float: left;
 }
 
@@ -270,7 +273,7 @@ a {
   padding: 20px;
   margin-bottom: 100px;
   font-size: large;
-  background-color: #262F36;
+  background-color: #262f36;
   color: white;
   border-radius: 7px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
@@ -328,7 +331,7 @@ a {
 }
 
 .user_contributions .contributions_states_buttons .approved {
-  background-color: #46BB5D;
+  background-color: #46bb5d;
 }
 
 .user_contributions .contributions_states_buttons .pending {
@@ -336,7 +339,7 @@ a {
 }
 
 .user_contributions .contributions_states_buttons .rejected {
-  background-color: #E76450;
+  background-color: #e76450;
 }
 
 .questions_container, .review_page {
@@ -353,11 +356,11 @@ a {
 }
 
 .questions_container .declinestate, .review_page .declinestate {
-  border-color: #E76450;
+  border-color: #e76450;
 }
 
 .questions_container .approvestate, .review_page .approvestate {
-  border-color: #46BB5D;
+  border-color: #46bb5d;
 }
 
 .question_basic, .user_contributed_question, .each_question_for_review_container {
@@ -554,7 +557,7 @@ a {
 }
 
 .game_view_container .game_container .game_question .selected_choice {
-  background-color: #365FAA;
+  background-color: #365faa;
   color: white;
 }
 
@@ -577,7 +580,7 @@ a {
 }
 
 .game_view_container .game_container .next_btn {
-  background-color: #365FAA;
+  background-color: #365faa;
 }
 
 .contribution {
@@ -606,8 +609,9 @@ a {
   height: 120px;
 }
 
-.contribution .contribution_form button:focus, .contribution .contribution_form textarea:focus {
-  outline: #2684FF solid 2.1px;
+.contribution .contribution_form button:focus,
+.contribution .contribution_form textarea:focus {
+  outline: #2684ff solid 2.1px;
   border-color: white;
 }
 
@@ -688,7 +692,7 @@ a {
 .about .community_links span {
   font-size: 21px;
   position: relative;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   bottom: 6px;
 }
 

@@ -5,7 +5,7 @@ import React from 'react'
 
 const About = () => {
   return (
-    <div className="centered_div about">
+    <div className="about">
       <div>
         <h2>About</h2>
         <p>
@@ -44,7 +44,8 @@ const About = () => {
             in other words, the right choice shouldn't be too obvious at first glance,
             so the question experience is more interesting and challenging.
           </li>
-          <li>your question must be in a valid english format (e.g. not a gibberish text) otherwise you will immediately get banned from the platform. </li>
+          <li>your question must be only relevant to the anime and doesn't contain any sexual, political, religious or hate speech content.</li>
+          <li>your question must be in a valid english format. </li>
         </ul>
 
         <h3>Trivial/bad questions &#128577;</h3>
@@ -80,7 +81,6 @@ const About = () => {
         <h2>Stay in touch</h2>
 
         <div className="community_links">
-
           <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank" rel="noreferrer">
             <BsGithub className="icon" /> <span>Github</span>
           </a>

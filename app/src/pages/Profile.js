@@ -59,7 +59,7 @@ const UserProfile = ({ user_data }) => {
     return (
       <div className="account_container">
         <div className="flex_container">
-        
+
           <div>
             <div className="progress">
 
@@ -71,6 +71,16 @@ const UserProfile = ({ user_data }) => {
               <div className="data_row">
                 <div>Email</div>
                 <div>{user_data.email}</div>
+              </div>
+
+              <div className="data_row">
+                <div>Country</div>
+                <div>
+                  {user_data.country ?
+                    <img src={`https://flagcdn.com/256x192/${user_data.country}.png`} width="30" height="20" alt="country_img"></img>
+                    : "N/A"
+                  }
+                </div>
               </div>
 
               <div className="data_row">
@@ -100,9 +110,9 @@ const UserProfile = ({ user_data }) => {
 
             </div>
           </div>
-        
+
           <Interactions interactions={user_interactions} />
-        
+
         </div>
       </div>
     )

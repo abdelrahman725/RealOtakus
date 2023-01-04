@@ -247,6 +247,9 @@ def record_question_encounter(request, question_id):
                 "info": "interaction already recorded"
             }
         )
+        
+    except IntegrityError:
+        pass
 
     return Response(
         {
