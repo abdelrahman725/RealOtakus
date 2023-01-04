@@ -45,8 +45,8 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
+    return User.objects.get(username="user_15")
     return request.user
-    return User.objects.get(username="user_4")
 
 
 def get_or_query_anime(anime: int):
@@ -71,7 +71,7 @@ def react_app(request):
     return render(request, "board/home.html")
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
@@ -117,7 +117,7 @@ def get_home_data(request):
     else:
         top_competitors = User.objects.annotate(
             n_contributions=Count("contributions", filter=(Q(contributions__approved=True)))
-        ).filter(points__gte=avg_score).order_by("-points")
+        ).filter(points__gt=avg_score).order_by("-points")
 
     leader_board_users = LeaderBoradSerializer(top_competitors, many=True)
 
@@ -131,7 +131,7 @@ def get_home_data(request):
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game_animes(request):
     user = get_current_user(request)
@@ -163,7 +163,7 @@ def get_game_animes(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
     current_user = get_current_user(request)
@@ -256,7 +256,7 @@ def record_question_encounter(request, question_id):
     )
 
 
-@login_required
+#@login_required
 @api_view(["POST"])
 def submit_game(request):
     user = get_current_user(request)
@@ -314,7 +314,7 @@ def submit_game(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-@login_required
+#@login_required
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
     user = get_current_user(request)
@@ -364,7 +364,7 @@ def get_or_make_contribution(request):
 
 
 
-@login_required
+#@login_required
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
     
@@ -437,7 +437,7 @@ def get_or_review_contribution(request):
         })
 
 
-@login_required
+#@login_required
 @api_view(["GET"])
 def get_user_interactions(request):
     user = get_current_user(request)
@@ -452,7 +452,7 @@ def get_user_interactions(request):
     })
 
 
-@login_required
+#@login_required
 @api_view(["PUT"])
 def update_notifications(request):
     user = get_current_user(request)

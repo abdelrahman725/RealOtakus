@@ -13,17 +13,6 @@ const Contribute = ({ all_animes_options }) => {
   const [choices_info, set_choices_info] = useState()
   const [submitted, setsubmitted] = useState(false)
 
-  const question_ref = useRef(null)
-  const submit_btn = useRef(null)
-  const anime_select = useRef(null)
-
-  // ensure
-  //const letters_exist = /[a-z]/ig
-  // reject
-  const leading_space = /^\s+/
-  const extra_space = /\s{2,}/
-  const excluded_symbols = /[#`~@^*|\\]/
-
   const [Question, setQuestion] = useState({
     question: "",
     rightanswer: "",
@@ -32,15 +21,27 @@ const Contribute = ({ all_animes_options }) => {
     choice3: "",
   })
 
+  const question_ref = useRef(null)
+  const submit_btn = useRef(null)
+  const anime_select = useRef(null)
+
+  // reject the following patterns
+  
+  // excluded symbols are # ` ~ @ ^ * | \
+  // as they are rarely used in questions  
+  const excluded_symbols = /[#`~@^*|\\]/
+  const extra_space = /\s{2,}/
+
+
   const handle_form_change = (e) => {
 
     const { name, value } = e.target
+
     if (name === "question") {
       question_ref.current.style.outlineColor = "#2684FF"
     }
 
-    if (value.match(leading_space) != null || value.match(extra_space) != null || value.match(excluded_symbols) != null) {
-      console.log("this input is not allowed")
+    if (value.match(extra_space) != null || value.match(excluded_symbols) != null) {
       return
     }
 
@@ -89,6 +90,7 @@ const Contribute = ({ all_animes_options }) => {
       }
 
       // clear form after submission 
+      setanime()
       for (const key in Question) {
         setQuestion(prev => ({ ...prev, [key]: "" }))
       }
@@ -117,14 +119,6 @@ const Contribute = ({ all_animes_options }) => {
         key !== "question" && unique_choices.add(trimmed_value)
         cleaned_question[key] = trimmed_value
       }
-
-      // const letters_exist_match = cleaned_question.question.match(letters_exist)
-      // if (letters_exist_match == null || letters_exist_match.length < 2) {
-      //   window.scrollTo({ top: 0, behavior: 'smooth' })
-      //   set_question_info("question should have letters")
-      //   question_ref.current.focus()
-      //   return false
-      // }
 
       if (cleaned_question.question.length < 7) {
         window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -155,25 +149,23 @@ const Contribute = ({ all_animes_options }) => {
 
   useEffect(() => {
 
-    if (Question.question) {
-      window.onbeforeunload = () => {
-        return true
-      }
+    if (sessionStorage.getItem("contribution") !== null) {
+      setQuestion(JSON.parse(sessionStorage.getItem("contribution")))
     }
 
-    else {
-      window.onbeforeunload = null
-    }
-
-  }, [Question.question])
-
-  useEffect(() => {
-
-    return () => {
-      window.onbeforeunload = null
+    if (sessionStorage.getItem("anime") !== null) {
+      setanime(JSON.parse(sessionStorage.getItem("anime")))
     }
 
   }, [])
+
+
+  useEffect(() => {
+
+    sessionStorage.setItem("contribution", JSON.stringify(Question))
+    !anime ? sessionStorage.setItem("anime", JSON.stringify("")) : sessionStorage.setItem("anime", JSON.stringify(anime))
+
+  }, [Question, anime])
 
   return (
     <div className="centered_div contribution">
@@ -182,7 +174,7 @@ const Contribute = ({ all_animes_options }) => {
 
       <p>
         first make sure you have read
-        <Link className="guidlines_link" to="/about">
+        <Link className="guidlines_link" to="/about" target={"_blank"} rel={"noreferrer"}>
           Contribution Guidlines
         </Link>
       </p>

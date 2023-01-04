@@ -93,7 +93,7 @@ const GameView = () => {
   return (
     <div className="game_view_container">
       {game_started === null &&
-        
+
         <div className="pre_game_start_container">
           <br />
           <Select

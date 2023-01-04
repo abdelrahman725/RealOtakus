@@ -21,13 +21,13 @@ const NavBar = ({
 
       <div className="left" >
         <div>
-          <Link to="/" className="logo" tabIndex={game_started === true && -1}>
+          <Link to="/" className="logo" tabIndex={game_started === true ? -1 : 1}>
             <strong className="logo_text">Real Otakus</strong> &nbsp;
           </Link>
         </div>
 
         <div>
-          <Link to="about" tabIndex={game_started === true && -1}>
+          <Link to="about" tabIndex={game_started === true ? -1 : 1}>
             <FiInfo className="nav_icon about_icon" />
           </Link>
         </div>
@@ -37,7 +37,7 @@ const NavBar = ({
       {user ?
         <div className="right">
           <div>
-            <Link to="profile" tabIndex={game_started === true && -1}>
+            <Link to="profile" tabIndex={game_started === true ? -1 : 1}>
               <BsPersonFill className="nav_icon" />
             </Link>
           </div>
@@ -48,7 +48,7 @@ const NavBar = ({
               {new_notifications}
             </strong>
 
-            <Link to="notifications" tabIndex={game_started === true && -1}>
+            <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
               <IoMdNotifications className="nav_icon" />
             </Link>
           </div>
@@ -59,7 +59,9 @@ const NavBar = ({
           </div> */}
 
           <div>
-            <MdLogout className="nav_icon" onClick={() => window.location.href = `/logout`} />
+            <Link tabIndex={game_started === true ? -1 : 1} >
+              <MdLogout className="nav_icon" onClick={() => window.location.href = '/logout'} />
+            </Link>
           </div>
 
         </div>

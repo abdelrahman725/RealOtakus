@@ -63,6 +63,8 @@ a {
 
 .disabled_div {
   pointer-events: none;
+  -webkit-filter: brightness(60%);
+          filter: brightness(60%);
 }
 
 .navbar {

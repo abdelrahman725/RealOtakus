@@ -1,6 +1,6 @@
 import Question from "./Question"
 import { GlobalStates } from "../../App"
-import { useContext, useState, useEffect } from "react"
+import { useContext, useState, useEffect, useRef } from "react"
 import async_http_request from "./AsyncRequest"
 
 const Game = ({
@@ -55,6 +55,21 @@ const Game = ({
 
   const nextquestion = () => index < N_Game_Questions - 1 && setindex(prev => prev + 1)
 
+
+  useEffect(() => {
+
+    window.history.pushState(null, document.title, window.location.href)
+
+    window.addEventListener('popstate', function () {
+      window.history.pushState(null, document.title, window.location.href)
+    })
+
+    return () => {
+
+    }
+
+  }, [])
+
   useEffect(() => {
 
     window.onbeforeunload = () => {
@@ -96,7 +111,7 @@ const Game = ({
             }
           </div>
 
-          <p> Do not leave current page (e.g. switch tabs), your progress will be lost</p>
+          <p> Do not leave this page (e.g. switch tabs) before submission, your progress will be lost</p>
 
         </div>
         :

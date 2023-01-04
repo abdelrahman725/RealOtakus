@@ -13,6 +13,7 @@ import InfoMessage from './pages/Components/InfoMessage'
 
 import React, { useState, useEffect, createContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
+
 import { domain } from './pages/Components/AsyncRequest'
 
 import useWebSocket from 'react-use-websocket'
@@ -61,6 +62,7 @@ function App() {
 
   // listening for incoming realtime notifications 
   useEffect(() => {
+
     if (lastMessage !== null) {
 
       const new_data = JSON.parse(lastMessage.data)
@@ -106,6 +108,7 @@ function App() {
     get_home_data()
   }, [])
 
+
   return (
     <GlobalStates.Provider value={{ SelectStyles, game_started, N_Game_Questions, setgame_started, set_user_data, set_info_message }}>
       <div className="App">
@@ -114,7 +117,7 @@ function App() {
           user={user_data}
           notifications_open={false}
           new_notifications={number_of_unseen_notifications}
-          game_started = {game_started}
+          game_started={game_started}
           darkmode={darkmode}
           setdarkmode={setdarkmode}
         />

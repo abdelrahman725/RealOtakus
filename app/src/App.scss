@@ -69,6 +69,7 @@ a{
 
 .disabled_div{
   pointer-events: none;
+  filter:brightness(60%);
 }
 
 .navbar{
@@ -222,6 +223,7 @@ a{
   margin-top: 70px;
   margin-bottom: 70px;  
   text-align: center;
+  
   .leaderboard_title{
     font-size: 22px;
   }

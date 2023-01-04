@@ -25,7 +25,7 @@ const About = () => {
           always keep in mind that the goal of questions is not
           to test whether the person has watched the entire anime
           or if he remembers everything happend but to test whether the person
-          truly understood the events, the characters, their developemnt throughout the anime, their personalities and goals,
+          truly understood the events, the characters, their development throughout the anime, their personalities and goals,
           the plot twists ..etc. <br />
 
           A question like <strong> Do you think character X would kill character Y if he has the chance ? </strong>
@@ -36,7 +36,7 @@ const About = () => {
         </p>
 
         <ul>
-          <li>avoid trivia/too easy questions.</li>
+          <li>avoid trivial/too easy questions.</li>
           <li>your question should not be solely depend on memorizing things like (dates, characters names, places).</li>
           <li>try to avoid questions that are based on your personal opinion or theory. </li>
           <li>make sure to make 4 distinguishable choices.</li >
@@ -47,7 +47,7 @@ const About = () => {
           <li>your question must be in a valid english format (e.g. not a gibberish text) otherwise you will immediately get banned from the platform. </li>
         </ul>
 
-        <h3>Trivia/bad questions &#128577;</h3>
+        <h3>Trivial/bad questions &#128577;</h3>
         <ul>
           <li>(Attack on Titans) What was the name of Eren's mother ?</li>
           <li>(Dragon Ball) What species of fighters does Goku belong to ?</li>
