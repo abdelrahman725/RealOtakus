@@ -98,10 +98,10 @@ def contribution_reviewed(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Contribution)
 def post_contribution_creation(sender, instance, created, **kwargs):
-    if created and instance.contributor != instance.reviewer:
+    if created:
         async_notification = threading.Thread(
             target=notify_reviewers,
-            args=(instance.question.anime,)
+            args=(instance.question.anime, instance.contributor)
         )
         async_notification.start()
   

@@ -373,7 +373,8 @@ class ContributionAdmin(admin.ModelAdmin):
 
   def reviewers_assigned(self,obj):
     if obj.question:
-      return obj.question.anime.reviewers.count() 
+      return obj.question.anime.reviewers.exclude(id=obj.contributor.id).count()
+    
     return "N/A"
 
   def _date_created(self,obj):

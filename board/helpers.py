@@ -42,13 +42,14 @@ def CreateNotification(receiver,notification,kind=None):
         )
 
 
-def notify_reviewers(anime):
+def notify_reviewers(anime,contributor):
     for reviewer in anime.reviewers.all():
-        CreateNotification(
-            receiver=reviewer,
-            notification= anime.anime_name,
-            kind="R"
-        )
+        if reviewer != contributor:
+            CreateNotification(
+                receiver=reviewer,
+                notification= anime.anime_name,
+                kind="R"
+            )
 
 
 def notify_user_of_contribution_state(contribution):

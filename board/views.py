@@ -45,7 +45,7 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
-    return User.objects.get(username="user_15")
+    return User.objects.get(username="user_1")
     return request.user
 
 
@@ -330,12 +330,10 @@ def get_or_make_contribution(request):
 
     question_object = request.data["question"]
 
-    is_anime_reviewr = anime in user.animes_to_review.all()
     
     try:
         contributed_question = Question.objects.create(
             anime=anime,
-            active=is_anime_reviewr,
             question=question_object["question"],
             right_answer=question_object["rightanswer"],
             choice1=question_object["choice1"],
@@ -345,15 +343,12 @@ def get_or_make_contribution(request):
 
         Contribution.objects.create(
             contributor=user,
-            question=contributed_question,
-            reviewer=user if is_anime_reviewr else None,
-            approved=True if is_anime_reviewr else None
+            question=contributed_question
         )
 
         return Response(
             {
-                "info": "ok",
-                "reviewer" : is_anime_reviewr
+                "info": "ok"
             },
             status=status.HTTP_201_CREATED
         )

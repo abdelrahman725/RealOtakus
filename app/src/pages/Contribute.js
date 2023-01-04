@@ -81,16 +81,10 @@ const Contribute = ({ all_animes_options }) => {
         return
       }
 
-      if (submit_contribution.reviewer === true) {
-        set_response_msg("Thanks for your Contribution !")
-      }
-
-      if (submit_contribution.reviewer === false) {
-        set_response_msg("Thanks for your Contribution ! it will be reviewed soon")
-      }
-
+      set_response_msg("Thanks for your Contribution !")
+  
       // clear form after submission 
-      setanime()
+      setanime(null)
       for (const key in Question) {
         setQuestion(prev => ({ ...prev, [key]: "" }))
       }
