@@ -635,6 +635,7 @@ class UserAdmin(admin.ModelAdmin):
   
   def view_country(self,obj):
     if obj.country:
+      return COUNTRIES[obj.country]
       return format_html(
         '<img src="https://flagcdn.com/w80/{}.png" width="35" alt="country flag" >&nbsp;{}</img>',
         obj.country,

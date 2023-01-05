@@ -1,4 +1,5 @@
 import random
+from time import sleep
 
 from django.db import connection, IntegrityError
 from django.db.models import Count, Avg, Q
@@ -45,7 +46,7 @@ for anime in Anime.objects.all():
 
 
 def get_current_user(request):
-    return User.objects.get(username="user_1")
+    return User.objects.get(username="user_2")
     return request.user
 
 
@@ -75,16 +76,8 @@ def react_app(request):
 @api_view(["GET", "POST"])
 def get_home_data(request):
     user = get_current_user(request)
-
-    if request.method == "POST":
-        user.country = request.data["country"]
-        user.save()
-        return Response(
-            {
-                "info": "country saved"
-            },
-            status=status.HTTP_201_CREATED
-        )
+    
+    #sleep(2)
 
     user_data = UserDataSerializer(
         User.objects.values(
@@ -127,6 +120,23 @@ def get_home_data(request):
         "animes": all_animes.data,
         "leaderboard": leader_board_users.data
     })
+
+#@login_required
+@api_view(["POST"])
+def save_user_country(request):
+    user = get_current_user(request)
+    
+    user.country = request.data["country"]
+    user.save()
+
+    sleep(2)
+    
+    return Response(
+        {
+            "info": "saved"
+        },
+        status=status.HTTP_201_CREATED
+    )
 
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------

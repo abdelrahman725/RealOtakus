@@ -28,7 +28,7 @@ const Home = ({ user_data, dashboard_users }) => {
           </button>
         </Link>
 
-        {user_data && user_data.is_reviewer &&
+        {user_data.is_reviewer &&
           <Link to="review">
             <button>
               <MdOutlineRateReview className="icon" /> Review
@@ -37,7 +37,7 @@ const Home = ({ user_data, dashboard_users }) => {
         }
       </div>
 
-      {dashboard_users && dashboard_users.length > 0 && <TheDashBoard dashboard_users={dashboard_users} current_user={user_data && user_data.id} />}
+      {dashboard_users.length > 0 && <TheDashBoard dashboard_users={dashboard_users} current_user={user_data} />}
 
     </div>
   )

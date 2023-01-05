@@ -56,7 +56,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     console.log(attempt_response)
   }
 
-  const timer = useTimer({ delay: 10000, callback: () => handletimeleft() })
+  const timer = useTimer({ delay: 1000, callback: () => handletimeleft() })
 
   useEffect(() => {
 

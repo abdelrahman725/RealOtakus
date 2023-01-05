@@ -26,7 +26,7 @@ const Contribute = ({ all_animes_options }) => {
   const anime_select = useRef(null)
 
   // reject the following patterns
-  
+
   // excluded symbols are # ` ~ @ ^ * | \
   // as they are rarely used in questions  
   const excluded_symbols = /[#`~@^*|\\]/
@@ -82,7 +82,7 @@ const Contribute = ({ all_animes_options }) => {
       }
 
       set_response_msg("Thanks for your Contribution !")
-  
+
       // clear form after submission 
       setanime(null)
       for (const key in Question) {

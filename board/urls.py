@@ -13,6 +13,7 @@ from board.views import get_user_interactions
 from board.views import get_or_make_contribution
 from board.views import get_or_review_contribution
 from board.views import record_question_encounter
+from board.views import save_user_country
 from board.views import update_notifications
 from board.views import submit_game
 
@@ -42,6 +43,7 @@ urlpatterns = [
     path('get_make_contribution',get_or_make_contribution),
     path('get_review_contribution',get_or_review_contribution),
     path('interaction/<int:question_id>',record_question_encounter),
+    path('post_country',save_user_country),
     path('update_notifications',update_notifications),
     path('submitgame',submit_game)
 ]

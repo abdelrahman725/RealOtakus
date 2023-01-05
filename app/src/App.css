@@ -5,27 +5,8 @@
   text-align: center;
 }
 
-.base_box_window, .info_container {
-  background-color: #262f36;
-  text-align: center;
-  padding: 10px;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 250px;
-  color: white;
-  border-radius: 7px;
-  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
-          box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  position: absolute;
-  z-index: 2;
-}
-
 button,
 .pointer_cursor,
-.info_container .close_icon,
 .game_view_container .game_container .question_x .choice {
   cursor: pointer;
 }
@@ -59,6 +40,11 @@ a {
   background-color: #46bb5d;
 }
 
+.app_loading_div {
+  padding: 20px;
+  text-align: center;
+}
+
 .loading_div {
   margin-top: 100px;
   font-size: larger;
@@ -66,8 +52,12 @@ a {
 
 .disabled_div {
   pointer-events: none;
-  -webkit-filter: brightness(60%);
-          filter: brightness(60%);
+  -webkit-filter: brightness(50%);
+          filter: brightness(50%);
+}
+
+.faded_background {
+  opacity: 50%;
 }
 
 .navbar {
@@ -127,30 +117,57 @@ a {
   top: 2px;
 }
 
-.faded_background {
-  opacity: 50%;
+.country_selection_panel {
+  background-color: #262f36;
+  text-align: center;
+  padding: 10px;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 7px;
+  -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
+          box-shadow: 0.5px 0.5px 3px 0.1px grey;
+  position: absolute;
+  z-index: 2;
+  width: 80%;
+  max-width: 900px;
+  height: 400px;
+  margin-top: 200px;
 }
 
-.info_container {
-  width: 70%;
-  max-width: 500px;
-  height: 300px;
+.country_selection_panel h1 {
+  color: white;
+  padding: 5px;
 }
 
-.info_container .close_icon {
+.country_selection_panel .close_icon {
+  cursor: pointer;
   color: #6e7174;
+  -webkit-transform: scale(2.1);
+          transform: scale(2.1);
   float: right;
-  font-size: xx-large;
+  margin-top: 10px;
+  margin-right: 12px;
+  margin-bottom: 15px;
 }
 
-.info_container .close_icon:hover {
+.country_selection_panel .close_icon:hover {
   color: white;
 }
 
-.info_container p {
-  padding: 10px;
-  font-size: large;
-  padding-top: 35px;
+.country_selection_panel form {
+  margin-top: 50px;
+}
+
+.country_selection_panel form .info_message {
+  font-weight: bolder;
+  color: white;
+}
+
+.country_selection_panel form .lower_div {
+  margin: 40px 0px;
 }
 
 .navigation_buttons {
