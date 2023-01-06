@@ -7,12 +7,13 @@ import { useLocation } from 'react-router-dom'
 
 const QuestionsForReview = () => {
 
-  const { set_info_message, SelectStyles } = useContext(GlobalStates)
+  const { SelectStyles } = useContext(GlobalStates)
   const [contributors_contributions, set_contributors_contributions] = useState()
   const [n_reviewed_contributions, set_n_reviewed_contributions] = useState()
   const [reviewstates, setreviewstates] = useState({})
   const [animes_options, setanimes_options] = useState([])
   const [selected_anime, setselected_anime] = useState()
+  const [result_msg, set_result_msg] = useState("loading contributions...")
   const location = useLocation()
   const anime_select = useRef(null)
 
@@ -45,9 +46,21 @@ const QuestionsForReview = () => {
       const contributions_result = await async_http_request({ path: "get_review_contribution" })
 
       if (contributions_result === null) {
-        set_info_message("network error")
+        set_result_msg("network error")
         return
       }
+
+      if (contributions_result.info === "unauthorized") {
+        set_result_msg("you should be a reviewer")
+        return
+      }
+
+      if (contributions_result.info !== "ok") {
+        set_result_msg("an unknown error")
+        return
+      }
+
+
 
       if (cancled === false) {
 
@@ -59,7 +72,9 @@ const QuestionsForReview = () => {
 
         set_n_reviewed_contributions(contributions_result.n_reviewed_contributions)
         set_contributors_contributions(contributions_result.questions)
+        set_result_msg()
       }
+
     }
 
     fetch_contributions()
@@ -75,7 +90,7 @@ const QuestionsForReview = () => {
   return (
     <div className="review_page">
 
-      {contributors_contributions ?
+      {contributors_contributions &&
         <div>
           <h2 className="title">
             <span>
@@ -122,11 +137,10 @@ const QuestionsForReview = () => {
           ))}
 
         </div>
-        :
-        <div className="loading_div">
-          loading contributions...
-        </div>
       }
+
+      {result_msg && <div className="loading_div">{result_msg}</div>}
+
     </div>
   )
 }

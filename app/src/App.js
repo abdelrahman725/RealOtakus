@@ -137,7 +137,7 @@ function App() {
 
               <Route path="/game" element={<GameView />} />
 
-              {user_data.is_reviewer && <Route path="/review" element={<QuestionsForReview />} />}
+              <Route path="/review" element={<QuestionsForReview />} />
 
               <Route path="/profile" element={<UserProfile user_data={user_data} />} />
 
