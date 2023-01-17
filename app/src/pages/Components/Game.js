@@ -1,6 +1,6 @@
 import Question from "./Question"
 import { GlobalStates } from "../../App"
-import { useContext, useState, useEffect, useRef } from "react"
+import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
 
 const Game = ({
@@ -31,7 +31,7 @@ const Game = ({
     const answers = {}
     let score = 0
 
-    game_results.right_answers.map((question) => ((
+    game_results.right_answers.forEach((question) => ((
       answers[question.id] = question.right_answer,
       question.right_answer === useranswers[question.id] && (score += 1)
 

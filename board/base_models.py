@@ -56,7 +56,7 @@ class Question(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')
-            ]
+        ]
         ordering = ["-id"]
         abstract = True
 
@@ -68,10 +68,10 @@ class Contribution(models.Model):
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
     reviewer_feedback = models.CharField(
         choices=(
-            ("not clear","not clear"),
-            ("similar choices","similar choices"),
-            ("too easy","too easy"),
-            ("wrong information","wrong information")
+            ("irrelevant","not relevant"),
+            ("easy","too easy"),
+            ("bad_choices","bad choices"),
+            ("invalid","invalid/wrong information")
         ),
         max_length=50,
         null=True,
@@ -96,7 +96,7 @@ class QuestionInteraction(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'question'], name='user interacts with each question just once')
-            ]
+        ]
         abstract = True
 
 
@@ -108,7 +108,7 @@ class Notification(models.Model):
 
     kind = models.CharField(
         choices=(
-            ("N","new anime"),
+            ("N","new anime to review"),
             ("R","review needed"),
             ("A","question approved"),
             ("F","question rejected"),

@@ -2,10 +2,9 @@ from django.db import IntegrityError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
-#from  django.contrib.auth.password_validation import validate_password 
 
-from board.helpers import login_required
 from board.models import User
+from board.helpers import login_required
 
 
 def user_register(request):
@@ -16,8 +15,8 @@ def user_register(request):
     email = request.POST["email"].strip()
     user_password = request.POST["password"]
     
-    if not user_password:
-      messages.error(request, 'password is required !')
+    if len(user_password) < 6:
+      messages.error(request, 'password is too short, min length is 6')
       return redirect("/")
   
     try:
@@ -54,5 +53,4 @@ def user_login(request):
 @login_required
 def user_logout(request):
   logout(request)
-  list(messages.get_messages(request))
   return redirect("/")

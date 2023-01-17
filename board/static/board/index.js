@@ -27,13 +27,13 @@ function validate_form_inputs() {
 
          if (passwords_inputs[0].value === passwords_inputs[1].value) {
             confirmed_pass.style.outline = "none"
-            register_btn.disabled = false;
+            register_btn.disabled = false
          }
 
          else {
             confirmed_pass.style.outline = "solid 2px"
             confirmed_pass.style.outlineColor = "red"
-            register_btn.disabled = true;
+            register_btn.disabled = true
          }
 
       })
@@ -44,42 +44,43 @@ function validate_form_inputs() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
+   sessionStorage.removeItem("anime")
+   sessionStorage.removeItem("contribution")
+
    const register_form = document.getElementById("register_form")
    const login_form = document.getElementById("login_form")
 
-   console.log(sessionStorage.getItem("current_view"))
-
    if (sessionStorage.getItem("current_view") === "login") {
-      register_form.hidden = true;
-      login_form.hidden = false;
+      register_form.hidden = true
+      login_form.hidden = false
    }
 
    if (sessionStorage.getItem("current_view") === "register") {
-      register_form.hidden = false;
-      login_form.hidden = true;
+      register_form.hidden = false
+      login_form.hidden = true
    }
 
    validate_form_inputs()
 
    document.getElementById("to_login_form").addEventListener("click", (e) => {
       e.preventDefault()
-      register_form.hidden = true;
-      login_form.hidden = false;
-      document.querySelector(".messages").innerHTML = ""
-      document.getElementById("login_name").focus();
+      register_form.hidden = true
+      login_form.hidden = false
       sessionStorage.setItem("current_view", "login")
+      document.querySelector(".messages").innerHTML = ""
+      document.getElementById("login_name").focus()
    })
 
    document.getElementById("to_register_form").addEventListener("click", (e) => {
       e.preventDefault()
-      register_form.hidden = false;
-      login_form.hidden = true;
-      document.querySelector(".messages").innerHTML = ""
-      document.getElementById("register_name").focus();
+      register_form.hidden = false
+      login_form.hidden = true
       sessionStorage.setItem("current_view", "register")
+      document.querySelector(".messages").innerHTML = ""
+      document.getElementById("register_name").focus()
    })
 
-   document.getElementById("authenticate").addEventListener("click", (e) => {
+   document.getElementById("social_authenticate").addEventListener("click", (e) => {
       window.location.href = e.target.value
    })
 

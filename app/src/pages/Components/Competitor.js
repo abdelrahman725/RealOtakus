@@ -9,7 +9,7 @@ const Competitor = ({ index, name, points, level, country, contributions, curren
       <td>{contributions}</td>
       <td>
         {country &&
-          <img src={`https://flagcdn.com/256x192/${country}.png`} width="32" height="24"></img>
+          <img src={`https://flagcdn.com/256x192/${country}.png`} alt="country_flag" width="32" height="24"></img>
         }
       </td>
     </tr>

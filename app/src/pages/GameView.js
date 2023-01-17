@@ -68,18 +68,17 @@ const GameView = () => {
         return
       }
 
-      const animes_array = []
-
-      quiz_animes_result.animes.map((anime) =>
-        animes_array.push({
-          value: anime.id,
-          label: anime.anime_name,
-          user_interactions: anime.n_user_interactions,
-          anime_questions: anime.n_active_questions
-        })
+      setanimesoptions(
+        quiz_animes_result.animes.map(anime => (
+          {
+            value: anime.id,
+            label: anime.anime_name,
+            user_interactions: anime.n_user_interactions,
+            anime_questions: anime.n_active_questions
+          }
+        ))
       )
 
-      setanimesoptions(animes_array)
     }
 
     get_available_quiz_animes()

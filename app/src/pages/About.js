@@ -1,4 +1,3 @@
-import { FaDonate } from 'react-icons/fa'
 import { SlSocialTwitter } from 'react-icons/sl'
 import { BsGithub } from 'react-icons/bs'
 import React from 'react'
@@ -9,7 +8,7 @@ const About = () => {
       <div>
         <h2>About</h2>
         <p>
-          Real Otaku is a platform for anime enthusiasts and fans founded in 2023 by <strong>my name</strong>,
+          Real Otaku is a platform for anime enthusiasts and fans founded by <strong>my name</strong>  in 2023,
           it's about contributing anime questions and participate in games
           where you answer questions contributed by others,
           one can also be a reviewr of the incoming contributions
@@ -27,9 +26,11 @@ const About = () => {
           or if he remembers everything happend but to test whether the person
           truly understood the events, the characters, their development throughout the anime, their personalities and goals,
           the plot twists ..etc. <br />
-
-          A question like <strong> Do you think character X would kill character Y if he has the chance ? </strong>
-          is a really good example as it requires the person to have a good understanding of character X.<br /><br />
+          So Questions like
+          <strong> Why did Character X do that, what was the impact of his actions on character Y ? </strong>
+          ,&nbsp;
+          <strong> Did Character X reach his goals, if yes, how ? if no, why ?  </strong>
+          are good examples as they require a good understanding of character X.<br /><br />
 
           So in order to make sure that your contributed question
           gets approved make sure to follow the following rules :
@@ -37,14 +38,14 @@ const About = () => {
 
         <ul>
           <li>avoid trivial/too easy questions.</li>
-          <li>your question should not be solely depend on memorizing things like (dates, characters names, places).</li>
+          <li>your question should not depends only on memorizing things like (dates, characters names, places).</li>
           <li>try to avoid questions that are based on your personal opinion or theory. </li>
           <li>make sure to make 4 distinguishable choices.</li >
           <li>the 3 wrong choices must not have any common pattern,
             in other words, the right choice shouldn't be too obvious at first glance,
             so the question experience is more interesting and challenging.
           </li>
-          <li>your question must be only relevant to the anime and doesn't contain any sexual, political, religious or hate speech content.</li>
+          <li>your question must be only relevant to anime and doesn't contain any racist, sexual, political, religious or hate speech content.</li>
           <li>your question must be in a valid english format. </li>
         </ul>
 
@@ -69,13 +70,20 @@ const About = () => {
           to do ...
         </p>
       </div>
-
+      
       <div>
+        <h2>Review Guidelines</h2>
+        <p>
+          to do ...
+        </p>
+      </div>
+
+      {/* <div>
         <h2>Buy us a cup of Coffee </h2>
-        <a href="https://www.buymeacoffee.com" target="_blank" rel="noreferrer">
+        <a href="/" target="_blank" rel="noreferrer">
           <FaDonate className="icon" />
         </a>
-      </div>
+      </div> */}
 
       <div>
         <h2>Stay in touch</h2>
@@ -85,7 +93,7 @@ const About = () => {
             <BsGithub className="icon" /> <span>Github</span>
           </a>
 
-          <a href="https://twitter.com" target="_blank" rel="noreferrer">
+          <a href="https://twitter.com/RealOtakus" target="_blank" rel="noreferrer">
             <SlSocialTwitter className="icon" /> <span>Twitter</span>
           </a>
         </div>

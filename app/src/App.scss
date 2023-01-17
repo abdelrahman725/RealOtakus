@@ -39,6 +39,13 @@ a {
   text-decoration: none;
 }
 
+.simple_link {
+  color: #0e4b9b;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .submit_btn {
   @extend .darker_on_hover;
   background-color: $base_green_color;
@@ -84,7 +91,7 @@ a {
   }
 
   .n_notifications {
-    width: 12px;
+    width: 21px;
   }
 
   .icon {
@@ -382,13 +389,31 @@ a {
 
 .review_page {
   @extend .questions_container;
+
+  .review_container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 50px;
+
+    .animes_for_review {
+      margin-bottom: 50px;
+    }
+
+    .contributions_for_review {
+      width: 900px;
+      .link_to_about_page{
+        padding: 7px 0px;
+
+      }
+    }
+
+  }
 }
 
 .each_question_for_review_container {
   @extend .question_basic;
   margin-bottom: 110px;
-  flex-direction: column;
-  justify-content: flex-start;
 
   .date_created {
     font-size: smaller;
@@ -570,15 +595,6 @@ a {
 
 .contribution {
   margin-bottom: 60px;
-
-  .guidlines_link {
-    margin-left: 5px;
-    color: #0e4b9b;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   .contribution_form {
     textarea {
       padding: 10px;
@@ -631,6 +647,7 @@ a {
     padding-bottom: 25px;
     box-shadow: $base_shadow;
     position: relative;
+    line-height: 1.8;
 
     &:hover {
       filter: brightness(90%);

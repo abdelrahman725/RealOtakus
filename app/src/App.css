@@ -36,6 +36,14 @@ a {
   text-decoration: none;
 }
 
+.simple_link {
+  color: #0e4b9b;
+}
+
+.simple_link:hover {
+  text-decoration: underline;
+}
+
 .submit_btn {
   background-color: #46bb5d;
 }
@@ -90,7 +98,7 @@ a {
 }
 
 .navbar .n_notifications {
-  width: 12px;
+  width: 21px;
 }
 
 .navbar .icon, .navbar .nav_icon {
@@ -407,15 +415,31 @@ a {
   top: 10px;
 }
 
+.review_page .review_container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-top: 50px;
+}
+
+.review_page .review_container .animes_for_review {
+  margin-bottom: 50px;
+}
+
+.review_page .review_container .contributions_for_review {
+  width: 900px;
+}
+
+.review_page .review_container .contributions_for_review .link_to_about_page {
+  padding: 7px 0px;
+}
+
 .each_question_for_review_container {
   margin-bottom: 110px;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
 }
 
 .each_question_for_review_container .date_created {
@@ -604,15 +628,6 @@ a {
   margin-bottom: 60px;
 }
 
-.contribution .guidlines_link {
-  margin-left: 5px;
-  color: #0e4b9b;
-}
-
-.contribution .guidlines_link:hover {
-  text-decoration: underline;
-}
-
 .contribution .contribution_form textarea {
   padding: 10px;
   border-radius: 7px;
@@ -664,6 +679,7 @@ a {
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
   position: relative;
+  line-height: 1.8;
 }
 
 .notifications .notification:hover {

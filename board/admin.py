@@ -10,6 +10,8 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
+from allauth.socialaccount.models import SocialAccount
+
 from board.models import User
 from board.models import Anime
 from board.models import Contribution
@@ -79,25 +81,6 @@ class IsContributorFilter(admin.SimpleListFilter):
       
       if self.value() == 'No':
         return queryset.exclude(contributions__question__approved=True)
-    
-
-class QuizTakerFilter(admin.SimpleListFilter):
-    title = 'quiz takers'
-    parameter_name = 'taken_quiz'
-
-    def lookups(self, request, model_admin):
-
-        return (
-          ('Yes', ('Yes')),
-          ('No', ('No')),
-      )
-
-    def queryset(self, request, queryset):        
-      if self.value() == 'Yes':
-        return queryset.filter(tests_completed__gt=0)
-      
-      if self.value() == 'No':
-        return queryset.filter(tests_completed=0)
         
 
 class CountryFilter(admin.SimpleListFilter):
@@ -176,7 +159,7 @@ class QuestionTypeFilter(admin.SimpleListFilter):
       return queryset.filter(contribution__isnull=False)
 
 
-class ContributionState(admin.SimpleListFilter):
+class ContributionStateFilter(admin.SimpleListFilter):
   title = 'state'
   parameter_name = 'state'
 
@@ -208,7 +191,6 @@ class ReviewersExistFilter(admin.SimpleListFilter):
   parameter_name = 'reviewable'
 
   def lookups(self, request, model_admin):
-
       return (
         ('No', ('No')),
         ('Yes', ('Yes')),
@@ -222,84 +204,142 @@ class ReviewersExistFilter(admin.SimpleListFilter):
       return queryset.filter(question__anime__reviewers__isnull=False)
 
 
-# admin models inherit from this class can't be changed or deleted
-class ReadOnly(admin.ModelAdmin):
- 
-  def has_change_permission(self, request, obj=None):
-    return False
- 
-  def has_delete_permission(self, request, obj=None):
-    return True
-    return False
+class ReviewersAssignedFilter(admin.SimpleListFilter):
+  title = 'reviewers assigned'
+  parameter_name = 'reviewer_assigned'
 
+  def lookups(self, request, model_admin):
+    reviewers_choices =  set()
 
-@admin.register(Notification)
-class NotificationAdmin(ReadOnly):
+    for reviewer in User.objects.filter(animes_to_review__isnull=False):
+      reviewers_choices.add((reviewer.id,(reviewer)))
+    
+    return reviewers_choices
 
-  list_display = (
-    "kind",
-    "owner",
-    "notification",
-    "_time",
-    "seen"
-  )
-  
-  autocomplete_fields = ['owner']
-  
-  search_fields   =  ("owner__username__startswith",)
-
-  list_filter  = (
-    ("owner",admin.RelatedOnlyFieldListFilter),
-    "seen",
-    "kind",
-    "time"
-    )
-
-  list_display_links = None
-
-  def _time(self,obj): return to_local_date_time(obj.time)
+  def queryset(self, request, queryset):
+    if self.value():
+      selected_user = User.objects.get(id=int(self.value()))
+      return queryset.filter(question__anime__in = selected_user.animes_to_review.all())
     
 
-@admin.register(Anime)
-class AnimeAdmin(admin.ModelAdmin):
 
-  list_editable = ("active",)
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
   
-  search_fields = ("anime_name",)
+  fields = (
+    "username",
+    "first_name",
+    "last_name",
+    "email",
+    "country",
+    "level",
+    "points",
+    "tests_started",
+    "tests_completed",
+    "animes_to_review",
+    "password",
+    "last_login",
+    "date_joined",
+    "is_active"
+  )
+
+  autocomplete_fields = ['animes_to_review']
+  
+  list_display_links = ("username",)
+
+  readonly_fields =  (
+    #"level",
+    "points",
+    "tests_started",
+    "tests_completed",
+    "first_name",
+    "last_name",
+    "password",
+    "date_joined",
+    "last_login"
+  )
 
   list_display = (
-    "view_anime",
-    "total_questions",
+    "id",
+    "username",
+    "points",
+    #"email",
+    "tests_started",
+    "tests_completed",
+    #"level",
+    "quizes_score",
+    "quiz_completion",
     "contributions",
-    "admin_questions",
-    "_reviewers",
-    "interactions",
-    "active"
+    "questions_reviewed",
+    "reviewer_of",
+    "view_country",
+    "social_connected"
   )
 
-  list_filter = (
-    "active",
-    ("reviewers",admin.RelatedOnlyFieldListFilter)
+  list_filter  =  (
+    IsContributorFilter,
+    IsReviewerFilter,
+    SocialAccountFilter,
+    "level",
+    CountryFilter,
+    ("animes_to_review",admin.RelatedOnlyFieldListFilter)
   )
 
-  def get_queryset(self, request):
-    query = super(AnimeAdmin, self).get_queryset(request)
-    return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
+  search_fields = ("username__startswith",)
   
-  def view_anime(self,obj):
-    return format_html('<p>{}<p/><br/>',obj.anime_name) 
+  def get_queryset(self, request):    
+    query = super(UserAdmin, self).get_queryset(request)
+    return query.exclude(is_superuser=True)
+
   
-  def interactions(self,obj):
-    return obj.anime_interactions.all().count()        
+  def quizes_score(self,obj):
+    if obj.tests_completed > 0:
+      all_answers =  QUESTIONSCOUNT * obj.tests_completed
+      right_answers =  obj.questions_interacted_with.filter(correct_answer=True).count()
+      return f"{round(right_answers / all_answers * 100) } %"
+    return "N/A"
+
+  def quiz_completion(self,obj):
+    if obj.tests_started > 0:
+      return f"{ round(obj.tests_completed / obj.tests_started * 100)} %"
+    return "N/A"
+
+  def reviewer(self,obj):
+    return obj.animes_to_review.exists()
+  reviewer.boolean = True
   
-  def admin_questions(self,obj):
-    return obj.anime_questions.exclude(contribution__isnull=False).count()   
+  def authenticated(self,obj):
+    uid_list = []
+    for session in Session.objects.filter(expire_date__gte=timezone.now()):
+      uid_list.append(session.get_decoded().get('_auth_user_id', None))
+    return obj in User.objects.filter(id__in=uid_list)
+  authenticated.boolean = True
   
+  def social_connected(self,obj):
+    try:
+      SocialAccount.objects.get(user=obj)
+      return True
+    
+    except SocialAccount.DoesNotExist:
+      return False
+
+  social_connected.boolean = True
+
   def contributions(self,obj):
-    return obj.anime_questions.filter(contribution__isnull=False).count() 
+    return obj.contributions.filter(approved=True).count()
+  
+  def questions_reviewed(self,obj):
+    return obj.contributions_reviewed.count()
+  
+  def view_country(self,obj):
+    if obj.country:
+      return COUNTRIES[obj.country]
+    return "N/A"
 
-  def _reviewers(self,obj):
-    return obj.reviewers.all().count()
+  view_country.short_description = "country"
+
+  def reviewer_of(self,obj):
+    return "{} animes".format(obj.animes_to_review.all().count())   
 
 
 @admin.register(Contribution)
@@ -328,9 +368,9 @@ class ContributionAdmin(admin.ModelAdmin):
   
   list_filter = (
     OldestToRecentFilter,
-    ContributionState,
+    ContributionStateFilter,
+    ReviewersAssignedFilter,
     ("question__anime",admin.RelatedOnlyFieldListFilter),
-    #you know the difference right ?("question__anime__reviewers",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
     ("reviewer",admin.RelatedOnlyFieldListFilter),
     ReviewersExistFilter,
@@ -360,7 +400,7 @@ class ContributionAdmin(admin.ModelAdmin):
     if obj.approved == None:
       url = reverse('admin:board_contribution_change', args=(obj.id,))
       return format_html(
-        '<a href="{}" style="color:red;font-size:15px;letter-spacing: 1px;">pending...</a>',
+        '<a href="{}" style="color:#FF8C00;font-size:15px;letter-spacing: 1px;">pending...</a>',
         url
       )
 
@@ -373,8 +413,9 @@ class ContributionAdmin(admin.ModelAdmin):
 
   def reviewers_assigned(self,obj):
     if obj.question:
-      return obj.question.anime.reviewers.exclude(id=obj.contributor.id).count()
-    
+      if obj.contributor:
+        return obj.question.anime.reviewers.exclude(id=obj.contributor.id).count()
+      return obj.question.anime.reviewers.all().count()
     return "N/A"
 
   def _date_created(self,obj):
@@ -448,15 +489,15 @@ class QuestionAdmin(admin.ModelAdmin):
     "question",
     "anime",
     #"id",
-    "right_answer",
+    #"right_answer",
     #"choice1",
     #"choice2",
     #"choice3",
-    "active",
     "correct_answers",
     "wrong_answers",
     #"not_answered",
-    #"_contribution"
+    "active",
+    "_contribution"
   )
 
   list_filter = (
@@ -484,7 +525,6 @@ class QuestionAdmin(admin.ModelAdmin):
   def not_answered(self,obj): 
     return obj.question_interactions.filter(correct_answer__isnull=True).count()
 
-
   def get_readonly_fields(self, request, obj=None):
     if obj and obj.pk:  return self.readonly_fields + ('anime',)
     return self.readonly_fields
@@ -493,8 +533,7 @@ class QuestionAdmin(admin.ModelAdmin):
 # hide Delete button if it's an active question
   def has_delete_permission(self, request, obj=None):
     return True
-    if obj: return not obj.active
-  
+    if obj: return not obj.active  
 
   def _contribution(self,obj):
     try:
@@ -505,13 +544,79 @@ class QuestionAdmin(admin.ModelAdmin):
                 None:"pending...",
                 True:"approved",
                 False:"rejected"
-              }
+        }
+
+        states_color = {
+          None:"#FF8C00",
+          True:"green",
+          False:"red",
+        }
         
-        return format_html('<a href="{}">{}</a>',url,contribution_states[obj.contribution.approved]) 
+        return format_html(
+          '<a href="{}" style="color:{};">{}</a>',
+          url,
+          states_color[obj.contribution.approved],
+          contribution_states[obj.contribution.approved],
+        )
+
     except:
       pass
     return None
 
+
+# admin models inherit from this class can't be changed or deleted
+class ReadOnly(admin.ModelAdmin):
+ 
+  def has_change_permission(self, request, obj=None):
+    return False
+ 
+  def has_delete_permission(self, request, obj=None):
+    return True
+    return False
+
+
+@admin.register(Anime)
+class AnimeAdmin(admin.ModelAdmin):
+
+  list_editable = ("active",)
+  
+  search_fields = ("anime_name",)
+
+  list_display = (
+    "view_anime",
+    "total_questions",
+    "active_questions",
+    "admin_questions",
+    "total_contributions",
+    "approved_contributions",
+    "pending_contributions",
+    "rejected_contributions",
+    "_reviewers",
+    "interactions",
+    "active"
+  )
+
+  list_filter = (
+    "active",
+    ("reviewers",admin.RelatedOnlyFieldListFilter)
+  )
+
+  def get_queryset(self, request):
+    query = super(AnimeAdmin, self).get_queryset(request)
+    return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
+  
+  def view_anime(self,obj):
+    return format_html('<p>{}<p/><br/>',obj.anime_name) 
+  
+  def interactions(self,obj):
+    return obj.anime_interactions.all().count()        
+  
+  def admin_questions(self,obj):
+    return obj.anime_questions.exclude(contribution__isnull=False).count()   
+
+
+  def _reviewers(self,obj):
+    return obj.reviewers.all().count()
 
 @admin.register(QuestionInteraction)
 class QuestionInteractionAdmin(ReadOnly):
@@ -532,118 +637,29 @@ class QuestionInteractionAdmin(ReadOnly):
   def has_add_permission(self, request, obj=None):
     return False
   
-
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-  
-  fields = (
-    "username",
-    "first_name",
-    "last_name",
-    "email",
-    "country",
-    "level",
-    "points",
-    "tests_started",
-    "tests_completed",
-    "animes_to_review",
-    "password",
-    "last_login",
-    "date_joined",
-    "is_active"
-  )
-
-  autocomplete_fields = ['animes_to_review']
-  
-  list_display_links = ("username",)
-
-  readonly_fields =  (
-    #"level",
-    "points",
-    "tests_started",
-    "tests_completed",
-    "first_name",
-    "last_name",
-    "password",
-    "date_joined",
-    "last_login"
-  )
+@admin.register(Notification)
+class NotificationAdmin(ReadOnly):
 
   list_display = (
-    "id",
-    "username",
-    "points",
-    #"last_login",
-    #"email",
-    "tests_started",
-    "tests_completed",
-    #"level",
-    "quizes_score",
-    "quiz_completion",
-    #"password",
-    "contributions",
-    "questions_reviewed",
-    "reviewer_of",
-    "view_country"
+    "kind",
+    "owner",
+    "notification",
+    "_time",
+    "seen"
   )
-
-  list_filter  =  (
-    #QuizTakerFilter,
-    IsContributorFilter,
-    IsReviewerFilter,
-    SocialAccountFilter,
-    "level",
-    #"country",
-    CountryFilter,
-    ("animes_to_review",admin.RelatedOnlyFieldListFilter)
-  )
-
-  search_fields = ("username__startswith",)
   
-  def get_queryset(self, request):    
-    query = super(UserAdmin, self).get_queryset(request)
-    return query.exclude(is_superuser=True)
+  autocomplete_fields = ['owner']
   
-  def quizes_score(self,obj):
-    if obj.tests_completed > 0:
-      all_answers =  QUESTIONSCOUNT * obj.tests_completed
-      right_answers =  obj.questions_interacted_with.filter(correct_answer=True).count()
-      return f"{round(right_answers / all_answers * 100) } %"
-    return "N/A"
+  search_fields   =  ("owner__username__startswith",)
 
-  def quiz_completion(self,obj):
-    if obj.tests_started > 0:
-      return f"{ round(obj.tests_completed / obj.tests_started * 100)} %"
-    return "N/A"
+  list_filter  = (
+    ("owner",admin.RelatedOnlyFieldListFilter),
+    "seen",
+    "kind",
+    "time"
+    )
 
-  def reviewer(self,obj):
-    return obj.animes_to_review.exists()
-  reviewer.boolean = True
-  
-  def authenticated(self,obj):
-    uid_list = []
-    for session in Session.objects.filter(expire_date__gte=timezone.now()):
-      uid_list.append(session.get_decoded().get('_auth_user_id', None))
-    return obj in User.objects.filter(id__in=uid_list)
-  authenticated.boolean = True
-  
-  def contributions(self,obj):
-    return obj.contributions.filter(approved=True).count()
-  
-  def questions_reviewed(self,obj):
-    return obj.contributions_reviewed.count()
-  
-  def view_country(self,obj):
-    if obj.country:
-      return COUNTRIES[obj.country]
-      return format_html(
-        '<img src="https://flagcdn.com/w80/{}.png" width="35" alt="country flag" >&nbsp;{}</img>',
-        obj.country,
-        COUNTRIES[obj.country]
-      )
+  list_display_links = None
 
-    return "N/A"
-  view_country.short_description = "country"
-
-  def reviewer_of(self,obj):
-    return "{} animes".format(obj.animes_to_review.all().count())   
+  def _time(self,obj): return to_local_date_time(obj.time)
+    

@@ -22,7 +22,9 @@ const UserProfile = ({ user_data }) => {
       const interactions_dict = {}
 
       let n_user_correct_answers = 0
-      interactions_result.interactions.map((n) => {
+
+      interactions_result.interactions.forEach((n) => {
+
         if (n.anime.anime_name in interactions_dict) {
           n.correct_answer ? interactions_dict[n.anime.anime_name].correct += 1 : interactions_dict[n.anime.anime_name].not_correct += 1
         }
@@ -34,10 +36,11 @@ const UserProfile = ({ user_data }) => {
           }
         }
 
-        if (n.correct_answer === true)
+        if (n.correct_answer === true) {
           n_user_correct_answers += 1
-      })
+        }
 
+      })
 
       if (user_data.tests_completed === 0) {
         setgames_score_percentage(0)
@@ -53,6 +56,7 @@ const UserProfile = ({ user_data }) => {
 
     user_data && get_user_interactions()
 
+    // eslint-disable-next-line
   }, [user_data])
 
   if (user_data && !loading) {

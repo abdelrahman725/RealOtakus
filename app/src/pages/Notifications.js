@@ -5,13 +5,14 @@ import { useNavigate } from "react-router-dom"
 
 const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_notifications }) => {
 
-  const naviage_routes = useNavigate()
-
   const notification_kind_to_path = {
     "R": "/review",
+    "N": "/review",
     "A": "/mycontributions",
-    "F": "/mycontributions"
+    "F": "/mycontributions",
   }
+
+  const naviage_routes = useNavigate()
 
   const change_route = (kind, filtered_anime) => {
     if (kind === null)
@@ -36,6 +37,48 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     naviage_routes(notification_kind_to_path[kind])
   }
 
+  const get_shown_notification = (notification_or_anime_name, kind) => {
+
+    if (!kind) {
+      return (
+        <p>{notification_or_anime_name}</p>
+      )
+    }
+
+    if (kind === "N") {
+      return (
+        <p>
+          Congratulations! Now you are a reviewer of <strong>{notification_or_anime_name}</strong> contributions, please note that
+          your own contributions for <strong>{notification_or_anime_name}</strong> still need to be reviewed by other reviewer
+        </p>
+      )
+    }
+
+    if (kind === "R") {
+      return (
+        <p>
+          New contributed question for <strong>{notification_or_anime_name}</strong>
+        </p>
+      )
+    }
+
+    if (kind === "A") {
+      return (
+        <p>
+          Congratulations ! your contribution for <strong>{notification_or_anime_name}</strong> is approved
+        </p>
+      )
+    }
+
+    if (kind === "F") {
+      return (
+        <p>
+          Sorry your last contribution for <strong>{notification_or_anime_name}</strong> is rejected
+        </p>
+      )
+    }
+  }
+
   useEffect(() => {
 
     if (unseen_count <= 0)
@@ -47,7 +90,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     //update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
     const unseen_notifications = []
 
-    all_notifications.map((n) =>
+    all_notifications.forEach((n) =>
       !n.seen && unseen_notifications.push(n.id)
     )
 
@@ -77,9 +120,10 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
           notification={noti.notification}
           kind={noti.kind}
           navigate={change_route}
+          get_shown_notification={get_shown_notification}
         />
       )) :
-        <p>no activity yet</p>
+        <p>no activity</p>
       }
     </div>
   )

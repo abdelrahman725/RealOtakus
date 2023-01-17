@@ -17,17 +17,10 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# should be removed in production !
-ALLOWED_HOSTS = ["*"]
+SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew' if DEBUG == True else os.getenv('DJANGO_SECRET_KEY')
 
 
 # Application definition
@@ -42,27 +35,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    
+
     'rest_framework',
-    'corsheaders',    
+    'corsheaders',
     'channels',
 
     'allauth',
     'allauth.account',
-    'allauth.socialaccount', 
+    'allauth.socialaccount',
     'allauth.socialaccount.providers.google'
 
 ]
 
 
 CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels.layers.InMemoryChannelLayer"
-        }
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
+}
 
 
 SITE_ID = 1
+
+# should be removed in production !
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -77,7 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-] 
+]
 
 ASGI_APPLICATION = "anime.asgi.application"
 
@@ -87,7 +83,7 @@ ROOT_URLCONF = 'anime.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS':  ['templates/',  os.path.join(BASE_DIR, 'app/build')] , 
+        'DIRS':  ['templates/',  os.path.join(BASE_DIR, 'app/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,7 +97,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'anime.wsgi.application'
-
 
 
 # Database
@@ -122,25 +117,6 @@ AUTH_USER_MODEL = "board.User"
 # `allauth` specific authentication methods, such as login by e-mail
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-]
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
 ]
 
 
@@ -168,10 +144,15 @@ STATICFILES_DIRS = [
     os.path.join(os.path.join(BASE_DIR, 'app'), 'build', 'static'),
 ]
 
-LOGIN_REDIRECT_URL ='/'
+LOGIN_REDIRECT_URL = '/'
 
 SOCIALACCOUNT_EMAIL_REQUIRED = True
 
 SOCIALACCOUNT_QUERY_EMAIL = SOCIALACCOUNT_EMAIL_REQUIRED
 
-#ACCOUNT_EMAIL_SUBJECT_PREFIX = "[Django]"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('HOST_EMAIL')
+EMAIL_HOST_PASSWORD = os.getenv('HOST_EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('HOST_EMAIL')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

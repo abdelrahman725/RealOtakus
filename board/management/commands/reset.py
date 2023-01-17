@@ -32,7 +32,7 @@ class Command(BaseCommand):
   
         Question.objects.filter(contribution__isnull=False).update(active=False)
 
-        Question.objects.filter(contribution__isnull=False, active=False).delete()
+        Question.objects.filter(contribution__isnull=False).delete()
         
         Contribution.objects.all().delete()
      

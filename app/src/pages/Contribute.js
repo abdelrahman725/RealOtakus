@@ -13,22 +13,24 @@ const Contribute = ({ all_animes_options }) => {
   const [choices_info, set_choices_info] = useState()
   const [submitted, setsubmitted] = useState(false)
 
-  const [Question, setQuestion] = useState({
+  const question_format = {
     question: "",
     rightanswer: "",
     choice1: "",
     choice2: "",
     choice3: "",
-  })
+  }
+
+  const [Question, setQuestion] = useState(question_format)
 
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
 
+
   // reject the following patterns
 
-  // excluded symbols are # ` ~ @ ^ * | \
-  // as they are rarely used in questions  
+  // excluded symbols:  # ` ~ @ ^ * | \  as they are rarely used in questions  
   const excluded_symbols = /[#`~@^*|\\]/
   const extra_space = /\s{2,}/
 
@@ -46,6 +48,9 @@ const Contribute = ({ all_animes_options }) => {
     }
 
     setQuestion(prev => ({ ...prev, [name]: value }))
+    const updated_question = JSON.parse(sessionStorage.getItem("contribution"))
+    updated_question[name] = value
+    sessionStorage.setItem("contribution", JSON.stringify(updated_question))
   }
 
   const handle_form_submission = (e) => {
@@ -81,13 +86,13 @@ const Contribute = ({ all_animes_options }) => {
         return
       }
 
-      set_response_msg("Thanks for your Contribution !")
+      sessionStorage.setItem("contribution", JSON.stringify(question_format))
 
-      // clear form after submission 
-      setanime(null)
       for (const key in Question) {
         setQuestion(prev => ({ ...prev, [key]: "" }))
       }
+
+      set_response_msg("Thanks for your Contribution !")
     }
 
     const validate_contribution_form_then_submit = () => {
@@ -136,6 +141,7 @@ const Contribute = ({ all_animes_options }) => {
   }
 
   const on_anime_select = (selected_anime) => {
+    sessionStorage.setItem("anime", JSON.stringify(selected_anime))
     setanime(selected_anime)
     selected_anime && !Question.question && question_ref.current.focus()
     selected_anime && anime_select.current.blur()
@@ -147,6 +153,10 @@ const Contribute = ({ all_animes_options }) => {
       setQuestion(JSON.parse(sessionStorage.getItem("contribution")))
     }
 
+    else {
+      sessionStorage.setItem("contribution", JSON.stringify(question_format))
+    }
+
     if (sessionStorage.getItem("anime") !== null) {
       setanime(JSON.parse(sessionStorage.getItem("anime")))
     }
@@ -154,21 +164,14 @@ const Contribute = ({ all_animes_options }) => {
   }, [])
 
 
-  useEffect(() => {
-
-    sessionStorage.setItem("contribution", JSON.stringify(Question))
-    !anime ? sessionStorage.setItem("anime", JSON.stringify("")) : sessionStorage.setItem("anime", JSON.stringify(anime))
-
-  }, [Question, anime])
-
   return (
     <div className="centered_div contribution">
 
       <h1>Contribute a quesion</h1>
 
       <p>
-        first make sure you have read
-        <Link className="guidlines_link" to="/about" target={"_blank"} rel={"noreferrer"}>
+        make sure to read &nbsp;
+        <Link className="simple_link" to="/about" target={"_blank"} rel={"noreferrer"}>
           Contribution Guidlines
         </Link>
       </p>
@@ -185,7 +188,6 @@ const Contribute = ({ all_animes_options }) => {
             styles={SelectStyles}
             className="react_select"
             placeholder="select anime"
-            isClearable={true}
             isLoading={!all_animes_options}
             options={all_animes_options}
             onChange={on_anime_select}

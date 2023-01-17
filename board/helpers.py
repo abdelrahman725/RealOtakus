@@ -1,29 +1,27 @@
-import re
-
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 from django.utils import timezone
 
-from board.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
-
 import board.models
+
+from board.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
 
 
 def get_client_ip(request):
-    # use this in case of a the application is running behind a reverse proxy server(like Nginx)
+    # use this in case of application is running behind a reverse proxy server (like Nginx)
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
-        print ("returning FORWARDED_FOR")
+        print("returning FORWARDED_FOR")
         ip = x_forwarded_for.split(',')[-1].strip()
 
     elif request.META.get('HTTP_X_REAL_IP'):
-        print ("returning REAL_IP")
+        print("returning REAL_IP")
         ip = request.META.get('HTTP_X_REAL_IP')
 
     else:
-        print ("returning REMOTE_ADDR")
+        print("returning REMOTE_ADDR")
         ip = request.META.get('REMOTE_ADDR')
+  
     return ip
 
 
@@ -33,35 +31,36 @@ def print_request_relevant_ips(request):
     print(f"SERVER_NAME : {request.META.get('SERVER_NAME')}\n")
 
 
-def CreateNotification(receiver,notification,kind=None):
+def CreateNotification(receiver, notification, kind=None):
     if receiver and not receiver.is_superuser:
         board.models.Notification.objects.create(
             owner=receiver,
             notification=notification,
-            kind = kind
+            kind=kind
         )
 
 
-def notify_reviewers(anime,contributor):
+def notify_reviewers(anime, contributor):
     for reviewer in anime.reviewers.all():
         if reviewer != contributor:
             CreateNotification(
                 receiver=reviewer,
-                notification= anime.anime_name,
+                notification=anime.anime_name,
                 kind="R"
             )
 
 
-def notify_user_of_contribution_state(contribution):
+def contribution_reviewed(contribution):
 
     contribution.date_reviewed = timezone.now()
 
     if contribution.reviewer == None:
-        contribution.reviewer = board.models.User.objects.get(is_superuser=True) 
-    
+        contribution.reviewer = board.models.User.objects.get(
+            is_superuser=True)
+
     if contribution.approved == True:
 
-        if contribution.contributor: 
+        if contribution.contributor:
             contribution.contributor.points += 10
             contribution.contributor.save()
 
@@ -80,19 +79,18 @@ def notify_user_of_contribution_state(contribution):
             notification=contribution.question.anime,
             kind="F"
         )
-  
+
 
 def get_user_new_level(user):
-    if user.points >= LEVELS[REALOTAKU] :
+    if user.points >= LEVELS[REALOTAKU]:
         return REALOTAKU
 
-    if user.points >= LEVELS[ADVANCED] :
+    if user.points >= LEVELS[ADVANCED]:
         return ADVANCED
-    
+
     if user.points >= LEVELS[INTERMEDIATE]:
         return INTERMEDIATE
     return None
-
 
 
 def login_required(f):
@@ -104,33 +102,3 @@ def login_required(f):
             return requested_endpoint
     return wraper
 
-# def check_empty_string(value):
-#     if re.search(r'^\s+$',value):        
-#         raise ValidationError(
-#             _('no empty strings allowed')
-#         )
-
-
-# def question_validator(value):
-    
-#     check_empty_string(value)
-
-#     if len(value) < 8:
-#         raise ValidationError(
-#             _('question must be at leat 8 characters length'),
-#             code="invalid question length"
-#         )
-
-
-# def choices_integirty(choices):
-
-#     unique_choices = set()
-
-#     for choice in choices:
-#         check_empty_string(choice)
-#         unique_choices.add(choice)
-
-#     if len(unique_choices) < len(choices):
-#          raise ValidationError(
-#             _('question choices must be unique'),code="choices_integrity_error"
-#         )

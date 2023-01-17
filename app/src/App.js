@@ -4,7 +4,7 @@ import Home from './pages/Home'
 import Contribute from './pages/Contribute'
 import UserContributions from './pages/UserContributions'
 import GameView from './pages/GameView'
-import QuestionsForReview from './pages/QuestionsForReview'
+import Review from './pages/Review'
 import UserProfile from './pages/Profile'
 import Notifications from './pages/Notifications'
 import About from './pages/About'
@@ -33,10 +33,6 @@ function App() {
   const [info_message, set_info_message] = useState()
   const [darkmode, setdarkmode] = useState(true)
   const N_Game_Questions = 5
-
-  const close_info_panel = () => {
-    set_info_message()
-  }
 
   const SelectStyles = {
     option: (provided) => ({
@@ -93,16 +89,15 @@ function App() {
       setnumber_of_unseen_notifications(result.notifications.filter(n => !n.seen).length)
       setnotifications(result.notifications)
 
-      const formated_animes = []
-
-      result.animes.map((anime) =>
-        formated_animes.push({
-          value: anime.id,
-          label: anime.anime_name
-        })
+      setall_animes(
+        result.animes.map(anime => (
+          {
+            value: anime.id,
+            label: anime.anime_name
+          }
+        ))
       )
 
-      setall_animes(formated_animes)
       set_loading(false)
     }
 
@@ -126,7 +121,7 @@ function App() {
 
           {country_required && <CountryPanel set_country_required={set_country_required} />}
 
-          <div className={country_required ? "components_container faded_background" : "components_container"} onClick={close_info_panel}>
+          <div className={country_required ? "components_container faded_background" : "components_container"} onClick={() => set_country_required(false)}>
 
             <Routes>
               <Route path="/" element={<Home dashboard_users={dashboard_users} user_data={user_data} />} />
@@ -137,7 +132,7 @@ function App() {
 
               <Route path="/game" element={<GameView />} />
 
-              <Route path="/review" element={<QuestionsForReview />} />
+              <Route path="/review" element={<Review />} />
 
               <Route path="/profile" element={<UserProfile user_data={user_data} />} />
 

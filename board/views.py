@@ -1,9 +1,8 @@
 import random
-from time import sleep
 
 from django.db import connection, IntegrityError
 from django.db.models import Count, Avg, Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect 
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -18,12 +17,12 @@ from board.models import QuestionInteraction
 from board.serializers import UserDataSerializer
 from board.serializers import LeaderBoradSerializer
 from board.serializers import AnimeSerializer
-from board.serializers import QuestionInteraction
 from board.serializers import ContributionSerializer
 from board.serializers import AnimeInteractionsSerializer
 from board.serializers import NotificationsSerializer
 from board.serializers import AnswersSerializer
-from board.serializers import InteractionsSerializer
+from board.serializers import QuestionInteractionsSerializer
+from board.serializers import AnimeReviewedContributionsSerializer
 
 from board.helpers import login_required, CreateNotification
 
@@ -33,13 +32,12 @@ from board.constants import QUESTIONSCOUNT
 # for q in connection.queries : print(f"\n\n { q } \n\n")
 
 
-# status.HTTP_429_TOO_MANY_REQUESTS
-
 animes_dict = {}
 
 game_questions = {}
 
 game_interactions = {}
+
 
 for anime in Anime.objects.all():
     animes_dict[anime.pk] = anime
@@ -47,8 +45,7 @@ for anime in Anime.objects.all():
 
 def get_current_user(request):
     return request.user
-    return User.objects.get(username="user_3")
-
+  
 
 def get_or_query_anime(anime: int):
     try:
@@ -67,9 +64,19 @@ def react_route_page(request):
 def react_app(request):
   # react app
     if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect("/admin")
         return render(request, "index.html")
   # django template
     return render(request, "board/home.html")
+
+
+def privacy_policy_page(request):
+    return render(request, "board/privacy.html")
+
+
+def terms_page(request):
+    return render(request, "board/terms.html")
 
 
 @login_required
@@ -102,11 +109,11 @@ def get_home_data(request):
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
 
     # leaderboard users sorted by their scores in non-increasing order where their score is !=0 and >= avg_score
-    avg_score = User.objects.filter(points__gt=0).aggregate(
-        Avg('points'))['points__avg']
+    avg_score = User.objects.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
 
     if not avg_score:
         top_competitors = []
+    
     else:
         top_competitors = User.objects.annotate(
             n_contributions=Count("contributions", filter=(
@@ -130,8 +137,6 @@ def save_user_country(request):
 
     user.country = request.data["country"]
     user.save()
-
-    sleep(2)
 
     return Response(
         {
@@ -186,7 +191,7 @@ def get_game(request, game_anime):
 
     # To catch malicious or non-serious users
     if current_user.tests_started - current_user.tests_completed == "To Do":
-        # for example we can do the following check (not perfect though)
+        # for example we can do the following check (not good enough though)
         if current_user.tests_started - current_user.tests_completed > 5:
             pass
         # catch here and act upon that
@@ -256,7 +261,6 @@ def record_question_encounter(request, question_id):
         return Response({
             "info": "interaction already recorded"
         })
-
 
     return Response(
         {
@@ -373,36 +377,42 @@ def get_or_make_contribution(request):
 def get_or_review_contribution(request):
 
     user = get_current_user(request)
-
-    if not user.animes_to_review.exists():
-        return Response(
-            {"info": "unauthorized"},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
-
+    
     if request.method == "GET":
+        
+        if not user.animes_to_review.exists():
+            return Response(
+                {"info": "unauthorized"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
-        animes_for_user_to_review = user.animes_to_review.all()
+        animes_for_user_to_review = user.animes_to_review.annotate(
+            reviewed_contributions=Count(
+                "anime_questions__contribution", filter=(
+                    Q(anime_questions__contribution__approved__isnull=False)
+                    &
+                    Q(anime_questions__contribution__reviewer=user)
+                )
+            )
+        )
 
         contributed_questions = ContributionSerializer(
             Contribution.objects.filter(
                 ~Q(contributor=user),
                 question__anime__in=animes_for_user_to_review,
                 approved__isnull=True,
-            ).select_related("question").select_related("question__anime").order_by("id"),
+            ).select_related("question").select_related("question__anime").order_by("-id"),
             many=True
         )
 
-        animes = AnimeSerializer(animes_for_user_to_review, many=True)
-
-        n_reviewed_contributions = user.contributions_reviewed.count()
+        animes = AnimeReviewedContributionsSerializer(animes_for_user_to_review, many=True)
 
         return Response({
             "info": "ok",
             "questions": contributed_questions.data,
             "animes": animes.data,
-            "n_reviewed_contributions": n_reviewed_contributions
         })
+
 
     contribution = Contribution.objects.get(
         pk=request.data["contribution"]
@@ -413,6 +423,16 @@ def get_or_review_contribution(request):
             "info": "this question doesn't exist anymore, probably is deleted",
             "state": "invalid"
         })
+
+
+    if contribution.question.anime not in user.animes_to_review.all():
+        return Response(
+            {
+                "info": "unauthorized",
+                "state" : "invalid"
+            },
+            status=status.HTTP_401_UNAUTHORIZED
+        )
 
     if contribution.approved != None:
         return Response({
@@ -448,7 +468,7 @@ def get_or_review_contribution(request):
 def get_user_interactions(request):
     user = get_current_user(request)
 
-    user_interactions = InteractionsSerializer(
+    user_interactions = QuestionInteractionsSerializer(
         user.questions_interacted_with.select_related("anime"),
         many=True
     )

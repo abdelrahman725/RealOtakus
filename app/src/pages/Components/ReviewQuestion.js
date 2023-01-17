@@ -4,12 +4,19 @@ import { useState, useRef, useContext } from "react"
 import { GlobalStates } from '../../App'
 import get_local_date from './LocalDate'
 
-const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate, set_n_reviewed_contributions, feedback_options }) => {
+const ReviewQuestion = ({
+    contribution_object,
+    set_animes,
+    contribution_class,
+    set_contributors_contributions,
+    feedback_options
+}) => {
 
     const { SelectStyles } = useContext(GlobalStates)
     const [question_state, setquestion_state] = useState()
     const [review_submitted, set_review_submitted] = useState(false)
     const [info, setinfo] = useState()
+    const [invalid_review, set_invalid_review] = useState()
     const [feedback, setfeedback] = useState()
     const feedback_select = useRef(null)
 
@@ -24,7 +31,7 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
                 path: "get_review_contribution",
                 method: "PUT",
                 data: {
-                    "contribution": id,
+                    "contribution": contribution_object.id,
                     "state": question_state,
                     "feedback": feedback ? feedback.label : null
                 }
@@ -37,14 +44,44 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
             console.log(review_submission_response)
 
             if (review_submission_response.state === "invalid") {
-                setreviewstate(prev => ({ ...prev, [id]: "canceledstate" }))
+                set_invalid_review("canceledstate")
                 setinfo(review_submission_response.info)
+
+                setTimeout(() => {
+                    set_contributors_contributions(current_contributions =>
+                        current_contributions.filter(contribution => {
+                            return contribution.id !== contribution_object.id
+                        })
+                    )
+                }, 3500)
             }
 
             else {
+                set_contributors_contributions(contributions =>
+                    contributions.map(contribution => {
+                        if (contribution.id === contribution_object.id) {
+                            return {
+                                ...contribution, approved: question_state === 1 ? true : false
+                            }
+                        }
+
+                        return contribution
+                    })
+                )
+
+                set_animes(animes =>
+                    animes.map(obj => {
+                        if (obj.id === contribution_object.question.anime.id) {
+                            return {
+                                ...obj, reviewed_contributions: obj.reviewed_contributions + 1
+                            }
+                        }
+
+                        return obj
+                    })
+                )
+
                 setinfo(review_submission_response.info)
-                setreviewstate(prev => ({ ...prev, [id]: `${question_state === 1 ? "approve" : "decline"}state` }))
-                set_n_reviewed_contributions(prev => prev + 1)
             }
 
         }
@@ -75,22 +112,22 @@ const ReviewQuestion = ({ id, question, anime, date, reviewstate, setreviewstate
         feedback_select.current.blur()
     }
 
+
     return (
-        <div className={`each_question_for_review_container ${reviewstate}`}>
-            <p className="question_anime"> <strong>{anime}</strong></p>
-            <p className="date_created">{get_local_date(date)}</p>
+        <div className={`each_question_for_review_container ${invalid_review ? invalid_review : contribution_class}`}>
+            <p className="question_anime"> <strong>{contribution_object.question.anime.anime_name}</strong></p>
+            <p className="date_created">{get_local_date(contribution_object.date_created)}</p>
             <div className="question_contents">
-                <p className="question">{question.question}</p>
+                <p className="question">{contribution_object.question.question}</p>
                 <div className="choices">
-                    <p className="right_answer"> {question.right_answer}</p>
-                    <p> {question.choice1}</p>
-                    <p> {question.choice2}</p>
-                    <p> {question.choice3}</p>
+                    <p className="right_answer"> {contribution_object.question.right_answer}</p>
+                    <p> {contribution_object.question.choice1}</p>
+                    <p> {contribution_object.question.choice2}</p>
+                    <p> {contribution_object.question.choice3}</p>
                 </div>
             </div>
 
-            {reviewstate === "pendingstate" &&
-
+            {contribution_object.approved === null && !invalid_review &&
                 <form onSubmit={(e) => pre_submit_review(e)}>
                     <div className="radios">
                         <label>
