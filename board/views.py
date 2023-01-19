@@ -1,6 +1,6 @@
 import random
 
-from django.db import connection, IntegrityError
+from django.db import IntegrityError
 from django.db.models import Count, Avg, Q
 from django.shortcuts import render, redirect 
 
@@ -28,9 +28,6 @@ from board.helpers import login_required, CreateNotification
 
 from board.constants import QUESTIONSCOUNT
 
-# to see the corresponding sql queries that get executed when the relevant ORM queryset gets executed :
-# for q in connection.queries : print(f"\n\n { q } \n\n")
-
 
 animes_dict = {}
 
@@ -42,10 +39,6 @@ game_interactions = {}
 for anime in Anime.objects.all():
     animes_dict[anime.pk] = anime
 
-
-def get_current_user(request):
-    return request.user
-  
 
 def get_or_query_anime(anime: int):
     try:
@@ -83,7 +76,7 @@ def terms_page(request):
 @api_view(["GET", "POST"])
 def get_home_data(request):
 
-    user = get_current_user(request)
+    user = request.user
 
     user_data = UserDataSerializer(
         User.objects.values(
@@ -133,7 +126,7 @@ def get_home_data(request):
 @login_required
 @api_view(["POST"])
 def save_user_country(request):
-    user = get_current_user(request)
+    user = request.user
 
     user.country = request.data["country"]
     user.save()
@@ -151,7 +144,7 @@ def save_user_country(request):
 @login_required
 @api_view(["GET"])
 def get_game_animes(request):
-    user = get_current_user(request)
+    user = request.user
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True).annotate(
@@ -183,28 +176,28 @@ def get_game_animes(request):
 @login_required
 @api_view(["GET"])
 def get_game(request, game_anime):
-    current_user = get_current_user(request)
+    user = request.user
     selected_anime = animes_dict[game_anime]
 
-    game_questions[current_user.id] = {}
-    game_interactions[current_user.id] = {}
+    game_questions[user.id] = {}
+    game_interactions[user.id] = {}
 
     # To catch malicious or non-serious users
-    if current_user.tests_started - current_user.tests_completed == "To Do":
+    if user.tests_started - user.tests_completed == "To Do":
         # for example we can do the following check (not good enough though)
-        if current_user.tests_started - current_user.tests_completed > 5:
+        if user.tests_started - user.tests_completed > 5:
             pass
         # catch here and act upon that
 
     # this game questions
     questions = selected_anime.anime_questions.filter(
-        (~Q(contribution__contributor=current_user)
+        (~Q(contribution__contributor=user)
          &
-         ~Q(contribution__reviewer=current_user)
+         ~Q(contribution__reviewer=user)
          ),
         active=True
     ).exclude(
-        pk__in=current_user.questions_interacted_with.values_list(
+        pk__in=user.questions_interacted_with.values_list(
             'question__pk', flat=True)
     )[:QUESTIONSCOUNT]
 
@@ -234,10 +227,10 @@ def get_game(request, game_anime):
             "choice4": question_choices[3]
         })
 
-        game_questions[current_user.id][question.id] = question
+        game_questions[user.id][question.id] = question
 
-    current_user.tests_started += 1
-    current_user.save()
+    user.tests_started += 1
+    user.save()
 
     return Response({
         "info": "ok",
@@ -248,7 +241,7 @@ def get_game(request, game_anime):
 @api_view(["POST"])
 def record_question_encounter(request, question_id):
 
-    user = get_current_user(request)
+    user = request.user
 
     try:
         game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
@@ -273,7 +266,7 @@ def record_question_encounter(request, question_id):
 @login_required
 @api_view(["POST"])
 def submit_game(request):
-    user = get_current_user(request)
+    user = request.user
     user_answers = request.data["answers"]
 
     for question_id in game_questions[user.id]:
@@ -331,7 +324,7 @@ def submit_game(request):
 @login_required
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
-    user = get_current_user(request)
+    user = request.user
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
@@ -376,7 +369,7 @@ def get_or_make_contribution(request):
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
 
-    user = get_current_user(request)
+    user = request.user
     
     if request.method == "GET":
         
@@ -466,7 +459,7 @@ def get_or_review_contribution(request):
 @login_required
 @api_view(["GET"])
 def get_user_interactions(request):
-    user = get_current_user(request)
+    user = request.user
 
     user_interactions = QuestionInteractionsSerializer(
         user.questions_interacted_with.select_related("anime"),
@@ -481,7 +474,7 @@ def get_user_interactions(request):
 @login_required
 @api_view(["PUT"])
 def update_notifications(request):
-    user = get_current_user(request)
+    user = request.user
 
     user.getnotifications.filter(
         pk__in=request.data["notifications"]

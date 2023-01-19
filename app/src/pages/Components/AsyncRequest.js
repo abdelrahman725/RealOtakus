@@ -1,8 +1,7 @@
 
-export const domain = "127.0.0.1:8000"
-//export const domain = "192.168.1.8:8000"
+export const our_domain = "127.0.0.1:8000"
 
-const myserver = `http://${domain}`
+const django_app_url = `http://${our_domain}`
 
 const getCookie = (name) => {
     let cookieValue = null;
@@ -21,7 +20,7 @@ const getCookie = (name) => {
 
 const CsrfToken = getCookie('csrftoken')
 
-const async_http_request = async ({ server = myserver, path = null, method = "GET", data = null } = {}) => {
+const async_http_request = async ({ server = django_app_url, path = null, method = "GET", data = null } = {}) => {
 
     const url = path ? `${server}/${path}` : server
 
