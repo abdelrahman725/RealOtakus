@@ -18,7 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("REAL_OTAKUS_DEBUG","") == "True"
+
 
 SECRET_KEY = '#0uxwk*fdqy02nem_&y7erlgb#b)nv99apk4ep_i511mu$prew' if DEBUG == True else os.getenv('DJANGO_SECRET_KEY')
 
