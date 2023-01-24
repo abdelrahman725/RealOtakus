@@ -27,17 +27,16 @@ const GameView = () => {
     setquizresults({})
     setuseranswers({})
 
-    const game = await async_http_request({ path: `getgame/${selected_anime.value}` })
+    const game_response = await async_http_request({ path: `getgame/${selected_anime.value}` })
 
-    if (game.info !== "ok") {
-      console.log(game.info)
-      set_game_info(game.info)
+    if (game_response.status !== 200) {
+      set_game_info("no available questions for this anime")
       setgame_started(null)
       return
     }
 
     setselected_anime()
-    setgamequestions(game.game_questions)
+    setgamequestions(game_response.payload.game_questions)
 
     set_user_data(prev => ({
       ...prev,
@@ -62,14 +61,14 @@ const GameView = () => {
 
     async function get_available_quiz_animes() {
 
-      const quiz_animes_result = await async_http_request({ path: "getgameanimes" })
+      const game_animes_response = await async_http_request({ path: "getgameanimes" })
 
-      if (quiz_animes_result === null) {
+      if (game_animes_response === null) {
         return
       }
 
       setanimesoptions(
-        quiz_animes_result.animes.map(anime => (
+        game_animes_response.payload.animes.map(anime => (
           {
             value: anime.id,
             label: anime.anime_name,

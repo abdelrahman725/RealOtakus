@@ -33,8 +33,8 @@ const UserContributions = () => {
       if (contributions === null)
         return
 
-      setcontributions(fetched_contributions)
-      location.state !== null ? set_selected_contribution_state(location.state) : set_n_contributions(fetched_contributions.length)
+      setcontributions(fetched_contributions.payload)
+      location.state !== null ? set_selected_contribution_state(location.state) : set_n_contributions(fetched_contributions.payload.length)
 
     }
 

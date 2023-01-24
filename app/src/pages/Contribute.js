@@ -61,7 +61,7 @@ const Contribute = ({ all_animes_options }) => {
 
       setsubmitted(true)
 
-      const submit_contribution = await async_http_request({
+      const submit_contribution_response = await async_http_request({
         path: "get_make_contribution",
         method: "POST",
         data: {
@@ -70,16 +70,16 @@ const Contribute = ({ all_animes_options }) => {
         }
       })
 
-      if (submit_contribution === null)
+      if (submit_contribution_response === null)
         return
 
-      console.log(submit_contribution)
+      console.log(submit_contribution_response)
 
       setsubmitted(false)
 
       window.scrollTo({ top: 0, behavior: 'smooth' })
 
-      if (submit_contribution.info === "conflict") {
+      if (submit_contribution_response.status !== 201) {
         question_ref.current.style.outlineColor = "red"
         question_ref.current.focus()
         set_question_info("Sorry, This question already exists")

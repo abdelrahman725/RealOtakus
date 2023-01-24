@@ -13,7 +13,7 @@ import CountryPanel from './pages/Components/SelectCountryPanel'
 
 import React, { useState, useEffect, createContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { domain } from './pages/Components/AsyncRequest'
+import { our_domain } from './pages/Components/AsyncRequest'
 
 import useWebSocket from 'react-use-websocket'
 import async_http_request from './pages/Components/AsyncRequest'
@@ -50,7 +50,14 @@ function App() {
 
   }
 
-  const { lastMessage } = useWebSocket(`ws://${domain}/ws/socket-server/`, {
+  const log_user_out = async() => {
+    const logging_out = await async_http_request({ path: "logout/", method: "DELETE" })
+    if(logging_out.status === 200){
+      window.location.href = "/"
+    }
+  }
+
+  const { lastMessage } = useWebSocket(`ws://${our_domain}/ws/socket-server/`, {
     //Will attempt to reconnect on all close events, such as server shutting down
     onOpen: () => console.log('\n connection open \n\n'),
     shouldReconnect: () => true,
@@ -83,15 +90,14 @@ function App() {
         return
       }
 
-      set_user_data(result.user_data)
-      set_country_required(result.user_data.country === null)
-      set_dashboard_users(result.leaderboard)
-      setnumber_of_unseen_notifications(result.notifications.filter(n => !n.seen).length)
-      setnotifications(result.notifications)
+      set_user_data(result.payload.user_data)
+      set_country_required(result.payload.user_data.country === null)
+      set_dashboard_users(result.payload.leaderboard)
+      setnumber_of_unseen_notifications(result.payload.notifications.filter(n => !n.seen).length)
+      setnotifications(result.payload.notifications)
 
       setall_animes(
-        result.animes.map(anime => (
-          {
+        result.payload.animes.map(anime => ({
             value: anime.id,
             label: anime.anime_name
           }
@@ -111,6 +117,7 @@ function App() {
 
         {loading === false && <div className="loaded_app">
           <NavBar
+            log_user_out={log_user_out}
             country_required={country_required}
             notifications_open={false}
             new_notifications={number_of_unseen_notifications}

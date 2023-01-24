@@ -13,6 +13,7 @@ const NavBar = ({
   notifications_open,
   new_notifications,
   game_started,
+  log_user_out,
   darkmode,
   setdarkmode
 }) => {
@@ -60,7 +61,7 @@ const NavBar = ({
           </div> */}
 
         <div>
-          <Link onClick={() => window.location.href = '/logout'}  tabIndex={game_started === true ? -1 : 1} >
+          <Link onClick={log_user_out}  tabIndex={game_started === true ? -1 : 1} >
             <MdLogout className="nav_icon" />
           </Link>
         </div>

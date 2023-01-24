@@ -77,7 +77,7 @@ def terms_page(request):
 def get_home_data(request):
 
     user = request.user
-
+  
     user_data = UserDataSerializer(
         User.objects.values(
             "id",
@@ -131,12 +131,7 @@ def save_user_country(request):
     user.country = request.data["country"]
     user.save()
 
-    return Response(
-        {
-            "info": "saved"
-        },
-        status=status.HTTP_201_CREATED
-    )
+    return Response({},status=status.HTTP_201_CREATED)
 
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------
@@ -202,9 +197,7 @@ def get_game(request, game_anime):
     )[:QUESTIONSCOUNT]
 
     if questions.count() != QUESTIONSCOUNT:
-        return Response({
-            "info": "sorry no enough questions for the quiz",
-        })
+        return Response({},status=status.HTTP_404_NOT_FOUND)
 
     serialized_questions = []
 
@@ -233,7 +226,6 @@ def get_game(request, game_anime):
     user.save()
 
     return Response({
-        "info": "ok",
         "game_questions": serialized_questions
     })
 
@@ -313,7 +305,6 @@ def submit_game(request):
     del game_questions[user.id]
 
     return Response({
-        "info": "test submitted successfully",
         "level": user.level,
         "right_answers": right_answers.data
     })
@@ -353,16 +344,11 @@ def get_or_make_contribution(request):
             question=contributed_question
         )
 
-        return Response(
-            {
-                "info": "ok"
-            },
-            status=status.HTTP_201_CREATED
-        )
+        return Response({}, status=status.HTTP_201_CREATED)
 
     except IntegrityError as e:
         if 'UNIQUE constraint' in str(e.args):
-            return Response({"info": "conflict"})
+            return Response({}, status=status.HTTP_409_CONFLICT)
 
 
 @login_required
@@ -374,10 +360,7 @@ def get_or_review_contribution(request):
     if request.method == "GET":
         
         if not user.animes_to_review.exists():
-            return Response(
-                {"info": "unauthorized"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({}, status=status.HTTP_401_UNAUTHORIZED)
 
         animes_for_user_to_review = user.animes_to_review.annotate(
             reviewed_contributions=Count(
@@ -401,9 +384,8 @@ def get_or_review_contribution(request):
         animes = AnimeReviewedContributionsSerializer(animes_for_user_to_review, many=True)
 
         return Response({
-            "info": "ok",
             "questions": contributed_questions.data,
-            "animes": animes.data,
+            "animes": animes.data
         })
 
 
@@ -412,26 +394,14 @@ def get_or_review_contribution(request):
     )
 
     if contribution.question == None:
-        return Response({
-            "info": "this question doesn't exist anymore, probably is deleted",
-            "state": "invalid"
-        })
+        return Response({"info":"this question doesn't exist anymore"}, status=status.HTTP_404_NOT_FOUND)
 
 
     if contribution.question.anime not in user.animes_to_review.all():
-        return Response(
-            {
-                "info": "unauthorized",
-                "state" : "invalid"
-            },
-            status=status.HTTP_401_UNAUTHORIZED
-        )
+        return Response({"info":"not authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
     if contribution.approved != None:
-        return Response({
-            "info":   "question has been reviewed by another reviewer",
-            "state": "invalid"
-        })
+        return Response({"info":"this question got reviewed by another reviewer"}, status=status.HTTP_409_CONFLICT)
 
     review_state = request.data["state"]
     contribution.reviewer = user
@@ -442,8 +412,7 @@ def get_or_review_contribution(request):
         contribution.save()
 
         return Response({
-            "info": "question is approved successfully",
-            "state": "valid"
+            "info": "question is approved successfully"
         })
 
     if review_state == 0:
@@ -451,8 +420,7 @@ def get_or_review_contribution(request):
         contribution.save()
 
         return Response({
-            "info": "question is rejected successfully",
-            "state": "valid"
+            "info": "question is rejected successfully"
         })
 
 
@@ -482,21 +450,8 @@ def update_notifications(request):
 
     return Response(
         {
-            "info": f"notifications state of {request.user.username} are updated successfully"
+            "info": f"notifications state of {user.username} are updated successfully"
         },
         status=status.HTTP_201_CREATED
     )
 
-
-# @api_view(["GET"])
-# def api_animes_questions(requst, anime_id, n_questions):
-
-#     anime = get_or_query_anime(anime_id)
-
-#     serialized_questions = QuestionApi(
-#         anime.anime_questions.filter(active=True)[:n_questions],
-#         many=True
-#     )
-#     return Response({
-#         "data": serialized_questions.data,
-#     })

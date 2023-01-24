@@ -43,9 +43,9 @@ const ReviewQuestion = ({
 
             console.log(review_submission_response)
 
-            if (review_submission_response.state === "invalid") {
+            if (review_submission_response.status !== 200) {
                 set_invalid_review("canceledstate")
-                setinfo(review_submission_response.info)
+                setinfo(review_submission_response.payload.info)
 
                 setTimeout(() => {
                     set_contributors_contributions(current_contributions =>
@@ -81,7 +81,7 @@ const ReviewQuestion = ({
                     })
                 )
 
-                setinfo(review_submission_response.info)
+                setinfo(review_submission_response.payload.info)
             }
 
         }

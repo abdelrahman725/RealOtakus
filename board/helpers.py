@@ -40,7 +40,7 @@ def CreateNotification(receiver, notification, kind=None):
         )
 
 
-def notify_reviewers(anime, contributor):
+def notify_reviewers_of_a_new_contribution(anime, contributor):
     for reviewer in anime.reviewers.all():
         if reviewer != contributor:
             CreateNotification(
@@ -49,14 +49,20 @@ def notify_reviewers(anime, contributor):
                 kind="R"
             )
 
+def notify_users_of_a_new_anime(anime_name):
+    for user in board.models.User.objects.all():
+        CreateNotification(
+            receiver=user,
+            notification=anime_name,
+            kind="NA"
+        )
 
 def contribution_reviewed(contribution):
 
     contribution.date_reviewed = timezone.now()
 
     if contribution.reviewer == None:
-        contribution.reviewer = board.models.User.objects.get(
-            is_superuser=True)
+        contribution.reviewer = board.models.User.objects.get(is_superuser=True)
 
     if contribution.approved == True:
 

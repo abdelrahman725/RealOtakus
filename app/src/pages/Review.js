@@ -59,28 +59,22 @@ const Review = () => {
         return
       }
 
-      if (contributions_result.info === "unauthorized") {
+      if (contributions_result.status === 401) {
         set_result_msg("you must be a reviewer first to review contributions")
         return
       }
 
-      if (contributions_result.info !== "ok") {
-        set_result_msg("an unknown error")
-        return
-      }
-
-
       if (cancled === false) {
 
-        set_animes(contributions_result.animes)
+        set_animes(contributions_result.payload.animes)
 
-        contributions_result.animes.forEach((each_anime) => (
+        contributions_result.payload.animes.forEach((each_anime) => (
           setanimes_options(
             prev => [...prev, { value: each_anime.anime_name, label: each_anime.anime_name }]
           )
         ))
 
-        set_contributors_contributions(contributions_result.questions)
+        set_contributors_contributions(contributions_result.payload.questions)
         set_result_msg()
 
       }

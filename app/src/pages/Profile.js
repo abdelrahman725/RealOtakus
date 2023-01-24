@@ -15,6 +15,7 @@ const UserProfile = ({ user_data }) => {
     async function get_user_interactions() {
 
       const interactions_result = await async_http_request({ path: "getprofile" })
+
       if (interactions_result === null) {
         return
       }
@@ -23,7 +24,7 @@ const UserProfile = ({ user_data }) => {
 
       let n_user_correct_answers = 0
 
-      interactions_result.interactions.forEach((n) => {
+      interactions_result.payload.interactions.forEach((n) => {
 
         if (n.anime.anime_name in interactions_dict) {
           n.correct_answer ? interactions_dict[n.anime.anime_name].correct += 1 : interactions_dict[n.anime.anime_name].not_correct += 1

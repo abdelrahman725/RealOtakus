@@ -133,16 +133,3 @@ class NotificationsSerializer(serializers.ModelSerializer):
             "time",
             "seen"
         )
-
-
-class QuestionApi(serializers.ModelSerializer):
-    class Meta:
-        model = Question
-        fields = (
-            "id",
-            "question",
-            "right_answer",
-            "choice1",
-            "choice2",
-            "choice3"
-        )

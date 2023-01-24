@@ -13,7 +13,8 @@ from board import base_models
 
 from board.helpers import CreateNotification
 from board.helpers import get_user_new_level
-from board.helpers import notify_reviewers
+from board.helpers import notify_reviewers_of_a_new_contribution
+from board.helpers import notify_users_of_a_new_anime
 from board.helpers import contribution_reviewed
 
 
@@ -25,15 +26,14 @@ class User(base_models.User):
 # on user signup send an email (if user has a valid email) welcoming the user
 @receiver(post_save, sender=User)
 def new_user_signed_up(sender, instance, created, **kwargs):
-    if created:
-        if instance.email:
-            send_mail(
-                subject=f"{instance.username}, Welcome to RealOtakus!",
-                message="message to send here",
-                from_email=None,
-                recipient_list=[instance.email],
-                fail_silently=False,
-            )
+    if created and instance.email:
+        send_mail(
+            subject=f"{instance.username}, Welcome to RealOtakus!",
+            message="message to send here",
+            from_email=None,
+            recipient_list=[instance.email],
+            fail_silently=False,
+        )
 
 
 @receiver(pre_save, sender=User)
@@ -49,22 +49,30 @@ def update_user_points_and_level(sender, instance, **kwargs):
 
 @receiver(m2m_changed, sender=User.animes_to_review.through)
 def on_animes_to_review_change(sender, instance, **kwargs):
+    from board.views import get_or_query_anime
     action = kwargs.pop('action', None)
-    new_added_anime = kwargs.pop('pk_set', None)
 
-    if action == "post_add" and new_added_anime:
+    if action == "post_remove":
+        removed_animes = ", ".join([get_or_query_anime(anime_id).anime_name for anime_id in kwargs.pop('pk_set', None)])
         CreateNotification(
             receiver=instance,
-            notification=Anime.objects.get(id=new_added_anime.pop()).anime_name,
-            kind="N"
+            notification=f"Sorry you are no longer a reviewer of ({removed_animes}) as you didn't comply with our review guidelines"
         )
+
+    if action == "post_add":
+        for anime_id in kwargs.pop('pk_set', None):
+            CreateNotification(
+                receiver=instance,
+                notification=get_or_query_anime(anime_id).anime_name,
+                kind="N"
+            )
 
 
 class Anime(base_models.Anime):
-    
+
     @property
     def total_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False).count() 
+        return self.anime_questions.filter(contribution__isnull=False).count()
 
     @property
     def total_questions(self):
@@ -76,17 +84,32 @@ class Anime(base_models.Anime):
 
     @property
     def approved_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False,contribution__approved=True).count()
-        
+        return self.anime_questions.filter(contribution__isnull=False, contribution__approved=True).count()
+
     @property
     def pending_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False,contribution__approved__isnull=True).count()
+        return self.anime_questions.filter(contribution__isnull=False, contribution__approved__isnull=True).count()
 
     @property
     def rejected_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False,contribution__approved=False).count()
+        return self.anime_questions.filter(contribution__isnull=False, contribution__approved=False).count()
 
     def __str__(self): return f"{self.anime_name}"
+
+    previously_active = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.previously_active = self.active
+
+    def save(self, *args, **kwargs):
+        if self.active == True and self.previously_active == False:
+            async_notification = threading.Thread(
+                target=notify_users_of_a_new_anime,
+                args=(self.anime_name,)
+            )
+            async_notification.start()
+        super(Anime, self).save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Anime)
@@ -103,6 +126,7 @@ def delete_chached_anime(sender, instance, **kwargs):
         del animes_dict[instance.id]
     except KeyError:
         pass
+
 
 class Question(base_models.Question):
     def __str__(self):
@@ -126,20 +150,23 @@ class Contribution(base_models.Contribution):
 
 @receiver(pre_save, sender=Contribution)
 def pre_contribution_review(sender, instance, **kwargs):
-    if instance.pk != None and instance.approved != None and instance.date_reviewed == None:
-        contribution_reviewed(instance)
+    if instance.pk != None:
 
-    if instance.pk != None and instance.approved == None:
-        raise IntegrityError(
-            "approved = None, reviewed questions can't return back to be unreviewed"
-        )
+        if instance.approved == None:
+            raise IntegrityError(
+                "approved = None, reviewed questions can't return back to be unreviewed"
+            )
+
+        if  instance.approved != None:
+            contribution_reviewed(instance)
+
 
 
 @receiver(post_save, sender=Contribution)
 def post_contribution_creation(sender, instance, created, **kwargs):
     if created:
         async_notification = threading.Thread(
-            target=notify_reviewers,
+            target=notify_reviewers_of_a_new_contribution,
             args=(instance.question.anime, instance.contributor)
         )
         async_notification.start()

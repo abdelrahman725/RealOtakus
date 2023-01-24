@@ -45,6 +45,14 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
       )
     }
 
+    if (kind === "NA") {
+      return (
+        <p>
+          <strong>{notification_or_anime_name}</strong> is now available in Quizes!
+        </p>
+      )
+    }
+
     if (kind === "N") {
       return (
         <p>

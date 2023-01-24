@@ -36,8 +36,13 @@ const async_http_request = async ({ server = django_app_url, path = null, method
                 body: JSON.stringify(data)
             })
 
-            const result = await response.json()
-            return result
+            const status_code = response.status
+            const result_data = await response.json()
+
+            return {
+                payload: result_data,
+                status: status_code
+            }
         }
 
         catch (error) {
@@ -49,8 +54,14 @@ const async_http_request = async ({ server = django_app_url, path = null, method
     else {
         try {
             const response = await fetch(url)
-            const result = await response.json()
-            return result
+            const status_code = response.status
+            const result_data = await response.json()
+
+            return {
+                payload: result_data,
+                status: status_code
+            }
+
         }
 
         catch (error) {
@@ -58,7 +69,6 @@ const async_http_request = async ({ server = django_app_url, path = null, method
             return null
         }
     }
-
 
 }
 

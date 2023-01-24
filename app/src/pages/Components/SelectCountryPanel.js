@@ -291,8 +291,6 @@ const CountryPanel = ({ set_country_required }) => {
                 data: { "country": selected_country.value }
             })
 
-            console.log(saving_country_response)
-
             set_loading(false)
 
             if (saving_country_response === null) {

@@ -108,12 +108,13 @@ class Notification(models.Model):
 
     kind = models.CharField(
         choices=(
+            ("NA","new available anime in quizes"),
             ("N","new anime to review"),
             ("R","review needed"),
             ("A","question approved"),
-            ("F","question rejected"),
+            ("F","question rejected")
         ),
-        max_length=1,
+        max_length=2,
         null=True,
         blank=True
     )

@@ -3,6 +3,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
 from board.models import User
 from board.helpers import login_required
 
@@ -51,6 +55,7 @@ def user_login(request):
 
 
 @login_required
+@api_view(["DELETE"])
 def user_logout(request):
   logout(request)
-  return redirect("/")
+  return Response({})

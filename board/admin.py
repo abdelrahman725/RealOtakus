@@ -584,6 +584,7 @@ class AnimeAdmin(admin.ModelAdmin):
 
   list_display = (
     "view_anime",
+    "active",
     "total_questions",
     "active_questions",
     "admin_questions",
@@ -592,8 +593,7 @@ class AnimeAdmin(admin.ModelAdmin):
     "pending_contributions",
     "rejected_contributions",
     "_reviewers",
-    "interactions",
-    "active"
+    "interactions"
   )
 
   list_filter = (
