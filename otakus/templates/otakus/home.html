@@ -1,0 +1,137 @@
+{% extends "otakus/layout.html" %} 
+
+{% load static %}{% load socialaccount %} {% load account %} 
+
+{% block script %}<script src="{% static 'otakus/index.js' %}"></script>{% endblock %}
+
+{% block head_title %}Real Otakus{% endblock %}
+
+{% block main %}
+
+<div class="header_container">
+
+  <br/>
+  <h1 class="title_color">So you are a real Otaku ?</h1>
+  <p>
+    The platform for real anime fans with challenging and mindblowing questions
+  </p>
+</div>
+
+<div class="content_container">
+  <div class="about_container">
+    <h3 class="title_color">what can you do</h3>
+    <p>Test yourself by taking quizes in your favorite animes</p>
+    <p>Contribute a new question so other otakus can test themselves</p>
+    <p>Become a reviewr by reviewing other users contributed questions !</p>
+  </div>
+
+  <div class="forms_container">
+    <h3 class="title_color">are you Ready ?</h3>
+    <button
+      type="button"
+      id="social_authenticate"
+      class="google_login"
+      {% comment %} value="{% provider_login_url 'google' %}" {% endcomment %}
+    >
+      Continue with Google
+    </button>
+
+    <p class="error_messages">
+      {% if messages %} 
+        {% for msg in messages %}
+          {% if msg.tags == 'error' %}
+            <span>{{msg}}</span>
+          {% endif %}
+        {% endfor %} 
+      {% endif %}
+    </p>
+
+    <!-- Login Form -->
+    <div id="login_form">
+      <form action="{%url 'login_url' %}" method="post">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="login_name"
+          name="username"
+          placeholder="username"
+          autocomplete="off"
+          required
+          autofocus
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder=" passsword"
+          autocomplete="off"
+          required
+        />
+        <br> <a href="{%url 'account_reset_password' %}" target="_blank">Forgot password ?</a><br>
+
+        <input type="submit" value="Log in" />
+      </form>
+
+      <p>
+        new here ?&nbsp;
+        <span class="link" id="to_register_form"> <strong>Sign up</strong> </span>
+      </p>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register_form" hidden="true">
+      <form action="{%url 'register_url' %}" method="post">
+        {% csrf_token %}
+        <input
+          type="text"
+          class="valid_input"
+          id="register_name"
+          name="username"
+          placeholder="username"
+          autocomplete="off"
+          required
+          minlength="5"
+          maxlength="16"
+        />
+
+        <input
+          type="text"
+          class="valid_input"
+          name="email"
+          placeholder="email"
+          required
+        />
+
+        <input
+          type="password"
+          class="passwords"
+          id="pass"
+          name="password"
+          placeholder="passsword"
+          autocomplete="off"
+          required
+          minlength="3"
+        />
+
+        <input
+          type="password"
+          class="passwords"
+          id="confirmed_pass"
+          placeholder="confirm passsword"
+          autocomplete="off"
+          required
+          minlength="3"
+        />
+
+        <input id="register_btn" type="submit" value="Create account" />
+      </form>
+      <p>
+        already have account? &nbsp;
+        <span class="link" id="to_login_form" > <strong>Log in</strong> </span>
+      </p>
+    </div>
+  </div>
+  
+</div>
+
+{% endblock %}

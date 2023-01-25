@@ -37,7 +37,7 @@ const Home = ({ user_data, dashboard_users }) => {
         }
       </div>
 
-      {dashboard_users.length > 0 && <TheDashBoard dashboard_users={dashboard_users} current_user={user_data} />}
+      {dashboard_users && <TheDashBoard dashboard_users={dashboard_users} current_user={user_data} />}
 
     </div>
   )
