@@ -1,8 +1,8 @@
 import async_http_request from './AsyncRequest'
 import Select from 'react-select'
-import { useState, useRef, useContext } from "react"
-import { GlobalStates } from '../../App'
-import get_local_date from './LocalDate'
+import { useState, useRef } from "react"
+import { SelectStyles } from "Constants"
+import get_local_date from "./LocalDate"
 
 const ReviewQuestion = ({
     contribution_object,
@@ -12,14 +12,12 @@ const ReviewQuestion = ({
     feedback_options
 }) => {
 
-    const { SelectStyles } = useContext(GlobalStates)
-    const [question_state, setquestion_state] = useState()
+    const [question_state, setquestion_state] = useState(null)
     const [review_submitted, set_review_submitted] = useState(false)
     const [info, setinfo] = useState()
     const [invalid_review, set_invalid_review] = useState()
     const [feedback, setfeedback] = useState()
     const feedback_select = useRef(null)
-
 
     const pre_submit_review = (e) => {
 
@@ -86,8 +84,8 @@ const ReviewQuestion = ({
 
         }
 
-        if (question_state !== 0 && question_state !== 1) {
-            console.log("error! a review decision is required for the contribution (approve/decline)")
+        if (question_state === null) {
+            setinfo("review required first")
             return
         }
 

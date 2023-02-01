@@ -8,8 +8,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from django.db.models import Count
-
-#from allauth.socialaccount.models import SocialAccount
+from allauth.socialaccount.models import SocialAccount
 
 from otakus.models import User
 from otakus.models import Anime
@@ -28,7 +27,7 @@ def to_local_date_time(utc_datetime):
     #return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
   return "N/A"
 
-# 10 customized filter classes
+# 9 customized filter classes
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social_account'
@@ -62,25 +61,6 @@ class OldestToRecentFilter(admin.SimpleListFilter):
       if self.value() == 'Yes':
         return queryset.order_by("id")
 
-    
-class IsContributorFilter(admin.SimpleListFilter):
-    title = 'contributor'
-    parameter_name = 'is_contributor'
-
-    def lookups(self, request, model_admin):
-        return (
-          ('Yes', ('Yes')),
-          ('No', ('No')),
-      )
-
-    def queryset(self, request, queryset):  
-          
-      if self.value() == 'Yes':
-        return queryset.filter(contributions__question__approved=True)
-      
-      if self.value() == 'No':
-        return queryset.exclude(contributions__question__approved=True)
-        
 
 class CountryFilter(admin.SimpleListFilter):
     title = 'country'
@@ -237,13 +217,17 @@ class UserAdmin(admin.ModelAdmin):
     "tests_completed",
     "animes_to_review",
     "password",
+    "is_staff",
+    #"user_permissions",
     "last_login",
     "date_joined",
     "is_active"
   )
 
-  autocomplete_fields = ['animes_to_review']
+  autocomplete_fields = ["animes_to_review",]
   
+  #filter_horizontal = ("user_permissions",)
+
   list_display_links = ("username",)
 
   readonly_fields =  (
@@ -276,9 +260,8 @@ class UserAdmin(admin.ModelAdmin):
   )
 
   list_filter  =  (
-    IsContributorFilter,
     IsReviewerFilter,
-    #SocialAccountFilter,
+    SocialAccountFilter,
     "level",
     CountryFilter,
     ("animes_to_review",admin.RelatedOnlyFieldListFilter)
@@ -315,15 +298,15 @@ class UserAdmin(admin.ModelAdmin):
   authenticated.boolean = True
   
   def social_connected(self,obj):
-    return "to do .."
-#     try:
-#       SocialAccount.objects.get(user=obj)
-#       return True
-    
-#     except SocialAccount.DoesNotExist:
-#       return False
 
-#   social_connected.boolean = True
+    try:
+      SocialAccount.objects.get(user=obj)
+      return True
+    
+    except SocialAccount.DoesNotExist:
+      return False
+
+  social_connected.boolean = True
 
   def contributions(self,obj):
     return obj.contributions.filter(approved=True).count()
@@ -493,9 +476,9 @@ class QuestionAdmin(admin.ModelAdmin):
     #"choice1",
     #"choice2",
     #"choice3",
-    "correct_answers",
-    "wrong_answers",
-    #"not_answered",
+    #"correct_answers",
+    #"wrong_answers",
+    #"no_answers",
     "active",
     "_contribution"
   )
@@ -522,7 +505,7 @@ class QuestionAdmin(admin.ModelAdmin):
   def wrong_answers(self,obj):
     return obj.question_interactions.filter(correct_answer=False).count()
   
-  def not_answered(self,obj): 
+  def no_answers(self,obj): 
     return obj.question_interactions.filter(correct_answer__isnull=True).count()
 
   def get_readonly_fields(self, request, obj=None):

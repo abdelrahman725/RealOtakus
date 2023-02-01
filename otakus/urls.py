@@ -1,12 +1,14 @@
-from django.urls import path
+from django.urls import path, re_path
+from django.views.generic import TemplateView
 
-from otakus.authen_views import user_logout
+from otakus.authen_views import send_csrf_token_to_client
 from otakus.authen_views import user_register
 from otakus.authen_views import user_login
+from otakus.authen_views import user_logout
 
 from otakus.views import react_app
-from otakus.views import react_route_page
-from otakus.views import get_home_data
+from otakus.views import get_unauthenticated_home_data
+from otakus.views import get_user_authenticated_data
 from otakus.views import get_game_animes
 from otakus.views import get_game
 from otakus.views import get_user_interactions
@@ -16,30 +18,20 @@ from otakus.views import record_question_encounter
 from otakus.views import save_user_country
 from otakus.views import update_notifications
 from otakus.views import submit_game
-from otakus.views import privacy_policy_page
-from otakus.views import terms_page
 
+# DRF endpoints
 
 urlpatterns = [
 
-    path('', react_app),
-    path('register/', user_register, name="register_url"),
-    path('login/', user_login, name="login_url"),
+  # not authenticated routes
+    path('main', get_unauthenticated_home_data),
+    path('get_csrf/', send_csrf_token_to_client),
+    path('login/', user_login),
+    path('register/', user_register),
+  
+  # authenticated routes
     path('logout/', user_logout),
-    path('privacy/', privacy_policy_page, name="privacy_url"),
-    path('terms/', terms_page, name="terms_url"),
-
-    # react router paths (views only)
-    path('game/', react_route_page),
-    path('contribute/', react_route_page),
-    path('mycontributions/', react_route_page),
-    path('review/', react_route_page),
-    path('profile/', react_route_page),
-    path('notifications/', react_route_page),
-    path('about/', react_route_page),
-
-    # DRF api endpoints
-    path('gethomedata', get_home_data),
+    path('get_user_data', get_user_authenticated_data),
     path('getgameanimes', get_game_animes),
     path('getgame/<int:game_anime>', get_game),
     path('getprofile', get_user_interactions),
@@ -50,3 +42,6 @@ urlpatterns = [
     path('update_notifications', update_notifications),
     path('submitgame', submit_game)
 ]
+
+# catch all for react app and its routes 
+urlpatterns += [re_path(r'^.*',react_app)]

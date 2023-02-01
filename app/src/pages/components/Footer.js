@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+
 
 const Footer = () => {
   return (
@@ -15,8 +17,9 @@ const Footer = () => {
         Support
       </a> */}
 
-      <a className="simple_link" href="/privacy" target="_blank">privacy</a>
-      <a className="simple_link" href="/terms" target="_blank">terms</a>
+      <Link to="privacy" className="simple_link">privacy</Link>
+
+      <Link to="terms" className="simple_link">terms</Link>
 
     </footer>
   )

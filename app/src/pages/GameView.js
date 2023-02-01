@@ -1,14 +1,14 @@
-import Game from "./Components/Game"
-import Result from "./Components/Result"
-
-import async_http_request from "./Components/AsyncRequest"
+import async_http_request from './components/AsyncRequest'
+import Result from './components/Result'
+import Game from './components/Game'
 import Select from 'react-select'
-import { GlobalStates } from "../App"
+import { GlobalStates } from 'App'
+import { SelectStyles, N_Game_Questions } from 'Constants'
 import { useState, useContext, useEffect, useRef } from 'react'
 
 const GameView = () => {
 
-  const { SelectStyles, N_Game_Questions, game_started, setgame_started, set_user_data } = useContext(GlobalStates)
+  const { game_started, setgame_started, set_user_data } = useContext(GlobalStates)
   const [animesoptions, setanimesoptions] = useState()
   const [gamequestions, setgamequestions] = useState()
   const [selected_anime, setselected_anime] = useState()
@@ -117,11 +117,23 @@ const GameView = () => {
       }
 
       {game_started === true &&
-        <Game questions={gamequestions} setgame_score={setgame_score} setquizresults={setquizresults} setuseranswers={setuseranswers} useranswers={useranswers} set_game_info={set_game_info} />
+        <Game
+          questions={gamequestions}
+          setgame_score={setgame_score}
+          setquizresults={setquizresults}
+          setuseranswers={setuseranswers}
+          useranswers={useranswers}
+          set_game_info={set_game_info}
+        />
       }
 
       {game_started === false &&
-        <Result results={quizresults} useranswers={useranswers} questions={gamequestions} score={game_score} />
+        <Result
+          results={quizresults}
+          useranswers={useranswers}
+          questions={gamequestions}
+          score={game_score}
+        />
       }
 
     </div>

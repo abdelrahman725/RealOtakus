@@ -1,4 +1,3 @@
-
 # number of questions in each game
 QUESTIONSCOUNT = 5
 

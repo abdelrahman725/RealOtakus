@@ -1,61 +1,69 @@
 from django.db import IntegrityError
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect, csrf_exempt
 
-# from rest_framework import status
+from rest_framework import status
+from rest_framework.decorators import api_view,  permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
 from otakus.models import User
-from otakus.helpers import login_required
 
 
+@ensure_csrf_cookie
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def send_csrf_token_to_client(request):
+  return Response({"info" : "csrf token is set"})
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def user_register(request):
+  if request.user.is_authenticated:
+    return Response({"info":f"already logged in as {request.user.username}"})
 
-  if request.method == "POST":
+  username = request.data["username"].strip()
+  email = request.data["email"].strip()
+  user_country = request.data["country"]
+  user_password = request.data["password"]
 
-    username = request.POST["username"].strip()
-    email = request.POST["email"].strip()
-    user_password = request.POST["password"]
-    
-    if len(user_password) < 6:
-      messages.error(request, 'password is too short, min length is 6')
-      return redirect("/")
+  try:
+    new_otaku_user = User.objects.create_user(
+      username=username,
+      email=email,
+      password=user_password,
+      country=user_country
+    )
+
+    new_otaku_user.save()
+    login(request, new_otaku_user)
+
+    return Response({"info":"registered successfully"},status=status.HTTP_201_CREATED)
   
-    try:
-      new_user = User.objects.create_user(
-        username=username,
-        email=email,
-        password=user_password
-      )
+  except IntegrityError:
+    return Response({"info":"username already exists"},status=status.HTTP_403_FORBIDDEN)
+      
 
-      new_user.save()
-      login(request, new_user)
-    
-    except IntegrityError:
-      messages.error(request, 'username already exists !')
-    
-  return redirect("/")
-
-
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def user_login(request):
-  if request.method == "POST":
-    username = request.POST["username"]
-    password= request.POST["password"]
-    user = authenticate(request, username=username, password=password)
-   
-    if user is not None:
-      login(request,user)
-   
-    else:
-      messages.error(request, 'wrong username or password')
+
+  if request.user.is_authenticated:
+    return Response({"info":f"already logged in as {request.user.username}"})
+
+  username = request.data["username"]
+  password= request.data["password"]
+  user = authenticate(request, username=username, password=password)
   
-  return redirect("/")
+  if user is not None:
+    login(request,user)
+    return Response({"info":"successfull login"})
+
+  return Response({"info":"wrong username or password"}, status=status.HTTP_403_FORBIDDEN) 
 
 
-@login_required
 @api_view(["DELETE"])
 def user_logout(request):
   logout(request)
-  return Response({})
+  return Response({"info":"logged out successfully"})

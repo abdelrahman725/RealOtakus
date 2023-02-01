@@ -1,11 +1,10 @@
-import async_http_request from "./Components/AsyncRequest"
-import { useState, useEffect, useContext } from "react"
-import Interactions from "./Components/Interactions"
-import { GlobalStates } from "../App"
+import Interactions from "./components/Interactions"
+import async_http_request from "./components/AsyncRequest"
+import { useState, useEffect } from "react"
+import { N_Game_Questions } from "Constants"
 
 const UserProfile = ({ user_data }) => {
 
-  const { N_Game_Questions } = useContext(GlobalStates)
   const [games_score_percentage, setgames_score_percentage] = useState()
   const [user_interactions, setuser_interactions] = useState({})
   const [loading, setloading] = useState(true)

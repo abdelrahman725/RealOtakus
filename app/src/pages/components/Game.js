@@ -1,7 +1,8 @@
 import Question from "./Question"
-import { GlobalStates } from "../../App"
+import { GlobalStates } from "App"
 import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
+import { N_Game_Questions } from "Constants"
 
 const Game = ({
   questions,
@@ -12,7 +13,7 @@ const Game = ({
   set_game_info
 }) => {
 
-  const { N_Game_Questions, setgame_started, set_user_data } = useContext(GlobalStates)
+  const { setgame_started, set_user_data } = useContext(GlobalStates)
   const [index, setindex] = useState(0)
   const [timeout, settimout] = useState(false)
 

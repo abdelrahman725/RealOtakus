@@ -9,18 +9,18 @@ import { MdLogout } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 
 const NavBar = ({
-  country_required,
+  authenticated,
   notifications_open,
   new_notifications,
   game_started,
   log_user_out,
-  darkmode,
-  setdarkmode
+  //darkmode,
+  //setdarkmode
 }) => {
 
 
   return (
-    <div className={`navbar ${game_started && "disabled_div"} ${country_required && "faded_background"}`}>
+    <div className={`navbar ${game_started && "disabled_div"}`}>
 
       <div className="left" >
         <div>
@@ -39,7 +39,7 @@ const NavBar = ({
 
       <div className="right">
         <div>
-          <Link to="profile" tabIndex={game_started === true ? -1 : 1}>
+          <Link to={authenticated ? "profile" : "/"} tabIndex={game_started === true ? -1 : 1}>
             <BsPersonFill className="nav_icon" />
           </Link>
         </div>
@@ -50,7 +50,7 @@ const NavBar = ({
             {new_notifications}
           </strong>
 
-          <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
+          <Link to={authenticated ? "notifications" : "/"} tabIndex={game_started === true ? -1 : 1}>
             <IoMdNotifications className="nav_icon" />
           </Link>
         </div>
@@ -61,7 +61,7 @@ const NavBar = ({
           </div> */}
 
         <div>
-          <Link onClick={log_user_out}  tabIndex={game_started === true ? -1 : 1} >
+          <Link onClick={log_user_out} tabIndex={game_started === true ? -1 : 1} >
             <MdLogout className="nav_icon" />
           </Link>
         </div>

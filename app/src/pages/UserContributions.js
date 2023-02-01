@@ -1,5 +1,5 @@
-import ContributedQuestion from "./Components/ContributedQuestion"
-import async_http_request from "./Components/AsyncRequest"
+import ContributedQuestion from "./components/ContributedQuestion"
+import async_http_request from "./components/AsyncRequest"
 import { useState, useEffect } from "react"
 import { useLocation } from 'react-router-dom'
 
@@ -94,9 +94,8 @@ const UserContributions = () => {
 
           </div>
           :
-          <div className="loading_div">no contributions yet</div>
-
-        : <div className="loading_div">loading...</div>
+          <div>no contributions yet</div>
+        : <div>loading</div>
       }
 
     </div>

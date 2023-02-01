@@ -1,5 +1,5 @@
-import EachNotification from "./Components/EachNotification"
-import async_http_request from "./Components/AsyncRequest"
+import EachNotification from "./components/EachNotification"
+import async_http_request from "./components/AsyncRequest"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 

@@ -1,18 +1,18 @@
-import ReviewQuestion from "./Components/ReviewQuestion"
-import async_http_request from "./Components/AsyncRequest"
+import ReviewQuestion from "./components/ReviewQuestion"
+import async_http_request from "./components/AsyncRequest"
 import Select from 'react-select'
-import { useState, useEffect, useRef, useContext } from "react"
-import { GlobalStates } from "../App"
+import { useState, useEffect, useRef } from "react"
+import { SelectStyles } from "Constants"
 import { useLocation, Link } from 'react-router-dom'
 
 const Review = () => {
 
-  const { SelectStyles } = useContext(GlobalStates)
   const [contributors_contributions, set_contributors_contributions] = useState()
   const [animes, set_animes] = useState()
   const [animes_options, setanimes_options] = useState([{ value: "all", label: "All" }])
   const [selected_anime, setselected_anime] = useState()
   const [result_msg, set_result_msg] = useState("loading contributions...")
+
   const location = useLocation()
   const anime_select = useRef(null)
 
@@ -25,7 +25,7 @@ const Review = () => {
     { value: 1, label: 'not relevant' },
     { value: 3, label: 'too easy' },
     { value: 2, label: 'bad choices' },
-    { value: 4, label: 'invalid/wrong information'}
+    { value: 4, label: 'invalid/wrong information' }
   ]
 
   const contributions_states_classes = {
@@ -134,9 +134,9 @@ const Review = () => {
             </p>
 
             <Select
+              styles={SelectStyles}
               isDisabled={contributors_contributions.length === 0}
               value={selected_anime}
-              styles={SelectStyles}
               className="react_select"
               placeholder={`filter ${animes_options.length - 1} animes`}
               options={animes_options}

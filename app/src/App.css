@@ -1,4 +1,4 @@
-.centered_div, .dashboard, .user_contributions, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container, .notifications {
+.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container, .notifications {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
@@ -38,10 +38,12 @@ a {
 
 .simple_link {
   color: #0e4b9b;
+  font-size: 14px;
 }
 
 .simple_link:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .submit_btn {
@@ -66,6 +68,102 @@ a {
 
 .faded_background {
   opacity: 50%;
+}
+
+.not_authenticated {
+  text-align: center;
+  margin: 10px;
+}
+
+.not_authenticated .container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin-top: 60px;
+}
+
+.not_authenticated .container .about {
+  margin-bottom: 50px;
+}
+
+.not_authenticated .container .authenticating_forms {
+  width: 450px;
+}
+
+.not_authenticated .container .authenticating_forms form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.not_authenticated .container .authenticating_forms form .select_country {
+  text-align: left;
+}
+
+.not_authenticated .container .authenticating_forms form input {
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.not_authenticated .container .authenticating_forms form .submit_btn {
+  width: 100%;
+}
+
+.not_authenticated .container .authenticating_forms form .fixed_height_container {
+  height: 30px;
+  margin-bottom: 10px;
+}
+
+.not_authenticated .container .authenticating_forms form .simple_link {
+  font-weight: bolder;
+  background: none;
+  padding: 0px;
+}
+
+.not_authenticated .container .authenticating_forms .google_container {
+  margin-bottom: 20px;
+}
+
+.not_authenticated .container .authenticating_forms .google_container .google_btn {
+  -webkit-transition: background-color 0.3s, -webkit-box-shadow 0.3s;
+  transition: background-color 0.3s, -webkit-box-shadow 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s, -webkit-box-shadow 0.3s;
+  padding: 12px 16px 12px 42px;
+  border: none;
+  -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
+  color: #757575;
+  letter-spacing: 0.4;
+  font-size: 15px;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
+  background-repeat: no-repeat;
+  background-position: 12px 11px;
+  background-color: white;
+}
+
+.not_authenticated .container .authenticating_forms .google_container .google_btn:hover {
+  -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.not_authenticated .container .authenticating_forms .google_container .google_btn:active {
+  background-color: #eeeeee;
+}
+
+.not_authenticated .container .authenticating_forms .google_container .google_btn:focus {
+  outline: none;
+  -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 0 3px #c8dafc;
+          box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25), 0 0 0 3px #c8dafc;
 }
 
 .navbar {
@@ -327,6 +425,10 @@ a {
 
 .account_container .flex_container .interactions td {
   padding: 40px;
+}
+
+.user_contributions {
+  text-align: center;
 }
 
 .user_contributions .n_contributions {
@@ -694,7 +796,7 @@ a {
 }
 
 .about {
-  padding: 10px 25px 10px 25px;
+  padding: 0px 25px 0px 25px;
   text-align: left;
   line-height: 1.8;
 }

@@ -1,9 +1,6 @@
-import { GlobalStates } from "../../App"
-import { useContext } from "react"
+import { N_Game_Questions } from "Constants"
 
 const Result = ({ results, useranswers, questions, score }) => {
-
-  const { N_Game_Questions } = useContext(GlobalStates)
 
   const get_choice_class = (right_answer, user_answer, choice) => {
 

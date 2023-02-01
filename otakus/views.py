@@ -6,7 +6,8 @@ from django.shortcuts import render, redirect
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 from otakus.models import User
 from otakus.models import Anime
@@ -24,9 +25,10 @@ from otakus.serializers import AnswersSerializer
 from otakus.serializers import QuestionInteractionsSerializer
 from otakus.serializers import AnimeReviewedContributionsSerializer
 
-from otakus.helpers import login_required, CreateNotification
+from otakus.helpers import CreateNotification
 
 from otakus.constants import QUESTIONSCOUNT
+
 
 
 animes_dict = {}
@@ -48,36 +50,44 @@ def get_or_query_anime(anime: int):
         return animes_dict[anime]
 
 
-def react_route_page(request):
-    if User.objects.get(username="andrea").is_authenticated:
-        return render(request, "index.html")
-    return redirect("/")
-
-
 def react_app(request):
-  # react app
-    if User.objects.get(username="andrea").is_authenticated:
-        if User.objects.get(username="andrea").is_superuser:
-            return redirect("/admin")
-        return render(request, "index.html")
-  # django template
-    return render(request, "otakus/home.html")
+    if request.user.is_superuser:
+        return redirect("/admin/")
+    return render(request, "index.html")
 
 
-def privacy_policy_page(request):
-    return render(request, "otakus/privacy.html")
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_unauthenticated_home_data(request):
+
+    all_animes = AnimeSerializer(animes_dict.values(), many=True)
+
+    # leaderotakus users sorted by their scores in non-increasing order where their score is !=0 and >= avg_score
+    avg_score = User.objects.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
+
+    if not avg_score:
+        top_competitors = []
+    
+    else:
+        # filter to use : points__gt=avg_score
+        top_competitors = User.objects.annotate(
+            n_contributions=Count("contributions", filter=(
+                Q(contributions__approved=True)))
+        ).filter().order_by("-points")
+
+    leader_otakus_users = LeaderBoradSerializer(top_competitors, many=True)
+    return Response({
+        "is_authenticated" : "true" if request.user.is_authenticated else "false",
+        "animes": all_animes.data,
+        "leaderboard": leader_otakus_users.data
+    })
 
 
-def terms_page(request):
-    return render(request, "otakus/terms.html")
-
-
-#@login_required
-@api_view(["GET", "POST"])
-def get_home_data(request):
-
-    user = User.objects.get(username="andrea")
+@api_view(["GET"])
+def get_user_authenticated_data(request):
   
+    user = request.user
+
     user_data = UserDataSerializer(
         User.objects.values(
             "id",
@@ -99,34 +109,15 @@ def get_home_data(request):
         many=True
     )
 
-    all_animes = AnimeSerializer(animes_dict.values(), many=True)
-
-    # leaderotakus users sorted by their scores in non-increasing order where their score is !=0 and >= avg_score
-    avg_score = User.objects.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
-
-    if not avg_score:
-        top_competitors = []
-    
-    else:
-        top_competitors = User.objects.annotate(
-            n_contributions=Count("contributions", filter=(
-                Q(contributions__approved=True)))
-        ).filter(points__gt=avg_score).order_by("-points")
-
-    leader_otakus_users = LeaderBoradSerializer(top_competitors, many=True)
-
     return Response({
         "user_data": user_data,
-        "notifications": serialized_notifications.data,
-        "animes": all_animes.data,
-        "leaderotakus": leader_otakus_users.data
+        "notifications": serialized_notifications.data
     })
 
 
-#@login_required
 @api_view(["POST"])
 def save_user_country(request):
-    user = User.objects.get(username="andrea")
+    user = request.user
 
     user.country = request.data["country"]
     user.save()
@@ -136,10 +127,10 @@ def save_user_country(request):
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------
 
-#@login_required
+
 @api_view(["GET"])
 def get_game_animes(request):
-    user = User.objects.get(username="andrea")
+    user = request.user
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True).annotate(
@@ -168,10 +159,10 @@ def get_game_animes(request):
     })
 
 
-#@login_required
+
 @api_view(["GET"])
 def get_game(request, game_anime):
-    user = User.objects.get(username="andrea")
+    user = request.user
     selected_anime = animes_dict[game_anime]
 
     game_questions[user.id] = {}
@@ -233,7 +224,7 @@ def get_game(request, game_anime):
 @api_view(["POST"])
 def record_question_encounter(request, question_id):
 
-    user = User.objects.get(username="andrea")
+    user = request.user
 
     try:
         game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
@@ -255,10 +246,10 @@ def record_question_encounter(request, question_id):
     )
 
 
-#@login_required
+
 @api_view(["POST"])
 def submit_game(request):
-    user = User.objects.get(username="andrea")
+    user = request.user
     user_answers = request.data["answers"]
 
     for question_id in game_questions[user.id]:
@@ -312,10 +303,9 @@ def submit_game(request):
 # ------------------------------------------------------------------------------------------------------
 
 
-#@login_required
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
-    user = User.objects.get(username="andrea")
+    user = request.user
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
@@ -351,11 +341,11 @@ def get_or_make_contribution(request):
             return Response({}, status=status.HTTP_409_CONFLICT)
 
 
-#@login_required
+
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
 
-    user = User.objects.get(username="andrea")
+    user = request.user
     
     if request.method == "GET":
         
@@ -424,10 +414,10 @@ def get_or_review_contribution(request):
         })
 
 
-#@login_required
+
 @api_view(["GET"])
 def get_user_interactions(request):
-    user = User.objects.get(username="andrea")
+    user = request.user
 
     user_interactions = QuestionInteractionsSerializer(
         user.questions_interacted_with.select_related("anime"),
@@ -439,10 +429,10 @@ def get_user_interactions(request):
     })
 
 
-#@login_required
+
 @api_view(["PUT"])
 def update_notifications(request):
-    user = User.objects.get(username="andrea")
+    user = request.user
 
     user.getnotifications.filter(
         pk__in=request.data["notifications"]
@@ -454,3 +444,4 @@ def update_notifications(request):
         },
         status=status.HTTP_201_CREATED
     )
+    

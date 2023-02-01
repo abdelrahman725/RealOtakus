@@ -6,7 +6,7 @@ const About = () => {
   return (
     <div className="about">
       <div>
-        <h2>About</h2>
+      <h2>About</h2>
         <p>
           Real Otaku is a platform for anime enthusiasts and fans founded by <strong>my name</strong>  in 2023,
           it's about contributing anime questions and participate in games

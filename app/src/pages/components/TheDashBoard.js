@@ -5,7 +5,7 @@ const TheDashBoard = ({ dashboard_users, current_user }) => {
   return (
     <div className="dashboard_container">
 
-      <h1 className="leaderboard_title"> Leaderboard</h1>
+      <h1 className="leaderboard_title">Top Otakus</h1>
 
       <table className="dashboard leaderboard">
 
@@ -25,7 +25,7 @@ const TheDashBoard = ({ dashboard_users, current_user }) => {
             <Competitor
               key={index}
               index={index}
-              current_user={current_user.id === competitor.id}
+              current_user={current_user && current_user.id === competitor.id}
               name={competitor.username}
               points={competitor.points}
               level={competitor.level}

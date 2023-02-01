@@ -1,12 +1,11 @@
-import async_http_request from "./Components/AsyncRequest"
+import async_http_request from "./components/AsyncRequest"
 import Select from 'react-select'
-import { useState, useRef, useContext, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { GlobalStates } from "../App"
+import { SelectStyles } from "Constants"
 
 const Contribute = ({ all_animes_options }) => {
 
-  const { SelectStyles } = useContext(GlobalStates)
   const [anime, setanime] = useState()
   const [response_msg, set_response_msg] = useState()
   const [question_info, set_question_info] = useState()
@@ -27,9 +26,7 @@ const Contribute = ({ all_animes_options }) => {
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
 
-
   // reject the following patterns
-
   // excluded symbols:  # ` ~ @ ^ * | \  as they are rarely used in questions  
   const excluded_symbols = /[#`~@^*|\\]/
   const extra_space = /\s{2,}/
@@ -79,10 +76,15 @@ const Contribute = ({ all_animes_options }) => {
 
       window.scrollTo({ top: 0, behavior: 'smooth' })
 
-      if (submit_contribution_response.status !== 201) {
+      if (submit_contribution_response.status === 409) {
         question_ref.current.style.outlineColor = "red"
         question_ref.current.focus()
         set_question_info("Sorry, This question already exists")
+        return
+      }
+
+      if (submit_contribution_response.status !== 201) {
+        set_question_info("an error has occurred")
         return
       }
 

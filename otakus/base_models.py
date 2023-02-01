@@ -37,7 +37,6 @@ class User(AbstractUser):
     )
 
     class Meta:
-        ordering = ["-points"]
         abstract = True
 
 

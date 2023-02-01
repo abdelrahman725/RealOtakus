@@ -1,5 +1,3 @@
-from django.utils.translation import gettext_lazy as _
-from django.shortcuts import redirect
 from django.utils import timezone
 
 import otakus.models
@@ -97,14 +95,3 @@ def get_user_new_level(user):
     if user.points >= LEVELS[INTERMEDIATE]:
         return INTERMEDIATE
     return None
-
-
-def login_required(f):
-    def wraper(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect("/")
-        else:
-            requested_endpoint = f(request, *args, **kwargs)
-            return requested_endpoint
-    return wraper
-
