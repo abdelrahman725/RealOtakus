@@ -6,7 +6,7 @@ const About = () => {
   return (
     <div className="about">
       <div>
-      <h2>About</h2>
+        <h2>About</h2>
         <p>
           Real Otaku is a platform for anime enthusiasts and fans founded by <strong>my name</strong>  in 2023,
           it's about contributing anime questions and participate in games
@@ -38,7 +38,7 @@ const About = () => {
 
         <ul>
           <li>avoid trivial/too easy questions.</li>
-          <li>your question should not depends only on memorizing things like (dates, characters names, places).</li>
+          <li>your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
           <li>try to avoid questions that are based on your personal opinion or theory. </li>
           <li>make sure to make 4 distinguishable choices.</li >
           <li>the 3 wrong choices must not have any common pattern,
@@ -66,13 +66,6 @@ const About = () => {
 
       <div>
         <h2>How to become a reviewer</h2>
-        <p>
-          to do ...
-        </p>
-      </div>
-      
-      <div>
-        <h2>Review Guidelines</h2>
         <p>
           to do ...
         </p>

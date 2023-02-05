@@ -8,6 +8,9 @@ DEBUG = True
 
 SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm' if DEBUG == True else os.getenv('DJANGO_SECRET_KEY')
 
+ALLOWED_HOSTS = [
+    "127.0.0.1"
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -30,12 +33,12 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_QUERY_EMAIL = SOCIALACCOUNT_EMAIL_REQUIRED
 
 
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = os.getenv('HOST_EMAIL')
-# EMAIL_HOST_PASSWORD = os.getenv('HOST_EMAIL_PASSWORD')
-# DEFAULT_FROM_EMAIL = os.getenv('HOST_EMAIL')
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('HOST_EMAIL')
+EMAIL_HOST_PASSWORD = os.getenv('HOST_EMAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('HOST_EMAIL')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 AUTH_USER_MODEL = "otakus.User"
 
@@ -54,7 +57,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
-    #'channels',
+    'channels',
 
     'allauth',
     'allauth.account',
@@ -74,7 +77,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'realotakus.urls'
+
 
 TEMPLATES = [
     {
@@ -103,7 +106,6 @@ AUTHENTICATION_BACKENDS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        #'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
      ],
 
@@ -113,7 +115,11 @@ REST_FRAMEWORK = {
     ]
 }
 
+ASGI_APPLICATION = 'realotakus.asgi.application'
+
 WSGI_APPLICATION = 'realotakus.wsgi.application'
+
+ROOT_URLCONF = 'realotakus.urls'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -125,6 +131,11 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

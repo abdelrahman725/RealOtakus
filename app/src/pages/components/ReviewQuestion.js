@@ -31,7 +31,7 @@ const ReviewQuestion = ({
                 data: {
                     "contribution": contribution_object.id,
                     "state": question_state,
-                    "feedback": feedback ? feedback.label : null
+                    "feedback": feedback ? feedback.value : null
                 }
             })
 

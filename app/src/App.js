@@ -1,7 +1,6 @@
 import './App.css'
 
 import AuthenticatedRoute from 'pages/AuthenticatedRoute'
-import NotAuthenticated from 'pages/NotAuthenticated'
 import Home from 'pages/Home'
 import GameView from 'pages/GameView'
 import Review from 'pages/Review'
@@ -14,7 +13,6 @@ import Privacy from 'pages/Privacy'
 import About from 'pages/About'
 
 import CountryPanel from 'pages/components/SelectCountryPanel'
-import TheDashBoard from 'pages/components/TheDashBoard'
 import getCookie from 'pages/components/getCookie'
 import Navbar from 'pages/components/NavBar'
 import Footer from 'pages/components/Footer'
@@ -39,27 +37,25 @@ function App() {
   const [info_message, set_info_message] = useState("loading")
   const [darkmode, setdarkmode] = useState(true)
 
-  // const { lastMessage } = useWebSocket(`ws://${OUR_DOMAIN}/ws/socket-server/`, {
-  //   //Will attempt to reconnect on all close events, such as server shutting down
-  //   onOpen: () => console.log('\n connection open \n\n'),
-  //   shouldReconnect: () => true,
-  // })
+  const { lastMessage } = useWebSocket(`ws://${OUR_DOMAIN}/ws/socket-server/`, {
+    //Will attempt to reconnect on all close events, such as server shutting down
+    onOpen: () => console.log('\n connection open \n\n'),
+    shouldReconnect: () => true
+  })
 
-  //listening for incoming realtime notifications 
-  // useEffect(() => {
+  // listening for incoming realtime notifications 
+  useEffect(() => {
 
-  //   if (lastMessage !== null) {
+    if (lastMessage !== null) {
+      const new_data = JSON.parse(lastMessage.data)
+      if (new_data.payload) {
+        console.log(new_data.payload)
+        setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
+        setnumber_of_unseen_notifications(prev => prev + 1)
+      }
 
-  //     const new_data = JSON.parse(lastMessage.data)
-
-  //     if (new_data.payload) {
-  //       console.log(new_data.payload)
-  //       setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
-  //       setnumber_of_unseen_notifications(prev => prev + 1)
-  //     }
-
-  //   }
-  // }, [lastMessage, setnotifications])
+    }
+  }, [lastMessage, setnotifications])
 
   const log_user_out = async () => {
 
@@ -123,7 +119,7 @@ function App() {
 
     set_user_data(result.payload.user_data)
     set_country_required(result.payload.user_data.country === null)
-    setnumber_of_unseen_notifications(result.payload.notifications.filter(n => !n.seen).length)
+    setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false).length)
     setnotifications(result.payload.notifications)
     set_authenticated(true)
   }
@@ -160,7 +156,7 @@ function App() {
           setdarkmode={setdarkmode}
         />
 
-        {country_required && <CountryPanel set_country_required={set_country_required} />}
+        {authenticated && country_required && <CountryPanel set_country_required={set_country_required} />}
 
         {authenticated === null ?
           <div className="app_loading_div">{info_message}</div>

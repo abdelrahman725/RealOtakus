@@ -68,7 +68,7 @@ class Command(BaseCommand):
         
         animes = Anime.objects.all()
         
-        all_users = User.objects.exclude(is_superuser=True)
+        all_users = User.otakus.all()
 
         if all_users.count() == 0:
             print("\nplease generate users first\n")

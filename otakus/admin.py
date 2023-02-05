@@ -1,13 +1,10 @@
 import math
 
-from datetime import timedelta
-
-from django.contrib.sessions.models import Session
-from django.utils import timezone
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from django.db.models import Count
+
 from allauth.socialaccount.models import SocialAccount
 
 from otakus.models import User
@@ -17,17 +14,11 @@ from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification 
 
+from otakus.helpers import to_local_date_time
+
 from otakus.constants import COUNTRIES, QUESTIONSCOUNT
 
-
-def to_local_date_time(utc_datetime):
-  if utc_datetime:
-    return utc_datetime + timedelta(minutes=120)
-    #local_tz = pytz.timezone('Africa/Cairo')
-    #return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
-  return "N/A"
-
-# 9 customized filter classes
+# 8 custome filter classes
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social_account'
@@ -69,7 +60,7 @@ class CountryFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
       countries_choices = set()
 
-      for c in User.objects.filter(country__isnull=False).values_list('country',flat=True).distinct():
+      for c in User.otakus.filter(country__isnull=False).values_list('country',flat=True).distinct():
         countries_choices.add((c,(COUNTRIES[c])))
         
       return countries_choices
@@ -78,25 +69,6 @@ class CountryFilter(admin.SimpleListFilter):
       if self.value():
         return queryset.filter(country=self.value())
       return queryset.all()
-
-
-class ActiveAnimeFilter(admin.SimpleListFilter):
-    title = 'has questions'
-    parameter_name = 'contains_questions'
-
-    def lookups(self, request, model_admin):
-
-        return (
-          ('Yes', ('Yes')),
-          ('No', ('No')),
-      )
-
-    def queryset(self, request, queryset):        
-      if self.value() == 'Yes':
-        return queryset.exclude(anime_questions=None)
-      
-      if self.value() == 'No':
-        return queryset.filter(anime_questions=None)
      
 
 class IsReviewerFilter(admin.SimpleListFilter):
@@ -190,17 +162,16 @@ class ReviewersAssignedFilter(admin.SimpleListFilter):
   def lookups(self, request, model_admin):
     reviewers_choices =  set()
 
-    for reviewer in User.objects.filter(animes_to_review__isnull=False):
+    for reviewer in User.otakus.filter(animes_to_review__isnull=False):
       reviewers_choices.add((reviewer.id,(reviewer)))
     
     return reviewers_choices
 
   def queryset(self, request, queryset):
     if self.value():
-      selected_user = User.objects.get(id=int(self.value()))
+      selected_user = User.otakus.get(id=int(self.value()))
       return queryset.filter(question__anime__in = selected_user.animes_to_review.all())
     
-
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -262,6 +233,7 @@ class UserAdmin(admin.ModelAdmin):
   list_filter  =  (
     IsReviewerFilter,
     SocialAccountFilter,
+    #"is_staff",
     "level",
     CountryFilter,
     ("animes_to_review",admin.RelatedOnlyFieldListFilter)
@@ -289,14 +261,7 @@ class UserAdmin(admin.ModelAdmin):
   def reviewer(self,obj):
     return obj.animes_to_review.exists()
   reviewer.boolean = True
-  
-  def authenticated(self,obj):
-    uid_list = []
-    for session in Session.objects.filter(expire_date__gte=timezone.now()):
-      uid_list.append(session.get_decoded().get('_auth_user_id', None))
-    return obj in User.objects.filter(id__in=uid_list)
-  authenticated.boolean = True
-  
+    
   def social_connected(self,obj):
 
     try:
@@ -343,19 +308,21 @@ class ContributionAdmin(admin.ModelAdmin):
     "view_question",
     "reviewers_assigned",
     "reviewed_by",
-    "reviewer_feedback",
+    "feedback",
     "_date_created",
     "_date_reviewed",
     "reviewed_after"
   )
   
   list_filter = (
+
     OldestToRecentFilter,
     ContributionStateFilter,
     ReviewersAssignedFilter,
     ("question__anime",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
     ("reviewer",admin.RelatedOnlyFieldListFilter),
+    "feedback",
     ReviewersExistFilter,
     "date_created",
     #"deleted_questions" 
@@ -428,13 +395,13 @@ class ContributionAdmin(admin.ModelAdmin):
       if time_diff.seconds > 60:
         return f"{math.floor(time_diff.seconds/60)} minutes"
       
-      return "a few seconds ago"
+      return "a few seconds"
 
     return "N/A"
 
   def get_readonly_fields(self, request, obj=None):
     if obj and obj.approved != None:
-      return self.readonly_fields + ('approved','reviewer_feedback')
+      return self.readonly_fields + ('approved','feedback')
 
     return self.readonly_fields
 
@@ -486,7 +453,7 @@ class QuestionAdmin(admin.ModelAdmin):
   list_filter = (
     QuestionTypeFilter,
     "active",
-    ("anime",admin.RelatedOnlyFieldListFilter),
+    ("anime",admin.RelatedOnlyFieldListFilter)
   )
   
   search_fields   =  ("question","anime__anime_name")
@@ -625,22 +592,22 @@ class NotificationAdmin(ReadOnly):
 
   list_display = (
     "kind",
-    "owner",
+    "receiver",
     "notification",
     "_time",
     "seen"
   )
   
-  autocomplete_fields = ['owner']
+  autocomplete_fields = ['receiver']
   
-  search_fields   =  ("owner__username__startswith",)
+  search_fields   =  ("receiver__username__startswith",)
 
   list_filter  = (
-    ("owner",admin.RelatedOnlyFieldListFilter),
+    ("receiver",admin.RelatedOnlyFieldListFilter),
     "seen",
     "kind",
     "time"
-    )
+  )
 
   list_display_links = None
 

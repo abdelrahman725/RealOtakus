@@ -14,6 +14,7 @@ from otakus.models import Anime
 from otakus.models import Contribution
 from otakus.models import Question
 from otakus.models import QuestionInteraction
+from otakus.models import Notification
 
 from otakus.serializers import UserDataSerializer
 from otakus.serializers import LeaderBoradSerializer
@@ -25,10 +26,9 @@ from otakus.serializers import AnswersSerializer
 from otakus.serializers import QuestionInteractionsSerializer
 from otakus.serializers import AnimeReviewedContributionsSerializer
 
-from otakus.helpers import CreateNotification
+from otakus.helpers import create_notification
 
 from otakus.constants import QUESTIONSCOUNT
-
 
 
 animes_dict = {}
@@ -62,24 +62,27 @@ def get_unauthenticated_home_data(request):
 
     all_animes = AnimeSerializer(animes_dict.values(), many=True)
 
-    # leaderotakus users sorted by their scores in non-increasing order where their score is !=0 and >= avg_score
-    avg_score = User.objects.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
+    # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0 
+    avg_score = User.otakus.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
 
-    if not avg_score:
-        top_competitors = []
+# To be deleted :
+    avg_score = -1
+
+    if not avg_score: top_competitors = []
     
     else:
-        # filter to use : points__gt=avg_score
-        top_competitors = User.objects.annotate(
+        top_competitors = User.otakus.annotate(
             n_contributions=Count("contributions", filter=(
-                Q(contributions__approved=True)))
-        ).filter().order_by("-points")
+                Q(contributions__approved=True)
+            ))
+        ).filter(points__gt=avg_score).order_by("-points")
 
-    leader_otakus_users = LeaderBoradSerializer(top_competitors, many=True)
+    top_otakus_users = LeaderBoradSerializer(top_competitors, many=True)
+    
     return Response({
         "is_authenticated" : "true" if request.user.is_authenticated else "false",
         "animes": all_animes.data,
-        "leaderboard": leader_otakus_users.data
+        "leaderboard": top_otakus_users.data
     })
 
 
@@ -89,7 +92,7 @@ def get_user_authenticated_data(request):
     user = request.user
 
     user_data = UserDataSerializer(
-        User.objects.values(
+        User.otakus.values(
             "id",
             "username",
             "email",
@@ -105,7 +108,9 @@ def get_user_authenticated_data(request):
     user_data["is_reviewer"] = user.animes_to_review.exists()
 
     serialized_notifications = NotificationsSerializer(
-        user.getnotifications.all(),
+        Notification.objects.filter(
+            Q(receiver=user) | Q(receiver=None)
+        ),
         many=True
     )
 
@@ -284,7 +289,7 @@ def submit_game(request):
 
     if user.tests_completed % 10 == 0:
         user.points += 20
-        CreateNotification(
+        create_notification(
             receiver=user,
             notification="new achievement! you have completed 10 quizes, +20 points",
         )
@@ -337,8 +342,8 @@ def get_or_make_contribution(request):
         return Response({}, status=status.HTTP_201_CREATED)
 
     except IntegrityError as e:
-        if 'UNIQUE constraint' in str(e.args):
-            return Response({}, status=status.HTTP_409_CONFLICT)
+        #if 'UNIQUE constraint' in str(e.args):
+        return Response({}, status=status.HTTP_409_CONFLICT)
 
 
 
@@ -366,7 +371,7 @@ def get_or_review_contribution(request):
             Contribution.objects.filter(
                 ~Q(contributor=user),
                 question__anime__in=animes_for_user_to_review,
-                approved__isnull=True,
+                approved__isnull=True
             ).select_related("question").select_related("question__anime").order_by("-id"),
             many=True
         )
@@ -393,11 +398,11 @@ def get_or_review_contribution(request):
     if contribution.approved != None:
         return Response({"info":"this question got reviewed by another reviewer"}, status=status.HTTP_409_CONFLICT)
 
-    review_state = request.data["state"]
+    review_decision = request.data["state"]
     contribution.reviewer = user
-    contribution.reviewer_feedback = request.data["feedback"]
+    contribution.feedback = request.data["feedback"]
 
-    if review_state == 1:
+    if review_decision == 1:
         contribution.approved = True
         contribution.save()
 
@@ -405,7 +410,7 @@ def get_or_review_contribution(request):
             "info": "question is approved successfully"
         })
 
-    if review_state == 0:
+    if review_decision == 0:
         contribution.approved = False
         contribution.save()
 
@@ -434,7 +439,7 @@ def get_user_interactions(request):
 def update_notifications(request):
     user = request.user
 
-    user.getnotifications.filter(
+    user.notifications.filter(
         pk__in=request.data["notifications"]
     ).update(seen=True)
 

@@ -56,7 +56,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     if (kind === "N") {
       return (
         <p>
-          Congratulations! Now you are a reviewer of <strong>{notification_or_anime_name}</strong> contributions, please note that
+          Congratulations! you are now a reviewer of <strong>{notification_or_anime_name}</strong>, please note that
           your own contributions for <strong>{notification_or_anime_name}</strong> still need to be reviewed by other reviewer
         </p>
       )

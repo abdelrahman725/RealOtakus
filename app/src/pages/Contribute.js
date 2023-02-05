@@ -172,7 +172,7 @@ const Contribute = ({ all_animes_options }) => {
       <h1>Contribute a quesion</h1>
 
       <p>
-        make sure to read &nbsp;
+        make sure you have read &nbsp;
         <Link className="simple_link" to="/about" target={"_blank"} rel={"noreferrer"}>
           Contribution Guidlines
         </Link>

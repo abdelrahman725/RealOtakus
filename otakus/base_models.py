@@ -3,8 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
 from otakus.constants import COUNTRY_CHOICES
-from otakus.constants import MAX_LEVEL_LENGTH 
-from otakus.constants import LEVELS_CHOICES
+from otakus.constants import LEVEL_CHOICES
 from otakus.constants import BEGINNER
 
 
@@ -18,7 +17,10 @@ class Anime(models.Model):
 
 class User(AbstractUser):
     points = models.PositiveIntegerField(default=0)
-    
+    tests_started = models.PositiveSmallIntegerField(default=0)
+    tests_completed = models.PositiveSmallIntegerField(default=0)
+    animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)
+
     country = models.CharField(
         choices=COUNTRY_CHOICES,
         max_length=10,
@@ -26,13 +28,9 @@ class User(AbstractUser):
         null=True
     )
 
-    tests_started = models.PositiveSmallIntegerField(default=0)
-    tests_completed = models.PositiveSmallIntegerField(default=0)
-    animes_to_review = models.ManyToManyField(Anime, related_name="reviewers", blank=True)
-
     level = models.CharField(
-        choices=LEVELS_CHOICES,
-        max_length=MAX_LEVEL_LENGTH,
+        choices=LEVEL_CHOICES,
+        max_length=15,
         default=BEGINNER
     )
 
@@ -41,15 +39,12 @@ class User(AbstractUser):
 
 
 class Question(models.Model):
-
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
-
     question = models.TextField(max_length=350)
     choice1 = models.CharField(max_length=150)
     choice2 = models.CharField(max_length=150)
     choice3 = models.CharField(max_length=150)
     right_answer = models.CharField(max_length=150)
-    
     active = models.BooleanField(default=False)
 
     class Meta:
@@ -65,20 +60,21 @@ class Contribution(models.Model):
     contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="contributions")
     approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
-    reviewer_feedback = models.CharField(
+    date_created = models.DateTimeField(default=timezone.now)
+    date_reviewed = models.DateTimeField(null=True,blank=True) 
+    
+    feedback = models.CharField(
         choices=(
-            ("irrelevant","not relevant"),
-            ("easy","too easy"),
-            ("bad_choices","bad choices"),
-            ("invalid","invalid/wrong information")
+            ("irr","not relevant"),
+            ("dup","duplicate"),
+            ("eas","too easy"),
+            ("bad","bad choices"),
+            ("inv","invalid/wrong information")
         ),
-        max_length=50,
+        max_length=5,
         null=True,
         blank=True
     )
-
-    date_created = models.DateTimeField(default=timezone.now)
-    date_reviewed = models.DateTimeField(null=True,blank=True) 
     
     class Meta:
         abstract = True
@@ -100,11 +96,10 @@ class QuestionInteraction(models.Model):
 
 
 class Notification(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="getnotifications")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="notifications")
     notification = models.CharField(max_length=250)
     time = models.DateTimeField(default=timezone.now)
-    seen = models.BooleanField(default=False)
-
+    seen = models.BooleanField(null=True, default=None, blank=True)
     kind = models.CharField(
         choices=(
             ("NA","new available anime in quizes"),

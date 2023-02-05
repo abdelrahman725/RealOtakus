@@ -21,11 +21,12 @@ const Review = () => {
     anime_select.current.blur()
   }
 
-  const review_feedback_options = [
-    { value: 1, label: 'not relevant' },
-    { value: 3, label: 'too easy' },
-    { value: 2, label: 'bad choices' },
-    { value: 4, label: 'invalid/wrong information' }
+  const feedback_options = [
+    { value: 'irr', label: 'not relevant' },
+    { value: 'dup', label: 'duplicate' },
+    { value: 'eas', label: 'too easy' },
+    { value: 'bad', label: 'bad choices' },
+    { value: 'inv', label: 'invalid/wrong information' }
   ]
 
   const contributions_states_classes = {
@@ -145,10 +146,10 @@ const Review = () => {
             />
 
             <p className="link_to_about_page">
-              make sure to read&nbsp;
+              make sure you have read&nbsp;
               <Link className="simple_link" to="/about" target={"_blank"} rel={"noreferrer"}>
-                Review Guidlines
-              </Link>
+                Contribution Guidlines
+              </Link>&nbsp;before start reviewing
             </p>
 
             {contributors_contributions.map((each_contribution) => (
@@ -159,7 +160,7 @@ const Review = () => {
                 set_animes={set_animes}
                 set_contributors_contributions={set_contributors_contributions}
                 contribution_class={contributions_states_classes[each_contribution.approved]}
-                feedback_options={review_feedback_options}
+                feedback_options={feedback_options}
               />
             ))}
 

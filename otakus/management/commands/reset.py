@@ -21,12 +21,10 @@ class Command(BaseCommand):
             approval = input("\n WARNING ! please make sure you are not in production, Delete ? (yes/no): ")
             if approval == "no":
                 print("\n command canceled \n")
-                exit()
+                return
 
 
-        admin = User.objects.get(username="admin", is_superuser=True)
-
-        User.objects.exclude(pk=admin.pk).delete()
+        User.otakus.all().delete()
         
         Notification.objects.all().delete()
   

@@ -2,7 +2,6 @@ import { IoMdNotifications } from 'react-icons/io'
 import { BsPersonFill } from 'react-icons/bs'
 import { FiInfo } from 'react-icons/fi'
 import { MdLogout } from 'react-icons/md'
-
 //import { MdDarkMode } from 'react-icons/md'
 //import { HiOutlineSun } from 'react-icons/hi'
 
@@ -20,7 +19,7 @@ const NavBar = ({
 
 
   return (
-    <div className={`navbar ${game_started && "disabled_div"}`}>
+    <div className={`navbar ${game_started ? "disabled_div" : ""}`}>
 
       <div className="left" >
         <div>
@@ -37,36 +36,40 @@ const NavBar = ({
 
       </div>
 
-      <div className="right">
-        <div>
-          <Link to={authenticated ? "profile" : "/"} tabIndex={game_started === true ? -1 : 1}>
-            <BsPersonFill className="nav_icon" />
-          </Link>
-        </div>
+      {authenticated ?
+        <div className="right">
+          <div>
+            <Link to="profile" tabIndex={game_started === true ? -1 : 1}>
+              <BsPersonFill className="nav_icon" />
+            </Link>
+          </div>
 
-        <div className="notification">
-          <strong className="n_notifications"
-            style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
-            {new_notifications}
-          </strong>
+          <div className="notification">
+            <strong className="n_notifications"
+              style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
+              {new_notifications}
+            </strong>
 
-          <Link to={authenticated ? "notifications" : "/"} tabIndex={game_started === true ? -1 : 1}>
-            <IoMdNotifications className="nav_icon" />
-          </Link>
-        </div>
+            <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
+              <IoMdNotifications className="nav_icon" />
+            </Link>
+          </div>
 
-        {/* <div>
+          {/* <div>
             {darkmode &&  <HiOutlineSun className="nav_icon" onClick={() => setdarkmode(false)} />}
             {!darkmode && <MdDarkMode className="nav_icon" onClick={() => setdarkmode(true)} />}
           </div> */}
 
-        <div>
-          <Link onClick={log_user_out} tabIndex={game_started === true ? -1 : 1} >
-            <MdLogout className="nav_icon" />
-          </Link>
-        </div>
+          <div>
+            <Link onClick={log_user_out} tabIndex={game_started === true ? -1 : 1} >
+              <MdLogout className="nav_icon" />
+            </Link>
+          </div>
 
-      </div>
+        </div>
+        :
+        <div className="right"></div>
+      }
 
     </div>
   )

@@ -1,23 +1,31 @@
 import threading
 
-from asgiref.sync import async_to_sync
-#from channels.layers import get_channel_layer
-from django.db import IntegrityError
+from django.db import models, IntegrityError
+from django.contrib.auth.models import UserManager
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db.models.signals import pre_delete, pre_save, post_save, m2m_changed
 from django.dispatch import receiver
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from otakus import base_models
 
-from otakus.helpers import CreateNotification
+from otakus.helpers import create_notification
 from otakus.helpers import get_user_new_level
 from otakus.helpers import notify_reviewers_of_a_new_contribution
-from otakus.helpers import notify_users_of_a_new_anime
 from otakus.helpers import contribution_reviewed
 
+# excluding super users (e.g. admin) from all users queryset
+class OtakusQuerySetManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().exclude(is_superuser=True)
 
 class User(base_models.User):
+    objects = UserManager()
+    otakus = OtakusQuerySetManager()
+
     def __str__(self):
         return self.username
 
@@ -41,7 +49,7 @@ def update_user_points_and_level(sender, instance, **kwargs):
     new_level = get_user_new_level(instance)
     if new_level and new_level != instance.level:
         instance.level = new_level
-        CreateNotification(
+        create_notification(
             receiver=instance,
             notification=f"Congratulations! level up to {new_level}"
         )
@@ -54,14 +62,14 @@ def on_animes_to_review_change(sender, instance, **kwargs):
 
     if action == "post_remove":
         removed_animes = ", ".join([get_or_query_anime(anime_id).anime_name for anime_id in kwargs.pop('pk_set', None)])
-        CreateNotification(
+        create_notification(
             receiver=instance,
             notification=f"Sorry you are no longer a reviewer of ({removed_animes}) as you didn't comply with our review guidelines"
         )
 
     if action == "post_add":
         for anime_id in kwargs.pop('pk_set', None):
-            CreateNotification(
+            create_notification(
                 receiver=instance,
                 notification=get_or_query_anime(anime_id).anime_name,
                 kind="N"
@@ -103,12 +111,11 @@ class Anime(base_models.Anime):
         self.previously_active = self.active
 
     def save(self, *args, **kwargs):
-        if self.active == True and self.previously_active == False:
-            async_notification = threading.Thread(
-                target=notify_users_of_a_new_anime,
-                args=(self.anime_name,)
+        if self.previously_active == False and self.active == True:
+            create_notification(
+                notification=self.anime_name,
+                kind="NA"
             )
-            async_notification.start()
         super(Anime, self).save(*args, **kwargs)
 
 
@@ -177,14 +184,28 @@ class QuestionInteraction(base_models.QuestionInteraction):
 
 
 class Notification(base_models.Notification):
-    #def save(self, *args, **kwargs):
-        # super(Notification, self).save(*args, **kwargs)
-        # channel_layer = get_channel_layer()
-        # async_to_sync(channel_layer.group_send)(
-        #     f'notifications_group_{self.owner.id}', {
-        #         'type': 'send_notifications',
-        #         'value': self
-        #     }
-        # )
+    pass
 
-    def __str__(self): return f"{self.kind} {self.notification}"
+
+@receiver(post_save, sender=Notification)
+def post_notification_creation(sender, instance, created, **kwargs):
+
+    if created:
+        channel_layer = get_channel_layer()
+
+    # notificaion for a specific user
+        if instance.receiver:
+            async_to_sync(channel_layer.group_send)(
+                f'group_{instance.receiver.id}', {
+                    'type': 'send_notifications',
+                    'value': instance
+                }
+            )
+    # notificaion for all users
+        else:
+            async_to_sync(channel_layer.group_send)(
+                f'group_all', {
+                    'type': 'send_notifications',
+                    'value': instance
+                }
+            )

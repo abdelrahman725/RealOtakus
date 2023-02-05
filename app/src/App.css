@@ -123,7 +123,7 @@ a {
   margin-bottom: 10px;
 }
 
-.not_authenticated .container .authenticating_forms form .simple_link {
+.not_authenticated .container .authenticating_forms .simple_link {
   font-weight: bolder;
   background: none;
   padding: 0px;
@@ -196,7 +196,7 @@ a {
 }
 
 .navbar .n_notifications {
-  width: 21px;
+  width: 15px;
 }
 
 .navbar .icon, .navbar .nav_icon {
@@ -853,7 +853,7 @@ footer a {
   margin-right: 25px;
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 580px) {
   .navbar {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;

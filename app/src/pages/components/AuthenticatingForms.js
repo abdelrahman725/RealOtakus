@@ -78,6 +78,7 @@ const AuthenticatingForms = () => {
     const login_user = async (submit_event) => {
 
         submit_event.preventDefault()
+
         set_loading(true)
 
         const login_res = await async_http_request({
@@ -124,8 +125,8 @@ const AuthenticatingForms = () => {
         }
     }
 
-// authenticate user (for the the first time it creates a new user) using his google account 
-    const continue_with_google = ()=>{
+    // authenticate user (for the the first time it creates a new user) using his google account 
+    const continue_with_google = () => {
         document.getElementById("google_authenticate_form").submit()
     }
 
@@ -137,7 +138,6 @@ const AuthenticatingForms = () => {
                     Continue with Google
                 </button>
             </div>
-
 
             {login_view ?
                 <form onSubmit={login_user} >
@@ -166,13 +166,8 @@ const AuthenticatingForms = () => {
                         {!loading ? <button type="submit" className="submit_btn" >Login</button> : "loading"}
                     </div>
 
-                    <p>
-                        new here ? &nbsp;&nbsp;
-                        <button className="simple_link" onClick={switch_view}>Sign up</button>
-                    </p>
                 </form>
                 :
-
                 <form onSubmit={validate_then_register} >
                     <input
                         name="username"
@@ -229,12 +224,16 @@ const AuthenticatingForms = () => {
                     <div className="fixed_height_container">
                         {!loading ? <button type="submit" className="submit_btn" >Sign Up</button> : "loading"}
                     </div>
-                    <p>
-                        already have account ? &nbsp;&nbsp;
-                        <button className="simple_link" onClick={switch_view}>Log in</button>
-                    </p>
+
                 </form>
             }
+
+            <p>
+                {login_view ? "new here ?" : "already have account ?"} &nbsp;&nbsp;
+                <button className="simple_link" onClick={switch_view}>
+                    {login_view ? "Sign up" : "Log in"}
+                </button>
+            </p>
         </div>
     )
 }

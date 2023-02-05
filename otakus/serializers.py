@@ -84,7 +84,7 @@ class ContributionSerializer(serializers.ModelSerializer):
             "id",
             "approved",
             "date_created",
-            "reviewer_feedback",
+            "feedback",
             "question"
         )
 

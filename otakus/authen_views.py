@@ -19,7 +19,7 @@ def send_csrf_token_to_client(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def user_register(request):
+def user_register(request):  
   if request.user.is_authenticated:
     return Response({"info":f"already logged in as {request.user.username}"})
 
@@ -48,7 +48,6 @@ def user_register(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def user_login(request):
-
   if request.user.is_authenticated:
     return Response({"info":f"already logged in as {request.user.username}"})
 

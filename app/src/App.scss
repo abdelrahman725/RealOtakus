@@ -81,9 +81,9 @@ a {
     justify-content: space-around;
     flex-wrap: wrap;
     margin-top: 60px;
-    
-    .about{
-        margin-bottom: 50px;
+
+    .about {
+      margin-bottom: 50px;
     }
 
     .authenticating_forms {
@@ -111,12 +111,12 @@ a {
           height: 30px;
           margin-bottom: 10px;
         }
+      }
 
-        .simple_link {
-          font-weight: bolder;
-          background: none;
-          padding: 0px;
-        }
+      .simple_link {
+        font-weight: bolder;
+        background: none;
+        padding: 0px;
       }
 
       .google_container {
@@ -177,7 +177,7 @@ a {
   }
 
   .n_notifications {
-    width: 21px;
+    width: 15px;
   }
 
   .icon {
@@ -794,7 +794,7 @@ footer {
   }
 }
 
-@media screen and(max-width: 550px) {
+@media screen and(max-width: 580px) {
   .navbar {
     flex-direction: column;
     padding: 15px;

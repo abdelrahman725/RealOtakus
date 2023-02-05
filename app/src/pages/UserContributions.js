@@ -10,6 +10,14 @@ const UserContributions = () => {
   const [selected_contribution_state, set_selected_contribution_state] = useState(1)
   const location = useLocation()
 
+  const feedback_value_to_label = {
+    "irr": "not relevant",
+    "dup": "duplicate",
+    "eas": "too easy",
+    "bad": "bad choices",
+    "inv": "invalid/wrong information"
+  }
+
   useEffect(() => {
 
     if (contributions) {
@@ -88,7 +96,7 @@ const UserContributions = () => {
               {contributions.map((contribution, index) => (
                 (selected_contribution_state === 1 || selected_contribution_state === contribution.approved)
                 &&
-                <ContributedQuestion key={index} contribution={contribution} />
+                <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
               ))}
             </div>
 

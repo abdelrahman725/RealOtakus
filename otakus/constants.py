@@ -14,10 +14,7 @@ LEVELS = {
     REALOTAKU: 2000
 }
 
-LEVELS_CHOICES = [(level,level) for level in LEVELS]
-
-# for 'max_length' parameter of the User model definition
-MAX_LEVEL_LENGTH = len(max(LEVELS, key=len))
+LEVEL_CHOICES = [(level,level) for level in LEVELS]
 
 
 COUNTRIES = {

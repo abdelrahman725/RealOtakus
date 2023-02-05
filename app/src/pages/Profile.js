@@ -20,7 +20,6 @@ const UserProfile = ({ user_data }) => {
       }
 
       const interactions_dict = {}
-
       let n_user_correct_answers = 0
 
       interactions_result.payload.interactions.forEach((n) => {
@@ -42,12 +41,12 @@ const UserProfile = ({ user_data }) => {
 
       })
 
-      if (user_data.tests_completed === 0) {
+      if (user_data.tests_started === 0) {
         setgames_score_percentage(0)
       }
 
       else {
-        setgames_score_percentage(Math.round((n_user_correct_answers / (user_data.tests_completed * N_Game_Questions)) * 100))
+        setgames_score_percentage(Math.round((n_user_correct_answers / (user_data.tests_started * N_Game_Questions)) * 100))
       }
 
       setuser_interactions(interactions_dict)

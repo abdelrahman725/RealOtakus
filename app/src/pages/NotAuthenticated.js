@@ -8,8 +8,8 @@ const NotAuthenticated = () => {
 
       <div className="container">
 
-        <div class="about">
-          <h3 class="title_color">what can you do</h3>
+        <div className="about">
+          <h3 className="title_color">what can you do</h3>
           <p>Test yourself by taking quizes in your favorite animes</p>
           <p>Contribute a new question so other otakus can test themselves</p>
           <p>Become a reviewr by reviewing other users contributed questions !</p>
