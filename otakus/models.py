@@ -33,7 +33,6 @@ class User(base_models.User):
 # on user signup send an email (if user has a valid email) welcoming the user
 @receiver(post_save, sender=User)
 def new_user_signed_up(sender, instance, created, **kwargs):
-    return
     if created and instance.email:
         send_mail(
             subject=f"{instance.username}, Welcome to RealOtakus!",
@@ -153,6 +152,10 @@ def protect_active_questions(sender, instance, **kwargs):
 class Contribution(base_models.Contribution):
     def __str__(self) -> str:
         return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime if self.question else 'a deleted question'}"
+    
+    def clean(self):
+        if self.approved == False and self.feedback == None:
+            raise ValidationError("feedback needed for rejection")
 
 
 @receiver(pre_save, sender=Contribution)

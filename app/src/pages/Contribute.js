@@ -173,13 +173,11 @@ const Contribute = ({ all_animes_options }) => {
 
       <p>
         make sure you have read &nbsp;
-        <Link className="simple_link" to="/about" target={"_blank"} rel={"noreferrer"}>
+        <Link className="simple_link" to="/about#contribution-guidelines" target={"_blank"} >
           Contribution Guidlines
         </Link>
       </p>
-
-      <br />
-
+      
       {response_msg && <h3>{response_msg}</h3>}
 
       <form onSubmit={handle_form_submission} >
@@ -196,8 +194,7 @@ const Contribute = ({ all_animes_options }) => {
             value={anime}
             ref={anime_select}
           />
-
-          <br />
+          
 
           <div className="invalid_input">{question_info}</div>
 
@@ -211,7 +208,7 @@ const Contribute = ({ all_animes_options }) => {
             onChange={handle_form_change}
             ref={question_ref}
           >
-          </textarea><br />
+          </textarea>
 
           <textarea name="rightanswer"
             typeof="text"
@@ -222,7 +219,7 @@ const Contribute = ({ all_animes_options }) => {
             value={Question.rightanswer}
             onChange={handle_form_change}
           >
-          </textarea><br />
+          </textarea>
 
           <h3>choices <span style={{ fontWeight: "lighter" }}>(wrong answers)</span> </h3>
 
@@ -237,7 +234,7 @@ const Contribute = ({ all_animes_options }) => {
             value={Question.choice1}
             onChange={handle_form_change}
           >
-          </textarea><br />
+          </textarea>
 
           <textarea name="choice2"
             typeof="text"
@@ -248,7 +245,8 @@ const Contribute = ({ all_animes_options }) => {
             value={Question.choice2}
             onChange={handle_form_change}
           >
-          </textarea><br />
+          </textarea>
+          
 
           <textarea name="choice3"
             typeof="text"
@@ -259,7 +257,7 @@ const Contribute = ({ all_animes_options }) => {
             value={Question.choice3}
             onChange={handle_form_change}
           >
-          </textarea><br />
+          </textarea>
 
           <div className="submit_container">
             {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn}> submit question</button> : "loading..."}

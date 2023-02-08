@@ -98,4 +98,3 @@ def print_request_relevant_ips(request):
     print(f"REMOTE_ADDR : {request.META.get('REMOTE_ADDR')}\n")
     print(f"REMOTE_HOST : {request.META.get('REMOTE_HOST')}\n")
     print(f"SERVER_NAME : {request.META.get('SERVER_NAME')}\n")
-

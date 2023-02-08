@@ -4,7 +4,6 @@ import { FiInfo } from 'react-icons/fi'
 import { MdLogout } from 'react-icons/md'
 //import { MdDarkMode } from 'react-icons/md'
 //import { HiOutlineSun } from 'react-icons/hi'
-
 import { Link } from 'react-router-dom'
 
 const NavBar = ({
@@ -17,14 +16,13 @@ const NavBar = ({
   //setdarkmode
 }) => {
 
-
   return (
     <div className={`navbar ${game_started ? "disabled_div" : ""}`}>
 
       <div className="left" >
         <div>
           <Link to="/" className="logo" tabIndex={game_started === true ? -1 : 1}>
-            <strong className="logo_text">Real Otakus</strong> &nbsp;
+            <strong className="logo_text">Real Otakus</strong>
           </Link>
         </div>
 
@@ -45,14 +43,12 @@ const NavBar = ({
           </div>
 
           <div className="notification">
-            <strong className="n_notifications"
-              style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
-              {new_notifications}
-            </strong>
-
             <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
               <IoMdNotifications className="nav_icon" />
             </Link>
+            <span className="n_notifications" style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
+              {new_notifications}
+            </span>
           </div>
 
           {/* <div>

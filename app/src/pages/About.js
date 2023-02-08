@@ -1,8 +1,30 @@
 import { SlSocialTwitter } from 'react-icons/sl'
 import { BsGithub } from 'react-icons/bs'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 const About = () => {
+
+  const { pathname, hash, key } = useLocation()
+
+  useEffect(() => {
+    // if not a hash link, scroll to top
+    if (hash === '') {
+      window.scrollTo(0, 0)
+      return
+    }
+
+    // else scroll to the required section by id
+    setTimeout(() => {
+      const id = hash.replace('#', '');
+      const element = document.getElementById(id)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 0)
+
+  }, [pathname, hash, key])
+
   return (
     <div className="about">
       <div>
@@ -16,7 +38,7 @@ const About = () => {
         </p>
       </div>
 
-      <div>
+      <div id="contribution-guidelines">
         <h2>Contribution Guidelines</h2>
         <p>
           As we always prefer quality questions over quantity
@@ -64,7 +86,7 @@ const About = () => {
 
       </div>
 
-      <div>
+      <div id="become_reviewer">
         <h2>How to become a reviewer</h2>
         <p>
           to do ...

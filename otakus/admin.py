@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from django.db.models import Count
+from django.core.exceptions import ValidationError
 
 from allauth.socialaccount.models import SocialAccount
 
@@ -399,19 +400,12 @@ class ContributionAdmin(admin.ModelAdmin):
 
     return "N/A"
 
-  def get_readonly_fields(self, request, obj=None):
-    if obj and obj.approved != None:
-      return self.readonly_fields + ('approved','feedback')
-
-    return self.readonly_fields
-
   def has_delete_permission(self, request, obj=None):
-    return True
     return False
+    return True
 
   def has_add_permission(self,request,obj=None):
     return False
-    return True
 
   
 @admin.register(Question)
@@ -482,8 +476,9 @@ class QuestionAdmin(admin.ModelAdmin):
 
 # hide Delete button if it's an active question
   def has_delete_permission(self, request, obj=None):
+    if obj: 
+      return not obj.active  
     return True
-    if obj: return not obj.active  
 
   def _contribution(self,obj):
     try:
@@ -563,7 +558,6 @@ class AnimeAdmin(admin.ModelAdmin):
   
   def admin_questions(self,obj):
     return obj.anime_questions.exclude(contribution__isnull=False).count()   
-
 
   def _reviewers(self,obj):
     return obj.reviewers.all().count()

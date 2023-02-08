@@ -46,8 +46,8 @@ const Home = ({ user_data, dashboard_users }) => {
         :
         <NotAuthenticated />
       }
-
-      {dashboard_users.length > 0 &&
+   
+      {dashboard_users && dashboard_users.length > 0 &&
         <TheDashBoard dashboard_users={dashboard_users} current_user={user_data} />
       }
 

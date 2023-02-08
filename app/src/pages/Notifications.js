@@ -9,7 +9,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     "R": "/review",
     "N": "/review",
     "A": "/mycontributions",
-    "F": "/mycontributions",
+    "F": "/mycontributions"
   }
 
   const naviage_routes = useNavigate()
@@ -95,20 +95,13 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     // clears unseen_notifcations count when user sees them
     setnumber_of_unseen_notifications(0)
 
-    //update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
-    const unseen_notifications = []
-
-    all_notifications.forEach((n) =>
-      !n.seen && unseen_notifications.push(n.id)
-    )
-
+    // update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
     const update_notifications_state = async () => {
-
       const notifications_update_state_response = await async_http_request({
         path: "update_notifications",
         method: "PUT",
         data: {
-          "notifications": unseen_notifications
+          "notifications": all_notifications.map(notif => (notif.seen === false && notif.id))
         }
       })
 
@@ -131,7 +124,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
           get_shown_notification={get_shown_notification}
         />
       )) :
-        <p>no activity</p>
+        <p className="centered_div">no activity</p>
       }
     </div>
   )

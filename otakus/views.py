@@ -65,7 +65,7 @@ def get_unauthenticated_home_data(request):
     # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0 
     avg_score = User.otakus.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
 
-# To be deleted :
+# To be deleted 
     avg_score = -1
 
     if not avg_score: top_competitors = []
@@ -184,8 +184,7 @@ def get_game(request, game_anime):
     questions = selected_anime.anime_questions.filter(
         (~Q(contribution__contributor=user)
          &
-         ~Q(contribution__reviewer=user)
-         ),
+         ~Q(contribution__reviewer=user)),
         active=True
     ).exclude(
         pk__in=user.questions_interacted_with.values_list(
@@ -407,7 +406,7 @@ def get_or_review_contribution(request):
         contribution.save()
 
         return Response({
-            "info": "question is approved successfully"
+            "info": "question is approved"
         })
 
     if review_decision == 0:
@@ -415,7 +414,7 @@ def get_or_review_contribution(request):
         contribution.save()
 
         return Response({
-            "info": "question is rejected successfully"
+            "info": "question is rejected"
         })
 
 
@@ -438,7 +437,7 @@ def get_user_interactions(request):
 @api_view(["PUT"])
 def update_notifications(request):
     user = request.user
-
+    
     user.notifications.filter(
         pk__in=request.data["notifications"]
     ).update(seen=True)

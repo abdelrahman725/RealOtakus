@@ -1,7 +1,6 @@
-.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container, .notifications {
+.centered_div, .dashboard, .questions_container, .review_page, .question_basic, .user_contributed_question, .each_question_for_review_container, .game_view_container, .game_view_container .game_container {
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 10px;
   text-align: center;
 }
 
@@ -109,9 +108,16 @@ a {
 }
 
 .not_authenticated .container .authenticating_forms form input {
+  border-radius: 3px;
   margin-bottom: 15px;
   padding: 10px;
   font-size: 16px;
+  border: none;
+  outline: #d7d2d2 solid 1px;
+}
+
+.not_authenticated .container .authenticating_forms form input:focus {
+  outline: #76a8e9 solid 2px;
 }
 
 .not_authenticated .container .authenticating_forms form .submit_btn {
@@ -139,7 +145,7 @@ a {
   transition: background-color 0.3s, box-shadow 0.3s;
   transition: background-color 0.3s, box-shadow 0.3s, -webkit-box-shadow 0.3s;
   padding: 12px 16px 12px 42px;
-  border: none;
+  border: 0.4px solid #d7d2d2;
   -webkit-box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
           box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
   color: #757575;
@@ -181,7 +187,8 @@ a {
           align-items: center;
 }
 
-.navbar div {
+.navbar .right,
+.navbar .left {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -192,11 +199,8 @@ a {
 }
 
 .navbar .right div {
-  margin: 0px 20px;
-}
-
-.navbar .n_notifications {
-  width: 15px;
+  margin: 0px 15px;
+  padding: 10px;
 }
 
 .navbar .icon, .navbar .nav_icon {
@@ -209,10 +213,41 @@ a {
 }
 
 .navbar .nav_icon {
-  font-size: xx-large;
+  -webkit-transform: scale(2.3);
+          transform: scale(2.3);
+}
+
+.navbar .notification {
+  position: relative;
+}
+
+.navbar .notification .n_notifications {
+  position: absolute;
+  right: -0.7em;
+  top: -0.7em;
+  min-width: 1.6em;
+  /* or width, explained below. */
+  height: 1.6em;
+  border-radius: 0.8em;
+  /* or 50%, explained below. */
+  border: 0.05em solid white;
+  background-color: red;
+  /* number size and position */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 0.9em;
+  color: white;
 }
 
 .navbar .logo {
+  margin-right: 20px;
   font-size: 30px;
   letter-spacing: 1px;
   color: white;
@@ -220,7 +255,7 @@ a {
 
 .navbar .about_icon {
   position: relative;
-  top: 2px;
+  top: 10px;
 }
 
 .country_selection_panel {
@@ -730,16 +765,27 @@ a {
   margin-bottom: 60px;
 }
 
+.contribution .contribution_form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
 .contribution .contribution_form textarea {
   padding: 10px;
   border-radius: 7px;
   font-size: large;
   resize: none;
   outline: none;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .contribution .contribution_form textarea:first-of-type {
+  margin-top: 20px;
   height: 120px;
 }
 
@@ -766,22 +812,20 @@ a {
 }
 
 .notifications {
-  max-width: 650px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 650px;
 }
 
 .notifications .notification {
   border-radius: 7px;
   background-color: white;
   text-align: left;
-  margin: 10px;
-  margin-bottom: 40px;
-  padding: 0px 10px;
-  padding-top: 10px;
-  padding-bottom: 25px;
+  padding: 0.1px 10px;
+  margin-bottom: 35px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  position: relative;
-  line-height: 1.8;
+  line-height: 1.7;
 }
 
 .notifications .notification:hover {
@@ -790,8 +834,6 @@ a {
 }
 
 .notifications .notification .notification_time {
-  position: absolute;
-  bottom: 0px;
   font-size: small;
 }
 
@@ -840,7 +882,7 @@ footer {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  padding: 20px;
+  padding: 100px 0px 35px 0px;
   color: white;
   margin-top: auto;
   width: 100%;
@@ -848,7 +890,7 @@ footer {
 }
 
 footer a {
-  padding: 10px;
+  padding: 6px;
   margin-left: 25px;
   margin-right: 25px;
 }
@@ -904,6 +946,9 @@ footer a {
   }
   .account .interactions {
     width: 100%;
+  }
+  .notifications {
+    width: 85%;
   }
 }
 /*# sourceMappingURL=App.css.map */

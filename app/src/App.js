@@ -80,13 +80,17 @@ function App() {
 
   // also used to check (against the server) whether the user is authenticated or not
   const fetch_unauthenticated_data = async () => {
+
     const result = await async_http_request({ path: "main" })
+
     if (result === null) {
       set_info_message("network error")
       return
     }
 
     console.log(result.payload)
+
+    //set_authenticated(false)
 
     if (result.payload.is_authenticated === "true") {
       fetch_authenticated_user_data()
@@ -156,7 +160,9 @@ function App() {
           setdarkmode={setdarkmode}
         />
 
-        {authenticated && country_required && <CountryPanel set_country_required={set_country_required} />}
+        {authenticated && country_required &&
+          <CountryPanel set_country_required={set_country_required} />
+        }
 
         {authenticated === null ?
           <div className="app_loading_div">{info_message}</div>

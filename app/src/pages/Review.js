@@ -16,11 +16,6 @@ const Review = () => {
   const location = useLocation()
   const anime_select = useRef(null)
 
-  const handle_questions_filter = (selected) => {
-    setselected_anime(selected)
-    anime_select.current.blur()
-  }
-
   const feedback_options = [
     { value: 'irr', label: 'not relevant' },
     { value: 'dup', label: 'duplicate' },
@@ -35,9 +30,13 @@ const Review = () => {
     true: "approvestate"
   }
 
+  const handle_questions_filter = (selected) => {
+    setselected_anime(selected)
+    anime_select.current.blur()
+  }
+
   const filter_questions = (anime) => {
     if (selected_anime) {
-
       if (selected_anime.value === "all")
         return true
 
@@ -147,7 +146,7 @@ const Review = () => {
 
             <p className="link_to_about_page">
               make sure you have read&nbsp;
-              <Link className="simple_link" to="/about" target={"_blank"} rel={"noreferrer"}>
+              <Link className="simple_link" to="/about#contribution-guidelines" target={"_blank"}>
                 Contribution Guidlines
               </Link>&nbsp;before start reviewing
             </p>
