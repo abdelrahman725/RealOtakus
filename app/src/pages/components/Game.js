@@ -112,13 +112,9 @@ const Game = ({
             }
           </div>
 
-          <p> Do not leave this page (e.g. switch tabs) before submission, your progress will be lost</p>
-
         </div>
         :
-        <div className="loading_div">
-          loading quiz ...
-        </div>
+        <div>loading quiz...</div>
       }
     </div>
   )

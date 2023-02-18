@@ -1,6 +1,7 @@
 import async_http_request from './components/AsyncRequest'
 import Result from './components/Result'
 import Game from './components/Game'
+import { FiAlertTriangle } from 'react-icons/fi'
 import Select from 'react-select'
 import { GlobalStates } from 'App'
 import { SelectStyles, N_Game_Questions } from 'Constants'
@@ -92,27 +93,41 @@ const GameView = () => {
     <div className="game_view_container">
       {game_started === null &&
 
-        <div className="pre_game_start_container">
-          <br />
-          <Select
-            styles={SelectStyles}
-            className="react_select"
-            placeholder="select anime"
-            value={selected_anime}
-            isClearable={true}
-            options={animesoptions}
-            isLoading={animesoptions ? false : true}
-            onChange={on_anime_select}
-            isOptionDisabled={(option) => hide_anime(option.user_interactions, option.anime_questions)}
-            ref={anime_select} />
+        <div className="pre_game_container">
+          <h1>Get ready for a <span>5</span> questions test</h1>
+          <div className="res_info">{game_info && game_info}</div>
 
-          <br />
+          <div className="container">
 
-          {game_info && <div className="info_msg">{game_info}</div>}
+            <div className="instructions">
+              <h2>instructions</h2>
+              <p>you have 1:40 min for each question.</p>
+              <p>avoid starting tests without submitting them.</p>
+              <p>
+                <FiAlertTriangle className="warning_icon" />
+                After start do not leave the page (e.g. switch tabs) before submission, your progress will be lost.
+              </p>
+            </div>
 
-          <button className="submit_btn" onClick={() => selected_anime ? GetGame() : anime_select.current.focus()} >
-            Start
-          </button>
+            <div className="start_game">
+              <Select
+                styles={SelectStyles}
+                className="react_select"
+                placeholder="select anime"
+                value={selected_anime}
+                isClearable={true}
+                options={animesoptions}
+                isLoading={animesoptions ? false : true}
+                onChange={on_anime_select}
+                isOptionDisabled={(option) => hide_anime(option.user_interactions, option.anime_questions)}
+                ref={anime_select}
+              />
+
+              <button className="submit_btn" onClick={() => selected_anime ? GetGame() : anime_select.current.focus()} >
+                Start
+              </button>
+            </div>
+          </div>
         </div>
       }
 

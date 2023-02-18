@@ -1,4 +1,4 @@
-# What is RealOtakus
+# RealOtakus
 
 Real Otaku is a platform for anime enthusiasts and fans founded in 2023.
 

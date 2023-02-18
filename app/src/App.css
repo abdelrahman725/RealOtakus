@@ -37,7 +37,6 @@ a {
 
 .simple_link {
   color: #0e4b9b;
-  font-size: 14px;
 }
 
 .simple_link:hover {
@@ -175,7 +174,7 @@ a {
 .navbar {
   background-color: #262f36;
   color: white;
-  padding: 20px;
+  padding: 10px;
   margin-bottom: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -196,6 +195,8 @@ a {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .navbar .right div {
@@ -321,7 +322,7 @@ a {
 }
 
 .navigation_buttons button {
-  width: 170px;
+  min-width: 200px;
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 7px;
@@ -459,7 +460,8 @@ a {
 }
 
 .account_container .flex_container .interactions td {
-  padding: 40px;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 .user_contributions {
@@ -673,19 +675,47 @@ a {
   height: 30px;
 }
 
-.game_view_container .pre_game_start_container {
+.game_view_container {
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-top: 20px;
+}
+
+.game_view_container .pre_game_container .res_info {
+  color: #dc334f;
+  font-size: larger;
+}
+
+.game_view_container .pre_game_container .container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
   margin-top: 50px;
 }
 
-.game_view_container .info_msg {
-  color: #dc334f;
-  padding: 20px;
+.game_view_container .pre_game_container .container .instructions {
+  text-align: left;
+}
+
+.game_view_container .pre_game_container .container .instructions .warning_icon {
+  font-size: large;
+  margin-right: 5px;
+  position: relative;
+  top: 3px;
+  color: #b61c36;
+}
+
+.game_view_container .pre_game_container .container .react_select {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 .game_view_container .game_container {
-  width: 90%;
-  margin-top: 50px;
-  max-width: 1000px;
+  min-width: 340px;
 }
 
 .game_view_container .game_container .timer {
@@ -766,6 +796,8 @@ a {
 }
 
 .contribution .contribution_form {
+  padding-left: 10px;
+  padding-right: 10px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -776,6 +808,7 @@ a {
 }
 
 .contribution .contribution_form textarea {
+  width: 99.9%;
   padding: 10px;
   border-radius: 7px;
   font-size: large;
@@ -801,8 +834,9 @@ a {
 }
 
 .contribution .contribution_form .invalid_input {
+  font-size: larger;
   color: crimson;
-  margin-bottom: 6px;
+  margin-top: 8px;
 }
 
 .react_select {
@@ -814,7 +848,8 @@ a {
 .notifications {
   margin-right: auto;
   margin-left: auto;
-  width: 650px;
+  width: 90%;
+  max-width: 650px;
 }
 
 .notifications .notification {
@@ -837,14 +872,36 @@ a {
   font-size: small;
 }
 
-.about {
+.about,
+.terms,
+.privacy {
   padding: 0px 25px 0px 25px;
   text-align: left;
-  line-height: 1.8;
+  line-height: 1.7;
+}
+
+.about h2,
+.about h3,
+.about h4,
+.terms h2,
+.terms h3,
+.terms h4,
+.privacy h2,
+.privacy h3,
+.privacy h4 {
+  position: relative;
+  top: 10px;
 }
 
 .about div {
   margin-bottom: 60px;
+}
+
+.about .love {
+  text-align: center;
+  font-size: larger;
+  font-family: "Courier New", Courier, monospace;
+  color: #262f36;
 }
 
 .about .icon, .about .navbar .nav_icon, .navbar .about .nav_icon {
@@ -873,6 +930,16 @@ a {
   bottom: 6px;
 }
 
+.terms .date {
+  position: relative;
+  bottom: 20px;
+}
+
+.terms .credit {
+  margin-top: 3em;
+  font-size: 0.8em;
+}
+
 footer {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -896,15 +963,12 @@ footer a {
 }
 
 @media screen and (max-width: 580px) {
-  .navbar {
+  .navbar,
+  .contributions_states_buttons {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    padding: 15px;
-  }
-  .navbar .left {
-    margin-bottom: 12px;
   }
   .leaderboard {
     font-size: 12px;
@@ -914,20 +978,11 @@ footer a {
   }
   .leaderboard th {
     padding: 15px 7px;
-    font-size: x-small;
+    font-size: small;
   }
   .leaderboard img {
     -webkit-transform: scale(0.7);
             transform: scale(0.7);
-  }
-  .contribution textarea {
-    width: 85%;
-  }
-  .contributions_states_buttons {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
   }
 }
 
@@ -940,15 +995,6 @@ footer a {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-  }
-  .navigation_buttons button {
-    width: 240px;
-  }
-  .account .interactions {
-    width: 100%;
-  }
-  .notifications {
-    width: 85%;
   }
 }
 /*# sourceMappingURL=App.css.map */

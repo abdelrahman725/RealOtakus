@@ -40,7 +40,6 @@ a {
 
 .simple_link {
   color: #0e4b9b;
-  font-size: 14px;
   &:hover {
     text-decoration: underline;
     cursor: pointer;
@@ -165,7 +164,7 @@ a {
 .navbar {
   background-color: $base_div_background_color;
   color: white;
-  padding: 20px;
+  padding: 10px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
@@ -175,6 +174,8 @@ a {
   .left {
     display: flex;
     flex-direction: row;
+    margin-top: 8px;
+    margin-bottom: 8px;
   }
 
   .right {
@@ -287,7 +288,7 @@ a {
   justify-content: center;
 
   button {
-    width: 170px;
+    min-width: 200px;
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 7px;
@@ -405,7 +406,8 @@ a {
 
     .interactions {
       td {
-        padding: 40px;
+        padding-top: 30px;
+        padding-bottom: 30px;
       }
     }
   }
@@ -622,21 +624,44 @@ a {
 
 .game_view_container {
   @extend .centered_div;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-top: 20px;
 
-  .pre_game_start_container {
-    margin-top: 50px;
-  }
+  .pre_game_container {
+    .res_info {
+      color: #dc334f;
+      font-size: larger;
+    }
 
-  .info_msg {
-    color: #dc334f;
-    padding: 20px;
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-top: 50px;
+
+      .instructions {
+        text-align: left;
+
+        .warning_icon {
+          font-size: large;
+          margin-right: 5px;
+          position: relative;
+          top: 3px;
+          color: #b61c36;
+        }
+      }
+
+      .react_select {
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+    }
   }
 
   .game_container {
     @extend .centered_div;
-    width: 90%;
-    margin-top: 50px;
-    max-width: 1000px;
+    min-width: 340px;
 
     .timer {
       display: flex;
@@ -705,10 +730,15 @@ a {
 
 .contribution {
   margin-bottom: 60px;
+
   .contribution_form {
+    padding-left: 10px;
+    padding-right: 10px;
     display: flex;
     flex-direction: column;
+
     textarea {
+      width: 99.9%;
       padding: 10px;
       border-radius: $base_border_radius;
       font-size: large;
@@ -733,8 +763,9 @@ a {
     }
 
     .invalid_input {
+      font-size: larger;
       color: crimson;
-      margin-bottom: 6px;
+      margin-top: 8px;
     }
   }
 }
@@ -748,7 +779,8 @@ a {
 .notifications {
   margin-right: auto;
   margin-left: auto;
-  width: 650px;
+  width: 90%;
+  max-width: 650px;
 
   .notification {
     border-radius: $base_border_radius;
@@ -769,13 +801,31 @@ a {
   }
 }
 
-.about {
+.about,
+.terms,
+.privacy {
   padding: 0px 25px 0px 25px;
   text-align: left;
-  line-height: 1.8;
+  line-height: 1.7;
 
+  h2,
+  h3,
+  h4 {
+    position: relative;
+    top: 10px;
+  }
+}
+
+.about {
   div {
     margin-bottom: 60px;
+  }
+
+  .love {
+    text-align: center;
+    font-size: larger;
+    font-family: "Courier New", Courier, monospace;
+    color: $base_div_background_color;
   }
 
   .icon {
@@ -801,6 +851,18 @@ a {
   }
 }
 
+.terms {
+  .date {
+    position: relative;
+    bottom: 20px;
+  }
+
+  .credit {
+    margin-top: 3em;
+    font-size: 0.8em;
+  }
+}
+
 footer {
   display: flex;
   flex-wrap: wrap;
@@ -819,16 +881,9 @@ footer {
 }
 
 @media screen and(max-width: 580px) {
-  .navbar {
+  .navbar,
+  .contributions_states_buttons {
     flex-direction: column;
-    padding: 15px;
-    .left {
-      margin-bottom: 12px;
-    }
-  }
-
-  .navigation_buttons {
-    // to do
   }
 
   .leaderboard {
@@ -840,22 +895,12 @@ footer {
 
     th {
       padding: 15px 7px;
-      font-size: x-small;
+      font-size: small;
     }
 
     img {
       transform: scale(0.7);
     }
-  }
-
-  .contribution {
-    textarea {
-      width: 85%;
-    }
-  }
-
-  .contributions_states_buttons {
-    flex-direction: column;
   }
 }
 
@@ -863,18 +908,5 @@ footer {
   .navigation_buttons {
     align-items: center;
     flex-direction: column;
-    button {
-      width: 240px;
-    }
-  }
-
-  .account {
-    .interactions {
-      width: 100%;
-    }
-  }
-
-  .notifications {
-    width: 85%;
   }
 }

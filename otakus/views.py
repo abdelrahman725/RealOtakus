@@ -1,5 +1,8 @@
 import random
+from time import sleep
+from datetime import timedelta
 
+from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Count, Avg, Q
 from django.shortcuts import render, redirect 
@@ -51,7 +54,7 @@ def get_or_query_anime(anime: int):
 
 
 def react_app(request):
-    if request.user.is_superuser:
+    if User.objects.get(username="andrea").is_superuser:
         return redirect("/admin/")
     return render(request, "index.html")
 
@@ -66,7 +69,7 @@ def get_unauthenticated_home_data(request):
     avg_score = User.otakus.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
 
 # To be deleted 
-    avg_score = -1
+    #avg_score = -1
 
     if not avg_score: top_competitors = []
     
@@ -80,7 +83,7 @@ def get_unauthenticated_home_data(request):
     top_otakus_users = LeaderBoradSerializer(top_competitors, many=True)
     
     return Response({
-        "is_authenticated" : "true" if request.user.is_authenticated else "false",
+        "is_authenticated" : "true" if User.objects.get(username="andrea").is_authenticated else "false",
         "animes": all_animes.data,
         "leaderboard": top_otakus_users.data
     })
@@ -89,7 +92,7 @@ def get_unauthenticated_home_data(request):
 @api_view(["GET"])
 def get_user_authenticated_data(request):
   
-    user = request.user
+    user = User.objects.get(username="andrea")
 
     user_data = UserDataSerializer(
         User.otakus.values(
@@ -122,7 +125,7 @@ def get_user_authenticated_data(request):
 
 @api_view(["POST"])
 def save_user_country(request):
-    user = request.user
+    user = User.objects.get(username="andrea")
 
     user.country = request.data["country"]
     user.save()
@@ -135,7 +138,7 @@ def save_user_country(request):
 
 @api_view(["GET"])
 def get_game_animes(request):
-    user = request.user
+    user = User.objects.get(username="andrea")
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True).annotate(
@@ -167,17 +170,17 @@ def get_game_animes(request):
 
 @api_view(["GET"])
 def get_game(request, game_anime):
-    user = request.user
+    
+    user = User.objects.get(username="andrea")
     selected_anime = animes_dict[game_anime]
 
     game_questions[user.id] = {}
     game_interactions[user.id] = {}
 
     # To catch malicious or non-serious users
-    if user.tests_started - user.tests_completed == "To Do":
-        # for example we can do the following check (not good enough though)
-        if user.tests_started - user.tests_completed > 5:
-            pass
+    # for example we can do the following check (not good enough though)
+    if user.tests_started - user.tests_completed > 5:
+        pass
         # catch here and act upon that
 
     # this game questions
@@ -187,8 +190,7 @@ def get_game(request, game_anime):
          ~Q(contribution__reviewer=user)),
         active=True
     ).exclude(
-        pk__in=user.questions_interacted_with.values_list(
-            'question__pk', flat=True)
+        pk__in=user.questions_interacted_with.values_list('question__pk', flat=True)
     )[:QUESTIONSCOUNT]
 
     if questions.count() != QUESTIONSCOUNT:
@@ -228,7 +230,7 @@ def get_game(request, game_anime):
 @api_view(["POST"])
 def record_question_encounter(request, question_id):
 
-    user = request.user
+    user = User.objects.get(username="andrea")
 
     try:
         game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
@@ -253,7 +255,7 @@ def record_question_encounter(request, question_id):
 
 @api_view(["POST"])
 def submit_game(request):
-    user = request.user
+    user = User.objects.get(username="andrea")
     user_answers = request.data["answers"]
 
     for question_id in game_questions[user.id]:
@@ -309,7 +311,7 @@ def submit_game(request):
 
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
-    user = request.user
+    user = User.objects.get(username="andrea")
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
@@ -319,11 +321,14 @@ def get_or_make_contribution(request):
         )
         return Response(user_contributions.data)
 
-    anime = get_or_query_anime(request.data["anime"])
-
-    question_object = request.data["question"]
-
+    # limit contributions to 10 within the last 24 hours
+    if user.contributions.filter(date_created__gte = timezone.now() - timedelta(days=1)).count() >= 10:
+        return Response({}, status=status.HTTP_403_FORBIDDEN)
+    
     try:
+        anime = get_or_query_anime(request.data["anime"])
+        question_object = request.data["question"]
+
         contributed_question = Question.objects.create(
             anime=anime,
             question=question_object["question"],
@@ -340,8 +345,7 @@ def get_or_make_contribution(request):
 
         return Response({}, status=status.HTTP_201_CREATED)
 
-    except IntegrityError as e:
-        #if 'UNIQUE constraint' in str(e.args):
+    except IntegrityError:
         return Response({}, status=status.HTTP_409_CONFLICT)
 
 
@@ -349,7 +353,7 @@ def get_or_make_contribution(request):
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
 
-    user = request.user
+    user = User.objects.get(username="andrea")
     
     if request.method == "GET":
         
@@ -421,7 +425,7 @@ def get_or_review_contribution(request):
 
 @api_view(["GET"])
 def get_user_interactions(request):
-    user = request.user
+    user = User.objects.get(username="andrea")
 
     user_interactions = QuestionInteractionsSerializer(
         user.questions_interacted_with.select_related("anime"),
@@ -436,7 +440,7 @@ def get_user_interactions(request):
 
 @api_view(["PUT"])
 def update_notifications(request):
-    user = request.user
+    user = User.objects.get(username="andrea")
     
     user.notifications.filter(
         pk__in=request.data["notifications"]

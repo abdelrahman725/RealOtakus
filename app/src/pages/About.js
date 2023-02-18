@@ -9,28 +9,31 @@ const About = () => {
 
   useEffect(() => {
     // if not a hash link, scroll to top
-    if (hash === '') {
-      window.scrollTo(0, 0)
-      return
-    }
+    // if (hash === '') {
+    //   window.scrollTo(0, 0)
+    //   return
+    // }
 
-    // else scroll to the required section by id
-    setTimeout(() => {
-      const id = hash.replace('#', '');
-      const element = document.getElementById(id)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
-    }, 0)
+    // // else scroll to the required section by id
+    // setTimeout(() => {
+    //   const id = hash.replace('#', '');
+    //   const element = document.getElementById(id)
+    //   if (element) {
+    //     element.scrollIntoView({ behavior: 'smooth' })
+    //   }
+    // }, 0)
 
   }, [pathname, hash, key])
 
   return (
     <div className="about">
+
+      <p className="love">created with love by Bedo</p>
+
       <div>
         <h2>About</h2>
         <p>
-          Real Otaku is a platform for anime enthusiasts and fans founded by <strong>my name</strong>  in 2023,
+          Real Otaku is the platform for only anime enthusiasts and fans, founded in 2023,
           it's about contributing anime questions and participate in games
           where you answer questions contributed by others,
           one can also be a reviewr of the incoming contributions
@@ -43,22 +46,22 @@ const About = () => {
         <p>
           As we always prefer quality questions over quantity
           we have some rules and constraints when it comes to questions shown in tests,
-          always keep in mind that the goal of questions is not
+          always keep in mind that the goal of quizes is not
           to test whether the person has watched the entire anime
           or if he remembers everything happend but to test whether the person
-          truly understood the events, the characters, their development throughout the anime, their personalities and goals,
-          the plot twists ..etc. <br />
-          So Questions like
-          <strong> Why did Character X do that, what was the impact of his actions on character Y ? </strong>
-          ,&nbsp;
-          <strong> Did Character X reach his goals, if yes, how ? if no, why ?  </strong>
-          are good examples as they require a good understanding of character X.<br /><br />
+          truly understood the events, the characters, their development throughout the series, their personalities and goals,
+          the plot twists ..etc.
+        </p>
 
+        <p>
           So in order to make sure that your contributed question
           gets approved make sure to follow the following rules :
         </p>
 
         <ul>
+          <li><strong>getting a question from google is the fastest way for your contribution to be rejected !</strong></li>
+          <li>You are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
+
           <li>avoid trivial/too easy questions.</li>
           <li>your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
           <li>try to avoid questions that are based on your personal opinion or theory. </li>
@@ -71,25 +74,40 @@ const About = () => {
           <li>your question must be in a valid english format. </li>
         </ul>
 
-        <h3>Trivial/bad questions &#128577;</h3>
+        <p>Some (not limited to) recommended ideas for questions :</p>
+        <ul>
+          <li><strong> Why did Character X .. , what was the impact of his actions on character Y ? </strong></li>
+          <li><strong> Did Character X reach his goals, if yes, how ? if no, why ?  </strong></li>
+          <li><strong> What would happen if ..</strong> </li>
+        </ul>
+
+
+        <h3>Real examples </h3>
+
+        <h4>Trivial/bad questions &#128577;</h4>
         <ul>
           <li>(Attack on Titans) What was the name of Eren's mother ?</li>
           <li>(Dragon Ball) What species of fighters does Goku belong to ?</li>
         </ul>
 
-        <h3>Good questions &#128512;</h3>
+        <h4>Good questions &#128512;</h4>
 
         <ul>
           <li>(One Piece) Why most people don't know about wano ?</li>
           <li>(Attack on Titans) In season 4, During detention of zeke yeager by Levi, why did Levi specifically choose a place like the forest ?</li>
         </ul>
 
+        <h3>Our Right</h3>
+        <p>
+          please note that we have the right to modify or delete (if inappropriate) any contributed question before or after being reviewed without prior notice to you.
+        </p>
+
       </div>
 
       <div id="become_reviewer">
         <h2>How to become a reviewer</h2>
         <p>
-          to do ...
+          to be determined...
         </p>
       </div>
 

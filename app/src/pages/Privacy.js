@@ -2,8 +2,8 @@ import React from 'react'
 
 const Privacy = () => {
   return (
-    <div className="centered_div">
-      <h2>Privacy page </h2>
+    <div className="privacy">
+      <h1>Privacy Policy </h1>
     </div>
   )
 }

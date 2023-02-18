@@ -4,49 +4,42 @@ import { FcIdea, FcDatabase } from 'react-icons/fc'
 import { GlobalStates } from 'App'
 import { useContext } from 'react'
 import { MdQuiz, MdOutlineRateReview } from 'react-icons/md'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const Home = ({ user_data, dashboard_users }) => {
 
   const { authenticated } = useContext(GlobalStates)
+  const naviage_routes = useNavigate()
 
   return (
 
     <div className="home">
 
       {authenticated ?
-
         <div className="navigation_buttons">
-          <Link to="contribute">
-            <button>
-              <FcIdea className="icon" />Contribute
-            </button>
-          </Link>
 
-          <Link to="game">
-            <button>
-              <MdQuiz className="icon" />Take Quiz
-            </button>
-          </Link>
+          <button onClick={() => naviage_routes("contribute")}>
+            <FcIdea className="icon" />Contribute
+          </button>
 
-          <Link to="mycontributions">
-            <button>
-              <FcDatabase className="icon" /> My Contributions
-            </button>
-          </Link>
+          <button onClick={() => naviage_routes("game")}>
+            <MdQuiz className="icon" />Take Quiz
+          </button>
+
+          <button onClick={() => naviage_routes("mycontributions")}>
+            <FcDatabase className="icon" /> My Contributions
+          </button>
 
           {user_data.is_reviewer &&
-            <Link to="review">
-              <button>
-                <MdOutlineRateReview className="icon" /> Review
-              </button>
-            </Link>
+            <button onClick={() => naviage_routes("review")}>
+              <MdOutlineRateReview className="icon" /> Review
+            </button>
           }
         </div>
         :
         <NotAuthenticated />
       }
-   
+
       {dashboard_users && dashboard_users.length > 0 &&
         <TheDashBoard dashboard_users={dashboard_users} current_user={user_data} />
       }

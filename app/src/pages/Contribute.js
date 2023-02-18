@@ -12,7 +12,7 @@ const Contribute = ({ all_animes_options }) => {
   const [choices_info, set_choices_info] = useState()
   const [submitted, setsubmitted] = useState(false)
 
-  const question_format = {
+  const contribution_format = {
     question: "",
     rightanswer: "",
     choice1: "",
@@ -20,7 +20,7 @@ const Contribute = ({ all_animes_options }) => {
     choice3: "",
   }
 
-  const [Question, setQuestion] = useState(question_format)
+  const [Question, setQuestion] = useState(contribution_format)
 
   const question_ref = useRef(null)
   const submit_btn = useRef(null)
@@ -45,16 +45,16 @@ const Contribute = ({ all_animes_options }) => {
     }
 
     setQuestion(prev => ({ ...prev, [name]: value }))
-    const updated_question = JSON.parse(sessionStorage.getItem("contribution"))
-    updated_question[name] = value
-    sessionStorage.setItem("contribution", JSON.stringify(updated_question))
+    const previous_contribution_value = JSON.parse(sessionStorage.getItem("contribution"))
+    previous_contribution_value[name] = value
+    sessionStorage.setItem("contribution", JSON.stringify(previous_contribution_value))
   }
 
   const handle_form_submission = (e) => {
 
     e.preventDefault()
 
-    const submit_contribution = async (cleaned_question) => {
+    const submit_contribution = async (cleaned_contribution) => {
 
       setsubmitted(true)
 
@@ -62,7 +62,7 @@ const Contribute = ({ all_animes_options }) => {
         path: "get_make_contribution",
         method: "POST",
         data: {
-          "question": cleaned_question,
+          "question": cleaned_contribution,
           "anime": anime.value
         }
       })
@@ -83,12 +83,17 @@ const Contribute = ({ all_animes_options }) => {
         return
       }
 
+      if (submit_contribution_response.status === 403) {
+        set_question_info("Max number (10) of contributions reached")
+        return
+      }
+
       if (submit_contribution_response.status !== 201) {
         set_question_info("an error has occurred")
         return
       }
-
-      sessionStorage.setItem("contribution", JSON.stringify(question_format))
+      // clear session storage and form
+      sessionStorage.setItem("contribution", JSON.stringify(contribution_format))
 
       for (const key in Question) {
         setQuestion(prev => ({ ...prev, [key]: "" }))
@@ -96,6 +101,8 @@ const Contribute = ({ all_animes_options }) => {
 
       set_response_msg("Thanks for your Contribution !")
     }
+
+
 
     const validate_contribution_form_then_submit = () => {
 
@@ -105,7 +112,7 @@ const Contribute = ({ all_animes_options }) => {
         return false
       }
 
-      const cleaned_question = {
+      const cleaned_contribution = {
         question: "",
         rightanswer: "",
         choice1: "",
@@ -113,17 +120,18 @@ const Contribute = ({ all_animes_options }) => {
         choice3: "",
       }
 
-      // removes leading and trailing spaces (to check for duplicates)
+      // removes leading and trailing spaces before checking for duplicates
       const unique_choices = new Set()
       for (const key in Question) {
         const trimmed_value = Question[key].trim()
         key !== "question" && unique_choices.add(trimmed_value)
-        cleaned_question[key] = trimmed_value
+        cleaned_contribution[key] = trimmed_value
       }
 
-      if (cleaned_question.question.length < 7) {
+      if (cleaned_contribution.question.length < 7) {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        set_question_info("question must be at least 7 characters length")
+        set_question_info("question must be at least 7 characters")
+        question_ref.current.style.outlineColor = "red"
         question_ref.current.focus()
         return false
       }
@@ -133,7 +141,7 @@ const Contribute = ({ all_animes_options }) => {
         return
       }
       set_response_msg()
-      submit_contribution(cleaned_question)
+      submit_contribution(cleaned_contribution)
       document.activeElement.blur()
       set_choices_info()
       set_question_info()
@@ -156,7 +164,7 @@ const Contribute = ({ all_animes_options }) => {
     }
 
     else {
-      sessionStorage.setItem("contribution", JSON.stringify(question_format))
+      sessionStorage.setItem("contribution", JSON.stringify(contribution_format))
     }
 
     if (sessionStorage.getItem("anime") !== null) {
@@ -174,10 +182,10 @@ const Contribute = ({ all_animes_options }) => {
       <p>
         make sure you have read &nbsp;
         <Link className="simple_link" to="/about#contribution-guidelines" target={"_blank"} >
-          Contribution Guidlines
+          Contribution Guidelines
         </Link>
       </p>
-      
+
       {response_msg && <h3>{response_msg}</h3>}
 
       <form onSubmit={handle_form_submission} >
@@ -194,7 +202,6 @@ const Contribute = ({ all_animes_options }) => {
             value={anime}
             ref={anime_select}
           />
-          
 
           <div className="invalid_input">{question_info}</div>
 
@@ -246,7 +253,7 @@ const Contribute = ({ all_animes_options }) => {
             onChange={handle_form_change}
           >
           </textarea>
-          
+
 
           <textarea name="choice3"
             typeof="text"
@@ -260,7 +267,7 @@ const Contribute = ({ all_animes_options }) => {
           </textarea>
 
           <div className="submit_container">
-            {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn}> submit question</button> : "loading..."}
+            {!submitted ? <button type="submit" className="submit_btn" ref={submit_btn}> submit question</button> : "validating..."}
           </div>
 
         </div>

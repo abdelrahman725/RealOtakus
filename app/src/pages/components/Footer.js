@@ -17,9 +17,9 @@ const Footer = () => {
         Support
       </a> */}
 
-      <Link to="privacy" className="simple_link">privacy</Link>
+      <Link to="/privacy" className="simple_link" target={"_blank"}>privacy</Link>
 
-      <Link to="terms" className="simple_link">terms</Link>
+      <Link to="/terms" className="simple_link" target={"_blank"}>terms</Link>
 
     </footer>
   )

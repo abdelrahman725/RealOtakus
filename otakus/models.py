@@ -151,7 +151,7 @@ def protect_active_questions(sender, instance, **kwargs):
 
 class Contribution(base_models.Contribution):
     def __str__(self) -> str:
-        return f"{self.contributor if self.contributor else 'deleted user'} made a contribution for {self.question.anime if self.question else 'a deleted question'}"
+        return Question.__str__(self.question)
     
     def clean(self):
         if self.approved == False and self.feedback == None:
