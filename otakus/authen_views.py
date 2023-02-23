@@ -1,7 +1,7 @@
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect, csrf_exempt
-
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from rest_framework.decorators import api_view,  permission_classes
 from rest_framework.permissions import AllowAny
@@ -66,3 +66,20 @@ def user_login(request):
 def user_logout(request):
   logout(request)
   return Response({"info":"logged out successfully"})
+
+
+@api_view(["DELETE"])
+def delete_account(request):
+
+    user = request.user
+    entered_password = request.data["password"]
+
+    if check_password(entered_password, user.password):
+      
+      user.delete()
+      
+      return Response({
+          "info": "account deleted_successfully"
+      })
+
+    return Response({"info": "wrong password"}, status=status.HTTP_403_FORBIDDEN)

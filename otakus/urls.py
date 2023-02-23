@@ -5,6 +5,7 @@ from otakus.authen_views import send_csrf_token_to_client
 from otakus.authen_views import user_register
 from otakus.authen_views import user_login
 from otakus.authen_views import user_logout
+from otakus.authen_views import delete_account
 
 from otakus.views import react_app
 from otakus.views import get_unauthenticated_home_data
@@ -19,6 +20,7 @@ from otakus.views import save_user_country
 from otakus.views import update_notifications
 from otakus.views import submit_game
 
+
 # DRF endpoints
 
 urlpatterns = [
@@ -31,6 +33,7 @@ urlpatterns = [
   
   # authenticated routes
     path('logout/', user_logout),
+    path('delete_account/', delete_account),
     path('get_user_data', get_user_authenticated_data),
     path('getgameanimes', get_game_animes),
     path('getgame/<int:game_anime>', get_game),

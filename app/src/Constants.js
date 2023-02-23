@@ -1,7 +1,7 @@
 
-export const OUR_DOMAIN = "127.0.0.1:8000"
+//export const OUR_DOMAIN = "127.0.0.1:8000"
 
-//export const OUR_DOMAIN = "192.168.1.8:8000"
+export const OUR_DOMAIN = "192.168.1.8:8000"
 
 export const DJANGO_APP_URL = `http://${OUR_DOMAIN}`
 

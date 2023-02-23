@@ -69,14 +69,12 @@ const GameView = () => {
       }
 
       setanimesoptions(
-        game_animes_response.payload.animes.map(anime => (
-          {
-            value: anime.id,
-            label: anime.anime_name,
-            user_interactions: anime.n_user_interactions,
-            anime_questions: anime.n_active_questions
-          }
-        ))
+        game_animes_response.payload.animes.map(anime => ({
+          value: anime.id,
+          label: anime.anime_name,
+          user_interactions: anime.n_user_interactions,
+          anime_questions: anime.n_active_questions
+        }))
       )
 
     }
@@ -94,7 +92,7 @@ const GameView = () => {
       {game_started === null &&
 
         <div className="pre_game_container">
-          <h1>Get ready for a <span>5</span> questions test</h1>
+          <h1>Get ready for the <span>5</span> questions Quiz</h1>
           <div className="res_info">{game_info && game_info}</div>
 
           <div className="container">

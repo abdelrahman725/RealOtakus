@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 const Footer = () => {
   return (
     <footer>
+      
       <a className="simple_link" href="https://github.com/abdelrahman725/RealOtakus" target="_blank" rel="noreferrer">
         Github
       </a>
@@ -17,9 +18,9 @@ const Footer = () => {
         Support
       </a> */}
 
-      <Link to="/privacy" className="simple_link" target={"_blank"}>privacy</Link>
+      <Link to="/terms" className="simple_link" target={"_blank"}>Terms</Link>
 
-      <Link to="/terms" className="simple_link" target={"_blank"}>terms</Link>
+      <Link to="/privacy" className="simple_link" target={"_blank"}>Privacy</Link>
 
     </footer>
   )

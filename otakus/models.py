@@ -35,7 +35,7 @@ class User(base_models.User):
 def new_user_signed_up(sender, instance, created, **kwargs):
     if created and instance.email:
         send_mail(
-            subject=f"{instance.username}, Welcome to RealOtakus!",
+            subject=f"Welcome to RealOtakus!",
             message="message to send here",
             from_email=None,
             recipient_list=[instance.email],
@@ -156,6 +156,9 @@ class Contribution(base_models.Contribution):
     def clean(self):
         if self.approved == False and self.feedback == None:
             raise ValidationError("feedback needed for rejection")
+
+        if self.approved == True and self.feedback != None:
+            raise ValidationError("no feedback for approved question")
 
 
 @receiver(pre_save, sender=Contribution)

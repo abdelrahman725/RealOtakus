@@ -60,73 +60,62 @@ const UserProfile = ({ user_data }) => {
 
   if (user_data && !loading) {
     return (
-      <div className="account_container">
-        <div className="flex_container">
+      <div className="account">
 
-          <div>
-            <div className="progress">
+        <div className="progress">
+          <div className="data_row">
+            <div>Username</div>
+            <div>{user_data.username}</div>
+          </div>
 
-              <div className="data_row">
-                <div>Username</div>
-                <div>{user_data.username}</div>
-              </div>
-
-              <div className="data_row">
-                <div>Email</div>
-                <div>{user_data.email}</div>
-              </div>
-
-              <div className="data_row">
-                <div>Country</div>
-                <div>
-                  {user_data.country ?
-                    <img src={`https://flagcdn.com/256x192/${user_data.country}.png`} width="30" height="20" alt="country_img"></img>
-                    : "N/A"
-                  }
-                </div>
-              </div>
-
-              <div className="data_row">
-                <div>Score</div>
-                <div>{user_data.points}</div>
-              </div>
-
-              <div className="data_row">
-                <div>Level</div>
-                <div> {user_data.level}</div>
-              </div>
-
-              <div className="data_row">
-                <div>Tests Score</div>
-                <div>{games_score_percentage} %</div>
-              </div>
-
-              <div className="data_row">
-                <div>Tests Started</div>
-                <div>{user_data.tests_started}</div>
-              </div>
-
-              <div className="data_row">
-                <div>Tests Completed</div>
-                <div>{user_data.tests_completed}</div>
-              </div>
-
+          <div className="data_row">
+            <div>Country</div>
+            <div>
+              {user_data.country ?
+                <img src={`https://flagcdn.com/256x192/${user_data.country}.png`} width="30" height="20" alt="country_img"></img>
+                : "N/A"
+              }
             </div>
           </div>
 
-          <Interactions interactions={user_interactions} />
+          <hr />
 
+          <h3>Progress</h3>
+
+          <div className="data_row">
+            <div>Level</div>
+            <div> {user_data.level}</div>
+          </div>
+
+          <div className="data_row">
+            <div>Score</div>
+            <div>{user_data.points}</div>
+          </div>
+
+          <div className="data_row">
+            <div>Tests Score</div>
+            <div>{games_score_percentage} %</div>
+          </div>
+
+          <div className="data_row">
+            <div>Tests Started</div>
+            <div>{user_data.tests_started}</div>
+          </div>
+
+          <div className="data_row">
+            <div>Tests Completed</div>
+            <div>{user_data.tests_completed}</div>
+          </div>
         </div>
+
+        <Interactions interactions={user_interactions} />
+
       </div>
     )
   }
 
   return (
-    <div className="account_container">
-      <div className="loading_div">
-        loading ...
-      </div>
-    </div>
+    <div className="account">loading ...</div>
   )
 }
 export default UserProfile

@@ -81,7 +81,7 @@ a {
       justify-content: space-around;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  margin-top: 60px;
+  margin-top: 30px;
 }
 
 .not_authenticated .container .about {
@@ -89,7 +89,8 @@ a {
 }
 
 .not_authenticated .container .authenticating_forms {
-  width: 450px;
+  width: 25%;
+  min-width: 340px;
 }
 
 .not_authenticated .container .authenticating_forms form {
@@ -131,7 +132,7 @@ a {
 .not_authenticated .container .authenticating_forms .simple_link {
   font-weight: bolder;
   background: none;
-  padding: 0px;
+  padding: 1px;
 }
 
 .not_authenticated .container .authenticating_forms .google_container {
@@ -174,7 +175,7 @@ a {
 .navbar {
   background-color: #262f36;
   color: white;
-  padding: 10px;
+  padding: 7px 0px;
   margin-bottom: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -191,17 +192,10 @@ a {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  margin-top: 8px;
-  margin-bottom: 8px;
 }
 
 .navbar .right div {
-  margin: 0px 15px;
-  padding: 10px;
+  margin: 0px 30px;
 }
 
 .navbar .icon, .navbar .nav_icon {
@@ -214,8 +208,8 @@ a {
 }
 
 .navbar .nav_icon {
-  -webkit-transform: scale(2.3);
-          transform: scale(2.3);
+  -webkit-transform: scale(2);
+          transform: scale(2);
 }
 
 .navbar .notification {
@@ -224,8 +218,8 @@ a {
 
 .navbar .notification .n_notifications {
   position: absolute;
-  right: -0.7em;
-  top: -0.7em;
+  right: -0.9em;
+  top: -0.9em;
   min-width: 1.6em;
   /* or width, explained below. */
   height: 1.6em;
@@ -243,20 +237,19 @@ a {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  font-size: 0.9em;
+  font-size: 0.8em;
   color: white;
 }
 
 .navbar .logo {
-  margin-right: 20px;
-  font-size: 30px;
-  letter-spacing: 1px;
+  font-size: xx-large;
   color: white;
 }
 
 .navbar .about_icon {
+  margin-left: 20px;
   position: relative;
-  top: 10px;
+  top: 19px;
 }
 
 .country_selection_panel {
@@ -411,12 +404,7 @@ a {
   background-color: #3e4f5b;
 }
 
-.account_container {
-  text-align: center;
-  margin: 20px;
-}
-
-.account_container .flex_container {
+.account {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -424,11 +412,13 @@ a {
       justify-content: space-around;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  margin-top: 60px;
+  text-align: center;
+  margin: 20px;
 }
 
-.account_container .flex_container .progress {
-  width: 100%;
+.account .progress {
+  width: 90%;
+  max-width: 700px;
   padding: 20px;
   margin-bottom: 100px;
   font-size: large;
@@ -439,27 +429,28 @@ a {
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 
-.account_container .flex_container .progress .data_row {
+.account .progress hr {
+  border: 2px solid #3e4d58;
+}
+
+.account .progress .data_row {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  padding: 25px 15px 25px 15px;
 }
 
-.account_container .flex_container .progress .data_row div {
-  padding: 30px;
-}
-
-.account_container .flex_container .progress .data_row div:last-child {
+.account .progress .data_row div:last-child {
   font-weight: 500;
   -webkit-transform: scale(1.2);
           transform: scale(1.2);
   color: #249090;
 }
 
-.account_container .flex_container .interactions td {
+.account .interactions td {
   padding-top: 30px;
   padding-bottom: 30px;
 }
@@ -539,13 +530,22 @@ a {
   text-align: left;
 }
 
-.user_contributed_question {
-  margin-bottom: 80px;
+.question_basic .right_answer, .user_contributed_question .right_answer, .each_question_for_review_container .right_answer {
+  background-color: #c7f1dc;
+  border-radius: 7px;
 }
 
-.user_contributed_question div {
-  padding-top: 1px;
+.question_basic .choices, .user_contributed_question .choices, .each_question_for_review_container .choices {
   padding-left: 15px;
+  padding-top: 1px;
+}
+
+.question_basic .choices p, .user_contributed_question .choices p, .each_question_for_review_container .choices p {
+  padding: 5px;
+}
+
+.user_contributed_question {
+  margin-bottom: 80px;
 }
 
 .user_contributed_question .date_created {
@@ -589,25 +589,10 @@ a {
   padding: 10px;
   margin: 10px;
   margin-bottom: 30px;
-  line-height: 1.6;
   border-radius: 7px;
   background-color: whitesmoke;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
-}
-
-.each_question_for_review_container .question_contents .choices {
-  padding-left: 15px;
-  margin-top: 30px;
-}
-
-.each_question_for_review_container .question_contents .choices p {
-  padding: 6px 0px 6px 12px;
-}
-
-.each_question_for_review_container .question_contents .choices .right_answer {
-  background-color: #c7f1dc;
-  border-radius: 7px;
 }
 
 .each_question_for_review_container form label {
@@ -679,6 +664,7 @@ a {
   padding-left: 15px;
   padding-right: 15px;
   margin-top: 20px;
+  margin-bottom: 100px;
 }
 
 .game_view_container .pre_game_container .res_info {
@@ -751,10 +737,6 @@ a {
   opacity: 40%;
 }
 
-.game_view_container .game_container .game_question {
-  line-height: 1.6;
-}
-
 .game_view_container .game_container .game_question .choice {
   border-radius: 7px;
   background-color: white;
@@ -807,6 +789,12 @@ a {
           flex-direction: column;
 }
 
+.contribution .contribution_form span {
+  font-size: smaller;
+  opacity: 60%;
+  margin-bottom: 20px;
+}
+
 .contribution .contribution_form textarea {
   width: 99.9%;
   padding: 10px;
@@ -818,7 +806,6 @@ a {
 }
 
 .contribution .contribution_form textarea:first-of-type {
-  margin-top: 20px;
   height: 120px;
 }
 
@@ -836,7 +823,7 @@ a {
 .contribution .contribution_form .invalid_input {
   font-size: larger;
   color: crimson;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .react_select {
@@ -857,10 +844,9 @@ a {
   background-color: white;
   text-align: left;
   padding: 0.1px 10px;
-  margin-bottom: 35px;
+  margin-bottom: 50px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  line-height: 1.7;
 }
 
 .notifications .notification:hover {
@@ -872,12 +858,48 @@ a {
   font-size: small;
 }
 
+.settings {
+  margin: 10px;
+}
+
+.settings .danger_container p:first-of-type {
+  display: inline-block;
+}
+
+.settings .danger_container p:last-of-type {
+  color: red;
+}
+
+.settings .danger_container .pre_delete {
+  background-color: black;
+}
+
+.settings .danger_container button {
+  margin-left: 20px;
+}
+
+.settings .danger_container form {
+  margin-top: 30px;
+}
+
+.settings .danger_container form input {
+  border-radius: 3px;
+  margin-bottom: 15px;
+  padding: 6px;
+  font-size: 16px;
+  border: none;
+  outline: #d7d2d2 solid 1px;
+}
+
+.settings .danger_container form button {
+  background-color: red;
+}
+
 .about,
 .terms,
 .privacy {
   padding: 0px 25px 0px 25px;
   text-align: left;
-  line-height: 1.7;
 }
 
 .about h2,
@@ -930,12 +952,14 @@ a {
   bottom: 6px;
 }
 
-.terms .date {
+.terms .date,
+.privacy .date {
   position: relative;
   bottom: 20px;
 }
 
-.terms .credit {
+.terms .credit,
+.privacy .credit {
   margin-top: 3em;
   font-size: 0.8em;
 }
@@ -946,10 +970,11 @@ footer {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  text-align: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  padding: 100px 0px 35px 0px;
+  padding: 200px 0px 20px 0px;
   color: white;
   margin-top: auto;
   width: 100%;
@@ -957,9 +982,9 @@ footer {
 }
 
 footer a {
-  padding: 6px;
-  margin-left: 25px;
-  margin-right: 25px;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 @media screen and (max-width: 580px) {
@@ -969,6 +994,10 @@ footer a {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
+  }
+  .navbar .right_existent {
+    margin-top: 25px;
+    margin-bottom: 15px;
   }
   .leaderboard {
     font-size: 12px;

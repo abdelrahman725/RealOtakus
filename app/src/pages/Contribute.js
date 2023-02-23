@@ -26,11 +26,10 @@ const Contribute = ({ all_animes_options }) => {
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
 
-  // reject the following patterns
   // excluded symbols:  # ` ~ @ ^ * | \  as they are rarely used in questions  
   const excluded_symbols = /[#`~@^*|\\]/
   const extra_space = /\s{2,}/
-
+  const required_pattern = /^[a-z0-9\s.,:;'"({\-/<>_=+!?%$&})]+$/i
 
   const handle_form_change = (e) => {
 
@@ -41,6 +40,10 @@ const Contribute = ({ all_animes_options }) => {
     }
 
     if (value.match(extra_space) != null || value.match(excluded_symbols) != null) {
+      return
+    }
+
+    if (value !== '' && value.match(required_pattern) === null) {
       return
     }
 
@@ -202,6 +205,8 @@ const Contribute = ({ all_animes_options }) => {
             value={anime}
             ref={anime_select}
           />
+
+          <span>new animes coming soon</span>
 
           <div className="invalid_input">{question_info}</div>
 

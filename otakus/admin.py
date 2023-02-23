@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from django.db.models import Count
-from django.core.exceptions import ValidationError
 
 from allauth.socialaccount.models import SocialAccount
 
@@ -228,7 +227,7 @@ class UserAdmin(admin.ModelAdmin):
     "questions_reviewed",
     "reviewer_of",
     "view_country",
-    "social_connected"
+    "social_connected",
   )
 
   list_filter  =  (
@@ -246,7 +245,6 @@ class UserAdmin(admin.ModelAdmin):
     query = super(UserAdmin, self).get_queryset(request)
     return query.exclude(is_superuser=True)
 
-  
   def quizes_score(self,obj):
     if obj.tests_completed > 0:
       all_answers =  QUESTIONSCOUNT * obj.tests_completed
@@ -301,7 +299,9 @@ class ContributionAdmin(admin.ModelAdmin):
     "date_created",
     "date_reviewed"
   )
-
+  
+  list_editable = ("approved","feedback")
+  
   list_display = (
     "view_contribution",
     "contributor",
@@ -316,7 +316,6 @@ class ContributionAdmin(admin.ModelAdmin):
   )
   
   list_filter = (
-
     OldestToRecentFilter,
     ContributionStateFilter,
     ReviewersAssignedFilter,
@@ -401,8 +400,8 @@ class ContributionAdmin(admin.ModelAdmin):
     return "N/A"
 
   def has_delete_permission(self, request, obj=None):
-    return False
     return True
+    return False
 
   def has_add_permission(self,request,obj=None):
     return False

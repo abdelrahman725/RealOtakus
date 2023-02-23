@@ -1,3 +1,4 @@
+import React from 'react'
 import Question from "./Question"
 import { GlobalStates } from "App"
 import { useContext, useState, useEffect } from "react"
@@ -19,7 +20,7 @@ const Game = ({
 
   const SubmitGame = async () => {
 
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0 })
 
     setgame_started(false)
 
@@ -59,19 +60,7 @@ const Game = ({
 
   useEffect(() => {
 
-    window.history.pushState(null, document.title, window.location.href)
-
-    window.addEventListener('popstate', function () {
-      window.history.pushState(null, document.title, window.location.href)
-    })
-
-    return () => {
-
-    }
-
-  }, [])
-
-  useEffect(() => {
+    window.scrollTo({ top: 0 })
 
     window.onbeforeunload = () => {
       return true

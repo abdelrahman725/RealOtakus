@@ -142,7 +142,6 @@ const AuthenticatingForms = () => {
             {login_view ?
                 <form onSubmit={login_user} >
                     <input
-                        autoFocus={true}
                         name="username"
                         type="text"
                         required
@@ -171,10 +170,10 @@ const AuthenticatingForms = () => {
                 <form onSubmit={validate_then_register} >
                     <input
                         name="username"
-                        autoFocus={true}
                         type="text"
                         required
                         placeholder="username"
+                        minLength={5}
                         onChange={handle_register_form}
                         value={register_data.username}
                     />
@@ -206,6 +205,7 @@ const AuthenticatingForms = () => {
                         type="password"
                         required
                         placeholder="password"
+                        minLength={6}
                         onChange={handle_register_form}
                         value={register_data.password}
                     />
@@ -229,7 +229,7 @@ const AuthenticatingForms = () => {
             }
 
             <p>
-                {login_view ? "new here ?" : "already have account ?"} &nbsp;&nbsp;
+                {login_view ? "new here ?" : "already have account ?"} &nbsp;
                 <button className="simple_link" onClick={switch_view}>
                     {login_view ? "Sign up" : "Log in"}
                 </button>

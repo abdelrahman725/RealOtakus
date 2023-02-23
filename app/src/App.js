@@ -11,6 +11,7 @@ import Notifications from 'pages/Notifications'
 import Terms from 'pages/Terms'
 import Privacy from 'pages/Privacy'
 import About from 'pages/About'
+import Settings from 'pages/Settings'
 import NoMatch from 'pages/NoMatch'
 
 import CountryPanel from 'pages/components/SelectCountryPanel'
@@ -41,12 +42,13 @@ function App() {
   const { lastMessage } = useWebSocket(`ws://${OUR_DOMAIN}/ws/socket-server/`, {
     //Will attempt to reconnect on all close events, such as server shutting down
     onOpen: () => console.log('\n connection open \n\n'),
-    shouldReconnect: () => true
-  })
+    shouldReconnect: () => authenticated === true ? true : false
+  },
+    authenticated
+  )
 
   // listening for incoming realtime notifications 
   useEffect(() => {
-
     if (lastMessage !== null) {
       const new_data = JSON.parse(lastMessage.data)
       if (new_data.payload) {
@@ -54,7 +56,6 @@ function App() {
         setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
         setnumber_of_unseen_notifications(prev => prev + 1)
       }
-
     }
   }, [lastMessage, setnotifications])
 
@@ -91,15 +92,15 @@ function App() {
 
     console.log(result.payload)
 
-    //set_authenticated(false)
+    set_authenticated(false)
 
-    if (result.payload.is_authenticated === "true") {
-      fetch_authenticated_user_data()
-    }
+    // if (result.payload.is_authenticated === "true") {
+    //   fetch_authenticated_user_data()
+    // }
 
-    if (result.payload.is_authenticated === "false") {
-      set_authenticated(false)
-    }
+    // if (result.payload.is_authenticated === "false") {
+    //   set_authenticated(false)
+    // }
 
     set_dashboard_users(result.payload.leaderboard)
 
@@ -143,6 +144,7 @@ function App() {
       value={{
         authenticated,
         game_started,
+        set_authenticated,
         fetch_authenticated_user_data,
         setgame_started,
         set_user_data
@@ -168,6 +170,7 @@ function App() {
                     log_user_out={log_user_out}
                     setdarkmode={setdarkmode}
                   />
+
                   {authenticated && country_required && <CountryPanel set_country_required={set_country_required} />}
 
                   <Routes>
@@ -176,6 +179,7 @@ function App() {
                         <Home user_data={user_data} dashboard_users={dashboard_users} />
                       }
                     />
+
                     <Route path="/contribute"
                       element={
                         <AuthenticatedRoute>
@@ -228,9 +232,20 @@ function App() {
                       }
                     />
 
+                     <Route path="/settings"
+                      element={
+                        <AuthenticatedRoute>
+                          <Settings/>
+                        </AuthenticatedRoute>
+                      }
+                    />
+
                     <Route path="/about" element={<About />} />
+
                     <Route path="*" element={<NoMatch />} />
+
                   </Routes>
+
                   <Footer />
 
                 </>
@@ -240,10 +255,8 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
 
-
           </Routes>
         }
-
 
       </div>
     </GlobalStates.Provider>

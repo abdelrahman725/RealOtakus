@@ -8,20 +8,17 @@ const About = () => {
   const { pathname, hash, key } = useLocation()
 
   useEffect(() => {
-    // if not a hash link, scroll to top
-    // if (hash === '') {
-    //   window.scrollTo(0, 0)
-    //   return
-    // }
 
-    // // else scroll to the required section by id
-    // setTimeout(() => {
-    //   const id = hash.replace('#', '');
-    //   const element = document.getElementById(id)
-    //   if (element) {
-    //     element.scrollIntoView({ behavior: 'smooth' })
-    //   }
-    // }, 0)
+    // scroll to the required section by id
+    if (hash !== '') {
+      setTimeout(() => {
+        const id = hash.replace('#', '')
+        const element = document.getElementById(id)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 0)
+    }
 
   }, [pathname, hash, key])
 
@@ -76,11 +73,10 @@ const About = () => {
 
         <p>Some (not limited to) recommended ideas for questions :</p>
         <ul>
-          <li><strong> Why did Character X .. , what was the impact of his actions on character Y ? </strong></li>
-          <li><strong> Did Character X reach his goals, if yes, how ? if no, why ?  </strong></li>
-          <li><strong> What would happen if ..</strong> </li>
+          <li>What is the motivation behind Character X actions, what was the impact of his actions on character Y ? </li>
+          <li>Did Character X reach his goals? (when or how )</li>
+          <li>What would happen if .. ?</li>
         </ul>
-
 
         <h3>Real examples </h3>
 
@@ -97,17 +93,22 @@ const About = () => {
           <li>(Attack on Titans) In season 4, During detention of zeke yeager by Levi, why did Levi specifically choose a place like the forest ?</li>
         </ul>
 
-        <h3>Our Right</h3>
-        <p>
-          please note that we have the right to modify or delete (if inappropriate) any contributed question before or after being reviewed without prior notice to you.
-        </p>
-
       </div>
 
-      <div id="become_reviewer">
+      <div>
+        <h2>How we handle Contributions</h2>
+        <p>
+          Contributed questions get validated and reviewed (by reviewers or RealOtakus team) based on the above Guidelines.
+        </p>
+        <p>
+          Please note that Realotakus has the right to modify or delete (if inappropriate) any contributed question before or after being reviewed.
+        </p>
+      </div>
+
+      <div id="become-reviewer">
         <h2>How to become a reviewer</h2>
         <p>
-          to be determined...
+          to be determined
         </p>
       </div>
 

@@ -78,14 +78,15 @@ a {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    margin-top: 60px;
+    margin-top: 30px;
 
     .about {
       margin-bottom: 50px;
     }
 
     .authenticating_forms {
-      width: 450px;
+      width: 25%;
+      min-width: 340px;
 
       form {
         display: flex;
@@ -120,8 +121,9 @@ a {
 
       .simple_link {
         font-weight: bolder;
+
         background: none;
-        padding: 0px;
+        padding: 1px;
       }
 
       .google_container {
@@ -164,7 +166,7 @@ a {
 .navbar {
   background-color: $base_div_background_color;
   color: white;
-  padding: 10px;
+  padding: 7px 0px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-around;
@@ -173,15 +175,11 @@ a {
   .right,
   .left {
     display: flex;
-    flex-direction: row;
-    margin-top: 8px;
-    margin-bottom: 8px;
   }
 
   .right {
     div {
-      margin: 0px 15px;
-      padding: 10px;
+      margin: 0px 30px;
     }
   }
 
@@ -195,15 +193,15 @@ a {
 
   .nav_icon {
     @extend .icon;
-    transform: scale(2.3);
+    transform: scale(2);
   }
 
   .notification {
     position: relative;
     .n_notifications {
       position: absolute;
-      right: -0.7em;
-      top: -0.7em;
+      right: -0.9em;
+      top: -0.9em;
       min-width: 1.6em; /* or width, explained below. */
       height: 1.6em;
       border-radius: 0.8em; /* or 50%, explained below. */
@@ -214,21 +212,20 @@ a {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 0.9em;
+      font-size: 0.8em;
       color: white;
     }
   }
 
   .logo {
-    margin-right: 20px;
-    font-size: 30px;
-    letter-spacing: 1px;
+    font-size: xx-large;
     color: white;
   }
 
   .about_icon {
+    margin-left: 20px;
     position: relative;
-    top: 10px;
+    top: 19px;
   }
 }
 
@@ -368,47 +365,45 @@ a {
   }
 }
 
-.account_container {
+.account {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
   text-align: center;
   margin: 20px;
 
-  .flex_container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-top: 60px;
+  .progress {
+    width: 90%;
+    max-width: 700px;
+    padding: 20px;
+    margin-bottom: 100px;
+    font-size: large;
+    background-color: $base_div_background_color;
+    color: white;
+    border-radius: $base_border_radius;
+    box-shadow: $base_shadow;
 
-    .progress {
-      width: 100%;
-      padding: 20px;
-      margin-bottom: 100px;
-      font-size: large;
-      background-color: $base_div_background_color;
-      color: white;
-      border-radius: $base_border_radius;
-      box-shadow: $base_shadow;
-
-      .data_row {
-        display: flex;
-        justify-content: space-between;
-
-        div {
-          padding: 30px;
-        }
-
-        div:last-child {
-          font-weight: 500;
-          transform: scale(1.2);
-          color: #249090;
-        }
-      }
+    hr {
+      border: 2px solid #3e4d58;
     }
 
-    .interactions {
-      td {
-        padding-top: 30px;
-        padding-bottom: 30px;
+    .data_row {
+      display: flex;
+      justify-content: space-between;
+      padding: 25px 15px 25px 15px;
+
+      div:last-child {
+        font-weight: 500;
+        transform: scale(1.2);
+        color: #249090;
       }
+    }
+  }
+
+  .interactions {
+    td {
+      padding-top: 30px;
+      padding-bottom: 30px;
     }
   }
 }
@@ -483,16 +478,24 @@ a {
   padding: 5px 10px;
   padding-bottom: 10px;
   text-align: left;
+
+  .right_answer {
+    background-color: #c7f1dc;
+    border-radius: $base_border_radius;
+  }
+
+  .choices {
+    padding-left: 15px;
+    padding-top: 1px;
+    p {
+      padding: 5px;
+    }
+  }
 }
 
 .user_contributed_question {
   @extend .question_basic;
   margin-bottom: 80px;
-
-  div {
-    padding-top: 1px;
-    padding-left: 15px;
-  }
 
   .date_created {
     font-size: smaller;
@@ -535,23 +538,9 @@ a {
     padding: 10px;
     margin: 10px;
     margin-bottom: 30px;
-    line-height: 1.6;
     border-radius: $base_border_radius;
     background-color: whitesmoke;
     box-shadow: $base_shadow;
-
-    .choices {
-      padding-left: 15px;
-      margin-top: 30px;
-      p {
-        padding: 6px 0px 6px 12px;
-      }
-
-      .right_answer {
-        background-color: #c7f1dc;
-        border-radius: $base_border_radius;
-      }
-    }
   }
 
   form {
@@ -627,6 +616,7 @@ a {
   padding-left: 15px;
   padding-right: 15px;
   margin-top: 20px;
+  margin-bottom: 100px;
 
   .pre_game_container {
     .res_info {
@@ -688,8 +678,6 @@ a {
     }
 
     .game_question {
-      line-height: 1.6;
-
       .choice {
         border-radius: $base_border_radius;
         background-color: white;
@@ -737,6 +725,12 @@ a {
     display: flex;
     flex-direction: column;
 
+    span {
+      font-size: smaller;
+      opacity: 60%;
+      margin-bottom: 20px;
+    }
+
     textarea {
       width: 99.9%;
       padding: 10px;
@@ -746,7 +740,6 @@ a {
       outline: none;
       margin-bottom: 20px;
       &:first-of-type {
-        margin-top: 20px;
         height: 120px;
       }
     }
@@ -765,7 +758,7 @@ a {
     .invalid_input {
       font-size: larger;
       color: crimson;
-      margin-top: 8px;
+      margin-top: 6px;
     }
   }
 }
@@ -787,9 +780,8 @@ a {
     background-color: white;
     text-align: left;
     padding: 0.1px 10px;
-    margin-bottom: 35px;
+    margin-bottom: 50px;
     box-shadow: $base_shadow;
-    line-height: 1.7;
 
     &:hover {
       filter: brightness(90%);
@@ -801,12 +793,49 @@ a {
   }
 }
 
+.settings {
+  margin: 10px;
+
+  .danger_container {
+    p:first-of-type {
+      display: inline-block;
+    }
+
+    p:last-of-type {
+      color: red;
+    }
+
+    .pre_delete {
+      background-color: black;
+    }
+
+    button {
+      margin-left: 20px;
+    }
+
+    form {
+      margin-top: 30px;
+      input {
+        border-radius: 3px;
+        margin-bottom: 15px;
+        padding: 6px;
+        font-size: 16px;
+        border: none;
+        outline: rgb(215, 210, 210) solid 1px;
+      }
+
+      button {
+        background-color: red;
+      }
+    }
+  }
+}
+
 .about,
 .terms,
 .privacy {
   padding: 0px 25px 0px 25px;
   text-align: left;
-  line-height: 1.7;
 
   h2,
   h3,
@@ -851,7 +880,8 @@ a {
   }
 }
 
-.terms {
+.terms,
+.privacy {
   .date {
     position: relative;
     bottom: 20px;
@@ -866,17 +896,18 @@ a {
 footer {
   display: flex;
   flex-wrap: wrap;
+  text-align: center;
   justify-content: center;
-  padding: 100px 0px 35px 0px;
+  padding: 200px 0px 20px 0px;
   color: white;
   margin-top: auto;
   width: 100%;
   font-size: smaller;
 
   a {
-    padding: 6px;
-    margin-left: 25px;
-    margin-right: 25px;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 }
 
@@ -884,6 +915,12 @@ footer {
   .navbar,
   .contributions_states_buttons {
     flex-direction: column;
+  }
+  .navbar {
+    .right_existent {
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
   }
 
   .leaderboard {

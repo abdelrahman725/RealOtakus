@@ -28,6 +28,7 @@ code {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 /* width */
