@@ -92,15 +92,15 @@ function App() {
 
     console.log(result.payload)
 
-    set_authenticated(false)
+    //set_authenticated(false)
 
-    // if (result.payload.is_authenticated === "true") {
-    //   fetch_authenticated_user_data()
-    // }
+    if (result.payload.is_authenticated === "true") {
+      fetch_authenticated_user_data()
+    }
 
-    // if (result.payload.is_authenticated === "false") {
-    //   set_authenticated(false)
-    // }
+    if (result.payload.is_authenticated === "false") {
+      set_authenticated(false)
+    }
 
     set_dashboard_users(result.payload.leaderboard)
 
@@ -232,10 +232,10 @@ function App() {
                       }
                     />
 
-                     <Route path="/settings"
+                    <Route path="/settings"
                       element={
                         <AuthenticatedRoute>
-                          <Settings/>
+                          <Settings />
                         </AuthenticatedRoute>
                       }
                     />

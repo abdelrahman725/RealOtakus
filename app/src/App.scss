@@ -225,7 +225,7 @@ a {
   .about_icon {
     margin-left: 20px;
     position: relative;
-    top: 19px;
+    top: 18px;
   }
 }
 
@@ -796,14 +796,10 @@ a {
 .settings {
   margin: 10px;
 
+  .title {
+    display: inline-block;
+  }
   .danger_container {
-    p:first-of-type {
-      display: inline-block;
-    }
-
-    p:last-of-type {
-      color: red;
-    }
 
     .pre_delete {
       background-color: black;
@@ -822,6 +818,11 @@ a {
         font-size: 16px;
         border: none;
         outline: rgb(215, 210, 210) solid 1px;
+      }
+
+      .disabled_btn{
+        @extend .darker_background;
+        cursor: default;
       }
 
       button {

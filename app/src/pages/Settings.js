@@ -8,19 +8,23 @@ const Settings = () => {
 
     const { set_authenticated } = useContext(GlobalStates)
     const [pre_delete, set_pre_delete] = useState(false)
-    const [password, set_password] = useState("")
+    const [user_input, set_user_input] = useState("")
     const [res_msg, set_res_msg] = useState("")
+    const CONFIRMATION_TEXT = "I understand and wish to proceed"
 
     const delete_account = async (submit_event) => {
 
         submit_event.preventDefault()
 
+        if (CONFIRMATION_TEXT !== user_input) {
+            return
+        }
+
+        set_res_msg("loading..")
+
         const delete_user_res = await async_http_request({
             path: "delete_account/",
-            method: "DELETE",
-            data: {
-                password: password
-            }
+            method: "DELETE"
         })
 
         console.log(delete_user_res)
@@ -30,35 +34,39 @@ const Settings = () => {
             return
         }
 
-        if (delete_user_res.status === 403) {
-            set_res_msg("wrong password")
-            return
-        }
-
         set_authenticated(false)
-
     }
 
     return (
         <div className="settings centered_div">
             <h2>Danger Zone</h2>
             <div className="danger_container">
-                <p>Delete your account and all data connected to it</p>
+                <p className="title">Delete your account and all data connected to it</p>
                 <button className="darker_on_hover pre_delete" onClick={() => set_pre_delete(!pre_delete)}>
                     delete account
                 </button>
 
                 {pre_delete &&
-                    <form onSubmit={delete_account} >
+                    <form onSubmit={delete_account}>
+                        <p>
+                            Please type <strong>"{CONFIRMATION_TEXT}"</strong> to confirm.
+                        </p>
+
                         <input
-                            type="password"
-                            name="password"
-                            placeholder="enter your password"
+                            type="text"
+                            autoComplete="off"
+                            maxLength={CONFIRMATION_TEXT.length}
                             autoFocus={true}
-                            onChange={(e) => set_password(e.target.value)}
-                            value={password}
+                            onChange={(e) => set_user_input(e.target.value)}
+                            value={user_input}
                         />
-                        <button type="submit" className="darker_on_hover delete">Delete!</button>
+
+                        <button
+                            className={`darker_on_hover ${user_input !== CONFIRMATION_TEXT ? "disabled_btn" : ""}`}
+                            type="submit"
+                        >
+                            Delete
+                        </button>
                     </form>
                 }
 

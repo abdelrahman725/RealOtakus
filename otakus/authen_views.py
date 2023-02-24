@@ -72,14 +72,9 @@ def user_logout(request):
 def delete_account(request):
 
     user = request.user
-    entered_password = request.data["password"]
-
-    if check_password(entered_password, user.password):
+    user.delete()
       
-      user.delete()
-      
-      return Response({
-          "info": "account deleted_successfully"
-      })
+    return Response({
+        "info": "account deleted_successfully"
+    })
 
-    return Response({"info": "wrong password"}, status=status.HTTP_403_FORBIDDEN)

@@ -10,7 +10,7 @@ button,
   cursor: pointer;
 }
 
-.darker_background {
+.darker_background, .settings .danger_container form .disabled_btn {
   -webkit-filter: brightness(70%);
           filter: brightness(70%);
 }
@@ -249,7 +249,7 @@ a {
 .navbar .about_icon {
   margin-left: 20px;
   position: relative;
-  top: 19px;
+  top: 18px;
 }
 
 .country_selection_panel {
@@ -862,12 +862,8 @@ a {
   margin: 10px;
 }
 
-.settings .danger_container p:first-of-type {
+.settings .title {
   display: inline-block;
-}
-
-.settings .danger_container p:last-of-type {
-  color: red;
 }
 
 .settings .danger_container .pre_delete {
@@ -889,6 +885,10 @@ a {
   font-size: 16px;
   border: none;
   outline: #d7d2d2 solid 1px;
+}
+
+.settings .danger_container form .disabled_btn {
+  cursor: default;
 }
 
 .settings .danger_container form button {
