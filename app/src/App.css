@@ -129,14 +129,24 @@ a {
   margin-bottom: 10px;
 }
 
+.not_authenticated .container .authenticating_forms .login_container {
+  position: relative;
+}
+
+.not_authenticated .container .authenticating_forms .login_container a {
+  position: absolute;
+  right: 0;
+  top: -29px;
+  color: #7c7b7b;
+}
+
 .not_authenticated .container .authenticating_forms .simple_link {
-  font-weight: bolder;
   background: none;
   padding: 1px;
 }
 
 .not_authenticated .container .authenticating_forms .google_container {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .not_authenticated .container .authenticating_forms .google_container .google_btn {

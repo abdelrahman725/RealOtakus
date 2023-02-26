@@ -92,8 +92,6 @@ function App() {
 
     console.log(result.payload)
 
-    //set_authenticated(false)
-
     if (result.payload.is_authenticated === "true") {
       fetch_authenticated_user_data()
     }

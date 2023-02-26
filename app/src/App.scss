@@ -87,7 +87,6 @@ a {
     .authenticating_forms {
       width: 25%;
       min-width: 340px;
-
       form {
         display: flex;
         flex-direction: column;
@@ -119,15 +118,24 @@ a {
         }
       }
 
-      .simple_link {
-        font-weight: bolder;
+      .login_container {
+        position: relative;
 
+        a {
+          position: absolute;
+          right: 0;
+          top: -29px;
+          color: rgb(124, 123, 123);
+        }
+      }
+
+      .simple_link {
         background: none;
         padding: 1px;
       }
 
       .google_container {
-        margin-bottom: 20px;
+        margin-bottom: 40px;
 
         .google_btn {
           transition: background-color 0.3s, box-shadow 0.3s;
@@ -800,7 +808,6 @@ a {
     display: inline-block;
   }
   .danger_container {
-
     .pre_delete {
       background-color: black;
     }
@@ -820,7 +827,7 @@ a {
         outline: rgb(215, 210, 210) solid 1px;
       }
 
-      .disabled_btn{
+      .disabled_btn {
         @extend .darker_background;
         cursor: default;
       }

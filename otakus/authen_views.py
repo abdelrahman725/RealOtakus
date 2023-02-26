@@ -1,7 +1,6 @@
 from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from rest_framework.decorators import api_view,  permission_classes
 from rest_framework.permissions import AllowAny

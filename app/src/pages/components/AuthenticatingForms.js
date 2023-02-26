@@ -139,33 +139,38 @@ const AuthenticatingForms = () => {
                 </button>
             </div>
 
+
             {login_view ?
-                <form onSubmit={login_user} >
-                    <input
-                        name="username"
-                        type="text"
-                        required
-                        placeholder="username"
-                        onChange={handle_login_form}
-                        value={login_data.username}
-                    />
+                <div className="login_container">
+                    <a href="/accounts/password/reset/" className="simple_link">Forgot password ?</a>
+                    
+                    <form onSubmit={login_user} >
+                        <input
+                            name="username"
+                            type="text"
+                            required
+                            placeholder="username"
+                            onChange={handle_login_form}
+                            value={login_data.username}
+                        />
 
 
-                    <input
-                        name="password"
-                        type="password"
-                        required
-                        placeholder="password"
-                        onChange={handle_login_form}
-                        value={login_data.password}
-                    />
-                    {res_msg && !loading && <div>{res_msg}<br /></div>}
+                        <input
+                            name="password"
+                            type="password"
+                            required
+                            placeholder="password"
+                            onChange={handle_login_form}
+                            value={login_data.password}
+                        />
+                        {res_msg && !loading && <div>{res_msg}<br /></div>}
 
-                    <div className="fixed_height_container">
-                        {!loading ? <button type="submit" className="submit_btn" >Login</button> : "loading"}
-                    </div>
+                        <div className="fixed_height_container">
+                            {!loading ? <button type="submit" className="submit_btn" >Login</button> : "loading"}
+                        </div>
 
-                </form>
+                    </form>
+                </div>
                 :
                 <form onSubmit={validate_then_register} >
                     <input
