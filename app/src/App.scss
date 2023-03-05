@@ -27,7 +27,6 @@ button,
 button {
   border-radius: $base_border_radius;
   color: white;
-  transition: 0.4s;
   border: none;
   font-weight: bold;
   padding: 10px 15px;
@@ -293,6 +292,7 @@ a {
   justify-content: center;
 
   button {
+    transition: 0.4;
     min-width: 200px;
     margin-left: 10px;
     margin-right: 10px;
