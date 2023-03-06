@@ -113,6 +113,7 @@ class Anime(base_models.Anime):
         if self.previously_active == False and self.active == True:
             create_notification(
                 notification=self.anime_name,
+                broad=True,
                 kind="NA"
             )
         super(Anime, self).save(*args, **kwargs)
@@ -208,7 +209,7 @@ def post_notification_creation(sender, instance, created, **kwargs):
                 }
             )
     # notificaion for all users
-        else:
+        if instance.broad:
             async_to_sync(channel_layer.group_send)(
                 f'group_all', {
                     'type': 'send_notifications',

@@ -131,5 +131,6 @@ class NotificationsSerializer(serializers.ModelSerializer):
             "notification",
             "kind",
             "time",
-            "seen"
+            "seen",
+            "broad"
         )

@@ -99,7 +99,8 @@ class Notification(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="notifications")
     notification = models.CharField(max_length=250)
     time = models.DateTimeField(default=timezone.now)
-    seen = models.BooleanField(null=True, default=False, blank=True)
+    seen = models.BooleanField(default=False)
+    broad = models.BooleanField(default=False)
     kind = models.CharField(
         choices=(
             ("NA","new available anime in quizes"),

@@ -123,7 +123,7 @@ function App() {
 
     set_user_data(result.payload.user_data)
     set_country_required(result.payload.user_data.country === null)
-    setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false).length)
+    setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false && n.broad === false).length)
     setnotifications(result.payload.notifications)
     set_authenticated(true)
   }

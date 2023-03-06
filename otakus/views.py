@@ -112,7 +112,7 @@ def get_user_authenticated_data(request):
 
     serialized_notifications = NotificationsSerializer(
         Notification.objects.filter(
-            Q(receiver=user) | Q(receiver=None)
+            Q(receiver=user) | Q(broad=True)
         ),
         many=True
     )

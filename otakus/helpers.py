@@ -15,12 +15,14 @@ def to_local_date_time(utc_datetime):
   return "N/A"
 
 
-def create_notification(notification, receiver=None, kind=None):
+def create_notification(notification, receiver=None, broad=False, kind=None):
+    if not receiver and not broad:
+        return
     otakus.models.Notification.objects.create(
-        receiver=receiver,
         notification=notification,
-        kind=kind,
-        seen = False if receiver else None
+        receiver=receiver,
+        broad=broad,
+        kind=kind
     )
 
 
