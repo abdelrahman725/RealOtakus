@@ -299,9 +299,7 @@ class ContributionAdmin(admin.ModelAdmin):
     "date_created",
     "date_reviewed"
   )
-  
-  list_editable = ("approved","feedback")
-  
+    
   list_display = (
     "view_contribution",
     "contributor",

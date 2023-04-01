@@ -78,7 +78,7 @@ const About = () => {
           <li>What would happen if .. ?</li>
         </ul>
 
-        <h3>Real examples </h3>
+        <h3>examples </h3>
 
         <h4>Trivial/bad questions &#128577;</h4>
         <ul>
