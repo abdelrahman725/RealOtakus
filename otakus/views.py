@@ -1,11 +1,11 @@
 import random
-from time import sleep
 from datetime import timedelta
 
 from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Count, Avg, Q
 from django.shortcuts import render, redirect 
+from django.core.cache import caches,cache
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -34,23 +34,11 @@ from otakus.helpers import create_notification
 from otakus.constants import QUESTIONSCOUNT
 
 
-animes_dict = {}
-
-game_questions = {}
-
-game_interactions = {}
-
-
-for anime in Anime.objects.all():
-    animes_dict[anime.pk] = anime
-
-
-def get_or_query_anime(anime: int):
-    try:
-        return animes_dict[anime]
-    except KeyError:
-        animes_dict[anime] = Anime.objects.get(anime)
-        return animes_dict[anime]
+cache.set(
+    key="animes",
+    value={anime.id: anime for anime in Anime.objects.all()},
+    timeout=None
+)
 
 
 def react_app(request):
@@ -62,30 +50,37 @@ def react_app(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_unauthenticated_home_data(request):
-
-    all_animes = AnimeSerializer(animes_dict.values(), many=True)
-
-    # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0 
-    avg_score = User.otakus.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
-
-# To be deleted 
-    #avg_score = -1
-
-    if not avg_score: top_competitors = []
+    all_animes = AnimeSerializer(cache.get("animes").values(), many=True)
     
-    else:
-        top_competitors = User.otakus.annotate(
-            n_contributions=Count("contributions", filter=(
-                Q(contributions__approved=True)
-            ))
-        ).filter(points__gt=avg_score).order_by("-points")
+    if cache.get("leaderboard") != None:
+        leaderboard = cache.get("leaderboard")
 
-    top_otakus_users = LeaderBoradSerializer(top_competitors, many=True)
+    else:
+        # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0 
+        avg_score = User.otakus.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
+
+        if not avg_score: top_users = []
+        
+        else:
+            top_users = User.otakus.annotate(
+                n_contributions=Count("contributions", filter=(
+                    Q(contributions__approved=True)
+                ))
+            ).filter(points__gt=avg_score).order_by("-points")
+        
+
+        leaderboard = LeaderBoradSerializer(top_users, many=True).data
+        
+        cache.set(
+            key="leaderboard",
+            value=leaderboard,
+            timeout=12
+        )
     
     return Response({
         "is_authenticated" : "true" if request.user.is_authenticated else "false",
         "animes": all_animes.data,
-        "leaderboard": top_otakus_users.data
+        "leaderboard": leaderboard
     })
 
 
@@ -135,7 +130,6 @@ def save_user_country(request):
 
 # -------------------------------------- 4 Quiz related endpoints ----------------------------------------
 
-
 @api_view(["GET"])
 def get_game_animes(request):
     user = request.user
@@ -172,16 +166,14 @@ def get_game_animes(request):
 def get_game(request, game_anime):
     
     user = request.user
-    selected_anime = animes_dict[game_anime]
-
-    game_questions[user.id] = {}
-    game_interactions[user.id] = {}
-
-    # To catch malicious or non-serious users
-    # for example we can do the following check (not good enough though)
-    if user.tests_started - user.tests_completed > 5:
-        pass
+    selected_anime = cache.get("animes")[game_anime]
+  
+    # To catch malicious or non-serious users, for example we can do the following check (not good enough though) :
+    if user.tests_started - user.tests_completed > 5:        
         # catch here and act upon that
+        pass
+        #return Response({"info": "you are not consistent enough when taking quiz"}, status=status.HTTP_403_FORBIDDEN)
+
 
     # this game questions
     questions = selected_anime.anime_questions.filter(
@@ -217,7 +209,12 @@ def get_game(request, game_anime):
             "choice4": question_choices[3]
         })
 
-        game_questions[user.id][question.id] = question
+    
+    cache.set(
+        key=f"game_{user.id}",
+        value={question.id: question for question in questions},
+        timeout=700
+    )
 
     user.tests_started += 1
     user.save()
@@ -227,19 +224,27 @@ def get_game(request, game_anime):
     })
 
 
+
 @api_view(["POST"])
 def record_question_encounter(request, question_id):
 
     user = request.user
 
     try:
-        game_interactions[user.id][question_id] = QuestionInteraction.objects.create(
+        interaction = QuestionInteraction.objects.create(
             user=user,
-            question=game_questions[user.id][question_id],
-            anime=game_questions[user.id][question_id].anime,
+            question=cache.get(f"game_{user.id}")[question_id],
+            anime=cache.get(f"game_{user.id}")[question_id].anime,
         )
 
-    except (KeyError, IntegrityError):
+        cache.add(
+            key=f"interaction_{user.id}_{question_id}",
+            value=interaction,
+            timeout=700
+        )   
+
+
+    except IntegrityError:
         return Response({
             "info": "interaction already recorded"
         })
@@ -258,8 +263,8 @@ def submit_game(request):
     user = request.user
     user_answers = request.data["answers"]
 
-    for question_id in game_questions[user.id]:
-        current_qustion = game_questions[user.id][question_id]
+    for question_id in cache.get(f"game_{user.id}"):
+        current_qustion = cache.get(f"game_{user.id}")[question_id]
         user_answered_correctly = None
 
         string_question_id = str(question_id)
@@ -268,10 +273,11 @@ def submit_game(request):
             if user_answered_correctly == True:
                 user.points += 1
 
-        if question_id in game_interactions[user.id]:
+        question_interaction = cache.get(f"interaction_{user.id}_{question_id}")
+        if question_interaction != None:
             if user_answered_correctly != None:
-                game_interactions[user.id][question_id].correct_answer = user_answered_correctly
-                game_interactions[user.id][question_id].save()
+                question_interaction.correct_answer = user_answered_correctly
+                question_interaction.save()
 
         else:
             QuestionInteraction.objects.create(
@@ -281,8 +287,10 @@ def submit_game(request):
                 correct_answer=user_answered_correctly
             )
 
+        cache.delete(f"interaction_{user.id}_{question_id}")
+
     right_answers = AnswersSerializer(
-        game_questions[user.id].values(),
+        cache.get(f"game_{user.id}").values(),
         many=True
     )
 
@@ -297,9 +305,9 @@ def submit_game(request):
 
     user.save()
 
-# delete current user's game questions from memory
-    del game_interactions[user.id]
-    del game_questions[user.id]
+# clear user's game questions from cache
+    cache.delete(f"game_{user.id}")
+    
 
     return Response({
         "level": user.level,
@@ -326,7 +334,8 @@ def get_or_make_contribution(request):
         return Response({}, status=status.HTTP_403_FORBIDDEN)
     
     try:
-        anime = get_or_query_anime(request.data["anime"])
+        anime = cache.get("animes")[request.data["anime"]]
+        
         question_object = request.data["question"]
 
         contributed_question = Question.objects.create(

@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db.models.signals import pre_delete, pre_save, post_save, m2m_changed
 from django.dispatch import receiver
+from django.core.cache import cache
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -122,17 +123,25 @@ class Anime(base_models.Anime):
 @receiver(post_save, sender=Anime)
 def chache_new_created_anime(sender, instance, created, **kwargs):
     if created:
-        from otakus.views import animes_dict
-        animes_dict[instance.id] = instance
+        previous_animes=cache.get("animes")
+        previous_animes[instance.id] = instance
+        cache.set(
+            key="animes",
+            value=previous_animes,
+            timeout=None
+        )
+
 
 
 @receiver(pre_delete, sender=Anime)
 def delete_chached_anime(sender, instance, **kwargs):
-    from otakus.views import animes_dict
-    try:
-        del animes_dict[instance.id]
-    except KeyError:
-        pass
+    previous_animes=cache.get("animes")
+    del previous_animes[instance.id]
+    cache.set(
+        key="animes",
+        value=previous_animes,
+        timeout=None
+    )
 
 
 class Question(base_models.Question):
@@ -201,11 +210,12 @@ def post_notification_creation(sender, instance, created, **kwargs):
         channel_layer = get_channel_layer()
 
     # notificaion for a specific user
+        from otakus.serializers import NotificationsSerializer
         if instance.receiver:
             async_to_sync(channel_layer.group_send)(
                 f'group_{instance.receiver.id}', {
                     'type': 'send_notifications',
-                    'value': instance
+                    'value': NotificationsSerializer(instance).data
                 }
             )
     # notificaion for all users
@@ -213,6 +223,8 @@ def post_notification_creation(sender, instance, created, **kwargs):
             async_to_sync(channel_layer.group_send)(
                 f'group_all', {
                     'type': 'send_notifications',
-                    'value': instance
+                    'value': NotificationsSerializer(instance).data
                 }
             )
+
+        

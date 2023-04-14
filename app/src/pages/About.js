@@ -56,7 +56,7 @@ const About = () => {
         </p>
 
         <ul>
-          <li><strong>getting a question from google is the fastest way for your contribution to be rejected !</strong></li>
+          <li><strong>copying a question from google is the fastest way for your contribution to be rejected !</strong></li>
           <li>You are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
 
           <li>avoid trivial/too easy questions.</li>
@@ -74,7 +74,7 @@ const About = () => {
         <p>Some (not limited to) recommended ideas for questions :</p>
         <ul>
           <li>What is the motivation behind Character X actions, what was the impact of his actions on character Y ? </li>
-          <li>Did Character X reach his goals? (when or how )</li>
+          <li>Did Character X reach his goals ? (when, how ?)</li>
           <li>What would happen if .. ?</li>
         </ul>
 
@@ -108,7 +108,7 @@ const About = () => {
       <div id="become-reviewer">
         <h2>How to become a reviewer</h2>
         <p>
-          to be determined
+          to be determined soon
         </p>
       </div>
 

@@ -41,10 +41,10 @@ class User(AbstractUser):
 class Question(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
     question = models.TextField(max_length=350)
-    choice1 = models.CharField(max_length=150)
-    choice2 = models.CharField(max_length=150)
-    choice3 = models.CharField(max_length=150)
-    right_answer = models.CharField(max_length=150)
+    choice1 = models.TextField(max_length=150)
+    choice2 = models.TextField(max_length=150)
+    choice3 = models.TextField(max_length=150)
+    right_answer = models.TextField(max_length=150)
     active = models.BooleanField(default=False)
 
     class Meta:

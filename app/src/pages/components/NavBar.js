@@ -45,7 +45,7 @@ const NavBar = ({
               <IoMdNotifications className="nav_icon" />
             </Link>
             <span className="n_notifications" style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
-              {new_notifications}
+              {new_notifications > 9 ? "9+" : new_notifications}
             </span>
           </div>
 

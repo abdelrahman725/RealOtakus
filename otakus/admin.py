@@ -291,6 +291,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Contribution)
 class ContributionAdmin(admin.ModelAdmin):
+  list_per_page = 300
 
   readonly_fields = (
     "question",
@@ -409,11 +410,13 @@ class ContributionAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
   #date_hierarchy = 'date_created'
   
+  list_per_page = 300
+  
   fields = (
-    "active",
-    "anime",
     "question",
     "right_answer",
+    "anime",
+    "active",
     "choice1",
     "choice2",
     "choice3"

@@ -9,21 +9,19 @@ DEBUG = True
 SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm' if DEBUG == True else os.getenv('DJANGO_SECRET_KEY')
 
 ALLOWED_HOSTS = [
-    "127.0.0.1"
+    "127.0.0.1",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:8000",
-    "https://127.0.0.1:8000",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:8000",
+#     "https://127.0.0.1:8000",
+# ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://127.0.0.1:8000",
-    "http://127.0.0.1:8000",
-    "http://localhost:3000",
+    "http://localhost:3000"
 ]
 
 LOGIN_REDIRECT_URL = '/'
@@ -127,9 +125,30 @@ DATABASES = {
     }
 }
 
-CHANNEL_LAYERS = {
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache"
+    }
+
+} if DEBUG == False else {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+    }
+}
+
+
+CHANNEL_LAYERS =  {   
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'      
+    }
+
+} if DEBUG == False else {   
+    'default': {  
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('localhost', 6379)],
+        },
     }
 }
 

@@ -2,8 +2,6 @@ import json
 
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from otakus.serializers import NotificationsSerializer
-
 
 class NotificationConsumer(WebsocketConsumer):
     def connect(self):
@@ -28,5 +26,5 @@ class NotificationConsumer(WebsocketConsumer):
         print("disconnected from the server")
 
     def send_notifications(self, event):
-        notification_object = NotificationsSerializer(event.get("value"))
-        self.send(text_data=json.dumps({"payload": notification_object.data}))
+        notification_object = event.get("value")
+        self.send(text_data=json.dumps({"payload": notification_object}))
