@@ -3,3 +3,6 @@ django-allauth==0.52.0
 django-cors-headers==3.13.0
 djangorestframework==3.14.0
 channels==3.0.4
+channels-redis==4.1.0
+django-redis==5.2.0
+redis==4.5.4
