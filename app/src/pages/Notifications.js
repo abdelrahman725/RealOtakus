@@ -105,7 +105,6 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
         }
       })
 
-      console.log(notifications_update_state_response)
     }
 
     update_notifications_state()

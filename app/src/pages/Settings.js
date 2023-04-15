@@ -27,7 +27,6 @@ const Settings = () => {
             method: "DELETE"
         })
 
-        console.log(delete_user_res)
 
         if (delete_user_res === null) {
             set_res_msg("Error occurred")

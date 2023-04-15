@@ -316,7 +316,6 @@ def submit_game(request):
 
 # ------------------------------------------------------------------------------------------------------
 
-
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
     user = request.user

@@ -106,7 +106,18 @@ REST_FRAMEWORK = {
      'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         #'rest_framework.permissions.AllowAny'
-    ]
+    ],
+
+     'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '50/minute',
+        'user': '70/minute',
+    }
+
 }
 
 ASGI_APPLICATION = 'realotakus.asgi.application'
@@ -130,7 +141,7 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache"
     }
 
-} if DEBUG == False else {
+} if DEBUG == True else {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': 'redis://127.0.0.1:6379',
@@ -143,7 +154,7 @@ CHANNEL_LAYERS =  {
         'BACKEND': 'channels.layers.InMemoryChannelLayer'      
     }
 
-} if DEBUG == False else {   
+} if DEBUG == True else {   
     'default': {  
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {

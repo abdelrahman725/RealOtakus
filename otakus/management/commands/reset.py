@@ -6,8 +6,8 @@ from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification 
 
-# script for reseting state of the database by deleting any data used in testing (manual or automatic)
-# Note : don't use in production !
+# script for reseting state of the database by deleting any data generated and used during development
+# Warning : don't use in production !
 
 
 class Command(BaseCommand):

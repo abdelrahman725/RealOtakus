@@ -39,8 +39,6 @@ const ReviewQuestion = ({
                 return
             }
 
-            console.log(review_submission_response)
-
             if (review_submission_response.status !== 200) {
                 set_invalid_review("canceledstate")
                 setinfo(review_submission_response.payload.info)

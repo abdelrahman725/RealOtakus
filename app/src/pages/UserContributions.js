@@ -1,11 +1,13 @@
 import ContributedQuestion from "./components/ContributedQuestion"
 import async_http_request from "./components/AsyncRequest"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+import { GlobalStates } from "App"
 import { useLocation } from 'react-router-dom'
 
 const UserContributions = () => {
 
   const [contributions, setcontributions] = useState()
+  const { set_too_many_requests } = useContext(GlobalStates)
   const [n_contributions, set_n_contributions] = useState()
   const [selected_contribution_state, set_selected_contribution_state] = useState(1)
   const location = useLocation()
@@ -40,6 +42,7 @@ const UserContributions = () => {
       const fetched_contributions = await async_http_request({ path: "get_make_contribution" })
       if (contributions === null)
         return
+
 
       setcontributions(fetched_contributions.payload)
       location.state !== null ? set_selected_contribution_state(location.state) : set_n_contributions(fetched_contributions.payload.length)

@@ -73,7 +73,6 @@ const Contribute = ({ all_animes_options }) => {
       if (submit_contribution_response === null)
         return
 
-      console.log(submit_contribution_response)
 
       setsubmitted(false)
 

@@ -53,7 +53,6 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
       method: "POST"
     })
 
-    console.log(attempt_response)
   }
 
   const timer = useTimer({ delay: 1000, callback: () => handletimeleft() })

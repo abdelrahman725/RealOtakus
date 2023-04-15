@@ -90,8 +90,6 @@ const AuthenticatingForms = () => {
             }
         })
 
-        console.log(login_res.payload)
-
         set_loading(false)
         set_res_msg(login_res.payload.info)
 
@@ -114,8 +112,6 @@ const AuthenticatingForms = () => {
                 "password": register_data.password
             }
         })
-
-        console.log(register_res.payload)
 
         set_loading(false)
         set_res_msg(register_res.payload.info)
