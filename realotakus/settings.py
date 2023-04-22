@@ -8,17 +8,15 @@ DEBUG = True
 
 SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm' if DEBUG == True else os.getenv('DJANGO_SECRET_KEY')
 
+ADMIN_PANEL_PATH = 'admin/' if DEBUG == True else os.getenv('DJANGO_ADMIN_PATH') 
+
+
 ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:8000",
-#     "https://127.0.0.1:8000",
-# ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000"
@@ -50,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django.contrib.sites',
 
     'rest_framework',
     'corsheaders',
@@ -104,19 +101,9 @@ REST_FRAMEWORK = {
      ],
 
      'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-        #'rest_framework.permissions.AllowAny'
+        #'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny'
     ],
-
-     'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
-    ],
-
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '50/minute',
-        'user': '70/minute',
-    }
 
 }
 
@@ -162,24 +149,6 @@ CHANNEL_LAYERS =  {
         },
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
 
 
 # Internationalization

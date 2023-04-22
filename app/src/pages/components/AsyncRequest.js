@@ -2,7 +2,7 @@ import getCookie from "./getCookie"
 import { DJANGO_APP_URL } from "Constants"
 
 
-const async_http_request = async ({ server = DJANGO_APP_URL, path = null, method = "GET", data = null, set_too_many_requests = null } = {}) => {
+const async_http_request = async ({ server = DJANGO_APP_URL, path = null, method = "GET", data = null } = {}) => {
 
     const url = path ? `${server}/${path}` : server
 
@@ -31,10 +31,6 @@ const async_http_request = async ({ server = DJANGO_APP_URL, path = null, method
         const result_data = await response.json()
 
         console.log(result_data)
-
-        if (set_too_many_requests && status_code === 429) {
-            set_too_many_requests(true)
-        }
 
         return {
             payload: result_data,

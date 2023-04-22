@@ -134,6 +134,7 @@ a {
 .not_authenticated .container .authenticating_forms .login_container a {
   position: absolute;
   right: 0;
+  font-size: 14px;
   top: -29px;
   color: #7c7b7b;
 }
@@ -943,8 +944,8 @@ a {
 .about a {
   text-decoration: none;
   color: black;
-  margin-right: 40px;
-  margin-left: 4px;
+  margin-right: 45px;
+  margin-bottom: 15px;
 }
 
 .about .community_links {
@@ -953,13 +954,14 @@ a {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  padding: 5px;
 }
 
 .about .community_links span {
   font-size: 21px;
   position: relative;
   font-family: "Courier New", Courier, monospace;
-  bottom: 6px;
+  bottom: 7px;
 }
 
 .terms .date,

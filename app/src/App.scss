@@ -123,6 +123,7 @@ a {
         a {
           position: absolute;
           right: 0;
+          font-size: 14px;
           top: -29px;
           color: rgb(124, 123, 123);
         }
@@ -872,18 +873,19 @@ a {
   a {
     text-decoration: none;
     color: black;
-    margin-right: 40px;
-    margin-left: 4px;
+    margin-right: 45px;
+    margin-bottom: 15px;
   }
 
   .community_links {
     display: flex;
     flex-wrap: wrap;
+    padding: 5px;
     span {
       font-size: 21px;
       position: relative;
       font-family: "Courier New", Courier, monospace;
-      bottom: 6px;
+      bottom: 7px;
     }
   }
 }

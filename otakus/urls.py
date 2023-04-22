@@ -1,5 +1,4 @@
 from django.urls import path, re_path
-from django.views.generic import TemplateView
 
 from otakus.authen_views import send_csrf_token_to_client
 from otakus.authen_views import user_register

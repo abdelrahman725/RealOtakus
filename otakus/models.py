@@ -1,12 +1,12 @@
 import threading
 
 from django.db import models, IntegrityError
-from django.contrib.auth.models import UserManager
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
+from django.core.cache import cache
+from django.contrib.auth.models import UserManager
 from django.db.models.signals import pre_delete, pre_save, post_save, m2m_changed
 from django.dispatch import receiver
-from django.core.cache import cache
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -34,7 +34,7 @@ class User(base_models.User):
 # on user signup send an email (if user has a valid email) welcoming the user
 @receiver(post_save, sender=User)
 def new_user_signed_up(sender, instance, created, **kwargs):
-    if created and instance.email:
+    if created and instance.email:        
         send_mail(
             subject=f"Welcome to RealOtakus!",
             message="message to send here",
@@ -42,7 +42,7 @@ def new_user_signed_up(sender, instance, created, **kwargs):
             recipient_list=[instance.email],
             fail_silently=False,
         )
-
+     
 
 @receiver(pre_save, sender=User)
 def update_user_points_and_level(sender, instance, **kwargs):

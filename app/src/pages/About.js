@@ -1,6 +1,7 @@
+import React, { useEffect } from 'react'
 import { SlSocialTwitter } from 'react-icons/sl'
 import { BsGithub } from 'react-icons/bs'
-import React, { useEffect } from 'react'
+import { SiGmail } from 'react-icons/si'
 import { useLocation } from 'react-router-dom'
 
 const About = () => {
@@ -119,6 +120,10 @@ const About = () => {
         </a>
       </div> */}
 
+      {/* <div>
+        <h2>Credits</h2>
+      </div> */}
+
       <div>
         <h2>Stay in touch</h2>
 
@@ -130,6 +135,11 @@ const About = () => {
           <a href="https://twitter.com/RealOtakus" target="_blank" rel="noreferrer">
             <SlSocialTwitter className="icon" /> <span>Twitter</span>
           </a>
+
+          <a href="mailto:realotakus1@gmail.com" target="_blank" rel="noreferrer">
+            <SiGmail className="icon" /> <span>Gmail</span>
+          </a>
+
         </div>
 
       </div>

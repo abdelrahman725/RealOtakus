@@ -29,7 +29,6 @@ export const GlobalStates = createContext()
 
 function App() {
   const [authenticated, set_authenticated] = useState(null)
-  const [too_many_requests, set_too_many_requests] = useState(false)
   const [country_required, set_country_required] = useState(false)
   const [user_data, set_user_data] = useState()
   const [dashboard_users, set_dashboard_users] = useState()
@@ -51,7 +50,9 @@ function App() {
   // listening for incoming realtime notifications 
   useEffect(() => {
     if (lastMessage !== null) {
+
       const new_data = JSON.parse(lastMessage.data)
+
       if (new_data.payload) {
         console.log(new_data.payload)
         setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
@@ -81,14 +82,10 @@ function App() {
   // also used to check (against the server) whether the user is authenticated or not
   const fetch_unauthenticated_data = async () => {
 
-    const result = await async_http_request({ path: "main", set_too_many_requests: set_too_many_requests })
+    const result = await async_http_request({ path: "main" })
 
     if (result === null) {
       set_loading_or_network_error_msg("network error")
-      return
-    }
-
-    if (result.status === 429) {
       return
     }
 
@@ -119,10 +116,6 @@ function App() {
       return
     }
 
-    if (result.status === 429) {
-      return
-    }
-
     set_user_data(result.payload.user_data)
     set_country_required(result.payload.user_data.country === null)
     setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false && n.broad === false).length)
@@ -148,116 +141,114 @@ function App() {
         fetch_authenticated_user_data,
         setgame_started,
         set_user_data,
-        set_too_many_requests
       }}>
 
       <div className="App">
 
-        {too_many_requests === true ? <div className="app_loading_div">too many requests have been made please wait</div>
+        {authenticated === null ? <div className="app_loading_div">{loading_or_network_error_msg}</div>
           :
-          authenticated === null ? <div className="app_loading_div">{loading_or_network_error_msg}</div>
-            :
-            <Routes>
+          <Routes>
 
-              <Route path="/*"
-                element={
-                  <>
-                    <Navbar
-                      authenticated={authenticated}
-                      country_required={country_required}
-                      notifications_open={false}
-                      new_notifications={number_of_unseen_notifications}
-                      game_started={game_started}
-                      darkmode={darkmode}
-                      log_user_out={log_user_out}
-                      setdarkmode={setdarkmode}
+            <Route path="/*"
+              element={
+                <>
+                  <Navbar
+                    authenticated={authenticated}
+                    country_required={country_required}
+                    notifications_open={false}
+                    new_notifications={number_of_unseen_notifications}
+                    game_started={game_started}
+                    darkmode={darkmode}
+                    log_user_out={log_user_out}
+                    setdarkmode={setdarkmode}
+                  />
+
+                  {authenticated && country_required && <CountryPanel set_country_required={set_country_required} />}
+
+                  <Routes>
+
+                    <Route path="/"
+                      element={
+                        <Home user_data={user_data} dashboard_users={dashboard_users} />
+                      }
                     />
 
-                    {authenticated && country_required && <CountryPanel set_country_required={set_country_required} />}
+                    <Route path="/contribute"
+                      element={
+                        <AuthenticatedRoute>
+                          <Contribute all_animes_options={all_animes} />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                    <Routes>
-                      <Route path="/"
-                        element={
-                          <Home user_data={user_data} dashboard_users={dashboard_users} />
-                        }
-                      />
+                    <Route path="/mycontributions"
+                      element={
+                        <AuthenticatedRoute>
+                          <UserContributions />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                      <Route path="/contribute"
-                        element={
-                          <AuthenticatedRoute>
-                            <Contribute all_animes_options={all_animes} />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="/game"
+                      element={
+                        <AuthenticatedRoute>
+                          <GameView />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                      <Route path="/mycontributions"
-                        element={
-                          <AuthenticatedRoute>
-                            <UserContributions />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="/review"
+                      element={
+                        <AuthenticatedRoute>
+                          <Review />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                      <Route path="/game"
-                        element={
-                          <AuthenticatedRoute>
-                            <GameView />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="/profile"
+                      element={
+                        <AuthenticatedRoute>
+                          <UserProfile user_data={user_data} />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                      <Route path="/review"
-                        element={
-                          <AuthenticatedRoute>
-                            <Review />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="/notifications"
+                      element={
+                        <AuthenticatedRoute>
+                          <Notifications
+                            all_notifications={notifications}
+                            unseen_count={number_of_unseen_notifications}
+                            setnumber_of_unseen_notifications={setnumber_of_unseen_notifications}
+                          />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                      <Route path="/profile"
-                        element={
-                          <AuthenticatedRoute>
-                            <UserProfile user_data={user_data} />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="/settings"
+                      element={
+                        <AuthenticatedRoute>
+                          <Settings />
+                        </AuthenticatedRoute>
+                      }
+                    />
 
-                      <Route path="/notifications"
-                        element={
-                          <AuthenticatedRoute>
-                            <Notifications
-                              all_notifications={notifications}
-                              unseen_count={number_of_unseen_notifications}
-                              setnumber_of_unseen_notifications={setnumber_of_unseen_notifications}
-                            />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="/about" element={<About />} />
 
-                      <Route path="/settings"
-                        element={
-                          <AuthenticatedRoute>
-                            <Settings />
-                          </AuthenticatedRoute>
-                        }
-                      />
+                    <Route path="*" element={<NoMatch />} />
 
-                      <Route path="/about" element={<About />} />
+                  </Routes>
 
-                      <Route path="*" element={<NoMatch />} />
+                  <Footer />
 
-                    </Routes>
+                </>
+              }
+            />
 
-                    <Footer />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
 
-                  </>
-                }
-              />
-
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-
-            </Routes>
+          </Routes>
         }
 
       </div>
