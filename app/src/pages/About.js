@@ -44,9 +44,9 @@ const About = () => {
         <p>
           As we always prefer quality questions over quantity
           we have some rules and constraints when it comes to questions shown in tests,
-          always keep in mind that the goal of quizes is not
+          always keep in mind that the goal of the question is not
           to test whether the person has watched the entire anime
-          or if he remembers everything happend but to test whether the person
+          or if he remembers everything happend but rather to test whether the person
           truly understood the events, the characters, their development throughout the series, their personalities and goals,
           the plot twists ..etc.
         </p>
@@ -57,9 +57,8 @@ const About = () => {
         </p>
 
         <ul>
-          <li><strong>copying a question from google is the fastest way for your contribution to be rejected !</strong></li>
-          <li>You are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
-
+          <li>your question should be from your own creation, don't get it from the internet as it could be rejected.</li>
+          <li>you are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
           <li>avoid trivial/too easy questions.</li>
           <li>your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
           <li>try to avoid questions that are based on your personal opinion or theory. </li>

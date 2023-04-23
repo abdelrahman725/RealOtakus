@@ -4,7 +4,7 @@ const Interactions = ({ interactions }) => {
   return (
     <div className="interactions">
       <h2>Tests insights</h2>
-      {Object.keys(interactions).length > 0 ?
+      {interactions.length > 0 ?
         <table className="dashboard">
           <thead>
             <tr>
@@ -15,11 +15,11 @@ const Interactions = ({ interactions }) => {
           </thead>
 
           <tbody>
-            {Object.keys(interactions).map((anime, index) => (
+            {interactions.map((anime, index) => (
               <tr key={index}>
-                <td>{anime}</td>
-                <td>{interactions[anime].correct}</td>
-                <td>{interactions[anime].not_correct}</td>
+                <td>{anime[0]}</td>
+                <td>{anime[1]["correct"]}</td>
+                <td>{anime[1]["not_correct"]}</td>
               </tr>
             ))}
           </tbody>

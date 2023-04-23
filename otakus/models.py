@@ -37,7 +37,7 @@ def new_user_signed_up(sender, instance, created, **kwargs):
     if created and instance.email:        
         send_mail(
             subject=f"Welcome to RealOtakus!",
-            message="message to send here",
+            message=f"Hi {instance.username}, We are excited to have you in our platform!\n\n now you can start creating your own questions or participate in challenging otaku quizes! \n\n RealOtakus Team.",
             from_email=None,
             recipient_list=[instance.email],
             fail_silently=False,
@@ -57,11 +57,10 @@ def update_user_points_and_level(sender, instance, **kwargs):
 
 @receiver(m2m_changed, sender=User.animes_to_review.through)
 def on_animes_to_review_change(sender, instance, **kwargs):
-    from otakus.views import get_or_query_anime
     action = kwargs.pop('action', None)
 
     if action == "post_remove":
-        removed_animes = ", ".join([get_or_query_anime(anime_id).anime_name for anime_id in kwargs.pop('pk_set', None)])
+        removed_animes = ", ".join([cache.get("animes")[anime_id].anime_name for anime_id in kwargs.pop('pk_set', None)])
         create_notification(
             receiver=instance,
             notification=f"Sorry you are no longer a reviewer of ({removed_animes}) as you didn't comply with our review guidelines"
@@ -71,7 +70,7 @@ def on_animes_to_review_change(sender, instance, **kwargs):
         for anime_id in kwargs.pop('pk_set', None):
             create_notification(
                 receiver=instance,
-                notification=get_or_query_anime(anime_id).anime_name,
+                notification=cache.get("animes")[anime_id].anime_name,
                 kind="N"
             )
 

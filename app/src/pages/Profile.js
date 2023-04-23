@@ -49,7 +49,9 @@ const UserProfile = ({ user_data }) => {
         setgames_score_percentage(Math.round((n_user_correct_answers / (user_data.tests_started * N_Game_Questions)) * 100))
       }
 
-      setuser_interactions(interactions_dict)
+      const sorted_interactions = Object.entries(interactions_dict).sort((a, b) => b[1]["correct"] - a[1]["correct"])
+
+      setuser_interactions(sorted_interactions)
       setloading(false)
     }
 

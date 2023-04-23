@@ -1,4 +1,4 @@
-import TheDashBoard from './components/TheDashBoard'
+import DashBoard from './components/DashBoard'
 import NotAuthenticated from './NotAuthenticated'
 import { FcIdea, FcDatabase } from 'react-icons/fc'
 import { GlobalStates } from 'App'
@@ -40,8 +40,8 @@ const Home = ({ user_data, dashboard_users }) => {
         <NotAuthenticated />
       }
 
-      {dashboard_users && dashboard_users.length > 0 &&
-        <TheDashBoard dashboard_users={dashboard_users} current_user={user_data} />
+      {dashboard_users &&
+        <DashBoard dashboard_users={dashboard_users} current_user={user_data} />
       }
 
     </div>
