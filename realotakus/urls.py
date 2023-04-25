@@ -1,7 +1,5 @@
-import os
-
 from django.contrib import admin
-from django.urls import include,path
+from django.urls import include, path
 from realotakus.settings import ADMIN_PANEL_PATH
 
 urlpatterns = [

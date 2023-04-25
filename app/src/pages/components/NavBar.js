@@ -3,9 +3,9 @@ import { BsPersonFill } from 'react-icons/bs'
 import { FiInfo } from 'react-icons/fi'
 import { MdLogout } from 'react-icons/md'
 import { AiFillSetting } from 'react-icons/ai'
+import { MdDarkMode } from 'react-icons/md'
+import { HiOutlineSun } from 'react-icons/hi'
 
-//import { MdDarkMode } from 'react-icons/md'
-//import { HiOutlineSun } from 'react-icons/hi'
 import { Link } from 'react-router-dom'
 
 const NavBar = ({
@@ -14,8 +14,8 @@ const NavBar = ({
   new_notifications,
   game_started,
   log_user_out,
-  //darkmode,
-  //setdarkmode
+  darkmode,
+  setdarkmode
 }) => {
 
   return (
@@ -23,13 +23,13 @@ const NavBar = ({
 
       <div className="left" >
 
-        <div>
+        <div title="RealOtakus Home">
           <Link to="/" className="logo" tabIndex={game_started === true ? -1 : 1}>
             <strong className="logo_text">Real Otakus</strong>
           </Link>
         </div>
 
-        <div className="about_icon">
+        <div className="about_icon" title="about">
           <Link to="about" tabIndex={game_started === true ? -1 : 1}>
             <FiInfo className="nav_icon" />
           </Link>
@@ -40,7 +40,8 @@ const NavBar = ({
 
       {authenticated ?
         <div className="right right_existent">
-          <div className="notification">
+
+          <div className="notification" title="notifications">
             <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
               <IoMdNotifications className="nav_icon" />
             </Link>
@@ -49,25 +50,24 @@ const NavBar = ({
             </span>
           </div>
 
-          <div>
+          <div title="your profile">
             <Link to="profile" tabIndex={game_started === true ? -1 : 1}>
               <BsPersonFill className="nav_icon" />
             </Link>
           </div>
 
-          {/* <div>
-            {darkmode &&  <HiOutlineSun className="nav_icon" onClick={() => setdarkmode(false)} />}
+          {/* <div title={darkmode ? "light mode" : "dark mode"}>
+            {darkmode && <HiOutlineSun className="nav_icon" onClick={() => setdarkmode(false)} />}
             {!darkmode && <MdDarkMode className="nav_icon" onClick={() => setdarkmode(true)} />}
           </div> */}
 
-
-          <div>
+          <div title="settings">
             <Link to="settings" tabIndex={game_started === true ? -1 : 1} >
               <AiFillSetting className="nav_icon" />
             </Link>
           </div>
 
-          <div>
+          <div title="log out">
             <Link onClick={log_user_out} tabIndex={game_started === true ? -1 : 1} >
               <MdLogout className="nav_icon" />
             </Link>

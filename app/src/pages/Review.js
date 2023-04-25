@@ -146,8 +146,8 @@ const Review = () => {
 
             <p className="link_to_about_page">
               make sure you have read&nbsp;
-              <Link className="simple_link" to="/about#contribution-guidelines" target={"_blank"}>
-                Contribution Guidlines
+              <Link className="simple_link" to="/about#review-guidelines" target={"_blank"}>
+                Review Guidelines
               </Link>&nbsp;before start reviewing
             </p>
 

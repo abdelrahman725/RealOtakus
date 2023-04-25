@@ -3,7 +3,7 @@ import { useState, useRef, useContext } from 'react'
 import async_http_request from './AsyncRequest'
 import { GlobalStates } from 'App'
 import Select from 'react-select'
-import { SelectStyles, countries } from "Constants"
+import { SelectStyles, COUNTRIES } from "Constants"
 
 const AuthenticatingForms = () => {
 
@@ -139,7 +139,7 @@ const AuthenticatingForms = () => {
             {login_view ?
                 <div className="login_container">
                     <a href="/accounts/password/reset/" className="simple_link">Forgot password ?</a>
-                    
+
                     <form onSubmit={login_user} >
                         <input
                             name="username"
@@ -194,8 +194,8 @@ const AuthenticatingForms = () => {
                         name="country"
                         placeholder="country"
                         isClearable={false}
-                        isLoading={!countries}
-                        options={countries}
+                        isLoading={!COUNTRIES}
+                        options={COUNTRIES}
                         onChange={on_country_selection}
                         value={selected_country}
                         ref={country_select}

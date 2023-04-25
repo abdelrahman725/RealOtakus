@@ -1,4 +1,4 @@
-const Competitor = ({ index, name, points, level, country, contributions, current_user }) => {
+const Competitor = ({ index, name, points, level, country_code, country_name, contributions, current_user }) => {
 
   return (
     <tr className={current_user ? "current_user" : ""}>
@@ -8,11 +8,11 @@ const Competitor = ({ index, name, points, level, country, contributions, curren
       <td>{level}</td>
       <td>{contributions}</td>
       <td>
-        {country &&
-          <img src={`https://flagcdn.com/256x192/${country}.png`} alt="country_flag" width="32" height="24"></img>
+        {country_code &&
+          <img src={`https://flagcdn.com/256x192/${country_code}.png`} alt="country_flag" width="32" height="24" title={country_name}></img>
         }
       </td>
-    </tr>
+    </tr >
 
   )
 }

@@ -3,7 +3,7 @@ import Select from 'react-select'
 import { CgCloseO } from 'react-icons/cg'
 import { useState, useContext, useRef } from "react"
 import { GlobalStates } from "App"
-import { SelectStyles, countries } from "Constants"
+import { SelectStyles, COUNTRIES } from "Constants"
 import async_http_request from './AsyncRequest'
 
 const CountryPanel = ({ set_country_required }) => {
@@ -71,8 +71,8 @@ const CountryPanel = ({ set_country_required }) => {
                     className="react_select"
                     placeholder="choose your country"
                     isClearable={false}
-                    isLoading={!countries}
-                    options={countries}
+                    isLoading={!COUNTRIES}
+                    options={COUNTRIES}
                     onChange={on_country_selection}
                     value={selected_country}
                     ref={country_select}

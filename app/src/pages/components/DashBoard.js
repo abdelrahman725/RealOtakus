@@ -1,4 +1,5 @@
 import Competitor from "./Competitor"
+import { COUNTRIES_DICT } from "Constants"
 
 const DashBoard = ({ dashboard_users, current_user }) => {
 
@@ -14,9 +15,9 @@ const DashBoard = ({ dashboard_users, current_user }) => {
             <tr>
               <th className="user_order_head"></th>
               <th> Otaku </th>
-              <th> Score </th>
+              <th title="accumulated score from quizes and contributions"> Score </th>
               <th> Level </th>
-              <th> Contributions </th>
+              <th title="approved contributions"> Contributions </th>
               <th> Country </th>
             </tr>
           </thead>
@@ -31,7 +32,9 @@ const DashBoard = ({ dashboard_users, current_user }) => {
                 points={competitor.points}
                 level={competitor.level}
                 contributions={competitor.n_contributions}
-                country={competitor.country} />
+                country_code={competitor.country}
+                country_name={COUNTRIES_DICT[competitor.country]}
+              />
             ))
             }
 

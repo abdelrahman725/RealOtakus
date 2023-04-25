@@ -95,6 +95,18 @@ const About = () => {
 
       </div>
 
+      <div id="review-guidelines">
+        <h2>Review Guidelines <span>(for reviewers)</span></h2>
+        <p>to do </p>
+      </div>
+
+      <div id="become-reviewer">
+        <h2>How to become a reviewer</h2>
+        <p>
+          to be determined soon
+        </p>
+      </div>
+
       <div>
         <h2>How we handle Contributions</h2>
         <p>
@@ -105,12 +117,6 @@ const About = () => {
         </p>
       </div>
 
-      <div id="become-reviewer">
-        <h2>How to become a reviewer</h2>
-        <p>
-          to be determined soon
-        </p>
-      </div>
 
       {/* <div>
         <h2>Buy us a cup of Coffee </h2>
