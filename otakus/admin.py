@@ -18,6 +18,10 @@ from otakus.helpers import to_local_date_time
 
 from otakus.constants import COUNTRIES, QUESTIONSCOUNT
 
+admin.site.site_header = "RealOtakus Administration"
+admin.site.site_title = admin.site.site_header
+admin.site.index_title = ""
+
 # 8 custome filter classes
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
@@ -189,7 +193,7 @@ class UserAdmin(admin.ModelAdmin):
     "animes_to_review",
     "password",
     "is_staff",
-    #"user_permissions",
+    "user_permissions",
     "last_login",
     "date_joined",
     "is_active"
@@ -197,7 +201,7 @@ class UserAdmin(admin.ModelAdmin):
 
   autocomplete_fields = ["animes_to_review",]
   
-  #filter_horizontal = ("user_permissions",)
+  filter_horizontal = ("user_permissions",)
 
   list_display_links = ("username",)
 
@@ -398,9 +402,6 @@ class ContributionAdmin(admin.ModelAdmin):
 
     return "N/A"
 
-  def has_delete_permission(self, request, obj=None):
-    return True
-    return False
 
   def has_add_permission(self,request,obj=None):
     return False
@@ -452,13 +453,19 @@ class QuestionAdmin(admin.ModelAdmin):
   
   search_fields   =  ("question","anime__anime_name")
 
+  def get_queryset(self, request):
+    query = super(QuestionAdmin, self).get_queryset(request)
+    if request.user.is_staff and not request.user.is_superuser:
+      return query.filter(anime__in = request.user.animes_to_review.all())
+    return  query
+
   def contributor(self,obj):
     try:
       if obj.contribution.contributor == None:
         return "DELETED"
       return obj.contribution.contributor
     except Contribution.DoesNotExist:
-      return "admin"
+      return "admin/moderator"
 
   def correct_answers(self,obj):
     return obj.question_interactions.filter(correct_answer=True).count()
@@ -473,13 +480,6 @@ class QuestionAdmin(admin.ModelAdmin):
     if obj and obj.pk:  return self.readonly_fields + ('anime',)
     return self.readonly_fields
   
-
-# hide Delete button if it's an active question
-  def has_delete_permission(self, request, obj=None):
-    if obj: 
-      return not obj.active  
-    return True
-
   def _contribution(self,obj):
     try:
       if obj.contribution:
@@ -507,18 +507,6 @@ class QuestionAdmin(admin.ModelAdmin):
     except:
       pass
     return None
-
-
-# admin models inherit from this class can't be changed or deleted
-class ReadOnly(admin.ModelAdmin):
- 
-  def has_change_permission(self, request, obj=None):
-    return False
- 
-  def has_delete_permission(self, request, obj=None):
-    return True
-    return False
-
 
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
@@ -548,6 +536,8 @@ class AnimeAdmin(admin.ModelAdmin):
 
   def get_queryset(self, request):
     query = super(AnimeAdmin, self).get_queryset(request)
+    if request.user.is_staff and not request.user.is_superuser:
+      return query.filter(id__in=request.user.animes_to_review.all()).annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
     return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
   
   def view_anime(self,obj):
@@ -562,9 +552,10 @@ class AnimeAdmin(admin.ModelAdmin):
   def _reviewers(self,obj):
     return obj.reviewers.all().count()
 
+
 @admin.register(QuestionInteraction)
-class QuestionInteractionAdmin(ReadOnly):
-    
+class QuestionInteractionAdmin(admin.ModelAdmin):
+  
   list_display = (
     "user",
     "question",
@@ -581,8 +572,11 @@ class QuestionInteractionAdmin(ReadOnly):
   def has_add_permission(self, request, obj=None):
     return False
   
+  def has_change_permission(self, request, obj=None):
+    return False
+  
 @admin.register(Notification)
-class NotificationAdmin(ReadOnly):
+class NotificationAdmin(admin.ModelAdmin):
 
   list_display = (
     "kind",
