@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { SlSocialTwitter } from 'react-icons/sl'
-import { BsGithub } from 'react-icons/bs'
+import { BsGithub, BsFillQuestionCircleFill } from 'react-icons/bs'
 import { SiGmail } from 'react-icons/si'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 
 const About = () => {
 
@@ -26,14 +26,14 @@ const About = () => {
   return (
     <div className="about">
 
-      <p className="love">created with love by Bedo</p>
+      <p className="love">created with love and enthusiasm by Bedo</p>
 
       <div>
         <h2>About</h2>
         <p>
-          Real Otaku is the platform for only anime enthusiasts and fans, founded in 2023,
+          Real Otaku is the platform for anime enthusiasts and fans, founded in 2023,
           it's about contributing anime questions and participate in games
-          where you answer questions contributed by others,
+          where users answer mindblowing questions contributed by others !
           one can also be a reviewr of the incoming contributions
           if he/she is eligible.
         </p>
@@ -57,18 +57,18 @@ const About = () => {
         </p>
 
         <ul>
-          <li>your question should be from your own creation, don't get it from the internet as it could be rejected.</li>
-          <li>you are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
-          <li>avoid trivial/too easy questions.</li>
-          <li>your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
-          <li>try to avoid questions that are based on your personal opinion or theory. </li>
-          <li>make sure to make 4 distinguishable choices.</li >
-          <li>the 3 wrong choices must not have any common pattern,
+          <li>Your question should be from your own creation, don't get it from the internet as it could be rejected.</li>
+          <li>You are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
+          <li>Avoid trivial/too easy questions.</li>
+          <li>Your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
+          <li>Try to avoid questions that are based on your personal opinion or theory. </li>
+          <li>Make sure to make 4 distinguishable choices.</li >
+          <li>The 3 wrong choices must not have any common pattern,
             in other words, the right choice shouldn't be too obvious at first glance,
             so the question experience is more interesting and challenging.
           </li>
-          <li>your question must be only relevant to anime and doesn't contain any racist, sexual, political, religious or hate speech content.</li>
-          <li>your question must be in a valid english format. </li>
+          <li>Your question must be only relevant to anime and doesn't contain any racist, sexual, political, religious or hate speech content.</li>
+          <li>Your question must be in a valid english format. </li>
         </ul>
 
         <p>Some (not limited to) recommended ideas for questions :</p>
@@ -97,32 +97,44 @@ const About = () => {
 
       <div id="review-guidelines">
         <h2>Review Guidelines <span>(for reviewers)</span></h2>
-        <p>to do </p>
-      </div>
-
-      <div id="become-reviewer">
-        <h2>How to become a reviewer</h2>
-        <p>
-          to be determined soon
+        <p>Reviewing contributed questions is critical for us as it makes sure that only good quality questions exist in RealOtakus,
+          with that in mind, you should be be aware of the importance of reviewers and their impact on the overall experience in RealOtakus, good reviewers means good content,
+          so not taking the role seriously can result in taking the role from you and other consequences.
         </p>
+        <p>Things to keep in mind when you are reviewing any contributed question :</p>
+        <ul>
+          <li>It's really important to be interested in the anime you are reviewing its question.</li>
+          <li>Needless to say, the question should comply with our <Link className="simple_link" to="/about#contribution-guidelines">Contribution Guidelines.</Link></li>
+          <li>Don't judge the question and take your decision quickly, be patient, judge wisely and objectively.</li>
+          <li>It's always good to review questions ASAP, avoid being inactive for long period.</li>
+          <li>It's good to do some research if needed.</li>
+          <li>If in doubt don't hesitate to contact us.</li>
+        </ul>
+
       </div>
 
-      <div>
-        <h2>How we handle Contributions</h2>
+      <div id="faq">
+        <h2 title="frequently asked questions">FAQ &nbsp;<BsFillQuestionCircleFill className="faq_icon icon" /></h2>
+
+        <h3 id="handling-contributions">How we handle Contributions ?</h3>
         <p>
           Contributed questions get validated and reviewed (by reviewers or RealOtakus team) based on the above Guidelines.
         </p>
         <p>
           Please note that Realotakus has the right to modify or delete (if inappropriate) any contributed question before or after being reviewed.
         </p>
+
+        <h3 id="become-reviewer">How to become a reviewer ?</h3>
+        <p>
+          to be determined soon
+        </p>
+
       </div>
 
-
-      {/* <div>
+      {/* 
+      <div>
         <h2>Buy us a cup of Coffee </h2>
-        <a href="/" target="_blank" rel="noreferrer">
-          <FaDonate className="icon" />
-        </a>
+        <a href="/" target="_blank" rel="noreferrer"></a>
       </div> */}
 
       {/* <div>

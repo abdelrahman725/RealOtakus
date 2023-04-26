@@ -9,8 +9,8 @@ const Review = () => {
 
   const [contributors_contributions, set_contributors_contributions] = useState()
   const [animes, set_animes] = useState()
-  const [animes_options, setanimes_options] = useState([{ value: "all", label: "All" }])
-  const [selected_anime, setselected_anime] = useState()
+  const [animes_options, setanimes_options] = useState([{ value: "all", label: "All animes" }])
+  const [selected_anime, setselected_anime] = useState({ value: "all", label: "All animes" })
   const [result_msg, set_result_msg] = useState("loading contributions...")
 
   const location = useLocation()
@@ -36,16 +36,16 @@ const Review = () => {
   }
 
   const filter_questions = (anime) => {
-    if (selected_anime) {
-      if (selected_anime.value === "all")
-        return true
+    if (selected_anime.value === "all")
+      return true
 
-      return selected_anime.value === anime
-    }
-    return true
+    return selected_anime.value === anime
   }
 
   useEffect(() => {
+
+    window.scrollTo({ top: 0 })
+
     let cancled = false
 
     location.state && setselected_anime(location.state)
@@ -84,7 +84,7 @@ const Review = () => {
     fetch_contributions()
 
     return () => {
-      setanimes_options([{ value: "all", label: "All" }])
+      setanimes_options([{ value: "all", label: "All animes" }])
       cancled = true
     }
 
@@ -99,7 +99,7 @@ const Review = () => {
 
           <div className="animes_for_review">
 
-            <p><strong>{animes.reduce((total, cur_anime) => total + cur_anime.reviewed_contributions, 0)}</strong> contributions Reviewed</p>
+            <p><strong>{animes.reduce((total, cur_anime) => total + cur_anime.reviewed_contributions, 0)}</strong> contributions have been reviewed</p>
 
             <table className="dashboard">
               <thead>
@@ -125,12 +125,8 @@ const Review = () => {
 
             <p>
               <strong>
-                {selected_anime ?
-                  contributors_contributions.filter(cont => cont.approved === null && (selected_anime.value === cont.question.anime.anime_name || selected_anime.value === "all")).length
-                  :
-                  contributors_contributions.filter(cont => cont.approved === null).length
-                }
-              </strong>  contributions need review
+                {contributors_contributions.filter(cont => cont.approved === null && (selected_anime.value === cont.question.anime.anime_name || selected_anime.value === "all")).length}
+              </strong> {selected_anime.value === "all" && "total"}  contributions need review
             </p>
 
             <Select
@@ -138,14 +134,13 @@ const Review = () => {
               isDisabled={contributors_contributions.length === 0}
               value={selected_anime}
               className="react_select"
-              placeholder={`filter ${animes_options.length - 1} animes`}
               options={animes_options}
               onChange={handle_questions_filter}
               ref={anime_select}
             />
 
             <p className="link_to_about_page">
-              make sure you have read&nbsp;
+              you must read&nbsp;
               <Link className="simple_link" to="/about#review-guidelines" target={"_blank"}>
                 Review Guidelines
               </Link>&nbsp;before start reviewing

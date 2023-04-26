@@ -869,15 +869,18 @@ a {
   .icon {
     font-size: 26px;
   }
-
-  a {
-    text-decoration: none;
-    color: black;
-    margin-right: 45px;
-    margin-bottom: 15px;
+  
+  .faq_icon {
+    position: relative;
+    top: 5px;
   }
 
   .community_links {
+    a {
+      color: black;
+      margin-right: 45px;
+      margin-bottom: 15px;
+    }
     display: flex;
     flex-wrap: wrap;
     padding: 5px;

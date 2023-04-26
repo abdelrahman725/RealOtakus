@@ -26,7 +26,7 @@ const Contribute = ({ all_animes_options }) => {
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
 
-  // excluded symbols:  # ` ~ @ ^ * | \  as they are rarely used in questions  
+  // excluded symbols:  # ` ~ @ ^ * | \  as they are rarely used in questions-type text
   const excluded_symbols = /[#`~@^*|\\]/
   const extra_space = /\s{2,}/
   const required_pattern = /^[a-z0-9\s.,:;'"({\-/<>_=+!?%$&})]+$/i

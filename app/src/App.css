@@ -941,11 +941,9 @@ a {
   font-size: 26px;
 }
 
-.about a {
-  text-decoration: none;
-  color: black;
-  margin-right: 45px;
-  margin-bottom: 15px;
+.about .faq_icon {
+  position: relative;
+  top: 5px;
 }
 
 .about .community_links {
@@ -955,6 +953,12 @@ a {
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
   padding: 5px;
+}
+
+.about .community_links a {
+  color: black;
+  margin-right: 45px;
+  margin-bottom: 15px;
 }
 
 .about .community_links span {
