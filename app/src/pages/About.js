@@ -101,7 +101,7 @@ const About = () => {
           with that in mind, you should be be aware of the importance of reviewers and their impact on the overall experience in RealOtakus, good reviewers means good content,
           so not taking the role seriously can result in taking the role from you and other consequences.
         </p>
-        <p>Things to keep in mind when you are reviewing any contributed question :</p>
+        <p>Things to keep in mind when you are reviewing contributions :</p>
         <ul>
           <li>It's really important to be interested in the anime you are reviewing its question.</li>
           <li>Needless to say, the question should comply with our <Link className="simple_link" to="/about#contribution-guidelines">Contribution Guidelines.</Link></li>

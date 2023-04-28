@@ -15,6 +15,9 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+
+REDIS_HOST = "127.0.0.1"  if DEBUG == True else "redis_producion_host"
+
 CORS_ALLOW_CREDENTIALS = True
 
 
@@ -131,7 +134,7 @@ CACHES = {
 } if DEBUG == True else {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379',
+        'LOCATION': f'redis://{REDIS_HOST}:6379',
     }
 }
 
@@ -145,7 +148,7 @@ CHANNEL_LAYERS =  {
     'default': {  
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)],
+            'hosts': [(REDIS_HOST, 6379)],
         },
     }
 }

@@ -18,7 +18,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     if (kind === null)
       return
 
-    if (kind === "R") {
+    if (kind === "R" || kind === "N") {
       naviage_routes(
         notification_kind_to_path[kind],
         { state: { value: filtered_anime, label: filtered_anime } }
@@ -57,7 +57,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
       return (
         <p>
           Congratulations! you are now a reviewer of <strong>{notification_or_anime_name}</strong>, please note that
-          your own contributions for <strong>{notification_or_anime_name}</strong> still need to be reviewed by other reviewer
+          your own contributions for <strong>{notification_or_anime_name}</strong> still need to be reviewed by other reviewers
         </p>
       )
     }
@@ -92,7 +92,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     if (unseen_count <= 0)
       return
 
-    // clears unseen_notifcations count when user sees them
+    // clears unseen_notifcations count when user opens notifications
     setnumber_of_unseen_notifications(0)
 
     // update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
