@@ -6,13 +6,6 @@ const DashBoard = ({ dashboard_users, current_user }) => {
 
   const [all_dashboard_displayed, set_all_dashboard_displayed] = useState(false)
 
-  const show_competitor = (index) => {
-    if (index < 10)
-      return true
-
-    return all_dashboard_displayed
-  }
-
   return (
     <div className="dashboard_container">
 
@@ -36,7 +29,7 @@ const DashBoard = ({ dashboard_users, current_user }) => {
 
             <tbody>
               {dashboard_users.map((competitor, index) => (
-                (show_competitor(index)) &&
+                (index < 10 ? true : all_dashboard_displayed) &&
                 <Competitor
                   key={index}
                   index={index}
