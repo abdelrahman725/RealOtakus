@@ -1,18 +1,8 @@
-from datetime import timedelta
-
 from django.utils import timezone
 
 import otakus.models
 
 from otakus.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
-
-
-def to_local_date_time(utc_datetime):
-  if utc_datetime:
-    return utc_datetime + timedelta(minutes=120)
-    #local_tz = pytz.timezone('Africa/Cairo')
-    #return utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_tz)
-  return "N/A"
 
 
 def create_notification(notification, receiver=None, broad=False, kind=None):
@@ -36,34 +26,23 @@ def notify_reviewers_of_a_new_contribution(anime, contributor):
             )
 
 
-def contribution_reviewed(contribution):
+def contribution_got_reviewed(contributed_question):
 
-    contribution.date_reviewed = timezone.now()
+    contributed_question.date_reviewed = timezone.now()
 
-    if contribution.reviewer == None:
-        contribution.reviewer = otakus.models.User.objects.get(is_superuser=True)
+    if contributed_question.approved == True:
 
-    if contribution.approved == True:
+        if contributed_question.contributor:
+            contributed_question.contributor.points += 10
+            contributed_question.contributor.save()
 
-        if contribution.contributor:
-            contribution.contributor.points += 10
-            contribution.contributor.save()
+        contributed_question.active = True
 
-        contribution.question.active = True
-        contribution.question.save()
-
-        create_notification(
-            receiver=contribution.contributor,
-            notification=contribution.question.anime,
-            kind="A"
-        )
-
-    if contribution.approved == False:
-        create_notification(
-            receiver=contribution.contributor,
-            notification=contribution.question.anime,
-            kind="F"
-        )
+    create_notification(
+        receiver=contributed_question.contributor,
+        notification=contributed_question.anime,
+        kind= "A" if contributed_question.approved == True else "F"
+    )
 
 
 def get_user_new_level(user):

@@ -40,28 +40,20 @@ class User(AbstractUser):
 
 class Question(models.Model):
     anime = models.ForeignKey(Anime, on_delete=models.PROTECT, related_name="anime_questions")
+    contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="contributions")
+    
     question = models.TextField(max_length=350)
     choice1 = models.TextField(max_length=150)
     choice2 = models.TextField(max_length=150)
     choice3 = models.TextField(max_length=150)
     right_answer = models.TextField(max_length=150)
+    
     active = models.BooleanField(default=False)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')
-        ]
-        ordering = ["-id"]
-        abstract = True
-
-
-class Contribution(models.Model):
-    question = models.OneToOneField(Question, on_delete=models.SET_NULL,null=True, related_name="contribution")
-    contributor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="contributions")
     approved = models.BooleanField(null=True, default=None)
     reviewer =  models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True, related_name="contributions_reviewed")    
     date_created = models.DateTimeField(default=timezone.now)
     date_reviewed = models.DateTimeField(null=True,blank=True) 
+    is_contribution = models.BooleanField(default=False)
     
     feedback = models.CharField(
         choices=(
@@ -75,9 +67,14 @@ class Contribution(models.Model):
         null=True,
         blank=True
     )
-    
+
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['anime', 'question'], name='unique question for each anime')
+        ]
+        ordering = ["-id"]
         abstract = True
+
 
 
 class QuestionInteraction(models.Model):

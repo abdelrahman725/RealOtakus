@@ -1,6 +1,5 @@
 from otakus.models import User
 from otakus.models import Anime
-from otakus.models import Contribution
 from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification
@@ -59,33 +58,22 @@ class AnimeReviewedContributionsSerializer(serializers.ModelSerializer):
         )
 
 
-class QuestionSerializer(serializers.ModelSerializer):
+class ContributionSerializer(serializers.ModelSerializer):
     anime = AnimeSerializer()
-
+    
     class Meta:
         model = Question
         fields = (
+            "id",
             "anime",
             "question",
             "choice1",
             "choice2",
             "choice3",
             "right_answer",
-            "id",
-        )
-
-
-class ContributionSerializer(serializers.ModelSerializer):
-    question = QuestionSerializer()
-
-    class Meta:
-        model = Contribution
-        fields = (
-            "id",
             "approved",
             "date_created",
             "feedback",
-            "question"
         )
 
 

@@ -14,7 +14,6 @@ from rest_framework.decorators import api_view, permission_classes
 
 from otakus.models import User
 from otakus.models import Anime
-from otakus.models import Contribution
 from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification
@@ -74,7 +73,7 @@ def get_unauthenticated_home_data(request):
         cache.set(
             key="leaderboard",
             value=leaderboard,
-            timeout=12
+            timeout=15
         )
     
     return Response({
@@ -111,7 +110,6 @@ def get_user_authenticated_data(request):
         ),
         many=True
     )
-
     return Response({
         "user_data": user_data,
         "notifications": serialized_notifications.data
@@ -146,9 +144,9 @@ def get_game_animes(request):
                     filter=(
                         Q(anime_questions__active=True)
                         &
-                        ~Q(anime_questions__contribution__contributor=user)
+                        ~Q(anime_questions__contributor=user)
                         &
-                        ~Q(anime_questions__contribution__reviewer=user)
+                        ~Q(anime_questions__reviewer=user)
                     ),
                     distinct=True
                 )
@@ -177,9 +175,9 @@ def get_game(request, game_anime):
 
     # this game questions
     questions = selected_anime.anime_questions.filter(
-        (~Q(contribution__contributor=user)
+        (~Q(contributor=user)
          &
-         ~Q(contribution__reviewer=user)),
+         ~Q(reviewer=user)),
         active=True
     ).exclude(
         pk__in=user.questions_interacted_with.values_list('question__pk', flat=True)
@@ -322,11 +320,12 @@ def get_or_make_contribution(request):
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
-            user.contributions.filter(question__isnull=False).select_related(
-                "question").order_by("-id"),
+            user.contributions.filter(is_contribution = True).select_related(
+                "anime").order_by("-id"),
             many=True
         )
         return Response(user_contributions.data)
+
 
     # limit contributions to 10 within the last 24 hours
     if user.contributions.filter(date_created__gte = timezone.now() - timedelta(days=1)).count() >= 10:
@@ -336,9 +335,12 @@ def get_or_make_contribution(request):
         anime = cache.get("animes")[request.data["anime"]]
         
         question_object = request.data["question"]
-
-        contributed_question = Question.objects.create(
+        
+        # contributed question
+        Question.objects.create(
             anime=anime,
+            contributor = user,
+            is_contribution = True,
             question=question_object["question"],
             right_answer=question_object["rightanswer"],
             choice1=question_object["choice1"],
@@ -346,16 +348,10 @@ def get_or_make_contribution(request):
             choice3=question_object["choice3"]
         )
 
-        Contribution.objects.create(
-            contributor=user,
-            question=contributed_question
-        )
-
         return Response({}, status=status.HTTP_201_CREATED)
 
     except IntegrityError:
         return Response({}, status=status.HTTP_409_CONFLICT)
-
 
 
 @api_view(["GET", "PUT"])
@@ -370,64 +366,65 @@ def get_or_review_contribution(request):
 
         animes_for_user_to_review = user.animes_to_review.annotate(
             reviewed_contributions=Count(
-                "anime_questions__contribution", filter=(
-                    Q(anime_questions__contribution__approved__isnull=False)
+                "anime_questions", filter=(
+                    Q(anime_questions__approved__isnull=False)
                     &
-                    Q(anime_questions__contribution__reviewer=user)
+                    Q(anime_questions__reviewer=user)
                 )
             )
         )
 
-        contributed_questions = ContributionSerializer(
-            Contribution.objects.filter(
+        pending_contributions = ContributionSerializer(
+            Question.objects.filter(
                 ~Q(contributor=user),
-                question__anime__in=animes_for_user_to_review,
+                is_contribution= True,
+                anime__in=animes_for_user_to_review,
                 approved__isnull=True
-            ).select_related("question").select_related("question__anime").order_by("-id"),
+            ).select_related("anime").order_by("-id"),
             many=True
         )
 
         animes = AnimeReviewedContributionsSerializer(animes_for_user_to_review, many=True)
 
         return Response({
-            "questions": contributed_questions.data,
+            "questions": pending_contributions.data,
             "animes": animes.data
         })
 
+    try:
+        new_contribution = Question.objects.get(
+            pk=request.data["contribution"]
+        )
 
-    contribution = Contribution.objects.get(
-        pk=request.data["contribution"]
-    )
+        if new_contribution.anime not in user.animes_to_review.all():
+            return Response({"info":"not authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    if contribution.question == None:
+        if new_contribution.approved != None:
+            return Response({"info":"this question got reviewed by another reviewer"}, status=status.HTTP_409_CONFLICT)
+
+        review_decision = request.data["state"]
+        new_contribution.reviewer = user
+        new_contribution.feedback = request.data["feedback"]
+
+        if review_decision == 1:
+            new_contribution.approved = True
+            new_contribution.save()
+
+            return Response({
+                "info": "question is approved"
+            })
+
+        if review_decision == 0:
+            new_contribution.approved = False
+            new_contribution.save()
+
+            return Response({
+                "info": "question is rejected"
+            })
+        
+
+    except Question.DoesNotExist:
         return Response({"info":"this question doesn't exist anymore"}, status=status.HTTP_404_NOT_FOUND)
-
-
-    if contribution.question.anime not in user.animes_to_review.all():
-        return Response({"info":"not authorized"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    if contribution.approved != None:
-        return Response({"info":"this question got reviewed by another reviewer"}, status=status.HTTP_409_CONFLICT)
-
-    review_decision = request.data["state"]
-    contribution.reviewer = user
-    contribution.feedback = request.data["feedback"]
-
-    if review_decision == 1:
-        contribution.approved = True
-        contribution.save()
-
-        return Response({
-            "info": "question is approved"
-        })
-
-    if review_decision == 0:
-        contribution.approved = False
-        contribution.save()
-
-        return Response({
-            "info": "question is rejected"
-        })
 
 
 

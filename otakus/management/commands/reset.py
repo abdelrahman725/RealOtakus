@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 
 from otakus.models import User
-from otakus.models import Contribution
 from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification 
@@ -28,11 +27,9 @@ class Command(BaseCommand):
         
         Notification.objects.all().delete()
   
-        Question.objects.filter(contribution__isnull=False).update(active=False)
+        Question.objects.filter(is_contribution=True).update(active=False)
 
-        Question.objects.filter(contribution__isnull=False).delete()
-        
-        Contribution.objects.all().delete()
+        Question.objects.filter(is_contribution=True).delete()
      
         QuestionInteraction.objects.all().delete()
     

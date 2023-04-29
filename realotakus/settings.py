@@ -13,6 +13,7 @@ ADMIN_PANEL_PATH = 'admin/' if DEBUG == True else os.getenv('DJANGO_ADMIN_PATH')
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
+    "192.168.1.3"
 ]
 
 
@@ -72,6 +73,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'realotakus.custom_middleware.LocalTimezoneMiddleware'
 ]
 
 

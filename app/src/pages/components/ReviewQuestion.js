@@ -67,7 +67,7 @@ const ReviewQuestion = ({
 
                 set_animes(animes =>
                     animes.map(obj => {
-                        if (obj.id === contribution_object.question.anime.id) {
+                        if (obj.id === contribution_object.anime.id) {
                             return {
                                 ...obj, reviewed_contributions: obj.reviewed_contributions + 1
                             }
@@ -111,15 +111,15 @@ const ReviewQuestion = ({
 
     return (
         <div className={`each_question_for_review_container ${invalid_review ? invalid_review : contribution_class}`}>
-            <p className="question_anime"> <strong>{contribution_object.question.anime.anime_name}</strong></p>
+            <p className="question_anime"> <strong>{contribution_object.anime.anime_name}</strong></p>
             <p className="date_created">{get_local_date(contribution_object.date_created)}</p>
             <div className="question_contents">
-                <p className="question">{contribution_object.question.question}</p>
+                <p className="question">{contribution_object.question}</p>
                 <div className="choices">
-                    <p className="right_answer"> {contribution_object.question.right_answer}</p>
-                    <p> {contribution_object.question.choice1}</p>
-                    <p> {contribution_object.question.choice2}</p>
-                    <p> {contribution_object.question.choice3}</p>
+                    <p className="right_answer"> {contribution_object.right_answer}</p>
+                    <p> {contribution_object.choice1}</p>
+                    <p> {contribution_object.choice2}</p>
+                    <p> {contribution_object.choice3}</p>
                 </div>
             </div>
 

@@ -16,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--users",
             type=int,
-            default=20,
+            default=10,
         )
 
     def handle(self, *args, **options):

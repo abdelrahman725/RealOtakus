@@ -1,6 +1,6 @@
 import threading
 
-from django.db import models, IntegrityError
+from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.cache import cache
@@ -16,7 +16,7 @@ from otakus import base_models
 from otakus.helpers import create_notification
 from otakus.helpers import get_user_new_level
 from otakus.helpers import notify_reviewers_of_a_new_contribution
-from otakus.helpers import contribution_reviewed
+from otakus.helpers import contribution_got_reviewed
 
 # excluding super users (e.g. admin) from all users queryset
 class OtakusQuerySetManager(models.Manager):
@@ -79,7 +79,7 @@ class Anime(base_models.Anime):
 
     @property
     def total_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False).count()
+        return self.anime_questions.filter(is_contribution=True).count()
 
     @property
     def total_questions(self):
@@ -91,15 +91,15 @@ class Anime(base_models.Anime):
 
     @property
     def approved_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False, contribution__approved=True).count()
+        return self.anime_questions.filter(approved=True,is_contribution=True).count()
 
     @property
     def pending_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False, contribution__approved__isnull=True).count()
+        return self.anime_questions.filter(approved__isnull=True,is_contribution=True).count()
 
     @property
     def rejected_contributions(self):
-        return self.anime_questions.filter(contribution__isnull=False, contribution__approved=False).count()
+        return self.anime_questions.filter(approved=False,is_contribution=True).count()
 
     def __str__(self): return f"{self.anime_name}"
 
@@ -148,6 +148,16 @@ class Question(base_models.Question):
         if len(self.question) > 55:
             return f"{self.question[:55]}..."
         return f"{self.question}"
+    
+    def clean(self):
+        if not self.is_contribution: return
+
+        if self.approved == False and self.feedback == None:
+            raise ValidationError("feedback needed for rejection")
+
+        if self.approved == True and self.feedback != None:
+            raise ValidationError("no feedback for approved question")
+
 
 
 @receiver(pre_delete, sender=Question)
@@ -158,38 +168,21 @@ def protect_active_questions(sender, instance, **kwargs):
         )
 
 
-class Contribution(base_models.Contribution):
-    def __str__(self) -> str:
-        return Question.__str__(self.question)
-    
-    def clean(self):
-        if self.approved == False and self.feedback == None:
-            raise ValidationError("feedback needed for rejection")
 
-        if self.approved == True and self.feedback != None:
-            raise ValidationError("no feedback for approved question")
-
-
-@receiver(pre_save, sender=Contribution)
-def pre_contribution_review(sender, instance, **kwargs):
-    if instance.pk != None:
-
-        if instance.approved == None:
-            raise IntegrityError(
-                "approved = None, reviewed questions can't return back to be unreviewed"
-            )
-
-        if  instance.approved != None:
-            contribution_reviewed(instance)
+@receiver(pre_save, sender=Question)
+def post_contribution_review(sender, instance, **kwargs):
+    if instance.pk == None or instance.date_reviewed or not instance.is_contribution or instance.approved == None:
+        return
+    contribution_got_reviewed(instance)
 
 
 
-@receiver(post_save, sender=Contribution)
+@receiver(post_save, sender=Question)
 def post_contribution_creation(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.is_contribution:
         async_notification = threading.Thread(
             target=notify_reviewers_of_a_new_contribution,
-            args=(instance.question.anime, instance.contributor)
+            args=(instance.anime, instance.contributor)
         )
         async_notification.start()
 

@@ -129,6 +129,11 @@ const About = () => {
           to be determined soon
         </p>
 
+        <h3 id="adding-anime">How we determine which animes to include in the platform ?</h3>
+        <p>
+          to do ..
+        </p>
+
       </div>
 
       {/* 

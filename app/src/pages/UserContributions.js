@@ -1,6 +1,6 @@
 import ContributedQuestion from "./components/ContributedQuestion"
 import async_http_request from "./components/AsyncRequest"
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect } from "react"
 import { useLocation } from 'react-router-dom'
 
 const UserContributions = () => {

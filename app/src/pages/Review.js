@@ -125,7 +125,7 @@ const Review = () => {
 
             <p>
               <strong>
-                {contributors_contributions.filter(cont => cont.approved === null && (selected_anime.value === cont.question.anime.anime_name || selected_anime.value === "all")).length}
+                {contributors_contributions.filter(cont => cont.approved === null && (selected_anime.value === cont.anime.anime_name || selected_anime.value === "all")).length}
               </strong> {selected_anime.value === "all" && "total"}  contributions need review
             </p>
 
@@ -147,7 +147,7 @@ const Review = () => {
             </p>
 
             {contributors_contributions.map((each_contribution) => (
-              (filter_questions(each_contribution.question.anime.anime_name)) &&
+              (filter_questions(each_contribution.anime.anime_name)) &&
               <ReviewQuestion
                 key={each_contribution.id}
                 contribution_object={each_contribution}

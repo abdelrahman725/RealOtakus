@@ -1,7 +1,6 @@
 import math
 
 from django.contrib import admin
-from django.urls import reverse
 from django.utils.html import format_html
 from django.db.models import Count
 
@@ -9,12 +8,9 @@ from allauth.socialaccount.models import SocialAccount
 
 from otakus.models import User
 from otakus.models import Anime
-from otakus.models import Contribution
 from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification 
-
-from otakus.helpers import to_local_date_time
 
 from otakus.constants import COUNTRIES, QUESTIONSCOUNT
 
@@ -22,7 +18,7 @@ admin.site.site_header = "RealOtakus Administration"
 admin.site.site_title = admin.site.site_header
 admin.site.index_title = ""
 
-# 8 custome filter classes
+# 5 custome filter classes
 class SocialAccountFilter(admin.SimpleListFilter):
     title = 'social account'
     parameter_name = 'social_account'
@@ -41,22 +37,6 @@ class SocialAccountFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(socialaccount=None)
 
-
-class OldestToRecentFilter(admin.SimpleListFilter):
-    title = 'oldest to latest'
-    parameter_name = 'chronological_order'
-
-    def lookups(self, request, model_admin):
-        return (
-          ('Yes', ('Yes')),
-      )
-
-    def queryset(self, request, queryset):  
-          
-      if self.value() == 'Yes':
-        return queryset.order_by("id")
-
-
 class CountryFilter(admin.SimpleListFilter):
     title = 'country'
     parameter_name = 'country'
@@ -74,7 +54,6 @@ class CountryFilter(admin.SimpleListFilter):
         return queryset.filter(country=self.value())
       return queryset.all()
      
-
 class IsReviewerFilter(admin.SimpleListFilter):
     title = 'Reviewer'
     parameter_name = 'is_reviewer'
@@ -93,53 +72,39 @@ class IsReviewerFilter(admin.SimpleListFilter):
       if self.value() == 'No':
         return queryset.filter(animes_to_review=None)
      
-     
-class QuestionTypeFilter(admin.SimpleListFilter):
-  title = 'Type'
-  parameter_name = 'questions_contributor'
-
-  def lookups(self, request, model_admin):
-
-      return (
-        ('admin', ('admin')),
-        ('users', ('contribution'))
-    )
-
-  def queryset(self, request, queryset):
-
-    if self.value() == 'admin':
-      return queryset.filter(contribution__isnull=True)
-
-    if self.value() == 'users':
-      return queryset.filter(contribution__isnull=False)
-
-
-class ContributionStateFilter(admin.SimpleListFilter):
+class ContributionTypeFilter(admin.SimpleListFilter):
   title = 'state'
   parameter_name = 'state'
 
   def lookups(self, request, model_admin):
 
       return (
-        ('p', ('Pending ....')),
+        ('t', ('Staff')),
+        ('c', ('Contribution')),
+        ('p', ('Pending')),
         ('r', ('Reviewed')),
         ('a', ('Approved')),
         ('f', ('Rejected'))
     )
 
   def queryset(self, request, queryset):
+    if self.value() == 't':
+      return queryset.filter(is_contribution = False)
+    
+    if self.value() == 'd':
+      return queryset.filter(is_contribution = True)
+    
     if self.value() == 'p':
-      return queryset.filter(approved__isnull=True)
+      return queryset.filter(approved__isnull=True, is_contribution = True)
     
     if self.value() == 'r':
-      return queryset.filter(approved__isnull=False)
+      return queryset.filter(approved__isnull=False, is_contribution = True)
 
     if self.value() == 'a':
-      return queryset.filter(approved=True)
+      return queryset.filter(approved=True, is_contribution = True)
 
     if self.value() == 'f':
-      return queryset.filter(approved=False)
-
+      return queryset.filter(approved=False, is_contribution = True)
 
 class ReviewersExistFilter(admin.SimpleListFilter):
   title = 'has reviewers'
@@ -153,30 +118,12 @@ class ReviewersExistFilter(admin.SimpleListFilter):
 
   def queryset(self, request, queryset):
     if self.value() == 'No':
-      return queryset.filter(question__anime__reviewers__isnull=True)
+      return queryset.filter(anime__reviewers__isnull=True)
     
     if self.value() == 'Yes':
-      return queryset.filter(question__anime__reviewers__isnull=False)
+      return queryset.filter(anime__reviewers__isnull=False)
 
-
-class ReviewersAssignedFilter(admin.SimpleListFilter):
-  title = 'reviewers assigned'
-  parameter_name = 'reviewer_assigned'
-
-  def lookups(self, request, model_admin):
-    reviewers_choices =  set()
-
-    for reviewer in User.otakus.filter(animes_to_review__isnull=False):
-      reviewers_choices.add((reviewer.id,(reviewer)))
     
-    return reviewers_choices
-
-  def queryset(self, request, queryset):
-    if self.value():
-      selected_user = User.otakus.get(id=int(self.value()))
-      return queryset.filter(question__anime__in = selected_user.animes_to_review.all())
-    
-
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
   
@@ -192,8 +139,6 @@ class UserAdmin(admin.ModelAdmin):
     "tests_completed",
     "animes_to_review",
     "password",
-    "is_staff",
-    "user_permissions",
     "last_login",
     "date_joined",
     "is_active"
@@ -206,7 +151,7 @@ class UserAdmin(admin.ModelAdmin):
   list_display_links = ("username",)
 
   readonly_fields =  (
-    #"level",
+    "level",
     "points",
     "tests_started",
     "tests_completed",
@@ -237,7 +182,6 @@ class UserAdmin(admin.ModelAdmin):
   list_filter  =  (
     IsReviewerFilter,
     SocialAccountFilter,
-    #"is_staff",
     "level",
     CountryFilter,
     ("animes_to_review",admin.RelatedOnlyFieldListFilter)
@@ -277,7 +221,7 @@ class UserAdmin(admin.ModelAdmin):
   social_connected.boolean = True
 
   def contributions(self,obj):
-    return obj.contributions.filter(approved=True).count()
+    return obj.contributions.filter(approved=True,is_contribution=True).count()
   
   def questions_reviewed(self,obj):
     return obj.contributions_reviewed.count()
@@ -293,89 +237,119 @@ class UserAdmin(admin.ModelAdmin):
     return "{} animes".format(obj.animes_to_review.all().count())   
 
 
-@admin.register(Contribution)
-class ContributionAdmin(admin.ModelAdmin):
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+  #date_hierarchy = 'date_created'
+  
   list_per_page = 300
-
-  readonly_fields = (
+  
+  fields = (
     "question",
+    "right_answer",
+    "anime",
+    "active",
+    "choice1",
+    "choice2",
+    "choice3",
+    "approved",
+    "feedback",
+    "is_contribution",
     "contributor",
     "reviewer",
     "date_created",
     "date_reviewed"
   )
-    
-  list_display = (
-    "view_contribution",
+  
+  list_editable=("active",)
+
+  autocomplete_fields = ['anime']
+
+  list_display_links = ("question",)
+
+  list_display =  (
     "contributor",
-    "approved",
-    "view_question",
+    "question",
+    "anime",
+    #"right_answer",
+    #"n_correct_answers",
+    #"n_wrong_answers",
     "reviewers_assigned",
     "reviewed_by",
     "feedback",
-    "_date_created",
-    "_date_reviewed",
-    "reviewed_after"
+    "active",
+    "contribution_state",
+    "date_created",
+    "date_reviewed",
+    "reviewed_after",
   )
-  
+
+  readonly_fields = (
+    "contributor",
+    "reviewer",
+    "is_contribution",
+    "date_created",
+    "date_reviewed"
+  )
+
   list_filter = (
-    OldestToRecentFilter,
-    ContributionStateFilter,
-    ReviewersAssignedFilter,
-    ("question__anime",admin.RelatedOnlyFieldListFilter),
+    "active",
+    ContributionTypeFilter,
+    ("anime",admin.RelatedOnlyFieldListFilter),
     ("contributor",admin.RelatedOnlyFieldListFilter),
     ("reviewer",admin.RelatedOnlyFieldListFilter),
-    "feedback",
     ReviewersExistFilter,
     "date_created",
-    #"deleted_questions" 
   )
   
-  list_display_links = None
+  search_fields = ("question", "anime__anime_name", "contributor__username")
   
-  def view_question(self, obj):
-    if obj.question:
-      url = reverse('admin:otakus_question_change', args=(obj.question.id,))
-      return format_html(
-        '<p>{anime}<br/><br/> <a href="{url}">{question}</a><p/>',
-        anime=obj.question.anime.anime_name,
-        question=obj.question.question,
-        url=url,
-      )
-    return "removed"
 
-  view_question.short_description = "question"
+  def n_correct_answers(self,obj):
+    return obj.question_interactions.filter(correct_answer=True).count()
   
-  def view_contribution(self,obj):
-    if not obj.question:
-      return "none"
+  def n_wrong_answers(self,obj):
+    return obj.question_interactions.filter(correct_answer=False).count()
 
-    if obj.approved == None:
-      url = reverse('admin:otakus_contribution_change', args=(obj.id,))
-      return format_html(
-        '<a href="{}" style="color:#FF8C00;font-size:15px;letter-spacing: 1px;">pending...</a>',
-        url
-      )
-
-    return "Reviewed"
+  def get_readonly_fields(self, request, obj=None):
+    if obj: 
+      if not obj.is_contribution or obj.approved !=None:
+        return self.readonly_fields + ('approved','feedback','anime') 
+        
+      return self.readonly_fields + ('anime',)
+      
+    return self.readonly_fields + ('approved','feedback')  
   
-  view_contribution.short_description = "state"
+  def contribution_state(self,obj):
+    if not obj.is_contribution:
+      return "admin/staff"    
+    
+    contribution_states= {
+            None:"pending",
+            True:"approved",
+            False:"rejected"
+    }
 
+    states_color = {
+      None:"#FF8C00",
+      True:"green",
+      False:"red",
+    }
+    
+    return format_html(
+      '<span style="color:{};">{}</span>', states_color[obj.approved], contribution_states[obj.approved]
+    )
+  
+  contribution_state.short_description = "state"
+  
   def reviewed_by(self,obj):
     return obj.reviewer
 
   def reviewers_assigned(self,obj):
-    if obj.question:
+    if obj.is_contribution:
       if obj.contributor:
-        return obj.question.anime.reviewers.exclude(id=obj.contributor.id).count()
-      return obj.question.anime.reviewers.all().count()
+        return obj.anime.reviewers.exclude(id=obj.contributor.id).count()
+      return obj.anime.reviewers.all().count()
     return "N/A"
-
-  def _date_created(self,obj):
-    return to_local_date_time(obj.date_created)
-  
-  def _date_reviewed(self,obj):
-    return to_local_date_time(obj.date_reviewed)
     
   def reviewed_after(self,obj):
 
@@ -402,111 +376,13 @@ class ContributionAdmin(admin.ModelAdmin):
 
     return "N/A"
 
-
-  def has_add_permission(self,request,obj=None):
-    return False
-
   
-@admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
-  #date_hierarchy = 'date_created'
-  
-  list_per_page = 300
-  
-  fields = (
-    "question",
-    "right_answer",
-    "anime",
-    "active",
-    "choice1",
-    "choice2",
-    "choice3"
-  )
-  
-  list_editable=("active",)
+  def save_model(self, request, obj, form, change):
+      obj.user = request.user
+      if not obj.is_contribution:
+        obj.contributor = obj.user  
+      super().save_model(request, obj, form, change)
 
-  autocomplete_fields = ['anime']
-
-  list_display_links = ("question",)
-
-  list_display =  (
-    "contributor",
-    "question",
-    "anime",
-    #"id",
-    #"right_answer",
-    #"choice1",
-    #"choice2",
-    #"choice3",
-    #"correct_answers",
-    #"wrong_answers",
-    #"no_answers",
-    "active",
-    "_contribution"
-  )
-
-  list_filter = (
-    QuestionTypeFilter,
-    "active",
-    ("anime",admin.RelatedOnlyFieldListFilter)
-  )
-  
-  search_fields   =  ("question","anime__anime_name")
-
-  def get_queryset(self, request):
-    query = super(QuestionAdmin, self).get_queryset(request)
-    if request.user.is_staff and not request.user.is_superuser:
-      return query.filter(anime__in = request.user.animes_to_review.all())
-    return  query
-
-  def contributor(self,obj):
-    try:
-      if obj.contribution.contributor == None:
-        return "DELETED"
-      return obj.contribution.contributor
-    except Contribution.DoesNotExist:
-      return "admin/moderator"
-
-  def correct_answers(self,obj):
-    return obj.question_interactions.filter(correct_answer=True).count()
-  
-  def wrong_answers(self,obj):
-    return obj.question_interactions.filter(correct_answer=False).count()
-  
-  def no_answers(self,obj): 
-    return obj.question_interactions.filter(correct_answer__isnull=True).count()
-
-  def get_readonly_fields(self, request, obj=None):
-    if obj and obj.pk:  return self.readonly_fields + ('anime',)
-    return self.readonly_fields
-  
-  def _contribution(self,obj):
-    try:
-      if obj.contribution:
-        url = reverse('admin:otakus_contribution_change', args=(obj.contribution.id,))
-       
-        contribution_states= {
-                None:"pending...",
-                True:"approved",
-                False:"rejected"
-        }
-
-        states_color = {
-          None:"#FF8C00",
-          True:"green",
-          False:"red",
-        }
-        
-        return format_html(
-          '<a href="{}" style="color:{};">{}</a>',
-          url,
-          states_color[obj.contribution.approved],
-          contribution_states[obj.contribution.approved],
-        )
-
-    except:
-      pass
-    return None
 
 @admin.register(Anime)
 class AnimeAdmin(admin.ModelAdmin):
@@ -531,13 +407,11 @@ class AnimeAdmin(admin.ModelAdmin):
 
   list_filter = (
     "active",
-    ("reviewers",admin.RelatedOnlyFieldListFilter)
+    #("reviewers",admin.RelatedOnlyFieldListFilter)
   )
 
   def get_queryset(self, request):
     query = super(AnimeAdmin, self).get_queryset(request)
-    if request.user.is_staff and not request.user.is_superuser:
-      return query.filter(id__in=request.user.animes_to_review.all()).annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
     return  query.annotate(questions_count=Count("anime_questions")).order_by('-questions_count')
   
   def view_anime(self,obj):
@@ -547,7 +421,7 @@ class AnimeAdmin(admin.ModelAdmin):
     return obj.anime_interactions.all().count()        
   
   def admin_questions(self,obj):
-    return obj.anime_questions.exclude(contribution__isnull=False).count()   
+    return obj.anime_questions.exclude(is_contribution=True).count()   
 
   def _reviewers(self,obj):
     return obj.reviewers.all().count()
@@ -582,7 +456,7 @@ class NotificationAdmin(admin.ModelAdmin):
     "kind",
     "receiver",
     "notification",
-    "_time",
+    "time",
     "seen"
   )
   
@@ -599,5 +473,4 @@ class NotificationAdmin(admin.ModelAdmin):
 
   list_display_links = None
 
-  def _time(self,obj): return to_local_date_time(obj.time)
     

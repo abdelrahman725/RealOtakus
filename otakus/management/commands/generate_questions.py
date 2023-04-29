@@ -7,7 +7,6 @@ from django.core.management.base import BaseCommand
 
 from otakus.models import User
 from otakus.models import Anime
-from otakus.models import Contribution
 from otakus.models import Question
 
 
@@ -39,7 +38,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         n_questions = options["questions"]
-        contributions =  options["contributions"]
+        questions_are_contributions =  options["contributions"]
         q_iterator = options["iterator"]
 
         def random_date():
@@ -47,32 +46,27 @@ class Command(BaseCommand):
             end = timezone.now()
             return start + (end - start) * random.random()
         
-        def generate_question(anime,question):
-            return Question.objects.create(    
+        def generate_question(anime, contributor, question):
+            return Question.objects.create( 
                 anime = anime,
+                contributor = contributor,
+                is_contribution = questions_are_contributions,
                 question = question,
                 right_answer= "right_answer",
                 choice1="choice_1",
                 choice2="choice_2",
                 choice3="choice_3" ,
-            )
-
-        def generate_contribution(question,contributor):
-
-            return Contribution.objects.create(    
-                    question = question,
-                    contributor=contributor,
-                    date_created = random_date()
+                date_created = random_date()
             )
         
-        
-        animes = Anime.objects.all()
         
         all_users = User.otakus.all()
 
         if all_users.count() == 0:
             print("\nplease generate users first\n")
             return
+        
+        animes = Anime.objects.all()
 
         print(f"\n\n Creating {n_questions} questions...\n")
         
@@ -80,16 +74,11 @@ class Command(BaseCommand):
 
             anime = random.choice(animes)
 
-            question = generate_question(
+            generate_question(
                 anime=anime,
+                contributor=random.choice(all_users.exclude(animes_to_review__id=anime.id)),
                 question=f"question_{i} for {anime.anime_name}",
             )
-
-            if contributions:
-                generate_contribution(
-                    question=question,
-                    contributor=random.choice(all_users.exclude(animes_to_review__id=anime.id))
-                )
         
 
         print("\n Done \n")
