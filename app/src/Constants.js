@@ -1,7 +1,8 @@
+export const get_domain = () => "127.0.0.1:8000"
 
-export const OUR_DOMAIN = "127.0.0.1:8000"
+//export const get_domain = () => "production domain:port"
 
-export const DJANGO_APP_URL = `http://${OUR_DOMAIN}`
+export const DJANGO_URL = `http://${get_domain()}`
 
 export const N_Game_Questions = 5
 

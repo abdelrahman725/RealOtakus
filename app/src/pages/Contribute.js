@@ -26,9 +26,8 @@ const Contribute = ({ all_animes_options }) => {
   const submit_btn = useRef(null)
   const anime_select = useRef(null)
 
-  // excluded symbols:  # ` ~ @ ^ * | \  as they are rarely used in questions-type text
-  const excluded_symbols = /[#`~@^*|\\]/
-  const extra_space = /\s{2,}/
+  // excluded symbols  # ` ~ @ ^ * | \  as they are rarely used in question-type text
+  
   const required_pattern = /^[a-z0-9\s.,:;'"({\-/<>_=+!?%$&})]+$/i
 
   const handle_form_change = (e) => {
@@ -38,11 +37,7 @@ const Contribute = ({ all_animes_options }) => {
     if (name === "question") {
       question_ref.current.style.outlineColor = "#2684FF"
     }
-
-    if (value.match(extra_space) != null || value.match(excluded_symbols) != null) {
-      return
-    }
-
+  
     if (value !== '' && value.match(required_pattern) === null) {
       return
     }
@@ -103,7 +98,6 @@ const Contribute = ({ all_animes_options }) => {
 
       set_response_msg("Thanks for your Contribution !")
     }
-
 
 
     const validate_contribution_form_then_submit = () => {
@@ -182,7 +176,7 @@ const Contribute = ({ all_animes_options }) => {
       <h1>Contribute a quesion</h1>
 
       <p>
-        make sure you have read &nbsp;
+        Frist make sure to read &nbsp;
         <Link className="simple_link" to="/about#contribution-guidelines" target={"_blank"} >
           Contribution Guidelines
         </Link>

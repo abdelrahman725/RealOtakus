@@ -7,8 +7,7 @@ from otakus.authen_views import user_logout
 from otakus.authen_views import delete_account
 
 from otakus.views import react_app
-from otakus.views import get_unauthenticated_home_data
-from otakus.views import get_user_authenticated_data
+from otakus.views import get_home_data
 from otakus.views import get_game_animes
 from otakus.views import get_game
 from otakus.views import get_user_interactions
@@ -25,7 +24,7 @@ from otakus.views import submit_game
 urlpatterns = [
 
   # not authenticated routes
-    path('main', get_unauthenticated_home_data),
+    path('main', get_home_data),
     path('get_csrf/', send_csrf_token_to_client),
     path('login/', user_login),
     path('register/', user_register),
@@ -33,7 +32,6 @@ urlpatterns = [
   # authenticated routes
     path('logout/', user_logout),
     path('delete_account/', delete_account),
-    path('get_user_data', get_user_authenticated_data),
     path('getgameanimes', get_game_animes),
     path('getgame/<int:game_anime>', get_game),
     path('getprofile', get_user_interactions),

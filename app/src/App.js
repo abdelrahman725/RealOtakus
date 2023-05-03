@@ -23,7 +23,7 @@ import async_http_request from 'pages/components/AsyncRequest'
 import React, { useState, useEffect, createContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
-import { OUR_DOMAIN } from 'Constants'
+import { get_domain } from 'Constants'
 
 export const GlobalStates = createContext()
 
@@ -36,10 +36,10 @@ function App() {
   const [notifications, setnotifications] = useState([])
   const [number_of_unseen_notifications, setnumber_of_unseen_notifications] = useState(0)
   const [game_started, setgame_started] = useState(null)
-  const [loading_or_network_error_msg, set_loading_or_network_error_msg] = useState("loading")
+  const [loading_or_network_error_msg, set_loading_or_network_error_msg] = useState("RealOtakus is loading...")
   const [darkmode, setdarkmode] = useState(true)
 
-  const { lastMessage } = useWebSocket(`ws://${OUR_DOMAIN}/ws/socket-server/`, {
+  const { lastMessage } = useWebSocket(`ws://${get_domain()}/ws/socket-server/`, {
     //Will attempt to reconnect on all close events, such as server shutting down
     onOpen: () => console.log('\n connection open \n\n'),
     shouldReconnect: () => authenticated === true ? true : false
@@ -80,7 +80,7 @@ function App() {
   }
 
   // also used to check (against the server) whether the user is authenticated or not
-  const fetch_unauthenticated_data = async () => {
+  const fetch_home_data = async () => {
 
     const result = await async_http_request({ path: "main" })
 
@@ -90,7 +90,11 @@ function App() {
     }
 
     if (result.payload.is_authenticated === "true") {
-      fetch_authenticated_user_data()
+      set_user_data(result.payload.user_data)
+      set_country_required(result.payload.user_data.country === null)
+      setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false && n.broad === false).length)
+      setnotifications(result.payload.notifications)
+      set_authenticated(true)
     }
 
     if (result.payload.is_authenticated === "false") {
@@ -105,31 +109,15 @@ function App() {
         label: anime.anime_name
       }))
     )
-
   }
 
-  const fetch_authenticated_user_data = async () => {
-    const result = await async_http_request({ path: "get_user_data" })
-
-    if (result === null) {
-      set_loading_or_network_error_msg("network error")
-      return
-    }
-
-    set_user_data(result.payload.user_data)
-    set_country_required(result.payload.user_data.country === null)
-    setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false && n.broad === false).length)
-    setnotifications(result.payload.notifications)
-    set_authenticated(true)
-  }
 
   useEffect(() => {
     if (getCookie('csrftoken') === null) {
       fetch_csrf_token()
     }
 
-    fetch_unauthenticated_data()
-
+    fetch_home_data()
   }, [])
 
   return (
@@ -138,7 +126,7 @@ function App() {
         authenticated,
         game_started,
         set_authenticated,
-        fetch_authenticated_user_data,
+        fetch_home_data,
         setgame_started,
         set_user_data,
       }}>
@@ -217,7 +205,7 @@ function App() {
                       element={
                         <AuthenticatedRoute>
                           <Notifications
-                            all_notifications={notifications}
+                            notifications={notifications}
                             unseen_count={number_of_unseen_notifications}
                             setnumber_of_unseen_notifications={setnumber_of_unseen_notifications}
                           />

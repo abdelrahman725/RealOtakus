@@ -41,7 +41,7 @@ const Home = ({ user_data, dashboard_users }) => {
       }
 
       {dashboard_users &&
-        <DashBoard dashboard_users={dashboard_users} current_user={user_data} />
+        <DashBoard dashboard_users={dashboard_users} current_user={user_data} authenticated={authenticated} />
       }
 
     </div>

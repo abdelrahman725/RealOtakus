@@ -48,14 +48,15 @@ def react_app(request):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def get_unauthenticated_home_data(request):
+def get_home_data(request):
+    
     all_animes = AnimeSerializer(cache.get("animes").values(), many=True)
     
     if cache.get("leaderboard") != None:
         leaderboard = cache.get("leaderboard")
 
     else:
-        # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0 
+    # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0 
         avg_score = User.otakus.filter(points__gt=0).aggregate(Avg('points'))['points__avg']
 
         if not avg_score: top_users = []
@@ -73,56 +74,58 @@ def get_unauthenticated_home_data(request):
         cache.set(
             key="leaderboard",
             value=leaderboard,
-            timeout=15
+            timeout=25
         )
     
+    if request.user.is_authenticated:
+
+        user = request.user
+
+        user_data = UserDataSerializer(
+            User.otakus.values(
+                "id",
+                "username",
+                "email",
+                "points",
+                "level",
+                "tests_started",
+                "tests_completed",
+                "level",
+                "country",
+            ).get(id=user.id)
+        ).data
+
+        user_data["is_reviewer"] = user.animes_to_review.exists()
+
+        serialized_notifications = NotificationsSerializer(
+            Notification.objects.filter(
+                Q(receiver=user) | Q(broad=True)
+            ),
+            many=True
+        )
+
+        return Response({
+            "user_data": user_data,
+            "notifications": serialized_notifications.data,
+            "animes": all_animes.data,
+            "leaderboard": leaderboard,
+            "is_authenticated" : "true"
+        })
+       
+
     return Response({
-        "is_authenticated" : "true" if request.user.is_authenticated else "false",
         "animes": all_animes.data,
-        "leaderboard": leaderboard
+        "leaderboard": leaderboard,
+        "is_authenticated" : "false"
     })
 
-
-@api_view(["GET"])
-def get_user_authenticated_data(request):
-  
-    user = request.user
-
-    user_data = UserDataSerializer(
-        User.otakus.values(
-            "id",
-            "username",
-            "email",
-            "points",
-            "level",
-            "tests_started",
-            "tests_completed",
-            "level",
-            "country",
-        ).get(id=user.id)
-    ).data
-
-    user_data["is_reviewer"] = user.animes_to_review.exists()
-
-    serialized_notifications = NotificationsSerializer(
-        Notification.objects.filter(
-            Q(receiver=user) | Q(broad=True)
-        ),
-        many=True
-    )
-    return Response({
-        "user_data": user_data,
-        "notifications": serialized_notifications.data
-    })
 
 
 @api_view(["POST"])
 def save_user_country(request):
     user = request.user
-
     user.country = request.data["country"]
     user.save()
-
     return Response({},status=status.HTTP_201_CREATED)
 
 
@@ -173,17 +176,20 @@ def get_game(request, game_anime):
         #return Response({"info": "you are not consistent enough when taking quiz"}, status=status.HTTP_403_FORBIDDEN)
 
 
-    # this game questions
+    # current game questions for current user
     questions = selected_anime.anime_questions.filter(
         (~Q(contributor=user)
          &
-         ~Q(reviewer=user)),
+         ~Q(reviewer=user)
+        ),
         active=True
     ).exclude(
         pk__in=user.questions_interacted_with.values_list('question__pk', flat=True)
     )[:QUESTIONSCOUNT]
 
     if questions.count() != QUESTIONSCOUNT:
+        cache.delete(f"game_{user.id}")
+        cache.delete(f"interactions_{user.id}")
         return Response({},status=status.HTTP_404_NOT_FOUND)
 
     serialized_questions = []
@@ -211,8 +217,15 @@ def get_game(request, game_anime):
     cache.set(
         key=f"game_{user.id}",
         value={question.id: question for question in questions},
-        timeout=700
+        timeout=530
     )
+    
+    cache.set(
+        key=f"interactions_{user.id}",
+        value={},
+        timeout=530
+    )    
+    
 
     user.tests_started += 1
     user.save()
@@ -234,11 +247,14 @@ def record_question_encounter(request, question_id):
             question=cache.get(f"game_{user.id}")[question_id],
             anime=cache.get(f"game_{user.id}")[question_id].anime,
         )
-
-        cache.add(
-            key=f"interaction_{user.id}_{question_id}",
-            value=interaction,
-            timeout=700
+   
+        previous_interactions = cache.get(f"interactions_{user.id}")
+        previous_interactions[question_id] = interaction
+        
+        cache.set(
+            key=f"interactions_{user.id}",
+            value=previous_interactions,
+            timeout=530
         )   
 
 
@@ -262,16 +278,17 @@ def submit_game(request):
     user_answers = request.data["answers"]
 
     for question_id in cache.get(f"game_{user.id}"):
+
         current_qustion = cache.get(f"game_{user.id}")[question_id]
         user_answered_correctly = None
 
-        string_question_id = str(question_id)
-        if string_question_id in user_answers:
-            user_answered_correctly = user_answers[string_question_id] == current_qustion.right_answer
+        str_question_id = str(question_id)
+        if str_question_id in user_answers:
+            user_answered_correctly = user_answers[str_question_id] == current_qustion.right_answer
             if user_answered_correctly == True:
                 user.points += 1
 
-        question_interaction = cache.get(f"interaction_{user.id}_{question_id}")
+        question_interaction = cache.get(f"interactions_{user.id}")[question_id]
         if question_interaction != None:
             if user_answered_correctly != None:
                 question_interaction.correct_answer = user_answered_correctly
@@ -285,7 +302,7 @@ def submit_game(request):
                 correct_answer=user_answered_correctly
             )
 
-        cache.delete(f"interaction_{user.id}_{question_id}")
+        
 
     right_answers = AnswersSerializer(
         cache.get(f"game_{user.id}").values(),
@@ -303,8 +320,9 @@ def submit_game(request):
 
     user.save()
 
-# clear user's game questions from cache
+# clear user's quiz questions and interactions from cache
     cache.delete(f"game_{user.id}")
+    cache.delete(f"interactions_{user.id}")
     
 
     return Response({
@@ -336,7 +354,7 @@ def get_or_make_contribution(request):
         
         question_object = request.data["question"]
         
-        # contributed question
+        # new contributed question
         Question.objects.create(
             anime=anime,
             contributor = user,
@@ -350,6 +368,7 @@ def get_or_make_contribution(request):
 
         return Response({}, status=status.HTTP_201_CREATED)
 
+    # question already exists
     except IntegrityError:
         return Response({}, status=status.HTTP_409_CONFLICT)
 
@@ -396,7 +415,10 @@ def get_or_review_contribution(request):
             pk=request.data["contribution"]
         )
 
-        if new_contribution.anime not in user.animes_to_review.all():
+        try:
+            user.animes_to_review.get(id = new_contribution.anime.id)
+
+        except Anime.DoesNotExist:
             return Response({"info":"not authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
         if new_contribution.approved != None:

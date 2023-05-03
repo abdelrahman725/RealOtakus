@@ -11,20 +11,13 @@ SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm
 ADMIN_PANEL_PATH = 'admin/' if DEBUG == True else os.getenv('DJANGO_ADMIN_PATH') 
 
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "192.168.1.3"
-]
+ALLOWED_HOSTS = ["127.0.0.1"] if DEBUG == True else os.getenv('DJANGO_HOST')
 
 
-REDIS_HOST = "127.0.0.1"  if DEBUG == True else "redis_producion_host"
+CORS_ALLOW_CREDENTIALS = DEBUG
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"] if DEBUG == True else []
 
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000"
-]
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -39,11 +32,8 @@ DEFAULT_FROM_EMAIL = os.getenv('HOST_EMAIL')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-AUTH_USER_MODEL = "otakus.User"
 
-# Application definition
 INSTALLED_APPS = [
-
     'otakus',
     
     'django.contrib.admin',
@@ -61,7 +51,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google'
-
 ]
     
 MIDDLEWARE = [
@@ -73,7 +62,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
     'realotakus.custom_middleware.LocalTimezoneMiddleware'
 ]
 
@@ -95,8 +83,9 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = "otakus.User"
+
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -129,33 +118,34 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache"
-    }
 
-} if DEBUG == True else {
+REDIS_URL = os.getenv('REDIS_URL')
+
+
+CACHES = {
     'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+    } if DEBUG == True
+    
+    else {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': f'redis://{REDIS_HOST}:6379',
+        'LOCATION': REDIS_URL
     }
-}
+} 
 
 
 CHANNEL_LAYERS =  {   
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer'      
-    }
-
-} if DEBUG == True else {   
-    'default': {  
+    } if DEBUG == True
+    
+    else {  
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [(REDIS_HOST, 6379)],
-        },
+            'hosts': [(REDIS_URL)],
+        }
     }
-}
-
+} 
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

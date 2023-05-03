@@ -2,9 +2,9 @@ import Competitor from "./Competitor"
 import { COUNTRIES_DICT } from "Constants"
 import { useState } from "react"
 
-const DashBoard = ({ dashboard_users, current_user }) => {
+const DashBoard = ({ dashboard_users, current_user, authenticated }) => {
 
-  const [all_dashboard_displayed, set_all_dashboard_displayed] = useState(false)
+  const [show_all_dashboard, set_show_all_dashboard] = useState(false)
 
   return (
     <div className="dashboard_container">
@@ -29,11 +29,11 @@ const DashBoard = ({ dashboard_users, current_user }) => {
 
             <tbody>
               {dashboard_users.map((competitor, index) => (
-                (index < 10 ? true : all_dashboard_displayed) &&
+                (index < 10 ? true : show_all_dashboard) &&
                 <Competitor
                   key={index}
                   index={index}
-                  current_user={current_user && current_user.id === competitor.id}
+                  current_user={authenticated && current_user && current_user.id === competitor.id}
                   name={competitor.username}
                   points={competitor.points}
                   level={competitor.level}
@@ -49,10 +49,9 @@ const DashBoard = ({ dashboard_users, current_user }) => {
           </table>
 
           {dashboard_users.length > 10 &&
-            <p className="simple_link" onClick={() => set_all_dashboard_displayed(!all_dashboard_displayed)}>
-              {!all_dashboard_displayed ? "show more..." : "show less"}
-            </p>
-          }
+            <p className="simple_link" onClick={() => set_show_all_dashboard(!show_all_dashboard)}>
+              {!show_all_dashboard ? "show all Leaderboard" : "show less"}
+            </p>}
         </div>
         :
         <p>no data yet</p>

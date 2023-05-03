@@ -74,7 +74,7 @@ const UserProfile = ({ user_data }) => {
             <div>Country</div>
             <div>
               {user_data.country ?
-                <img src={`https://flagcdn.com/256x192/${user_data.country}.png`} width="30" height="20" alt="country_img"></img>
+                <img src={`https://flagcdn.com/256x192/${user_data.country}.png`} width="30" height="20" alt="country_img" title="your country"></img>
                 : "N/A"
               }
             </div>

@@ -1,8 +1,7 @@
 import getCookie from "./getCookie"
-import { DJANGO_APP_URL } from "Constants"
+import { DJANGO_URL } from "Constants"
 
-
-const async_http_request = async ({ server = DJANGO_APP_URL, path = null, method = "GET", data = null } = {}) => {
+const async_http_request = async ({ server = DJANGO_URL, path = null, method = "GET", data = null } = {}) => {
 
     const url = path ? `${server}/${path}` : server
 

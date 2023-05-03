@@ -37,7 +37,7 @@ def new_user_signed_up(sender, instance, created, **kwargs):
     if created and instance.email:        
         send_mail(
             subject=f"Welcome to RealOtakus!",
-            message=f"Hi {instance.username}, We are excited to have you in our platform!\n\n now you can start creating your own questions or participate in challenging otaku quizes! \n\n RealOtakus Team.",
+            message=f"Hi {instance.username}, We are excited to have you in our platform!\n\nYou can now start creating your own questions or participate in challenging otaku quizes!\n\n RealOtakus Team.",
             from_email=None,
             recipient_list=[instance.email],
             fail_silently=False,
@@ -63,7 +63,7 @@ def on_animes_to_review_change(sender, instance, **kwargs):
         removed_animes = ", ".join([cache.get("animes")[anime_id].anime_name for anime_id in kwargs.pop('pk_set', None)])
         create_notification(
             receiver=instance,
-            notification=f"Sorry you are no longer a reviewer of ({removed_animes}) as you didn't comply with our review guidelines"
+            notification=f"Sorry you are no longer a reviewer of ( {removed_animes} ) as you didn't comply with our review guidelines"
         )
 
     if action == "post_add":
@@ -131,7 +131,6 @@ def chache_new_created_anime(sender, instance, created, **kwargs):
         )
 
 
-
 @receiver(pre_delete, sender=Anime)
 def delete_chached_anime(sender, instance, **kwargs):
     previous_animes=cache.get("animes")
@@ -159,14 +158,12 @@ class Question(base_models.Question):
             raise ValidationError("no feedback for approved question")
 
 
-
 @receiver(pre_delete, sender=Question)
 def protect_active_questions(sender, instance, **kwargs):
     if instance.active == True:
         raise ValidationError(
             ('active questions can not be deleted')
         )
-
 
 
 @receiver(pre_save, sender=Question)
@@ -203,6 +200,7 @@ def post_notification_creation(sender, instance, created, **kwargs):
 
     # notificaion for a specific user
         from otakus.serializers import NotificationsSerializer
+
         if instance.receiver:
             async_to_sync(channel_layer.group_send)(
                 f'group_{instance.receiver.id}', {
@@ -218,5 +216,3 @@ def post_notification_creation(sender, instance, created, **kwargs):
                     'value': NotificationsSerializer(instance).data
                 }
             )
-
-        

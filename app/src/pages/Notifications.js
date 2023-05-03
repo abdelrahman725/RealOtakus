@@ -1,9 +1,11 @@
 import EachNotification from "./components/EachNotification"
 import async_http_request from "./components/AsyncRequest"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_notifications }) => {
+const Notifications = ({ notifications, unseen_count, setnumber_of_unseen_notifications }) => {
+
+  const [show_all_notifications, set_show_all_notifications] = useState(false)
 
   const notification_kind_to_path = {
     "R": "/review",
@@ -73,7 +75,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
     if (kind === "A") {
       return (
         <p>
-          Congratulations ! your contribution for <strong>{notification_or_anime_name}</strong> is approved
+          Congratulations ! your contribution for <strong>{notification_or_anime_name}</strong> is approved, +10 points
         </p>
       )
     }
@@ -101,7 +103,7 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
         path: "update_notifications",
         method: "PUT",
         data: {
-          "notifications": all_notifications.map(notif => (notif.seen === false && notif.id))
+          "notifications": notifications.map(notif => (notif.seen === false && notif.id))
         }
       })
 
@@ -109,20 +111,30 @@ const Notifications = ({ all_notifications, unseen_count, setnumber_of_unseen_no
 
     update_notifications_state()
 
-  }, [all_notifications])
+  }, [notifications])
 
   return (
     <div className="notifications">
-      {all_notifications.length > 0 ? all_notifications.map((noti, index) => (
-        <EachNotification
-          key={index}
-          time={noti.time}
-          notification={noti.notification}
-          kind={noti.kind}
-          navigate={change_route}
-          get_shown_notification={get_shown_notification}
-        />
-      )) :
+      {notifications.length > 0 ?
+        <div>
+          {notifications.map((noti, index) => (
+            (index < 10 ? true : show_all_notifications) &&
+            <EachNotification
+              key={index}
+              time={noti.time}
+              notification={noti.notification}
+              kind={noti.kind}
+              navigate={change_route}
+              get_shown_notification={get_shown_notification}
+            />
+          ))}
+
+          {notifications.length > 10 &&
+            <p className="simple_link centered_div" onClick={() => set_show_all_notifications(!show_all_notifications)}>
+              {!show_all_notifications ? "show all activity" : "show less"}
+            </p>}
+        </div>
+        :
         <p className="centered_div">no activity</p>
       }
     </div>

@@ -91,7 +91,7 @@ class ContributionTypeFilter(admin.SimpleListFilter):
     if self.value() == 't':
       return queryset.filter(is_contribution = False)
     
-    if self.value() == 'd':
+    if self.value() == 'c':
       return queryset.filter(is_contribution = True)
     
     if self.value() == 'p':
@@ -224,7 +224,9 @@ class UserAdmin(admin.ModelAdmin):
     return obj.contributions.filter(approved=True,is_contribution=True).count()
   
   def questions_reviewed(self,obj):
-    return obj.contributions_reviewed.count()
+    if obj.animes_to_review.exists():
+      return obj.contributions_reviewed.count()
+    return "N/A" 
   
   def view_country(self,obj):
     if obj.country:
@@ -401,8 +403,7 @@ class AnimeAdmin(admin.ModelAdmin):
     "approved_contributions",
     "pending_contributions",
     "rejected_contributions",
-    "_reviewers",
-    "interactions"
+    "_reviewers"
   )
 
   list_filter = (
@@ -416,10 +417,7 @@ class AnimeAdmin(admin.ModelAdmin):
   
   def view_anime(self,obj):
     return format_html('<p>{}<p/><br/>',obj.anime_name) 
-  
-  def interactions(self,obj):
-    return obj.anime_interactions.all().count()        
-  
+         
   def admin_questions(self,obj):
     return obj.anime_questions.exclude(is_contribution=True).count()   
 

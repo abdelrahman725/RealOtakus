@@ -92,15 +92,16 @@ const GameView = () => {
       {game_started === null &&
 
         <div className="pre_game_container">
-          <h1>Get ready for the <span>5</span> questions Quiz</h1>
+          <h1>Get ready for the Quiz !</h1>
           <div className="res_info">{game_info && game_info}</div>
 
           <div className="container">
 
             <div className="instructions">
               <h2>instructions</h2>
-              <p>you have 1:40 min for each question.</p>
-              <p>avoid starting tests without submitting them.</p>
+              <p>The Quiz contains 5 questions.</p>
+              <p>You have 1:40 min for each question.</p>
+              <p>Make sure to submit after start.</p>
               <p>
                 <FiAlertTriangle className="warning_icon" />
                 After start do not leave the page (e.g. switch tabs) before submission, your progress will be lost.

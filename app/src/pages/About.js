@@ -47,7 +47,7 @@ const About = () => {
           always keep in mind that the goal of the question is not
           to test whether the person has watched the entire anime
           or if he remembers everything happend but rather to test whether the person
-          truly understood the events, the characters, their development throughout the series, their personalities and goals,
+          truly understood the events, the characters, their development throughout the story, their personalities and goals,
           the plot twists ..etc.
         </p>
 
@@ -126,12 +126,17 @@ const About = () => {
 
         <h3 id="become-reviewer">How to become a reviewer ?</h3>
         <p>
-          to be determined soon
+          For now RealOtakus team only selects reviewers they know in person and trust their skills,
+          but very soon there will be a clear system which allows any user to apply for the rule and get selected if eligible.
         </p>
 
-        <h3 id="adding-anime">How we determine which animes to include in the platform ?</h3>
+        <h3 id="choosing-animes">How available animes are choosen ?</h3>
         <p>
-          to do ..
+          Animes in Contribution form are selected based on anime popularity and number of available reviewers for that anime.
+        </p>
+        <p>
+          Animes available for quiz are different for each user,
+          as they are based on the number of approved and not seen questions, so questions that are contributed or reviewed by each user don't count.
         </p>
 
       </div>
