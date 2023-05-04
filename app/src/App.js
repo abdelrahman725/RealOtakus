@@ -22,8 +22,8 @@ import async_http_request from 'pages/components/AsyncRequest'
 
 import React, { useState, useEffect, createContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
-//import useWebSocket from 'react-use-websocket'
-//import { get_domain } from 'Constants'
+import useWebSocket from 'react-use-websocket'
+import { get_domain } from 'Constants'
 
 export const GlobalStates = createContext()
 
@@ -39,27 +39,28 @@ function App() {
   const [loading_or_network_error_msg, set_loading_or_network_error_msg] = useState("RealOtakus is loading...")
   const [darkmode, setdarkmode] = useState(true)
 
-  // const { lastMessage } = useWebSocket(`ws://${get_domain()}/ws/socket-server/`, {
-  //   //Will attempt to reconnect on all close events, such as server shutting down
-  //   onOpen: () => console.log('\n connection open \n\n'),
-  //   shouldReconnect: () => authenticated === true ? true : false
-  // },
-  //   authenticated
-  // )
+  const { lastMessage } = useWebSocket(`ws://${get_domain()}/ws/socket-server/`, {
+    //Will attempt to reconnect on all close events, such as server shutting down
+    onOpen: () => console.log('\n connection open \n\n'),
+    shouldReconnect: () => authenticated === true ? true : false
+  },
+    false
+  )
 
-  // // listening for incoming realtime notifications 
-  // useEffect(() => {
-  //   if (lastMessage !== null) {
+  // not used yet as connect argument in useWebsocket is false
+  // listening for incoming realtime notifications 
+  useEffect(() => {
+    if (lastMessage !== null) {
 
-  //     const new_data = JSON.parse(lastMessage.data)
+      const new_data = JSON.parse(lastMessage.data)
 
-  //     if (new_data.payload) {
-  //       console.log(new_data.payload)
-  //       setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
-  //       setnumber_of_unseen_notifications(prev => prev + 1)
-  //     }
-  //   }
-  // }, [lastMessage, setnotifications])
+      if (new_data.payload) {
+        console.log(new_data.payload)
+        setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
+        setnumber_of_unseen_notifications(prev => prev + 1)
+      }
+    }
+  }, [lastMessage, setnotifications])
 
   const log_user_out = async () => {
 
