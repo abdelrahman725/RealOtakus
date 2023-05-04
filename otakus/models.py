@@ -8,8 +8,8 @@ from django.contrib.auth.models import UserManager
 from django.db.models.signals import pre_delete, pre_save, post_save, m2m_changed
 from django.dispatch import receiver
 
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
+#from asgiref.sync import async_to_sync
+#from channels.layers import get_channel_layer
 
 from otakus import base_models
 
@@ -192,27 +192,27 @@ class Notification(base_models.Notification):
     pass
 
 
-@receiver(post_save, sender=Notification)
-def post_notification_creation(sender, instance, created, **kwargs):
+# @receiver(post_save, sender=Notification)
+# def post_notification_creation(sender, instance, created, **kwargs):
 
-    if created:
-        channel_layer = get_channel_layer()
+#     if created:
+#         channel_layer = get_channel_layer()
 
-    # notificaion for a specific user
-        from otakus.serializers import NotificationsSerializer
+#     # notificaion for a specific user
+#         from otakus.serializers import NotificationsSerializer
 
-        if instance.receiver:
-            async_to_sync(channel_layer.group_send)(
-                f'group_{instance.receiver.id}', {
-                    'type': 'send_notifications',
-                    'value': NotificationsSerializer(instance).data
-                }
-            )
-    # notificaion for all users
-        if instance.broad:
-            async_to_sync(channel_layer.group_send)(
-                f'group_all', {
-                    'type': 'send_notifications',
-                    'value': NotificationsSerializer(instance).data
-                }
-            )
+#         if instance.receiver:
+#             async_to_sync(channel_layer.group_send)(
+#                 f'group_{instance.receiver.id}', {
+#                     'type': 'send_notifications',
+#                     'value': NotificationsSerializer(instance).data
+#                 }
+#             )
+#     # notificaion for all users
+#         if instance.broad:
+#             async_to_sync(channel_layer.group_send)(
+#                 f'group_all', {
+#                     'type': 'send_notifications',
+#                     'value': NotificationsSerializer(instance).data
+#                 }
+#             )
