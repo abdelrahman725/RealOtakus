@@ -122,7 +122,7 @@ class Anime(base_models.Anime):
 @receiver(post_save, sender=Anime)
 def chache_new_created_anime(sender, instance, created, **kwargs):
     if created:
-        previous_animes=cache.get("animes")
+        previous_animes=cache.get("animes") or {}
         previous_animes[instance.id] = instance
         cache.set(
             key="animes",

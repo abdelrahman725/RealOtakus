@@ -33,12 +33,6 @@ from otakus.helpers import create_notification
 from otakus.constants import QUESTIONSCOUNT
 
 
-cache.set(
-    key="animes",
-    value={anime.id: anime for anime in Anime.objects.all()},
-    timeout=None
-)
-
 
 def react_app(request):
     if request.user.is_superuser:
@@ -50,6 +44,13 @@ def react_app(request):
 @permission_classes([AllowAny])
 def get_home_data(request):
     
+    if cache.get("animes") == None:
+        cache.set(
+            key="animes",
+            value={anime.id: anime for anime in Anime.objects.all()},
+            timeout=None
+        )
+
     all_animes = AnimeSerializer(cache.get("animes").values(), many=True)
     
     if cache.get("leaderboard") != None:
