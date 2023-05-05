@@ -687,32 +687,38 @@ a {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
   margin-top: 50px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .game_view_container .pre_game_container .container .instructions {
   text-align: left;
 }
 
-.game_view_container .pre_game_container .container .instructions .warning_icon {
-  font-size: large;
-  margin-right: 5px;
-  position: relative;
-  top: 3px;
-  color: #b61c36;
+.game_view_container .pre_game_container .container .extraspace_class {
+  margin: 15px 150px 15px 150px;
 }
 
 .game_view_container .pre_game_container .container .react_select {
-  margin-top: 15px;
   margin-bottom: 15px;
 }
 
 .game_view_container .game_container {
   min-width: 340px;
+}
+
+.game_view_container .game_container .warning {
+  margin-bottom: 40px;
+}
+
+.game_view_container .game_container .warning .warning_icon {
+  font-size: x-large;
+  margin-right: 5px;
+  position: relative;
+  top: 6px;
+  color: #b61c36;
 }
 
 .game_view_container .game_container .timer {
@@ -726,6 +732,7 @@ a {
       -ms-flex-align: center;
           align-items: center;
   font-size: large;
+  margin-bottom: 30px;
 }
 
 .game_view_container .game_container .timer .icon, .game_view_container .game_container .timer .navbar .nav_icon, .navbar .game_view_container .game_container .timer .nav_icon {
@@ -751,7 +758,7 @@ a {
 .game_view_container .game_container .game_question .choice {
   border-radius: 7px;
   background-color: white;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   padding: 20px 15px;
   -webkit-box-shadow: 0.5px 0.5px 3px 0.1px grey;
           box-shadow: 0.5px 0.5px 3px 0.1px grey;
@@ -1036,6 +1043,12 @@ footer a {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .game_view_container .container {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
         -ms-flex-direction: column;

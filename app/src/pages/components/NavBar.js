@@ -40,7 +40,7 @@ const NavBar = ({
       {authenticated ?
         <div className="right right_existent">
 
-          <div className="notification" title="notifications">
+          <div className="notification" title="activity">
             <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
               <IoMdNotifications className="nav_icon" />
             </Link>

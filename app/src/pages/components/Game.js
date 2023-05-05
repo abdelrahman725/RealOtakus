@@ -1,5 +1,6 @@
 import React from 'react'
 import Question from "./Question"
+import { FiAlertTriangle } from 'react-icons/fi'
 import { GlobalStates } from "App"
 import { useContext, useState, useEffect } from "react"
 import async_http_request from "./AsyncRequest"
@@ -82,6 +83,9 @@ const Game = ({
 
   return (
     <div className="game_container">
+      <p className="warning">
+        <FiAlertTriangle className="warning_icon" />Do not leave current page or switch tabs, your progress will be lost.
+      </p>
       {questions ?
         <div>
           <Question

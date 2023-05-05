@@ -1,7 +1,6 @@
 import async_http_request from './components/AsyncRequest'
 import Result from './components/Result'
 import Game from './components/Game'
-import { FiAlertTriangle } from 'react-icons/fi'
 import Select from 'react-select'
 import { GlobalStates } from 'App'
 import { SelectStyles, N_Game_Questions } from 'Constants'
@@ -89,24 +88,21 @@ const GameView = () => {
 
   return (
     <div className="game_view_container">
-      {game_started === null &&
 
+      {game_started === null &&
         <div className="pre_game_container">
-          <h1>Get ready for the Quiz !</h1>
+          <h1>Get ready for the Otaku Quiz !</h1>
           <div className="res_info">{game_info && game_info}</div>
 
           <div className="container">
 
             <div className="instructions">
               <h2>instructions</h2>
-              <p>The Quiz contains 5 questions.</p>
-              <p>You have 1:40 min for each question.</p>
-              <p>Make sure to submit after start.</p>
-              <p>
-                <FiAlertTriangle className="warning_icon" />
-                After start do not leave the page (e.g. switch tabs) before submission, your progress will be lost.
-              </p>
+              <p>- The Quiz contains <strong>5</strong> questions.</p>
+              <p>- You have <strong>1:40</strong>  min for each question.</p>
             </div>
+
+            <div className="extraspace_class"></div>
 
             <div className="start_game">
               <Select
