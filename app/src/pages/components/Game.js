@@ -68,7 +68,7 @@ const Game = ({
     }
 
     document.onvisibilitychange = () => {
-      if (document.visibilityState === "hidden") {
+      if (document.visibilityState === "hidden" && questions) {
         set_game_info("Sorry your quiz is canceled because you left the page, you shouldn't do so")
         setgame_started(null)
       }
