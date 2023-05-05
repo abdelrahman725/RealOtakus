@@ -4,5 +4,7 @@ venv/
 # Database
 *.sqlite3
 
+__pycache__/
+
 # a git script
 /git-filter-repo
