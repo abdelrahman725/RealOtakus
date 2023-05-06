@@ -1,4 +1,3 @@
-from django.db import IntegrityError
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
@@ -26,22 +25,21 @@ def user_register(request):
   email = request.data["email"].strip()
   user_country = request.data["country"]
   user_password = request.data["password"]
+ 
+  if User.otakus.filter(username=username).exists():
+      return Response({"info":"username already exists"},status=status.HTTP_403_FORBIDDEN)
 
-  try:
-    new_otaku_user = User.objects.create_user(
-      username=username,
-      email=email,
-      password=user_password,
-      country=user_country
-    )
+  new_otaku_user = User.objects.create_user(
+    username=username,
+    email=email,
+    password=user_password,
+    country=user_country
+  )
 
-    new_otaku_user.save()
-    login(request, new_otaku_user)
-
-    return Response({"info":"registered successfully"},status=status.HTTP_201_CREATED)
+  new_otaku_user.save()
+  login(request, new_otaku_user)
+  return Response({"info":"registered successfully"},status=status.HTTP_201_CREATED)
   
-  except IntegrityError:
-    return Response({"info":"username already exists"},status=status.HTTP_403_FORBIDDEN)
       
 
 @api_view(["POST"])
