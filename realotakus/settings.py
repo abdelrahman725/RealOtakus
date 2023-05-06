@@ -4,15 +4,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.getenv('DJANGO_PRODUCTION', '') != 'True'
+DEBUG = os.getenv('PRODUCTION', '') != 'True'
 
-SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm' if DEBUG == True else os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm' if DEBUG == True else os.getenv('SECRET_KEY')
 
-ADMIN_PANEL_PATH = 'admin/' if DEBUG == True else os.getenv('DJANGO_ADMIN_PATH') 
+ADMIN_PANEL_PATH = 'admin/' if DEBUG == True else os.getenv('ADMIN_PATH') 
 
-
-ALLOWED_HOSTS = ["127.0.0.1"] if DEBUG == True else os.getenv('DJANGO_HOST')
-
+ALLOWED_HOSTS = ["127.0.0.1", os.getenv('HOST')]
 
 CORS_ALLOW_CREDENTIALS = DEBUG
 
