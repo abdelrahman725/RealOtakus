@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ["127.0.0.1", os.getenv('HOST')]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
-CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000", os.getenv("SITE_URL")]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000"] if DEBUG == True else ["http://127.0.0.1:8000", os.getenv('SITE_URL')]
 
 LOGIN_REDIRECT_URL = '/'
 
