@@ -8,14 +8,14 @@ DEBUG = os.getenv('PRODUCTION', '') != 'True'
 
 SECRET_KEY = 'django-insecure-1n%6p0^_2dg8sa23ogituq*x$r_+%oy$i*loop=mf@umrsvzqm' if DEBUG == True else os.getenv('SECRET_KEY')
 
-ADMIN_PANEL_PATH = 'admin/' if DEBUG == True else os.getenv('ADMIN_PATH') 
+ADMIN_PANEL_PATH = os.getenv('ADMIN_PATH','admin/') 
 
 ALLOWED_HOSTS = ["127.0.0.1", os.getenv('HOST')]
 
-CORS_ALLOW_CREDENTIALS = DEBUG
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"] if DEBUG == True else []
-
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000", os.getenv("SITE_URL")]
 
 LOGIN_REDIRECT_URL = '/'
 
