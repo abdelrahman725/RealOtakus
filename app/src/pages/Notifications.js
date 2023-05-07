@@ -3,7 +3,7 @@ import async_http_request from "./components/AsyncRequest"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-const Notifications = ({ notifications, unseen_count, setnumber_of_unseen_notifications }) => {
+const Notifications = ({ notifications, set_new_notifications_count }) => {
 
   const [show_all_notifications, set_show_all_notifications] = useState(false)
 
@@ -90,12 +90,11 @@ const Notifications = ({ notifications, unseen_count, setnumber_of_unseen_notifi
   }
 
   useEffect(() => {
+    set_new_notifications_count(0)
 
-    if (unseen_count <= 0)
-      return
+    const new_unseen_notifications_ids = []
 
-    // clears unseen_notifcations count when user opens notifications
-    setnumber_of_unseen_notifications(0)
+    notifications.forEach((notification) => { notification.seen === false && new_unseen_notifications_ids.push(notification.id) })
 
     // update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
     const update_notifications_state = async () => {
@@ -103,15 +102,15 @@ const Notifications = ({ notifications, unseen_count, setnumber_of_unseen_notifi
         path: "update_notifications",
         method: "PUT",
         data: {
-          "notifications": notifications.map(notif => (notif.seen === false && notif.id))
+          "notifications": new_unseen_notifications_ids
         }
       })
-
     }
 
-    update_notifications_state()
+    new_unseen_notifications_ids.length > 0 && update_notifications_state()
 
-  }, [notifications])
+    // don't forget to add notifications in the below dependency array when using real time notifcations through websockets
+  }, [])
 
   return (
     <div className="notifications">

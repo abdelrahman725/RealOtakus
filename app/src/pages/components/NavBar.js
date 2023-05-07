@@ -1,7 +1,7 @@
 import { IoMdNotifications } from 'react-icons/io'
 import { BsPersonFill } from 'react-icons/bs'
 import { FiInfo } from 'react-icons/fi'
-import { MdLogout,MdDarkMode } from 'react-icons/md'
+import { MdLogout, MdDarkMode } from 'react-icons/md'
 import { AiFillSetting } from 'react-icons/ai'
 import { HiOutlineSun } from 'react-icons/hi'
 
@@ -9,13 +9,13 @@ import { Link } from 'react-router-dom'
 
 const NavBar = ({
   authenticated,
-  notifications_open,
-  new_notifications,
+  new_notifications_count,
   game_started,
   log_user_out,
   darkmode,
   setdarkmode
 }) => {
+
 
   return (
     <div className={`navbar ${game_started ? "disabled_div" : ""}`}>
@@ -44,9 +44,9 @@ const NavBar = ({
             <Link to="notifications" tabIndex={game_started === true ? -1 : 1}>
               <IoMdNotifications className="nav_icon" />
             </Link>
-            
-            <span className="n_notifications" style={{ visibility: new_notifications > 0 && !notifications_open ? "visible" : "hidden" }}>
-              {new_notifications > 9 ? "9+" : new_notifications}
+
+            <span className="n_notifications" style={{ visibility: new_notifications_count > 0 ? "visible" : "hidden" }}>
+              {new_notifications_count > 9 ? "9+" : new_notifications_count}
             </span>
           </div>
 

@@ -13,3 +13,6 @@ staticfiles/
 
 # a git script
 /git-filter-repo
+
+# vscode settings
+.vscode/

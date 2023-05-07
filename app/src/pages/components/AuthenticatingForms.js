@@ -7,7 +7,7 @@ import { SelectStyles, COUNTRIES } from "Constants"
 
 const AuthenticatingForms = () => {
 
-    const { fetch_home_data } = useContext(GlobalStates)
+    const { set_fetched_user_data_and_authenticate } = useContext(GlobalStates)
     const [login_view, set_login_view] = useState(true)
     const [res_msg, set_res_msg] = useState()
     const [loading, set_loading] = useState()
@@ -94,7 +94,7 @@ const AuthenticatingForms = () => {
         set_res_msg(login_res.payload.info)
 
         if (login_res.status === 200) {
-            fetch_home_data()
+            set_fetched_user_data_and_authenticate(login_res.payload)
         }
     }
 
@@ -117,7 +117,7 @@ const AuthenticatingForms = () => {
         set_res_msg(register_res.payload.info)
 
         if (register_res.status === 201) {
-            fetch_home_data()
+            set_fetched_user_data_and_authenticate(register_res.payload)
         }
     }
 

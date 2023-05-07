@@ -34,7 +34,7 @@ function App() {
   const [dashboard_users, set_dashboard_users] = useState()
   const [all_animes, setall_animes] = useState()
   const [notifications, setnotifications] = useState([])
-  const [number_of_unseen_notifications, setnumber_of_unseen_notifications] = useState(0)
+  const [new_notifications_count, set_new_notifications_count] = useState(0)
   const [game_started, setgame_started] = useState(null)
   const [loading_or_network_error_msg, set_loading_or_network_error_msg] = useState("RealOtakus is loading...")
   const [darkmode, setdarkmode] = useState(true)
@@ -57,7 +57,7 @@ function App() {
       if (new_data.payload) {
         console.log(new_data.payload)
         setnotifications(prev_notifications => [new_data.payload, ...prev_notifications])
-        setnumber_of_unseen_notifications(prev => prev + 1)
+        set_new_notifications_count(prev => prev + 1)
       }
     }
   }, [lastMessage, setnotifications])
@@ -80,6 +80,14 @@ function App() {
     const token_response = await async_http_request({ path: "get_csrf/" })
   }
 
+  const set_fetched_user_data_and_authenticate = (payload) => {
+    set_user_data(payload.user_data)
+    set_country_required(payload.user_data.country === null)
+    set_new_notifications_count(payload.notifications.filter(n => n.seen === false && n.broad === false).length)
+    setnotifications(payload.notifications)
+    set_authenticated(true)
+  }
+
   // also used to check (against the server) whether the user is authenticated or not
   const fetch_home_data = async () => {
 
@@ -91,11 +99,7 @@ function App() {
     }
 
     if (result.payload.is_authenticated === "true") {
-      set_user_data(result.payload.user_data)
-      set_country_required(result.payload.user_data.country === null)
-      setnumber_of_unseen_notifications(result.payload.notifications.filter(n => n.seen === false && n.broad === false).length)
-      setnotifications(result.payload.notifications)
-      set_authenticated(true)
+      set_fetched_user_data_and_authenticate(result.payload)
     }
 
     if (result.payload.is_authenticated === "false") {
@@ -112,7 +116,6 @@ function App() {
     )
   }
 
-
   useEffect(() => {
     if (getCookie('csrftoken') === null) {
       fetch_csrf_token()
@@ -127,9 +130,9 @@ function App() {
         authenticated,
         game_started,
         set_authenticated,
-        fetch_home_data,
-        setgame_started,
+        set_fetched_user_data_and_authenticate,
         set_user_data,
+        setgame_started
       }}>
 
       <div className="App">
@@ -143,9 +146,7 @@ function App() {
                 <>
                   <Navbar
                     authenticated={authenticated}
-                    country_required={country_required}
-                    notifications_open={false}
-                    new_notifications={number_of_unseen_notifications}
+                    new_notifications_count={new_notifications_count}
                     game_started={game_started}
                     darkmode={darkmode}
                     log_user_out={log_user_out}
@@ -207,8 +208,7 @@ function App() {
                         <AuthenticatedRoute>
                           <Notifications
                             notifications={notifications}
-                            unseen_count={number_of_unseen_notifications}
-                            setnumber_of_unseen_notifications={setnumber_of_unseen_notifications}
+                            set_new_notifications_count={set_new_notifications_count}
                           />
                         </AuthenticatedRoute>
                       }

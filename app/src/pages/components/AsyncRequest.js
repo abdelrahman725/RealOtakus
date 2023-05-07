@@ -29,7 +29,7 @@ const async_http_request = async ({ server = DJANGO_URL, path = null, method = "
         const status_code = response.status
         const result_data = await response.json()
 
-        console.log(result_data)
+        console.log(status_code, result_data)
 
         return {
             payload: result_data,
