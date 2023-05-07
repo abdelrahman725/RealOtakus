@@ -8,5 +8,8 @@ venv/
 __pycache__/
 *.pyc
 
+# static files 
+staticfiles/
+
 # a git script
 /git-filter-repo

@@ -25,9 +25,9 @@ def user_register(request):
   email = request.data["email"].strip()
   user_country = request.data["country"]
   user_password = request.data["password"]
- 
-  if User.otakus.filter(username=username).exists():
-      return Response({"info":"username already exists"},status=status.HTTP_403_FORBIDDEN)
+  
+  if User.objects.filter(username=username).exists():
+      return Response({"info":f"username {username} already exists"},status=status.HTTP_403_FORBIDDEN)
 
   new_otaku_user = User.objects.create_user(
     username=username,
@@ -36,7 +36,6 @@ def user_register(request):
     country=user_country
   )
 
-  new_otaku_user.save()
   login(request, new_otaku_user)
   return Response({"info":"registered successfully"},status=status.HTTP_201_CREATED)
   
