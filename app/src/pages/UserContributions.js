@@ -67,14 +67,14 @@ const UserContributions = () => {
                 All
               </button>
 
-              <button className={`approved darker_on_hover ${selected_contribution_state === true && "darker_background"}`}
-                onClick={() => set_selected_contribution_state(true)}>
-                approved
-              </button>
-
               <button className={`pending darker_on_hover ${selected_contribution_state === null && "darker_background"}`}
                 onClick={() => set_selected_contribution_state(null)}>
                 pending
+              </button>
+
+              <button className={`approved darker_on_hover ${selected_contribution_state === true && "darker_background"}`}
+                onClick={() => set_selected_contribution_state(true)}>
+                approved
               </button>
 
               <button className={`rejected darker_on_hover ${selected_contribution_state === false && "darker_background"}`}

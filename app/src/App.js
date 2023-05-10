@@ -62,6 +62,7 @@ function App() {
     }
   }, [lastMessage, setnotifications])
 
+  
   const log_user_out = async () => {
 
     if (authenticated !== true) {

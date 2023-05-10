@@ -1,5 +1,7 @@
 import threading
+from datetime import timedelta
 
+from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -187,31 +189,44 @@ class QuestionInteraction(base_models.QuestionInteraction):
     pass
 
 
+# return notifications that are within a range of 1 month old
+class NoneExpiredNotifcationsManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super().get_queryset().filter(time__gt=timezone.now() - timedelta(days=30))
+        )
+
+
 class Notification(base_models.Notification):
-    pass
+    objects = models.Manager()
+    non_expired = NoneExpiredNotifcationsManager()
+
+    def __str__(self):
+        return f"{self.kind} : {self.receiver}"
 
 
 # @receiver(post_save, sender=Notification)
 # def post_notification_creation(sender, instance, created, **kwargs):
-
 #     if created:
 #         channel_layer = get_channel_layer()
 
-#     # notificaion for a specific user
+#         # notificaion for a specific user
 #         from otakus.serializers import NotificationsSerializer
 
 #         if instance.receiver:
 #             async_to_sync(channel_layer.group_send)(
-#                 f'group_{instance.receiver.id}', {
-#                     'type': 'send_notifications',
-#                     'value': NotificationsSerializer(instance).data
-#                 }
+#                 f"group_{instance.receiver.id}",
+#                 {
+#                     "type": "send_notifications",
+#                     "value": NotificationsSerializer(instance).data,
+#                 },
 #             )
-#     # notificaion for all users
+#         # notificaion for all users
 #         if instance.broad:
 #             async_to_sync(channel_layer.group_send)(
-#                 f'group_all', {
-#                     'type': 'send_notifications',
-#                     'value': NotificationsSerializer(instance).data
-#                 }
+#                 f"group_all",
+#                 {
+#                     "type": "send_notifications",
+#                     "value": NotificationsSerializer(instance).data,
+#                 },
 #             )

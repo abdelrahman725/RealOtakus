@@ -98,7 +98,7 @@ def get_home_data(request):
         user_data["is_reviewer"] = user.animes_to_review.exists()
 
         user_notifications = NotificationsSerializer(
-            Notification.objects.filter(Q(receiver=user) | Q(broad=True)), many=True
+            Notification.non_expired.filter(Q(receiver=user) | Q(broad=True)), many=True
         )
 
         return Response(
@@ -326,6 +326,7 @@ def get_or_make_contribution(request):
         ).count()
         >= 10
     ):
+        
         return Response({}, status=status.HTTP_403_FORBIDDEN)
 
     try:
@@ -448,8 +449,6 @@ def get_user_interactions(request):
 @api_view(["PUT"])
 def update_notifications(request):
     user = request.user
-    print(request.data["notifications"])
-
     user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
 
     return Response(

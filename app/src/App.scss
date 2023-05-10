@@ -748,6 +748,7 @@ a {
 
     textarea {
       width: 99.9%;
+      height: 90px;
       padding: 10px;
       border-radius: $base_border_radius;
       font-size: large;
@@ -755,7 +756,7 @@ a {
       outline: none;
       margin-bottom: 20px;
       &:first-of-type {
-        height: 120px;
+        height: 140px;
       }
     }
 
@@ -771,6 +772,7 @@ a {
     }
 
     .invalid_input {
+      width: 430px;
       font-size: larger;
       color: crimson;
       margin-top: 6px;

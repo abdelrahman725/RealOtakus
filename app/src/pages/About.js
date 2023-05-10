@@ -58,12 +58,12 @@ const About = () => {
 
         <ul>
           <li>Your question should be from your own creation, don't get it from the internet as it could be rejected.</li>
-          <li>You are allowed to make a maximum of <strong>10</strong> contributions every <strong>24</strong> hours.</li>
+          <li>You are allowed to make up to <strong>10</strong> contributions every <strong>24</strong> hours.</li>
           <li>Avoid trivial/too easy questions.</li>
           <li>Your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
           <li>Try to avoid questions that are based on your personal opinion or theory. </li>
           <li>Make sure to make 4 distinguishable choices.</li >
-          <li>The 3 wrong choices must not have any common pattern,
+          <li>The 3 wrong choices NOT have any common pattern,
             in other words, the right choice shouldn't be too obvious at first glance,
             so the question experience is more interesting and challenging.
           </li>
@@ -124,19 +124,28 @@ const About = () => {
           Please note that Realotakus has the right to modify or delete (if inappropriate) any contributed question before or after being reviewed.
         </p>
 
+        <h3 id="choosing-animes">How available animes are selected ?</h3>
+        <p>
+          Animes in Contribution form are chosen based on anime popularity and number of available reviewers for that anime.
+        </p>
+        <p>
+          Animes available for quiz are different for each user,
+          as they are based on the number of approved and not seen questions, so questions that are contributed or reviewed by each user don't count.
+        </p>
+
         <h3 id="become-reviewer">How to become a reviewer ?</h3>
         <p>
           For now RealOtakus team only selects reviewers they know in person and trust their skills,
           but very soon there will be a clear system which allows any user to apply for the rule and get selected if eligible.
         </p>
 
-        <h3 id="choosing-animes">How available animes are choosen ?</h3>
-        <p>
-          Animes in Contribution form are selected based on anime popularity and number of available reviewers for that anime.
+        <h3 id="contributions-limit">Why number of allowed contributions is limited to 10 per day ?</h3>
+        <p>As you can see in the above <Link className="simple_link" to="/about#contribution-guidelines">Guidelines</Link> we only accept high quality questions, with that said,
+          it should take some time creating a single question with its choices, trying to contribute more than 10 questions
+          in a single day probably means you didn't put enough time and effort in creating each of them.
         </p>
-        <p>
-          Animes available for quiz are different for each user,
-          as they are based on the number of approved and not seen questions, so questions that are contributed or reviewed by each user don't count.
+        <p>For now our application can only handle a certain amount of contributed questions received,
+          also we have a limited number of eligible reviewers (we are working on having more).
         </p>
 
       </div>

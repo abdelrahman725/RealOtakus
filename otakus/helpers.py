@@ -1,8 +1,11 @@
 from django.utils import timezone
-
+import otakus.models
+from otakus.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
 import otakus.models
 
-from otakus.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
+
+def get_superuser():
+    return otakus.models.User.objects.filter(is_superuser=True).first()
 
 
 def create_notification(notification, receiver=None, broad=False, kind=None):

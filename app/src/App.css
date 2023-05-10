@@ -815,6 +815,7 @@ a {
 
 .contribution .contribution_form textarea {
   width: 99.9%;
+  height: 90px;
   padding: 10px;
   border-radius: 7px;
   font-size: large;
@@ -824,7 +825,7 @@ a {
 }
 
 .contribution .contribution_form textarea:first-of-type {
-  height: 120px;
+  height: 140px;
 }
 
 .contribution .contribution_form button:focus,
@@ -839,6 +840,7 @@ a {
 }
 
 .contribution .contribution_form .invalid_input {
+  width: 430px;
   font-size: larger;
   color: crimson;
   margin-top: 6px;

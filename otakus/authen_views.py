@@ -98,7 +98,7 @@ def user_login(request):
         otaku_data["is_reviewer"] = user.animes_to_review.exists()
 
         user_notifications = NotificationsSerializer(
-            Notification.objects.filter(Q(receiver=user) | Q(broad=True)), many=True
+            Notification.non_expired.filter(Q(receiver=user) | Q(broad=True)), many=True
         )
 
         login(request, user)
