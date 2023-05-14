@@ -15,7 +15,6 @@ import Settings from 'pages/Settings'
 import NoMatch from 'pages/NoMatch'
 
 import CountryPanel from 'pages/components/SelectCountryPanel'
-import getCookie from 'pages/components/getCookie'
 import Navbar from 'pages/components/NavBar'
 import Footer from 'pages/components/Footer'
 import async_http_request from 'pages/components/AsyncRequest'
@@ -62,7 +61,7 @@ function App() {
     }
   }, [lastMessage, setnotifications])
 
-  
+
   const log_user_out = async () => {
 
     if (authenticated !== true) {
@@ -77,9 +76,6 @@ function App() {
 
   }
 
-  const fetch_csrf_token = async () => {
-    const token_response = await async_http_request({ path: "get_csrf/" })
-  }
 
   const set_fetched_user_data_and_authenticate = (payload) => {
     set_user_data(payload.user_data)
@@ -117,13 +113,7 @@ function App() {
     )
   }
 
-  useEffect(() => {
-    if (getCookie('csrftoken') === null) {
-      fetch_csrf_token()
-    }
-
-    fetch_home_data()
-  }, [])
+  useEffect(() => { fetch_home_data() }, [])
 
   return (
     <GlobalStates.Provider

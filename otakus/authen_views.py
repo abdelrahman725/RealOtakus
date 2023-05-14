@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.db.models import Q
 
 from rest_framework import status
@@ -12,13 +11,6 @@ from otakus.serializers import NotificationsSerializer
 
 from otakus.models import User
 from otakus.models import Notification
-
-
-@ensure_csrf_cookie
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def send_csrf_token_to_client(request):
-    return Response({"info": "csrf token is set"})
 
 
 @api_view(["POST"])

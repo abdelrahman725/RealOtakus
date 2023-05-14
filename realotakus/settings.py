@@ -35,8 +35,8 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = os.getenv("HOST_EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("HOST_EMAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("HOST_EMAIL")
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
 
 
 INSTALLED_APPS = [
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
-    #'channels',
+    # "channels",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",

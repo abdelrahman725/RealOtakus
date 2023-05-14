@@ -141,7 +141,7 @@ const About = () => {
 
         <h3 id="contributions-limit">Why number of allowed contributions is limited to 10 per day ?</h3>
         <p>As you can see in the above <Link className="simple_link" to="/about#contribution-guidelines">Guidelines</Link> we only accept high quality questions, with that said,
-          it should take some time creating a single question with its choices, trying to contribute more than 10 questions
+          creating a single question with its choices should take some time, trying to contribute more than 10 questions
           in a single day probably means you didn't put enough time and effort in creating each of them.
         </p>
         <p>For now our application can only handle a certain amount of contributed questions received,

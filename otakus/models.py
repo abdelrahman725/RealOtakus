@@ -4,7 +4,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.core.cache import cache
 from django.contrib.auth.models import UserManager
 from django.db.models.signals import pre_delete, pre_save, post_save, m2m_changed
@@ -12,13 +11,14 @@ from django.dispatch import receiver
 
 # from asgiref.sync import async_to_sync
 # from channels.layers import get_channel_layer
-
 from otakus import base_models
 
 from otakus.helpers import create_notification
 from otakus.helpers import get_user_new_level
 from otakus.helpers import notify_reviewers_of_a_new_contribution
 from otakus.helpers import contribution_got_reviewed
+
+from realotakus.settings import DEBUG
 
 
 # excluding super users (e.g. admin) from all users queryset
@@ -39,13 +39,15 @@ class User(base_models.User):
 @receiver(post_save, sender=User)
 def new_user_signed_up(sender, instance, created, **kwargs):
     if created and instance.email:
-        send_mail(
-            subject=f"Welcome to RealOtakus!",
-            message=f"Hi {instance.username}, We are excited to have you in our platform!\n\nYou can now start creating your own questions or participate in challenging otaku quizes!\n\n RealOtakus Team.",
-            from_email=None,
-            recipient_list=[instance.email],
-            fail_silently=False,
+        send_async_email = threading.Thread(
+            target=instance.email_user,
+            kwargs={
+                "subject": "Welcome to RealOtakus",
+                "message": f"Hi {instance.username}, We are excited to have you in our platform!\n\nYou can now start creating your own questions or participate in challenging otaku quizes!\n\nRealOtakus Team.",
+                "fail_silently": not DEBUG,
+            },
         )
+        send_async_email.start()
 
 
 @receiver(pre_save, sender=User)

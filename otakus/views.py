@@ -326,7 +326,6 @@ def get_or_make_contribution(request):
         ).count()
         >= 10
     ):
-        
         return Response({}, status=status.HTTP_403_FORBIDDEN)
 
     try:
