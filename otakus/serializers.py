@@ -11,14 +11,14 @@ class UserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id',
-            'username',
-            'email',
-            'points',
-            'level',
-            'tests_started',
-            'tests_completed',
-            'country'
+            "id",
+            "username",
+            "email",
+            "points",
+            "level",
+            "tests_started",
+            "tests_completed",
+            "country",
         )
 
 
@@ -27,23 +27,13 @@ class LeaderBoradSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
-            'id',
-            'username',
-            'points',
-            'level',
-            'n_contributions',
-            'country'
-        )
+        fields = ("id", "username", "points", "level", "n_contributions", "country")
 
 
 class AnimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anime
-        fields = (
-            "id",
-            "anime_name"
-        )
+        fields = ("id", "anime_name")
 
 
 class AnimeReviewedContributionsSerializer(serializers.ModelSerializer):
@@ -51,16 +41,12 @@ class AnimeReviewedContributionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Anime
-        fields = (
-            "id",
-            "anime_name",
-            "reviewed_contributions"
-        )
+        fields = ("id", "anime_name", "reviewed_contributions")
 
 
 class ContributionSerializer(serializers.ModelSerializer):
     anime = AnimeSerializer()
-    
+
     class Meta:
         model = Question
         fields = (
@@ -80,10 +66,7 @@ class ContributionSerializer(serializers.ModelSerializer):
 class AnswersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = (
-            "id",
-            "right_answer"
-        )
+        fields = ("id", "right_answer")
 
 
 class AnimeInteractionsSerializer(serializers.ModelSerializer):
@@ -105,20 +88,10 @@ class QuestionInteractionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionInteraction
-        fields = (
-            "anime",
-            "correct_answer"
-        )
+        fields = ("anime", "correct_answer")
 
 
 class NotificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = (
-            "id",
-            "notification",
-            "kind",
-            "time",
-            "seen",
-            "broad"
-        )
+        fields = ("id", "notification", "kind", "time", "seen", "broad")

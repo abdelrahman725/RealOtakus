@@ -16,9 +16,9 @@ ADMIN_PANEL_PATH = os.getenv("ADMIN_PATH", "admin/")
 
 ALLOWED_HOSTS = ["127.0.0.1", os.getenv("HOST")]
 
-CORS_ALLOW_CREDENTIALS = True
-
+# to allow requests from react app in development
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+
 CSRF_TRUSTED_ORIGINS = (
     ["http://127.0.0.1:8000"]
     if DEBUG == True
@@ -99,7 +99,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
-        # "rest_framework.permissions.AllowAny
+        #"rest_framework.permissions.AllowAny"
     ],
 }
 

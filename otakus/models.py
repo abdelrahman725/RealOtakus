@@ -38,7 +38,7 @@ class User(base_models.User):
 # on user signup send an email (if user has a valid email) welcoming the user
 @receiver(post_save, sender=User)
 def new_user_signed_up(sender, instance, created, **kwargs):
-    if created and instance.email:
+    if created and instance.email and not instance.is_superuser:
         send_async_email = threading.Thread(
             target=instance.email_user,
             kwargs={
