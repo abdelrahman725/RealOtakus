@@ -173,7 +173,6 @@ a {
 
 .navbar {
   background-color: $base_div_background_color;
-  color: white;
   padding: 7px 0px;
   margin-bottom: 20px;
   display: flex;
@@ -772,10 +771,9 @@ a {
     }
 
     .invalid_input {
-      width: 430px;
-      font-size: larger;
+      width: 360px;
+      @extend .centered_div;
       color: crimson;
-      margin-top: 6px;
     }
   }
 }
@@ -932,7 +930,7 @@ footer {
   }
 }
 
-@media screen and(max-width: 580px) {
+@media screen and (max-width: 580px) {
   .navbar,
   .contributions_states_buttons {
     flex-direction: column;
@@ -962,7 +960,7 @@ footer {
   }
 }
 
-@media screen and(max-width: 900px) {
+@media screen and (max-width: 900px) {
   .navigation_buttons {
     align-items: center;
     flex-direction: column;
