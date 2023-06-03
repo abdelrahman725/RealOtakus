@@ -137,7 +137,7 @@ def chache_new_created_anime(sender, instance, created, **kwargs):
 
 @receiver(pre_delete, sender=Anime)
 def delete_chached_anime(sender, instance, **kwargs):
-    previous_animes = cache.get("animes")
+    previous_animes = cache.get("animes") or {}
     del previous_animes[instance.id]
     cache.set(key="animes", value=previous_animes, timeout=None)
 

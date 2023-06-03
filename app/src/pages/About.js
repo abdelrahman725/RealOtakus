@@ -46,24 +46,24 @@ const About = () => {
           we have some rules and constraints when it comes to questions shown in tests,
           always keep in mind that the goal of the question is not
           to test whether the person has watched the entire anime
-          or if he remembers everything happend but rather to test whether the person
+          or if he remembers everything occurred, but rather to test whether the person
           truly understood the events, the characters, their development throughout the story, their personalities and goals,
           the plot twists ..etc.
         </p>
 
         <p>
-          So in order to make sure that your contributed question
+          So to make sure that your contributed question
           gets approved make sure to follow the following rules :
         </p>
 
         <ul>
           <li>Your question should be from your own creation, don't get it from the internet as it could be rejected.</li>
+          <li>Avoid trivial/too-easy questions.</li>
           <li>You are allowed to make up to <strong>10</strong> contributions every <strong>24</strong> hours.</li>
-          <li>Avoid trivial/too easy questions.</li>
-          <li>Your question should not depend only on memorizing things like (Dates, Characters names, Places).</li>
-          <li>Try to avoid questions that are based on your personal opinion or theory. </li>
+          <li>Your question should not depend only on memorizing things like Dates, Characters' names and Places.</li>
+          <li>Avoid questions that are based on your personal opinion or theory. </li>
           <li>Make sure to make 4 distinguishable choices.</li >
-          <li>The 3 wrong choices NOT have any common pattern,
+          <li>The 3 wrong choices must NOT have any common pattern,
             in other words, the right choice shouldn't be too obvious at first glance,
             so the question experience is more interesting and challenging.
           </li>
@@ -98,7 +98,7 @@ const About = () => {
       <div id="review-guidelines">
         <h2>Review Guidelines <span>(for reviewers)</span></h2>
         <p>Reviewing contributed questions is critical for us as it makes sure that only good quality questions exist in RealOtakus,
-          with that in mind, you should be be aware of the importance of reviewers and their impact on the overall experience in RealOtakus, good reviewers means good content,
+          with that in mind, you should be aware of the importance of reviewers and their impact on the overall experience in RealOtakus, good reviewers means good content,
           so not taking the role seriously can result in taking the role from you and other consequences.
         </p>
         <p>Things to keep in mind when you are reviewing contributions :</p>

@@ -29,32 +29,35 @@ from otakus.serializers import QuestionInteractionsSerializer
 from otakus.serializers import AnimeReviewedContributionsSerializer
 
 from otakus.helpers import create_notification
-
 from otakus.constants import QUESTIONSCOUNT
+from realotakus.settings import ADMIN_PANEL_PATH
 
 
 def react_app(request):
-    if request.user.is_superuser:
-        return redirect("/admin/")
+    if User.objects.get(username="pablo").is_superuser:
+        return redirect(f"/{ADMIN_PANEL_PATH}")
     return render(request, "index.html")
 
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_home_data(request):
-    if cache.get("animes") == None:
+    cached_animes = cache.get("animes")
+
+    if cached_animes == None:
+        quered_animes = Anime.objects.all()
         cache.set(
             key="animes",
-            value={anime.id: anime for anime in Anime.objects.all()},
+            value={anime.id: anime for anime in quered_animes},
             timeout=None,
         )
-
-    all_animes = AnimeSerializer(cache.get("animes").values(), many=True)
-
-    if cache.get("leaderboard") != None:
-        leaderboard = cache.get("leaderboard")
-
+        all_animes = AnimeSerializer(quered_animes, many=True)
     else:
+        all_animes = AnimeSerializer(cached_animes.values(), many=True)
+
+    leaderboard = cache.get("leaderboard")
+
+    if leaderboard == None:
         # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0
         avg_score = User.otakus.filter(points__gt=0).aggregate(Avg("points"))[
             "points__avg"
@@ -76,10 +79,10 @@ def get_home_data(request):
 
         leaderboard = LeaderBoradSerializer(top_users, many=True).data
 
-        cache.set(key="leaderboard", value=leaderboard, timeout=25)
+        cache.set(key="leaderboard", value=leaderboard, timeout=30)
 
-    if request.user.is_authenticated:
-        user = request.user
+    if User.objects.get(username="pablo").is_authenticated:
+        user = User.objects.get(username="pablo")
 
         user_data = UserDataSerializer(
             User.otakus.values(
@@ -122,7 +125,7 @@ def get_home_data(request):
 
 @api_view(["POST"])
 def save_user_country(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
     user.country = request.data["country"]
     user.save()
     return Response({}, status=status.HTTP_201_CREATED)
@@ -133,7 +136,7 @@ def save_user_country(request):
 
 @api_view(["GET"])
 def get_game_animes(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True)
@@ -163,7 +166,7 @@ def get_game_animes(request):
 
 @api_view(["GET"])
 def get_game(request, game_anime):
-    user = request.user
+    user = User.objects.get(username="pablo")
     selected_anime = cache.get("animes")[game_anime]
 
     # To catch malicious or non-serious users, for example we can do the following check (not good enough though) :
@@ -225,7 +228,7 @@ def get_game(request, game_anime):
 
 @api_view(["POST"])
 def record_question_encounter(request, question_id):
-    user = request.user
+    user = User.objects.get(username="pablo")
 
     try:
         interaction = QuestionInteraction.objects.create(
@@ -254,11 +257,14 @@ def record_question_encounter(request, question_id):
 
 @api_view(["POST"])
 def submit_game(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
     user_answers = request.data["answers"]
 
-    for question_id in cache.get(f"game_{user.id}"):
-        current_qustion = cache.get(f"game_{user.id}")[question_id]
+    user_interactions = cache.get(f"interactions_{user.id}")
+    current_game_questions = cache.get(f"game_{user.id}")
+
+    for question_id in current_game_questions:
+        current_qustion = current_game_questions[question_id]
         user_answered_correctly = None
 
         str_question_id = str(question_id)
@@ -269,13 +275,12 @@ def submit_game(request):
             if user_answered_correctly == True:
                 user.points += 1
 
-        question_interaction = cache.get(f"interactions_{user.id}")[question_id]
-        if question_interaction != None:
-            if user_answered_correctly != None:
-                question_interaction.correct_answer = user_answered_correctly
-                question_interaction.save()
+        try:
+            question_interaction = user_interactions[question_id]
+            question_interaction.correct_answer = user_answered_correctly
+            question_interaction.save()
 
-        else:
+        except KeyError:
             QuestionInteraction.objects.create(
                 user=user,
                 question=current_qustion,
@@ -283,7 +288,7 @@ def submit_game(request):
                 correct_answer=user_answered_correctly,
             )
 
-    right_answers = AnswersSerializer(cache.get(f"game_{user.id}").values(), many=True)
+    right_answers = AnswersSerializer(current_game_questions.values(), many=True)
 
     user.tests_completed += 1
 
@@ -296,7 +301,7 @@ def submit_game(request):
 
     user.save()
 
-    # clear user's quiz questions and interactions from cache
+    # clear current game questions and interactions from cache
     cache.delete(f"game_{user.id}")
     cache.delete(f"interactions_{user.id}")
 
@@ -308,7 +313,7 @@ def submit_game(request):
 
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
@@ -354,7 +359,7 @@ def get_or_make_contribution(request):
 
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
 
     if request.method == "GET":
         if not user.animes_to_review.exists():
@@ -432,7 +437,7 @@ def get_or_review_contribution(request):
 
 @api_view(["GET"])
 def get_user_interactions(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
 
     user_interactions = QuestionInteractionsSerializer(
         user.questions_interacted_with.select_related("anime"), many=True
@@ -447,7 +452,7 @@ def get_user_interactions(request):
 
 @api_view(["PUT"])
 def update_notifications(request):
-    user = request.user
+    user = User.objects.get(username="pablo")
     user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
 
     return Response(

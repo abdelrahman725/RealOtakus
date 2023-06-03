@@ -140,7 +140,6 @@ function App() {
                     new_notifications_count={new_notifications_count}
                     game_started={game_started}
                     darkmode={darkmode}
-                    log_user_out={log_user_out}
                     setdarkmode={setdarkmode}
                   />
 
@@ -208,7 +207,7 @@ function App() {
                     <Route path="/settings"
                       element={
                         <AuthenticatedRoute>
-                          <Settings />
+                          <Settings log_user_out={log_user_out} />
                         </AuthenticatedRoute>
                       }
                     />

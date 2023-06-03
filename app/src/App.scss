@@ -811,10 +811,31 @@ a {
 .settings {
   margin: 10px;
 
-  .title {
-    display: inline-block;
+  .logout {
+    span {
+      font-size: x-large;
+      padding-right: 20px;
+    }
+    .icon {
+      transform: scale(2);
+    }
+
+    &:hover {
+      transition: 0.1s;
+      transform: scale(1.04);
+      cursor: pointer;
+    }
   }
+
   .danger_container {
+    max-width: 600px;
+    padding-bottom: 15px;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    border: rgb(186, 41, 41) solid 2px;
+    border-radius: 10px;
+
     .pre_delete {
       background-color: black;
     }

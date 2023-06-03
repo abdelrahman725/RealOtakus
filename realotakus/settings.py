@@ -12,7 +12,7 @@ SECRET_KEY = (
     else os.getenv("SECRET_KEY")
 )
 
-ADMIN_PANEL_PATH = os.getenv("ADMIN_PATH", "admin/")
+ADMIN_PANEL_PATH = "admin/" if DEBUG == True else os.getenv("ADMIN_PATH")
 
 ALLOWED_HOSTS = ["127.0.0.1", os.getenv("HOST")]
 
@@ -98,8 +98,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-        # "rest_framework.permissions.AllowAny"
+        #"rest_framework.permissions.IsAuthenticated",
+         "rest_framework.permissions.AllowAny"
     ],
 }
 

@@ -677,8 +677,26 @@ a {
 .settings {
   margin: 10px;
 }
-.settings .title {
-  display: inline-block;
+.settings .logout span {
+  font-size: x-large;
+  padding-right: 20px;
+}
+.settings .logout .icon, .settings .logout .navbar .nav_icon, .navbar .settings .logout .nav_icon {
+  transform: scale(2);
+}
+.settings .logout:hover {
+  transition: 0.1s;
+  transform: scale(1.04);
+  cursor: pointer;
+}
+.settings .danger_container {
+  max-width: 600px;
+  padding-bottom: 15px;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  border: rgb(186, 41, 41) solid 2px;
+  border-radius: 10px;
 }
 .settings .danger_container .pre_delete {
   background-color: black;

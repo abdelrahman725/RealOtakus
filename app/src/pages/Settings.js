@@ -1,10 +1,10 @@
 import React from 'react'
 import async_http_request from './components/AsyncRequest'
 import { GlobalStates } from 'App'
-import { useState } from 'react'
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
+import { MdLogout } from 'react-icons/md'
 
-const Settings = () => {
+const Settings = ({ log_user_out }) => {
 
     const { set_authenticated } = useContext(GlobalStates)
     const [pre_delete, set_pre_delete] = useState(false)
@@ -38,9 +38,13 @@ const Settings = () => {
 
     return (
         <div className="settings centered_div">
-            <h2>Danger Zone</h2>
+            <div className="logout" onClick={log_user_out}>
+                <span><strong>Logout</strong></span><MdLogout className="icon" />
+            </div>
+
             <div className="danger_container">
-                <p className="title">Delete your account and all data connected to it</p>
+                <h2>Danger Zone</h2>
+                <span>Delete your account and all data connected to it</span>
                 <button className="darker_on_hover pre_delete" onClick={() => set_pre_delete(!pre_delete)}>
                     delete account
                 </button>
@@ -72,7 +76,7 @@ const Settings = () => {
                 {res_msg && <p>{res_msg}</p>}
 
             </div >
-        </div >
+        </div>
     )
 }
 
