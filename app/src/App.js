@@ -14,13 +14,12 @@ import About from 'pages/About'
 import Settings from 'pages/Settings'
 import NoMatch from 'pages/NoMatch'
 
-import CountryPanel from 'pages/components/SelectCountryPanel'
 import Navbar from 'pages/components/NavBar'
 import Footer from 'pages/components/Footer'
 import async_http_request from 'pages/components/AsyncRequest'
 
 import React, { useState, useEffect, createContext } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { get_domain } from 'Constants'
 
@@ -28,7 +27,6 @@ export const GlobalStates = createContext()
 
 function App() {
   const [authenticated, set_authenticated] = useState(null)
-  const [country_required, set_country_required] = useState(false)
   const [user_data, set_user_data] = useState()
   const [dashboard_users, set_dashboard_users] = useState()
   const [all_animes, setall_animes] = useState()
@@ -74,12 +72,37 @@ function App() {
       set_authenticated(false)
     }
 
+    return <Navigate to="/" replace />
+
   }
 
+  const fetch_client_country_via_api_then_save = async () => {
+
+    const result = await async_http_request({ server: "https://ipapi.co/json/" })
+
+    if (result !== null && result.status === 200) {
+
+      const fetched_country = result.payload.country.toLowerCase()
+
+      set_user_data(prev => ({
+        ...prev,
+        country: fetched_country
+      }))
+
+      // after successfully fetching the user country, now we save it to the db so we don't have to query it again
+      const saving_country_response = await async_http_request({
+        path: "post_country",
+        method: "POST",
+        data: { "country": fetched_country }
+      })
+
+    }
+
+  }
 
   const set_fetched_user_data_and_authenticate = (payload) => {
+    payload.user_data.country === null && fetch_client_country_via_api_then_save()
     set_user_data(payload.user_data)
-    set_country_required(payload.user_data.country === null)
     set_new_notifications_count(payload.notifications.filter(n => n.seen === false && n.broad === false).length)
     setnotifications(payload.notifications)
     set_authenticated(true)
@@ -142,8 +165,6 @@ function App() {
                     darkmode={darkmode}
                     setdarkmode={setdarkmode}
                   />
-
-                  {authenticated && country_required && <CountryPanel set_country_required={set_country_required} />}
 
                   <Routes>
 

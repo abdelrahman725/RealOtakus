@@ -85,6 +85,7 @@ a {
 }
 .not_authenticated .container .authenticating_forms form .select_country {
   text-align: left;
+  margin-bottom: 15px;
 }
 .not_authenticated .container .authenticating_forms form input {
   border-radius: 3px;

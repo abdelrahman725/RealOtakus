@@ -199,7 +199,7 @@ const AuthenticatingForms = () => {
                         onChange={on_country_selection}
                         value={selected_country}
                         ref={country_select}
-                    /><br />
+                    />
 
                     <input
                         name="password"

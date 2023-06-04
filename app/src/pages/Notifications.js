@@ -94,7 +94,7 @@ const Notifications = ({ notifications, set_new_notifications_count }) => {
 
     const new_unseen_notifications_ids = []
 
-    notifications.forEach((notification) => { notification.seen === false && new_unseen_notifications_ids.push(notification.id) })
+    notifications.forEach((notification) => { notification.seen === false && notification.broad === false && new_unseen_notifications_ids.push(notification.id) })
 
     // update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
     const update_notifications_state = async () => {

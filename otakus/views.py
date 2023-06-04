@@ -34,7 +34,7 @@ from realotakus.settings import ADMIN_PANEL_PATH
 
 
 def react_app(request):
-    if User.objects.get(username="pablo").is_superuser:
+    if request.user.is_superuser:
         return redirect(f"/{ADMIN_PANEL_PATH}")
     return render(request, "index.html")
 
@@ -81,8 +81,8 @@ def get_home_data(request):
 
         cache.set(key="leaderboard", value=leaderboard, timeout=30)
 
-    if User.objects.get(username="pablo").is_authenticated:
-        user = User.objects.get(username="pablo")
+    if request.user.is_authenticated:
+        user = request.user
 
         user_data = UserDataSerializer(
             User.otakus.values(
@@ -125,7 +125,7 @@ def get_home_data(request):
 
 @api_view(["POST"])
 def save_user_country(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
     user.country = request.data["country"]
     user.save()
     return Response({}, status=status.HTTP_201_CREATED)
@@ -136,7 +136,7 @@ def save_user_country(request):
 
 @api_view(["GET"])
 def get_game_animes(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
 
     game_animes = AnimeInteractionsSerializer(
         Anime.objects.filter(active=True)
@@ -166,7 +166,7 @@ def get_game_animes(request):
 
 @api_view(["GET"])
 def get_game(request, game_anime):
-    user = User.objects.get(username="pablo")
+    user = request.user
     selected_anime = cache.get("animes")[game_anime]
 
     # To catch malicious or non-serious users, for example we can do the following check (not good enough though) :
@@ -228,7 +228,7 @@ def get_game(request, game_anime):
 
 @api_view(["POST"])
 def record_question_encounter(request, question_id):
-    user = User.objects.get(username="pablo")
+    user = request.user
 
     try:
         interaction = QuestionInteraction.objects.create(
@@ -257,7 +257,7 @@ def record_question_encounter(request, question_id):
 
 @api_view(["POST"])
 def submit_game(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
     user_answers = request.data["answers"]
 
     user_interactions = cache.get(f"interactions_{user.id}")
@@ -313,7 +313,7 @@ def submit_game(request):
 
 @api_view(["GET", "POST"])
 def get_or_make_contribution(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
 
     if request.method == "GET":
         user_contributions = ContributionSerializer(
@@ -359,7 +359,7 @@ def get_or_make_contribution(request):
 
 @api_view(["GET", "PUT"])
 def get_or_review_contribution(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
 
     if request.method == "GET":
         if not user.animes_to_review.exists():
@@ -437,7 +437,7 @@ def get_or_review_contribution(request):
 
 @api_view(["GET"])
 def get_user_interactions(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
 
     user_interactions = QuestionInteractionsSerializer(
         user.questions_interacted_with.select_related("anime"), many=True
@@ -452,7 +452,7 @@ def get_user_interactions(request):
 
 @api_view(["PUT"])
 def update_notifications(request):
-    user = User.objects.get(username="pablo")
+    user = request.user
     user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
 
     return Response(
