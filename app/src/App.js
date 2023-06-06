@@ -219,6 +219,7 @@ function App() {
                         <AuthenticatedRoute>
                           <Notifications
                             notifications={notifications}
+                            new_notifications_count={new_notifications_count}
                             set_new_notifications_count={set_new_notifications_count}
                           />
                         </AuthenticatedRoute>
