@@ -68,7 +68,7 @@ const Game = ({
     }
 
     document.onvisibilitychange = () => {
-      if (document.visibilityState === "hidden" && questions) {
+      if (questions && document.visibilityState === "hidden") {
         set_game_info("Sorry your quiz is canceled because you left the page, you shouldn't do so")
         setgame_started(null)
       }
@@ -79,15 +79,17 @@ const Game = ({
       window.onbeforeunload = null
     }
 
-  }, [])
+  }, [questions])
 
   return (
     <div className="game_container">
-      <p className="warning">
-        <FiAlertTriangle className="warning_icon" />Do not leave current page or switch tabs, your progress will be lost.
-      </p>
+
       {questions ?
         <div>
+          <p className="warning">
+            <FiAlertTriangle className="warning_icon" />Do not leave current page or switch tabs, your progress will be lost.
+          </p>
+
           <Question
             question={questions[index]}
             question_index={index}
