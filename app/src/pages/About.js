@@ -57,9 +57,8 @@ const About = () => {
         </p>
 
         <ul>
-          <li>Your question should be from your own creation, don't get it from the internet as it could be rejected.</li>
           <li>Avoid trivial/too-easy questions.</li>
-          <li>You are allowed to make up to <strong>10</strong> contributions every <strong>24</strong> hours.</li>
+          <li>AI generated questions are not recommended.</li>
           <li>Your question should not depend only on memorizing things like Dates, Characters' names and Places.</li>
           <li>Avoid questions that are based on your personal opinion or theory. </li>
           <li>Make sure to make 4 distinguishable choices.</li >
@@ -68,6 +67,7 @@ const About = () => {
             so the question experience is more interesting and challenging.
           </li>
           <li>Your question must be only relevant to anime and doesn't contain any racist, sexual, political, religious or hate speech content.</li>
+          <li>You are allowed to make up to <strong>10</strong> contributions every <strong>24</strong> hours.</li>
           <li>Your question must be in a valid english format. </li>
         </ul>
 
