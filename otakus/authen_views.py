@@ -34,19 +34,7 @@ def user_register(request):
         username=username, email=email, password=user_password, country=user_country
     )
 
-    new_otaku_data = UserDataSerializer(
-        User.otakus.values(
-            "id",
-            "username",
-            "email",
-            "points",
-            "level",
-            "tests_started",
-            "tests_completed",
-            "level",
-            "country",
-        ).get(id=new_otaku.id)
-    ).data
+    new_otaku_data = UserDataSerializer(new_otaku).data
 
     new_otaku_data["is_reviewer"] = False
 
@@ -73,19 +61,7 @@ def user_login(request):
     user = authenticate(request, username=username, password=password)
 
     if user is not None:
-        otaku_data = UserDataSerializer(
-            User.otakus.values(
-                "id",
-                "username",
-                "email",
-                "points",
-                "level",
-                "tests_started",
-                "tests_completed",
-                "level",
-                "country",
-            ).get(id=user.id)
-        ).data
+        otaku_data = UserDataSerializer(user).data
 
         otaku_data["is_reviewer"] = user.animes_to_review.exists()
 

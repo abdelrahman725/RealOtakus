@@ -42,23 +42,25 @@ def react_app(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_home_data(request):
-    cached_animes = cache.get("animes")
+    cached_or_quered_animes = cache.get("animes")
 
-    if cached_animes == None:
-        quered_animes = Anime.objects.all()
+    if not cached_or_quered_animes:
+        cached_or_quered_animes = Anime.objects.all()
         cache.set(
             key="animes",
-            value={anime.id: anime for anime in quered_animes},
+            value={anime.id: anime for anime in cached_or_quered_animes},
             timeout=None,
         )
-        all_animes = AnimeSerializer(quered_animes, many=True)
+
     else:
-        all_animes = AnimeSerializer(cached_animes.values(), many=True)
+        cached_or_quered_animes = cached_or_quered_animes.values()
+
+    all_animes = AnimeSerializer(cached_or_quered_animes, many=True)
 
     leaderboard = cache.get("leaderboard")
 
     if leaderboard == None:
-        # Dashboard users are sorted by their scores in non-increasing order where their score is > avg_score and !=0
+        # Calculate the average score for all of the users.
         avg_score = User.otakus.filter(points__gt=0).aggregate(Avg("points"))[
             "points__avg"
         ]
@@ -67,6 +69,7 @@ def get_home_data(request):
             top_users = []
 
         else:
+            # Get the top users who have a score greater than the average score.
             top_users = (
                 User.otakus.annotate(
                     n_contributions=Count(
@@ -84,19 +87,7 @@ def get_home_data(request):
     if request.user.is_authenticated:
         user = request.user
 
-        user_data = UserDataSerializer(
-            User.otakus.values(
-                "id",
-                "username",
-                "email",
-                "points",
-                "level",
-                "tests_started",
-                "tests_completed",
-                "level",
-                "country",
-            ).get(id=user.id)
-        ).data
+        user_data = UserDataSerializer(user).data
 
         user_data["is_reviewer"] = user.animes_to_review.exists()
 
