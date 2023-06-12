@@ -77,7 +77,7 @@ def get_home_data(request):
                     )
                 )
                 .filter(points__gt=avg_score)
-                .order_by("-points")
+                .order_by("-points")[:30]
             )
 
         leaderboard = LeaderBoradSerializer(top_users, many=True).data
@@ -434,11 +434,7 @@ def get_user_interactions(request):
         user.questions_interacted_with.select_related("anime"), many=True
     )
 
-    return Response(
-        {
-            "interactions": user_interactions.data,
-        }
-    )
+    return Response({"interactions": user_interactions.data})
 
 
 @api_view(["PUT"])
@@ -446,7 +442,4 @@ def update_notifications(request):
     user = request.user
     user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
 
-    return Response(
-        {"info": f"notifications state of {user.username} are updated successfully"},
-        status=status.HTTP_201_CREATED,
-    )
+    return Response({"info": f"notifications updated successfully"})

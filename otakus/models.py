@@ -64,6 +64,13 @@ def update_user_points_and_level(sender, instance, **kwargs):
 def on_animes_to_review_change(sender, instance, **kwargs):
     action = kwargs.pop("action", None)
 
+    if not cache.get("animes"):
+        cache.set(
+            key="animes",
+            value={anime.id: anime for anime in Anime.objects.all()},
+            timeout=None,
+        )
+
     if action == "post_remove":
         removed_animes = ", ".join(
             [
