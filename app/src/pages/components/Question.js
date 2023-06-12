@@ -48,11 +48,10 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
   }
 
   const sendquestioninteraction = async () => {
-    const attempt_response = await async_http_request({
+    async_http_request({
       path: `interaction/${question.id}`,
       method: "POST"
     })
-
   }
 
   const timer = useTimer({ delay: 1000, callback: () => handletimeleft() })
@@ -66,7 +65,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     return () => {
       timer.stop()
     }
-
+    // eslint-disable-next-line
   }, [question_index])
 
 

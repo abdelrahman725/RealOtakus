@@ -87,7 +87,7 @@ const Review = () => {
       setanimes_options([{ value: "all", label: "All animes" }])
       cancled = true
     }
-
+    // eslint-disable-next-line
   }, [])
 
 

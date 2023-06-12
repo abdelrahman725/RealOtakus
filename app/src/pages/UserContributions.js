@@ -6,9 +6,16 @@ import { useLocation } from 'react-router-dom'
 const UserContributions = () => {
 
   const [contributions, setcontributions] = useState()
-  const [n_contributions, set_n_contributions] = useState()
-  const [selected_contribution_state, set_selected_contribution_state] = useState(1)
+  const [filtered_contributions, set_filtered_contributions] = useState()
+  const [selected_contribution_state, set_selected_contribution_state] = useState("all")
   const location = useLocation()
+
+  const contribution_state_to_label = {
+    "all": "total",
+    true: "approved",
+    false: "rejected",
+    null: "pending",
+  }
 
   const feedback_value_to_label = {
     "irr": "not relevant",
@@ -19,19 +26,13 @@ const UserContributions = () => {
   }
 
   useEffect(() => {
-
+    
     if (contributions) {
+      set_filtered_contributions(contributions.filter(c => selected_contribution_state === "all" ? true : c.approved === selected_contribution_state))
 
-      if (selected_contribution_state === 1) {
-        set_n_contributions(contributions.length)
-      }
-
-      else {
-        set_n_contributions(contributions.filter(c => c.approved === selected_contribution_state).length)
-      }
     }
 
-  }, [selected_contribution_state])
+  }, [selected_contribution_state, contributions])
 
   useEffect(() => {
 
@@ -41,29 +42,26 @@ const UserContributions = () => {
       if (contributions === null)
         return
 
-
       setcontributions(fetched_contributions.payload)
-      location.state !== null ? set_selected_contribution_state(location.state) : set_n_contributions(fetched_contributions.payload.length)
-
+      location.state !== null && set_selected_contribution_state(location.state)
     }
-
     get_contributions()
-
+    // eslint-disable-next-line
   }, [])
 
   return (
 
     <div className="user_contributions">
 
-      {contributions ?
-        contributions.length > 0 ?
+      {filtered_contributions ?
+        filtered_contributions.length > 0 ?
 
           <div>
 
             <div className="contributions_states_buttons">
 
-              <button className={`all darker_on_hover ${selected_contribution_state === 1 && "darker_background"}`}
-                onClick={() => set_selected_contribution_state(1)}>
+              <button className={`all darker_on_hover ${selected_contribution_state === "all" && "darker_background"}`}
+                onClick={() => set_selected_contribution_state("all")}>
                 All
               </button>
 
@@ -85,18 +83,13 @@ const UserContributions = () => {
             </div>
 
             <h2>
-              <span className="n_contributions">{n_contributions}</span>
-              {selected_contribution_state === 1 && " total "}
-              {selected_contribution_state === true && " approved "}
-              {selected_contribution_state === false && " rejected "}
-              {selected_contribution_state === null && " pending "}
-              Contributions
+              <span className="n_contributions">
+                {filtered_contributions && filtered_contributions.length}
+              </span> {contribution_state_to_label[selected_contribution_state]} Contributions
             </h2>
 
             <div className="questions_container">
-              {contributions.map((contribution, index) => (
-                (selected_contribution_state === 1 || selected_contribution_state === contribution.approved)
-                &&
+              {filtered_contributions.map((contribution, index) => (
                 <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
               ))}
             </div>

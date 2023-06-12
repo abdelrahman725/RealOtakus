@@ -83,7 +83,7 @@ const GameView = () => {
     return () => {
       setgame_started(null)
     }
-
+    // eslint-disable-next-line
   }, [])
 
   return (

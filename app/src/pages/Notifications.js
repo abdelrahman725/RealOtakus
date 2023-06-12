@@ -101,11 +101,11 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
         }
       })
 
-      set_new_notifications_count(0)
+      notifications_update_state_response.status === 200 && set_new_notifications_count(0)
     }
 
     new_notifications_count > 0 && update_notifications_state()
-
+    // eslint-disable-next-line
   }, [])
 
   return (

@@ -78,7 +78,7 @@ const Game = ({
       document.onvisibilitychange = null
       window.onbeforeunload = null
     }
-
+    // eslint-disable-next-line
   }, [questions])
 
   return (

@@ -73,7 +73,6 @@ function App() {
     }
 
     return <Navigate to="/" replace />
-
   }
 
   const fetch_client_country_via_api_then_save = async () => {
@@ -89,15 +88,13 @@ function App() {
         country: fetched_country
       }))
 
-      // after successfully fetching the user country, now we save it to the db so we don't have to query it again
-      const saving_country_response = await async_http_request({
+      // after fetching the user country successfully, now we save it to the db so we don't have to query it again
+      async_http_request({
         path: "post_country",
         method: "POST",
         data: { "country": fetched_country }
       })
-
     }
-
   }
 
   const set_fetched_user_data_and_authenticate = (payload) => {
@@ -108,35 +105,39 @@ function App() {
     set_authenticated(true)
   }
 
-  // also used to check (against the server) whether the user is authenticated or not
-  const fetch_home_data = async () => {
 
-    const result = await async_http_request({ path: "main" })
+  useEffect(() => {
 
-    if (result === null) {
-      set_loading_or_network_error_msg("network error")
-      return
+    // also used to check (against the server) whether the user is authenticated or not
+    const fetch_home_data = async () => {
+
+      const result = await async_http_request({ path: "main" })
+
+      if (result === null) {
+        set_loading_or_network_error_msg("network error")
+        return
+      }
+
+      if (result.payload.is_authenticated === "true") {
+        set_fetched_user_data_and_authenticate(result.payload)
+      }
+
+      if (result.payload.is_authenticated === "false") {
+        set_authenticated(false)
+      }
+
+      set_dashboard_users(result.payload.leaderboard)
+
+      setall_animes(
+        result.payload.animes.map(anime => ({
+          value: anime.id,
+          label: anime.anime_name
+        }))
+      )
     }
-
-    if (result.payload.is_authenticated === "true") {
-      set_fetched_user_data_and_authenticate(result.payload)
-    }
-
-    if (result.payload.is_authenticated === "false") {
-      set_authenticated(false)
-    }
-
-    set_dashboard_users(result.payload.leaderboard)
-
-    setall_animes(
-      result.payload.animes.map(anime => ({
-        value: anime.id,
-        label: anime.anime_name
-      }))
-    )
-  }
-
-  useEffect(() => { fetch_home_data() }, [])
+    fetch_home_data()
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <GlobalStates.Provider

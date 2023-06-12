@@ -27,7 +27,7 @@ const Contribute = ({ all_animes_options }) => {
   const anime_select = useRef(null)
 
   // excluded symbols  # ` ~ @ ^ * | \  as they are rarely used in question-type text
-  
+
   const required_pattern = /^[a-z0-9\s.,:;'"({\-/<>_=+!?%$&})]+$/i
 
   const handle_form_change = (e) => {
@@ -37,7 +37,7 @@ const Contribute = ({ all_animes_options }) => {
     if (name === "question") {
       question_ref.current.style.outlineColor = "#2684FF"
     }
-  
+
     if (value !== '' && value.match(required_pattern) === null) {
       return
     }
@@ -166,7 +166,7 @@ const Contribute = ({ all_animes_options }) => {
     if (sessionStorage.getItem("anime") !== null) {
       setanime(JSON.parse(sessionStorage.getItem("anime")))
     }
-
+    // eslint-disable-next-line
   }, [])
 
 
