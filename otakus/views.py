@@ -69,7 +69,7 @@ def get_home_data(request):
             top_users = []
 
         else:
-            # Get the top users who have a score greater than the average score.
+            # Get the top users (limited to 30 users) who have a score greater than the average score.
             top_users = (
                 User.otakus.annotate(
                     n_contributions=Count(
@@ -438,7 +438,7 @@ def get_user_interactions(request):
 
 
 @api_view(["PUT"])
-def update_notifications(request):
+def mark_notifications_as_read(request):
     user = request.user
     user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
 

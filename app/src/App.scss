@@ -520,10 +520,9 @@ a {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    margin-top: 50px;
 
     .animes_for_review {
-      margin-bottom: 50px;
+      margin-bottom: 100px;
     }
 
     .contributions_for_review {
@@ -796,7 +795,7 @@ a {
     background-color: white;
     text-align: left;
     padding: 0.1px 10px;
-    margin-top: 50px;
+    margin-bottom: 40px;
     box-shadow: $base_shadow;
 
     &:hover {

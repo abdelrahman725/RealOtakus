@@ -438,10 +438,9 @@ a {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  margin-top: 50px;
 }
 .review_page .review_container .animes_for_review {
-  margin-bottom: 50px;
+  margin-bottom: 100px;
 }
 .review_page .review_container .contributions_for_review {
   width: 900px;
@@ -665,7 +664,7 @@ a {
   background-color: white;
   text-align: left;
   padding: 0.1px 10px;
-  margin-top: 50px;
+  margin-bottom: 40px;
   box-shadow: 0.5px 0.5px 3px 0.1px grey;
 }
 .notifications .notification:hover {

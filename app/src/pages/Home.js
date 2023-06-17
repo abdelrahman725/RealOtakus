@@ -1,5 +1,5 @@
 import DashBoard from './components/DashBoard'
-import NotAuthenticated from './NotAuthenticated'
+import NotAuthenticated from './components/NotAuthenticated'
 import { FcIdea, FcDatabase } from 'react-icons/fc'
 import { GlobalStates } from 'App'
 import { useContext } from 'react'

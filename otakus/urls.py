@@ -24,7 +24,7 @@ urlpatterns = [
     path("get_review_contribution", otakus.views.get_or_review_contribution),
     path("interaction/<int:question_id>", otakus.views.record_question_encounter),
     path("post_country", otakus.views.save_user_country),
-    path("update_notifications", otakus.views.update_notifications),
+    path("notifications/mark", otakus.views.mark_notifications_as_read),
     path("submitgame", otakus.views.submit_game),
 ]
 

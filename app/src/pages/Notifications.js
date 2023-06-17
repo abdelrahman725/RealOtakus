@@ -94,7 +94,7 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
     // update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
     const update_notifications_state = async () => {
       const notifications_update_state_response = await async_http_request({
-        path: "update_notifications",
+        path: "notifications/mark",
         method: "PUT",
         data: {
           "notifications": notifications.filter(n => n.seen === false && n.broad === false).map(n => n.id)

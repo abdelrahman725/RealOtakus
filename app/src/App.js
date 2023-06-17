@@ -1,6 +1,5 @@
 import './App.css'
 
-import AuthenticatedRoute from 'pages/AuthenticatedRoute'
 import Home from 'pages/Home'
 import GameView from 'pages/GameView'
 import Review from 'pages/Review'
@@ -16,6 +15,7 @@ import NoMatch from 'pages/NoMatch'
 
 import Navbar from 'pages/components/NavBar'
 import Footer from 'pages/components/Footer'
+import AuthenticatedRoute from 'pages/components/AuthenticatedRoute'
 import async_http_request from 'pages/components/AsyncRequest'
 
 import React, { useState, useEffect, createContext } from 'react'
