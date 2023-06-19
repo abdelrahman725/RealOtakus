@@ -8,6 +8,7 @@ from django.core.cache import cache
 from django.contrib.auth.models import UserManager
 from django.db.models.signals import pre_delete, pre_save, post_save, m2m_changed
 from django.dispatch import receiver
+from django.conf import settings
 
 # from asgiref.sync import async_to_sync
 # from channels.layers import get_channel_layer
@@ -18,7 +19,6 @@ from otakus.helpers import get_user_new_level
 from otakus.helpers import notify_reviewers_of_a_new_contribution
 from otakus.helpers import contribution_got_reviewed
 
-from realotakus.settings import DEBUG
 
 
 # excluding super users (e.g. admin) from all users queryset
@@ -44,7 +44,7 @@ def new_user_signed_up(sender, instance, created, **kwargs):
             kwargs={
                 "subject": "Welcome to RealOtakus",
                 "message": f"Hi {instance.username}, We are excited to have you in our platform!\n\nYou can now start creating your own questions or participate in challenging otaku quizes!\n\nRealOtakus Team.",
-                "fail_silently": not DEBUG,
+                "fail_silently": not settings.DEBUG,
             },
         )
         send_async_email.start()

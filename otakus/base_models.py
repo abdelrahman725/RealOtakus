@@ -8,6 +8,7 @@ from otakus.constants import BEGINNER
 
 from otakus.helpers import get_superuser
 
+
 class Anime(models.Model):
     anime_name = models.CharField(max_length=50, unique=True)
     active = models.BooleanField(default=False)
@@ -130,6 +131,7 @@ class Notification(models.Model):
             ("N", "new anime to review"),
             ("R", "review needed"),
             ("A", "question approved"),
+            ("A1", "first question approved"),
             ("F", "question rejected"),
         ),
         max_length=2,

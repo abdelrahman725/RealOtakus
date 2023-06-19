@@ -11,6 +11,7 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
     "R": "/review",
     "N": "/review",
     "A": "/mycontributions",
+    "A1": "/mycontributions",
     "F": "/mycontributions"
   }
 
@@ -28,10 +29,10 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
       return
     }
 
-    if (kind === "A" || kind === "F") {
+    if (kind === "A" || kind === "A1" || kind === "F") {
       naviage_routes(
         notification_kind_to_path[kind],
-        { state: kind === "A" }
+        { state: kind === "A" || kind === "A1" }
       )
       return
     }
@@ -68,6 +69,15 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
       return (
         <p>
           New contributed question for <strong>{notification_or_anime_name}</strong>
+        </p>
+      )
+    }
+
+    if (kind === "A1") {
+      return (
+        <p>
+          <p>Congratulations you are now a contributor ! </p>
+          your contribution for <strong>{notification_or_anime_name}</strong> is approved, +10 points
         </p>
       )
     }

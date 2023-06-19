@@ -28,16 +28,26 @@ def contribution_got_reviewed(contributed_question):
     contributed_question.date_reviewed = timezone.now()
 
     if contributed_question.approved == True:
+        contributed_question.active = True
+
         if contributed_question.contributor:
+            is_first_approved_contribution = (
+                contributed_question.contributor.contributions.filter(
+                    approved=True
+                ).count()
+                == 0
+            )
             contributed_question.contributor.points += 10
             contributed_question.contributor.save()
-
-        contributed_question.active = True
 
     create_notification(
         receiver=contributed_question.contributor,
         notification=contributed_question.anime,
-        kind="A" if contributed_question.approved == True else "F",
+        kind="F"
+        if contributed_question.approved == False
+        else "A1"
+        if is_first_approved_contribution
+        else "A",
     )
 
 
