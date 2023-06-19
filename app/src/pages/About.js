@@ -126,20 +126,20 @@ const About = () => {
 
         <h3 id="choosing-animes">How available animes are selected ?</h3>
         <p>
-          Animes in Contribution form are chosen based on anime popularity and number of available reviewers for that anime.
+          Animes available for <strong>Contribution</strong> are chosen based on anime popularity and number of available reviewers for that anime.
         </p>
         <p>
-          Animes available for quiz are different for each user,
+          Animes available for <strong>Quiz</strong> are different for each user,
           as they are based on the number of approved and not seen questions, so questions that are contributed or reviewed by each user don't count.
         </p>
 
         <h3 id="become-reviewer">How to become a reviewer ?</h3>
         <p>
           For now RealOtakus team only selects reviewers they know in person and trust their skills,
-          but very soon there will be a clear system which allows any user to apply for the rule and get selected if eligible.
+          but very soon there will be a clear system which allows any user to apply for the rule and gets selected if eligible.
         </p>
 
-        <h3 id="contributions-limit">Why number of allowed contributions is limited to 10 per day ?</h3>
+        <h3 id="contributions-limit">Why is the number of allowed contributions limited to 10 per day ?</h3>
         <p>As you can see in the above <Link className="simple_link" to="/about#contribution-guidelines">Guidelines</Link> we only accept high quality questions, with that said,
           creating a single question with its choices should take some time, trying to contribute more than 10 questions
           in a single day probably means you didn't put enough time and effort in creating each of them.

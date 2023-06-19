@@ -30,12 +30,12 @@ from otakus.serializers import AnimeReviewedContributionsSerializer
 
 from otakus.helpers import create_notification
 from otakus.constants import QUESTIONSCOUNT
-from realotakus.settings import ADMIN_PANEL_PATH
+from django.conf import settings
 
 
 def react_app(request):
     if request.user.is_superuser:
-        return redirect(f"/{ADMIN_PANEL_PATH}")
+        return redirect(f"/{settings.ADMIN_PANEL_PATH}")
     return render(request, "index.html")
 
 
@@ -92,7 +92,10 @@ def get_home_data(request):
         user_data["is_reviewer"] = user.animes_to_review.exists()
 
         user_notifications = NotificationsSerializer(
-            Notification.non_expired.filter(Q(receiver=user) | Q(broad=True)), many=True
+            Notification.non_expired.filter(
+                (Q(receiver=user) | Q(broad=True)) & Q(time__gt=user.date_joined)
+            ),
+            many=True,
         )
 
         return Response(
