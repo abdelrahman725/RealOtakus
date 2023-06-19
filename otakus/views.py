@@ -328,21 +328,19 @@ def get_or_make_contribution(request):
         return Response({}, status=status.HTTP_403_FORBIDDEN)
 
     try:
-        anime = cache.get("animes")[request.data["anime"]]
+        question_data = request.data["question"]
 
-        question_object = request.data["question"]
-
-        # new contributed question
-        Question.objects.create(
-            anime=anime,
+        new_contribution = Question(
+            anime_id=request.data["anime"],
             contributor=user,
             is_contribution=True,
-            question=question_object["question"],
-            right_answer=question_object["rightanswer"],
-            choice1=question_object["choice1"],
-            choice2=question_object["choice2"],
-            choice3=question_object["choice3"],
+            question=question_data["question"],
+            right_answer=question_data["rightanswer"],
+            choice1=question_data["choice1"],
+            choice2=question_data["choice2"],
+            choice3=question_data["choice3"],
         )
+        new_contribution.save()
 
         return Response({}, status=status.HTTP_201_CREATED)
 
@@ -410,16 +408,16 @@ def get_or_review_contribution(request):
         new_contribution.reviewer = user
         new_contribution.feedback = request.data["feedback"]
 
+        # approved
         if review_decision == 1:
             new_contribution.approved = True
             new_contribution.save()
-
             return Response({"info": "question is approved"})
 
+        # rejected
         if review_decision == 0:
             new_contribution.approved = False
             new_contribution.save()
-
             return Response({"info": "question is rejected"})
 
     except Question.DoesNotExist:
