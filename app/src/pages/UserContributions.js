@@ -26,7 +26,7 @@ const UserContributions = () => {
   }
 
   useEffect(() => {
-    
+
     if (contributions) {
       set_filtered_contributions(contributions.filter(c => selected_contribution_state === "all" ? true : c.approved === selected_contribution_state))
 
@@ -53,8 +53,8 @@ const UserContributions = () => {
 
     <div className="user_contributions">
 
-      {filtered_contributions ?
-        filtered_contributions.length > 0 ?
+      {contributions ?
+        contributions.length > 0 ?
 
           <div>
 
@@ -89,7 +89,7 @@ const UserContributions = () => {
             </h2>
 
             <div className="questions_container">
-              {filtered_contributions.map((contribution, index) => (
+              {filtered_contributions && filtered_contributions.map((contribution, index) => (
                 <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
               ))}
             </div>
