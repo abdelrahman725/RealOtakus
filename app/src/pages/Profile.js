@@ -1,5 +1,6 @@
 import Interactions from "./components/Interactions"
 import async_http_request from "./components/AsyncRequest"
+import get_local_date from "./components/LocalDate"
 import { useState, useEffect } from "react"
 import { N_Game_Questions } from "Constants"
 
@@ -78,6 +79,10 @@ const UserProfile = ({ user_data }) => {
                 : "N/A"
               }
             </div>
+          </div>
+          <div className="data_row">
+            <div>Otaku since </div>
+            <div>{get_local_date(user_data.date_joined)}</div>
           </div>
 
           <hr />

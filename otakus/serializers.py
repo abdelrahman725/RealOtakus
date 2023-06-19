@@ -19,6 +19,7 @@ class UserDataSerializer(serializers.ModelSerializer):
             "tests_started",
             "tests_completed",
             "country",
+            "date_joined",
         )
 
 
