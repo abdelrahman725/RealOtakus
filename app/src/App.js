@@ -125,6 +125,7 @@ function App() {
       if (result.payload.is_authenticated === "false") {
         set_authenticated(false)
       }
+      set_authenticated(false)
 
       set_dashboard_users(result.payload.leaderboard)
 

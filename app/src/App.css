@@ -66,6 +66,9 @@ a {
   text-align: center;
   margin: 10px;
 }
+.not_authenticated h1 {
+  margin-bottom: 60px;
+}
 .not_authenticated .container {
   display: flex;
   justify-content: space-around;
@@ -73,7 +76,7 @@ a {
   margin-top: 30px;
 }
 .not_authenticated .container .about {
-  margin-bottom: 50px;
+  margin-bottom: 80px;
 }
 .not_authenticated .container .authenticating_forms {
   width: 25%;

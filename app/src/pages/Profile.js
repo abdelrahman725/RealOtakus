@@ -82,7 +82,7 @@ const UserProfile = ({ user_data }) => {
           </div>
           <div className="data_row">
             <div>Otaku since </div>
-            <div>{get_local_date(user_data.date_joined)}</div>
+            <div title="date you joined the platform">{get_local_date(user_data.date_joined)}</div>
           </div>
 
           <hr />
@@ -100,17 +100,17 @@ const UserProfile = ({ user_data }) => {
           </div>
 
           <div className="data_row">
-            <div>Tests Score</div>
+            <div>Quizes Score</div>
             <div>{games_score_percentage} %</div>
           </div>
 
           <div className="data_row">
-            <div>Tests Started</div>
+            <div>Quizes Started</div>
             <div>{user_data.tests_started}</div>
           </div>
 
           <div className="data_row">
-            <div>Tests Completed</div>
+            <div>Quizes Completed</div>
             <div>{user_data.tests_completed}</div>
           </div>
         </div>
