@@ -57,6 +57,40 @@ def get_home_data(request):
 
     all_animes = AnimeSerializer(cached_or_quered_animes, many=True)
 
+    if request.user.is_authenticated:
+        user = request.user
+
+        user_data = UserDataSerializer(user).data
+
+        user_data["is_reviewer"] = user.animes_to_review.exists()
+
+        user_notifications = NotificationsSerializer(
+            Notification.non_expired.filter(
+                (Q(receiver=user) | Q(broad=True)) & Q(time__gt=user.date_joined)
+            ),
+            many=True,
+        )
+
+        return Response(
+            {
+                "user_data": user_data,
+                "notifications": user_notifications.data,
+                "animes": all_animes.data,
+                "is_authenticated": "true",
+            }
+        )
+
+    return Response(
+        {
+            "animes": all_animes.data,
+            "is_authenticated": "false",
+        }
+    )
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_leaderboard(request):
     leaderboard = cache.get("leaderboard")
 
     if leaderboard == None:
@@ -82,39 +116,9 @@ def get_home_data(request):
 
         leaderboard = LeaderBoradSerializer(top_users, many=True).data
 
-        cache.set(key="leaderboard", value=leaderboard, timeout=30)
+        cache.set(key="leaderboard", value=leaderboard, timeout=40)
 
-    if request.user.is_authenticated:
-        user = request.user
-
-        user_data = UserDataSerializer(user).data
-
-        user_data["is_reviewer"] = user.animes_to_review.exists()
-
-        user_notifications = NotificationsSerializer(
-            Notification.non_expired.filter(
-                (Q(receiver=user) | Q(broad=True)) & Q(time__gt=user.date_joined)
-            ),
-            many=True,
-        )
-
-        return Response(
-            {
-                "user_data": user_data,
-                "notifications": user_notifications.data,
-                "animes": all_animes.data,
-                "leaderboard": leaderboard,
-                "is_authenticated": "true",
-            }
-        )
-
-    return Response(
-        {
-            "animes": all_animes.data,
-            "leaderboard": leaderboard,
-            "is_authenticated": "false",
-        }
-    )
+    return Response({"leaderboard": leaderboard})
 
 
 @api_view(["POST"])
@@ -167,7 +171,7 @@ def get_game(request, game_anime):
     if user.tests_started - user.tests_completed > 5:
         # catch here and act upon that
         pass
-        # return Response({"info": "you are not consistent enough when taking quiz"}, status=status.HTTP_403_FORBIDDEN)
+        # return Response({"info": "you are not consistent enough when taking quiz"}, status=status.HTTP_423_LOCKED)
 
     # current game questions for current user
     questions = selected_anime.anime_questions.filter(
@@ -325,7 +329,7 @@ def get_or_make_contribution(request):
         ).count()
         >= 10
     ):
-        return Response({}, status=status.HTTP_403_FORBIDDEN)
+        return Response({}, status=status.HTTP_423_LOCKED)
 
     try:
         question_data = request.data["question"]

@@ -27,7 +27,7 @@ const GameView = () => {
     setquizresults({})
     setuseranswers({})
 
-    const game_response = await async_http_request({ path: `getgame/${selected_anime.value}` })
+    const game_response = await async_http_request({ path: `quiz/${selected_anime.value}` })
 
     if (game_response.status !== 200) {
       set_game_info("no available questions for this anime")
@@ -61,7 +61,7 @@ const GameView = () => {
 
     async function get_available_quiz_animes() {
 
-      const game_animes_response = await async_http_request({ path: "getgameanimes" })
+      const game_animes_response = await async_http_request({ path: "quiz_animes" })
 
       if (game_animes_response === null) {
         return

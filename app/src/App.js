@@ -28,7 +28,6 @@ export const GlobalStates = createContext()
 function App() {
   const [authenticated, set_authenticated] = useState(null)
   const [user_data, set_user_data] = useState()
-  const [dashboard_users, set_dashboard_users] = useState()
   const [all_animes, setall_animes] = useState()
   const [notifications, setnotifications] = useState([])
   const [new_notifications_count, set_new_notifications_count] = useState(0)
@@ -126,8 +125,6 @@ function App() {
         set_authenticated(false)
       }
 
-      set_dashboard_users(result.payload.leaderboard)
-
       setall_animes(
         result.payload.animes.map(anime => ({
           value: anime.id,
@@ -171,7 +168,7 @@ function App() {
 
                     <Route path="/"
                       element={
-                        <Home user_data={user_data} dashboard_users={dashboard_users} />
+                        <Home user_data={user_data} />
                       }
                     />
 

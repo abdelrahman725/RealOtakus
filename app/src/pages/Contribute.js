@@ -80,7 +80,7 @@ const Contribute = ({ all_animes_options }) => {
         return
       }
 
-      if (submit_contribution_response.status === 403) {
+      if (submit_contribution_response.status === 423) {
         set_question_info("You've reached maximum number (10) of contributions in the last 24 hrs")
         return
       }

@@ -26,8 +26,8 @@ const async_http_request = async ({ server = DJANGO_URL, path = null, method = "
             response = await fetch(url)
         }
 
-        const status_code = response.status
         const result_data = await response.json()
+        const status_code = response.status
 
         console.log(status_code, result_data)
 

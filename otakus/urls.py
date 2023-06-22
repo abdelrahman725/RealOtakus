@@ -17,15 +17,16 @@ urlpatterns = [
     path("delete_account/", otakus.authen_views.delete_account),
     
     # app logic-related endpoints
-    path("getgameanimes", otakus.views.get_game_animes),
-    path("getgame/<int:game_anime>", otakus.views.get_game),
-    path("getprofile", otakus.views.get_user_interactions),
+    path("post_country", otakus.views.save_user_country),
+    path("profile", otakus.views.get_user_interactions),
+    path("leaderboard", otakus.views.get_leaderboard),
+    path("quiz_animes", otakus.views.get_game_animes),
+    path("quiz/<int:game_anime>", otakus.views.get_game),
+    path("interaction/<int:question_id>", otakus.views.record_question_encounter),
+    path("submitgame", otakus.views.submit_game),
     path("get_make_contribution", otakus.views.get_or_make_contribution),
     path("get_review_contribution", otakus.views.get_or_review_contribution),
-    path("interaction/<int:question_id>", otakus.views.record_question_encounter),
-    path("post_country", otakus.views.save_user_country),
     path("notifications/mark", otakus.views.mark_notifications_as_read),
-    path("submitgame", otakus.views.submit_game),
 ]
 
 # catch all for react app and its routes

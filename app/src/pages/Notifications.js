@@ -101,9 +101,10 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
 
   useEffect(() => {
 
-    // update notifications state in the server (which are seen by the user in the  UI) from unseen to seen   
-    const update_notifications_state = async () => {
-      const notifications_update_state_response = await async_http_request({
+    // mark notifications as seen in the server
+    const mark_notifications_as_seen = async () => {
+
+      const response = await async_http_request({
         path: "notifications/mark",
         method: "PUT",
         data: {
@@ -111,10 +112,10 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
         }
       })
 
-      notifications_update_state_response.status === 200 && set_new_notifications_count(0)
+      response.status === 200 && set_new_notifications_count(0)
     }
 
-    new_notifications_count > 0 && update_notifications_state()
+    new_notifications_count > 0 && mark_notifications_as_seen()
     // eslint-disable-next-line
   }, [])
 

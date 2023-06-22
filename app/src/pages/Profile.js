@@ -14,7 +14,7 @@ const UserProfile = ({ user_data }) => {
 
     async function get_user_interactions() {
 
-      const interactions_result = await async_http_request({ path: "getprofile" })
+      const interactions_result = await async_http_request({ path: "profile" })
 
       if (interactions_result === null) {
         return

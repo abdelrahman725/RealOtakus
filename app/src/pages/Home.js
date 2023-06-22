@@ -6,7 +6,7 @@ import { useContext } from 'react'
 import { MdQuiz, MdOutlineRateReview } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 
-const Home = ({ user_data, dashboard_users }) => {
+const Home = ({ user_data }) => {
 
   const { authenticated } = useContext(GlobalStates)
   const naviage_routes = useNavigate()
@@ -40,9 +40,7 @@ const Home = ({ user_data, dashboard_users }) => {
         <NotAuthenticated />
       }
 
-      {dashboard_users &&
-        <DashBoard dashboard_users={dashboard_users} current_user={user_data} authenticated={authenticated} />
-      }
+      <DashBoard current_user={user_data} authenticated={authenticated} />
 
     </div>
   )
