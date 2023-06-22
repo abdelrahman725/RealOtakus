@@ -21,7 +21,6 @@ def user_register(request):
 
     username = request.data["username"].strip()
     email = request.data["email"].strip()
-    user_country = request.data["country"]
     user_password = request.data["password"]
 
     if User.objects.filter(username=username).exists():
@@ -31,7 +30,7 @@ def user_register(request):
         )
 
     new_otaku = User.objects.create_user(
-        username=username, email=email, password=user_password, country=user_country
+        username=username, email=email, password=user_password
     )
 
     new_otaku_data = UserDataSerializer(new_otaku).data

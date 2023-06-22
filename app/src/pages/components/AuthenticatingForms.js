@@ -2,8 +2,7 @@ import React from 'react'
 import { useState, useRef, useContext } from 'react'
 import async_http_request from './AsyncRequest'
 import { GlobalStates } from 'App'
-import Select from 'react-select'
-import { SelectStyles, COUNTRIES } from "Constants"
+
 
 const AuthenticatingForms = () => {
 
@@ -11,7 +10,6 @@ const AuthenticatingForms = () => {
     const [login_view, set_login_view] = useState(true)
     const [res_msg, set_res_msg] = useState()
     const [loading, set_loading] = useState()
-    const [selected_country, set_selected_country] = useState()
 
     const [login_data, set_login_data] = useState({
         username: "",
@@ -21,20 +19,13 @@ const AuthenticatingForms = () => {
     const [register_data, set_register_data] = useState({
         username: "",
         email: "",
-        country: "",
         password: "",
         confirmed_password: ""
     })
 
     const confirmed_password_ref = useRef(null)
-    const country_select = useRef(null)
-
     const extra_space = /\s{2,}/
 
-    const on_country_selection = (selected) => {
-        set_selected_country(selected)
-        set_register_data(prev => ({ ...prev, country: selected.value }))
-    }
 
     const switch_view = () => {
         set_login_view(!login_view)
@@ -67,10 +58,6 @@ const AuthenticatingForms = () => {
             return
         }
 
-        if (!register_data.country) {
-            country_select.current.focus()
-            return
-        }
 
         register_user()
     }
@@ -108,7 +95,6 @@ const AuthenticatingForms = () => {
             data: {
                 "username": register_data.username,
                 "email": register_data.email,
-                "country": register_data.country,
                 "password": register_data.password
             }
         })
@@ -186,19 +172,6 @@ const AuthenticatingForms = () => {
                         placeholder="email"
                         onChange={handle_register_form}
                         value={register_data.email}
-                    />
-
-                    <Select
-                        styles={SelectStyles}
-                        className="select_country"
-                        name="country"
-                        placeholder="country"
-                        isClearable={false}
-                        isLoading={!COUNTRIES}
-                        options={COUNTRIES}
-                        onChange={on_country_selection}
-                        value={selected_country}
-                        ref={country_select}
                     />
 
                     <input
