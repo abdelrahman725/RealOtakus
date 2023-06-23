@@ -28,6 +28,7 @@ export const GlobalStates = createContext()
 function App() {
   const [authenticated, set_authenticated] = useState(null)
   const [user_data, set_user_data] = useState()
+  const [leaderboard, set_leaderboard] = useState()
   const [all_animes, setall_animes] = useState()
   const [notifications, setnotifications] = useState([])
   const [new_notifications_count, set_new_notifications_count] = useState(0)
@@ -131,6 +132,7 @@ function App() {
           label: anime.anime_name
         }))
       )
+      set_leaderboard(result.payload.leaderboard)
     }
     fetch_home_data()
     // eslint-disable-next-line
@@ -168,7 +170,7 @@ function App() {
 
                     <Route path="/"
                       element={
-                        <Home user_data={user_data} />
+                        <Home user_data={user_data} leaderboard={leaderboard} />
                       }
                     />
 

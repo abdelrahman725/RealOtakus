@@ -7,7 +7,13 @@ const UserContributions = () => {
 
   const [contributions, setcontributions] = useState()
   const [filtered_contributions, set_filtered_contributions] = useState()
+
+  // contributions are filtered by :
+  // 1- contribution state
+  // 2- anime (not used yet)
   const [selected_contribution_state, set_selected_contribution_state] = useState("all")
+  //const [anime, set_anime] = useState("all")
+
   const location = useLocation()
 
   const contribution_state_to_label = {

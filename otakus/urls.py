@@ -19,7 +19,6 @@ urlpatterns = [
     # app logic-related endpoints
     path("post_country", otakus.views.save_user_country),
     path("interactions", otakus.views.get_user_interactions),
-    path("leaderboard", otakus.views.get_leaderboard),
     path("quiz_animes", otakus.views.get_game_animes),
     path("quiz/<int:game_anime>", otakus.views.get_game),
     path("interaction/<int:question_id>", otakus.views.record_question_encounter),

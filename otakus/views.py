@@ -57,40 +57,6 @@ def get_home_data(request):
 
     all_animes = AnimeSerializer(cached_or_quered_animes, many=True)
 
-    if request.user.is_authenticated:
-        user = request.user
-
-        user_data = UserDataSerializer(user).data
-
-        user_data["is_reviewer"] = user.animes_to_review.exists()
-
-        user_notifications = NotificationsSerializer(
-            Notification.non_expired.filter(
-                (Q(receiver=user) | Q(broad=True)) & Q(time__gt=user.date_joined)
-            ),
-            many=True,
-        )
-
-        return Response(
-            {
-                "user_data": user_data,
-                "notifications": user_notifications.data,
-                "animes": all_animes.data,
-                "is_authenticated": "true",
-            }
-        )
-
-    return Response(
-        {
-            "animes": all_animes.data,
-            "is_authenticated": "false",
-        }
-    )
-
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def get_leaderboard(request):
     leaderboard = cache.get("leaderboard")
 
     if leaderboard == None:
@@ -118,7 +84,37 @@ def get_leaderboard(request):
 
         cache.set(key="leaderboard", value=leaderboard, timeout=40)
 
-    return Response({"leaderboard": leaderboard})
+    if request.user.is_authenticated:
+        user = request.user
+
+        user_data = UserDataSerializer(user).data
+
+        user_data["is_reviewer"] = user.animes_to_review.exists()
+
+        user_notifications = NotificationsSerializer(
+            Notification.non_expired.filter(
+                (Q(receiver=user) | Q(broad=True)) & Q(time__gt=user.date_joined)
+            ),
+            many=True,
+        )
+
+        return Response(
+            {
+                "user_data": user_data,
+                "notifications": user_notifications.data,
+                "leaderboard": leaderboard,
+                "animes": all_animes.data,
+                "is_authenticated": "true",
+            }
+        )
+
+    return Response(
+        {
+            "leaderboard": leaderboard,
+            "animes": all_animes.data,
+            "is_authenticated": "false",
+        }
+    )
 
 
 @api_view(["POST"])
@@ -270,7 +266,7 @@ def get_or_review_contribution(request):
         )
 
 
-# The following 4 endpoints are Quiz related
+# The following 4 API endpoints are Quiz related, and they are called (by single user) in order from top to bottom (typical workflow)
 
 @api_view(["GET"])
 def get_game_animes(request):
