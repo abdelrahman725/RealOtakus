@@ -71,7 +71,8 @@ const DashBoard = ({ current_user, authenticated }) => {
           </div>
           :
           <p>no data yet</p>
-        : <p>loading leaderboard</p>
+        :
+        <p>loading ...</p>
       }
 
     </div>

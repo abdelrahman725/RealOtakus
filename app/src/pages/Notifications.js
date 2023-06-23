@@ -101,21 +101,18 @@ const Notifications = ({ notifications, set_new_notifications_count, new_notific
 
   useEffect(() => {
 
-    // mark notifications as seen in the server
-    const mark_notifications_as_seen = async () => {
-
-      const response = await async_http_request({
-        path: "notifications/mark",
+    const mark_notifications_seen = async () => {
+      const mark_result = await async_http_request({
+        path: "mark_notifications",
         method: "PUT",
         data: {
           "notifications": notifications.filter(n => n.seen === false && n.broad === false).map(n => n.id)
         }
       })
-
-      response.status === 200 && set_new_notifications_count(0)
+      mark_result.status === 200 && set_new_notifications_count(0)
     }
 
-    new_notifications_count > 0 && mark_notifications_as_seen()
+    new_notifications_count > 0 && mark_notifications_seen()
     // eslint-disable-next-line
   }, [])
 

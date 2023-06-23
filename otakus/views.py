@@ -129,8 +129,148 @@ def save_user_country(request):
     return Response({}, status=status.HTTP_201_CREATED)
 
 
-# -------------------------------------- 4 Quiz related endpoints ----------------------------------------
+@api_view(["PUT"])
+def mark_notifications_as_read(request):
+    user = request.user
+    user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
 
+    return Response({"info": f"notifications updated successfully"})
+
+
+@api_view(["GET"])
+def get_user_interactions(request):
+    user = request.user
+
+    user_interactions = QuestionInteractionsSerializer(
+        user.questions_interacted_with.select_related("anime"), many=True
+    )
+
+    return Response({"interactions": user_interactions.data})
+
+
+@api_view(["GET", "POST"])
+def get_or_make_contribution(request):
+    user = request.user
+
+    if request.method == "GET":
+        user_contributions = ContributionSerializer(
+            user.contributions.filter(is_contribution=True)
+            .select_related("anime")
+            .order_by("-id"),
+            many=True,
+        )
+        return Response(user_contributions.data)
+
+    # limit contributions to 10 within the last 24 hours
+    if (
+        user.contributions.filter(
+            date_created__gte=timezone.now() - timedelta(days=1)
+        ).count()
+        >= 10
+    ):
+        return Response({}, status=status.HTTP_423_LOCKED)
+
+    try:
+        question_data = request.data["question"]
+
+        new_contribution = Question(
+            anime_id=request.data["anime"],
+            contributor=user,
+            is_contribution=True,
+            question=question_data["question"],
+            right_answer=question_data["rightanswer"],
+            choice1=question_data["choice1"],
+            choice2=question_data["choice2"],
+            choice3=question_data["choice3"],
+        )
+        new_contribution.save()
+
+        return Response({}, status=status.HTTP_201_CREATED)
+
+    # question already exists
+    except IntegrityError:
+        return Response({}, status=status.HTTP_409_CONFLICT)
+
+
+@api_view(["GET", "PUT"])
+def get_or_review_contribution(request):
+    user = request.user
+
+    if request.method == "GET":
+        if not user.animes_to_review.exists():
+            return Response({}, status=status.HTTP_401_UNAUTHORIZED)
+
+        animes_for_user_to_review = user.animes_to_review.annotate(
+            reviewed_contributions=Count(
+                "anime_questions",
+                filter=(
+                    Q(anime_questions__approved__isnull=False)
+                    & Q(anime_questions__reviewer=user)
+                ),
+            )
+        )
+
+        pending_contributions = ContributionSerializer(
+            Question.objects.filter(
+                ~Q(contributor=user),
+                is_contribution=True,
+                anime__in=animes_for_user_to_review,
+                approved__isnull=True,
+            )
+            .select_related("anime")
+            .order_by("-id"),
+            many=True,
+        )
+
+        animes = AnimeReviewedContributionsSerializer(
+            animes_for_user_to_review, many=True
+        )
+
+        return Response(
+            {"questions": pending_contributions.data, "animes": animes.data}
+        )
+
+    try:
+        new_contribution = Question.objects.get(pk=request.data["contribution"])
+
+        try:
+            user.animes_to_review.get(id=new_contribution.anime.id)
+
+        except Anime.DoesNotExist:
+            return Response(
+                {"info": "not authorized"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        if new_contribution.approved != None:
+            return Response(
+                {"info": "this question got reviewed by another reviewer"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        review_decision = request.data["state"]
+        new_contribution.reviewer = user
+        new_contribution.feedback = request.data["feedback"]
+
+        # approved
+        if review_decision == 1:
+            new_contribution.approved = True
+            new_contribution.save()
+            return Response({"info": "question is approved"})
+
+        # rejected
+        if review_decision == 0:
+            new_contribution.approved = False
+            new_contribution.save()
+            return Response({"info": "question is rejected"})
+
+    except Question.DoesNotExist:
+        return Response(
+            {"info": "this question doesn't exist anymore"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+
+# The following 4 endpoints are Quiz related
 
 @api_view(["GET"])
 def get_game_animes(request):
@@ -304,147 +444,3 @@ def submit_game(request):
     cache.delete(f"interactions_{user.id}")
 
     return Response({"level": user.level, "right_answers": right_answers.data})
-
-
-# ------------------------------------------------------------------------------------------------------
-
-
-@api_view(["GET", "POST"])
-def get_or_make_contribution(request):
-    user = request.user
-
-    if request.method == "GET":
-        user_contributions = ContributionSerializer(
-            user.contributions.filter(is_contribution=True)
-            .select_related("anime")
-            .order_by("-id"),
-            many=True,
-        )
-        return Response(user_contributions.data)
-
-    # limit contributions to 10 within the last 24 hours
-    if (
-        user.contributions.filter(
-            date_created__gte=timezone.now() - timedelta(days=1)
-        ).count()
-        >= 10
-    ):
-        return Response({}, status=status.HTTP_423_LOCKED)
-
-    try:
-        question_data = request.data["question"]
-
-        new_contribution = Question(
-            anime_id=request.data["anime"],
-            contributor=user,
-            is_contribution=True,
-            question=question_data["question"],
-            right_answer=question_data["rightanswer"],
-            choice1=question_data["choice1"],
-            choice2=question_data["choice2"],
-            choice3=question_data["choice3"],
-        )
-        new_contribution.save()
-
-        return Response({}, status=status.HTTP_201_CREATED)
-
-    # question already exists
-    except IntegrityError:
-        return Response({}, status=status.HTTP_409_CONFLICT)
-
-
-@api_view(["GET", "PUT"])
-def get_or_review_contribution(request):
-    user = request.user
-
-    if request.method == "GET":
-        if not user.animes_to_review.exists():
-            return Response({}, status=status.HTTP_401_UNAUTHORIZED)
-
-        animes_for_user_to_review = user.animes_to_review.annotate(
-            reviewed_contributions=Count(
-                "anime_questions",
-                filter=(
-                    Q(anime_questions__approved__isnull=False)
-                    & Q(anime_questions__reviewer=user)
-                ),
-            )
-        )
-
-        pending_contributions = ContributionSerializer(
-            Question.objects.filter(
-                ~Q(contributor=user),
-                is_contribution=True,
-                anime__in=animes_for_user_to_review,
-                approved__isnull=True,
-            )
-            .select_related("anime")
-            .order_by("-id"),
-            many=True,
-        )
-
-        animes = AnimeReviewedContributionsSerializer(
-            animes_for_user_to_review, many=True
-        )
-
-        return Response(
-            {"questions": pending_contributions.data, "animes": animes.data}
-        )
-
-    try:
-        new_contribution = Question.objects.get(pk=request.data["contribution"])
-
-        try:
-            user.animes_to_review.get(id=new_contribution.anime.id)
-
-        except Anime.DoesNotExist:
-            return Response(
-                {"info": "not authorized"}, status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        if new_contribution.approved != None:
-            return Response(
-                {"info": "this question got reviewed by another reviewer"},
-                status=status.HTTP_409_CONFLICT,
-            )
-
-        review_decision = request.data["state"]
-        new_contribution.reviewer = user
-        new_contribution.feedback = request.data["feedback"]
-
-        # approved
-        if review_decision == 1:
-            new_contribution.approved = True
-            new_contribution.save()
-            return Response({"info": "question is approved"})
-
-        # rejected
-        if review_decision == 0:
-            new_contribution.approved = False
-            new_contribution.save()
-            return Response({"info": "question is rejected"})
-
-    except Question.DoesNotExist:
-        return Response(
-            {"info": "this question doesn't exist anymore"},
-            status=status.HTTP_404_NOT_FOUND,
-        )
-
-
-@api_view(["GET"])
-def get_user_interactions(request):
-    user = request.user
-
-    user_interactions = QuestionInteractionsSerializer(
-        user.questions_interacted_with.select_related("anime"), many=True
-    )
-
-    return Response({"interactions": user_interactions.data})
-
-
-@api_view(["PUT"])
-def mark_notifications_as_read(request):
-    user = request.user
-    user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
-
-    return Response({"info": f"notifications updated successfully"})
