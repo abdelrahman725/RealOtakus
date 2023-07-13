@@ -40,7 +40,7 @@ const AuthenticatingForms = () => {
 
     const check_pass_strength = (pass_value) => {
 
-        if (pass_value == "") {
+        if (pass_value === "") {
             password_ref.current.style.outlineColor = ""
             set_pass_strength_msg()
             return
