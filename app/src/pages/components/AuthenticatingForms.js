@@ -9,6 +9,9 @@ const AuthenticatingForms = () => {
     const { set_fetched_user_data_and_authenticate } = useContext(GlobalStates)
     const [login_view, set_login_view] = useState(true)
     const [res_msg, set_res_msg] = useState()
+    const [pass_strength_msg, set_pass_strength_msg] = useState()
+    const [pass_is_strong, set_pass_is_strong] = useState(false)
+    const [pass_match, set_pass_match] = useState(false)
     const [loading, set_loading] = useState()
 
     const [login_data, set_login_data] = useState({
@@ -23,8 +26,11 @@ const AuthenticatingForms = () => {
         confirmed_password: ""
     })
 
-    const confirmed_password_ref = useRef(null)
     const extra_space = /\s{2,}/
+    const strong_pass_pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/
+
+    const password_ref = useRef(null)
+    const confirmed_password_ref = useRef(null)
 
 
     const switch_view = () => {
@@ -32,10 +38,55 @@ const AuthenticatingForms = () => {
         set_res_msg()
     }
 
+    const check_pass_strength = (pass_value) => {
+
+        if (pass_value == "") {
+            password_ref.current.style.outlineColor = ""
+            set_pass_strength_msg()
+            return
+        }
+
+        if (pass_value.length < 6) {
+            set_pass_strength_msg("Password must be at least 6 characters")
+            password_ref.current.style.outlineColor = "red"
+            set_pass_is_strong(false)
+            return
+        }
+
+        if (pass_value.match(strong_pass_pattern) === null) {
+            set_pass_strength_msg("Password must contain at least one capital letter, small letter, and number")
+            password_ref.current.style.outlineColor = "red"
+            set_pass_is_strong(false)
+            return
+        }
+
+        password_ref.current.style.outlineColor = ""
+        set_pass_is_strong(true)
+        set_pass_strength_msg()
+    }
+
+    const check_pass_match = () => {
+
+        if (password_ref.current.value === "") {
+            confirmed_password_ref.current.style.outlineColor = ""
+            return
+        }
+
+        if (confirmed_password_ref.current.value === password_ref.current.value) {
+            confirmed_password_ref.current.style.outlineColor = "green"
+            set_pass_match(true)
+            return
+        }
+        set_pass_match(false)
+        confirmed_password_ref.current.style.outlineColor = "red"
+    }
+
+
     const handle_login_form = (e) => {
         const { name, value } = e.target
         set_login_data(prev => ({ ...prev, [name]: value }))
     }
+
 
     const handle_register_form = (e) => {
 
@@ -48,18 +99,33 @@ const AuthenticatingForms = () => {
         set_register_data(prev => ({ ...prev, [name]: value }))
     }
 
-    const validate_then_register = (submit_event) => {
+
+    const register_user = async (submit_event) => {
 
         submit_event.preventDefault()
 
-        if (register_data.password !== register_data.confirmed_password) {
-            confirmed_password_ref.current.style.outlineColor = "red"
-            confirmed_password_ref.current.focus()
+        if (!pass_is_strong || !pass_match) {
             return
         }
 
+        set_loading(true)
 
-        register_user()
+        const register_res = await async_http_request({
+            path: "register/",
+            method: "POST",
+            data: {
+                "username": register_data.username,
+                "email": register_data.email,
+                "password": register_data.password
+            }
+        })
+
+        set_loading(false)
+        set_res_msg(register_res.payload.info)
+
+        if (register_res.status === 201) {
+            set_fetched_user_data_and_authenticate(register_res.payload)
+        }
     }
 
     const login_user = async (submit_event) => {
@@ -82,28 +148,6 @@ const AuthenticatingForms = () => {
 
         if (login_res.status === 200) {
             set_fetched_user_data_and_authenticate(login_res.payload)
-        }
-    }
-
-    const register_user = async () => {
-
-        set_loading(true)
-
-        const register_res = await async_http_request({
-            path: "register/",
-            method: "POST",
-            data: {
-                "username": register_data.username,
-                "email": register_data.email,
-                "password": register_data.password
-            }
-        })
-
-        set_loading(false)
-        set_res_msg(register_res.payload.info)
-
-        if (register_res.status === 201) {
-            set_fetched_user_data_and_authenticate(register_res.payload)
         }
     }
 
@@ -154,13 +198,13 @@ const AuthenticatingForms = () => {
                     </form>
                 </div>
                 :
-                <form onSubmit={validate_then_register} >
+                <form onSubmit={register_user} >
                     <input
                         name="username"
                         type="text"
                         required
                         placeholder="username"
-                        minLength={5}
+                        minLength={6}
                         onChange={handle_register_form}
                         value={register_data.username}
                     />
@@ -179,17 +223,18 @@ const AuthenticatingForms = () => {
                         type="password"
                         required
                         placeholder="password"
-                        minLength={6}
-                        onChange={handle_register_form}
+                        onChange={e => { handle_register_form(e); check_pass_strength(e.target.value); check_pass_match() }}
                         value={register_data.password}
+                        ref={password_ref}
                     />
+                    {pass_strength_msg && <div className="pass_msg">{pass_strength_msg}<br /></div>}
 
                     <input
                         name="confirmed_password"
                         type="password"
                         required
                         placeholder="confirm password"
-                        onChange={handle_register_form}
+                        onChange={e => { handle_register_form(e); check_pass_match() }}
                         value={register_data.confirmed_password}
                         ref={confirmed_password_ref}
                     />

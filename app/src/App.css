@@ -86,10 +86,6 @@ a {
   display: flex;
   flex-direction: column;
 }
-.not_authenticated .container .authenticating_forms form .select_country {
-  text-align: left;
-  margin-bottom: 15px;
-}
 .not_authenticated .container .authenticating_forms form input {
   border-radius: 3px;
   margin-bottom: 15px;
@@ -100,6 +96,10 @@ a {
 }
 .not_authenticated .container .authenticating_forms form input:focus {
   outline: #76a8e9 solid 2px;
+}
+.not_authenticated .container .authenticating_forms form .pass_msg {
+  position: relative;
+  bottom: 10px;
 }
 .not_authenticated .container .authenticating_forms form .submit_btn {
   width: 100%;
@@ -201,51 +201,6 @@ a {
   margin-left: 20px;
   position: relative;
   top: 18px;
-}
-
-.country_selection_panel {
-  background-color: #262f36;
-  text-align: center;
-  padding: 10px;
-  left: 0;
-  right: 0;
-  top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 7px;
-  box-shadow: 0.5px 0.5px 3px 0.1px grey;
-  position: absolute;
-  z-index: 2;
-  width: 80%;
-  max-width: 900px;
-  height: 400px;
-  margin-top: 200px;
-}
-.country_selection_panel h1 {
-  color: white;
-  padding: 5px;
-}
-.country_selection_panel .close_icon {
-  cursor: pointer;
-  color: #6e7174;
-  transform: scale(2.1);
-  float: right;
-  margin-top: 10px;
-  margin-right: 12px;
-  margin-bottom: 15px;
-}
-.country_selection_panel .close_icon:hover {
-  color: white;
-}
-.country_selection_panel form {
-  margin-top: 50px;
-}
-.country_selection_panel form .info_message {
-  font-weight: bolder;
-  color: white;
-}
-.country_selection_panel form .lower_div {
-  margin: 40px 0px;
 }
 
 .navigation_buttons {
