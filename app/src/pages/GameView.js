@@ -3,6 +3,7 @@ import Result from './components/Result'
 import Game from './components/Game'
 import Select from 'react-select'
 import { GlobalStates } from 'App'
+import { Link } from "react-router-dom"
 import { SelectStyles, N_Game_Questions } from 'Constants'
 import { useState, useContext, useEffect, useRef } from 'react'
 
@@ -92,6 +93,13 @@ const GameView = () => {
       {game_started === null &&
         <div className="pre_game_container">
           <h1>Get ready for the Otaku Quiz !</h1>
+
+          <div className="faq">
+            <Link className="simple_link" to="/about#choosing-animes" target={"_blank"} >
+              How available animes get selected ?
+            </Link>
+          </div>
+
           <div className="res_info">{game_info && game_info}</div>
 
           <div className="container">
