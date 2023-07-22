@@ -47,14 +47,14 @@ class Question(models.Model):
         related_name="contributions",
     )
 
-    question = models.TextField(max_length=350)
-    choice1 = models.TextField(max_length=150)
-    choice2 = models.TextField(max_length=150)
-    choice3 = models.TextField(max_length=150)
-    right_answer = models.TextField(max_length=150)
+    question = models.CharField(max_length=350)
+    choice1 = models.CharField(max_length=150)
+    choice2 = models.CharField(max_length=150)
+    choice3 = models.CharField(max_length=150)
+    right_answer = models.CharField(max_length=150)
 
     active = models.BooleanField(default=False)
-    approved = models.BooleanField(null=True, default=None)
+    approved = models.BooleanField(null=True, blank=True, default=None)
     reviewer = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -83,7 +83,7 @@ class Question(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["anime", "question"], name="unique question for each anime"
-            )
+            ),
         ]
         ordering = ["-id"]
         abstract = True
