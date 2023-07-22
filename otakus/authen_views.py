@@ -25,8 +25,8 @@ def user_register(request):
 
     if User.objects.filter(username=username).exists():
         return Response(
-            {"info": f"username {username} already exists"},
-            status=status.HTTP_403_FORBIDDEN,
+            {"info": f"username already exists"},
+            status=status.HTTP_401_UNAUTHORIZED,
         )
 
     new_otaku = User.objects.create_user(
@@ -79,8 +79,8 @@ def user_login(request):
         )
 
     return Response(
-        {"info": "wrong username or password"},
-        status=status.HTTP_403_FORBIDDEN,
+        {"info": "User not found"},
+        status=status.HTTP_401_UNAUTHORIZED,
     )
 
 
@@ -94,5 +94,4 @@ def user_logout(request):
 def delete_account(request):
     user = request.user
     user.delete()
-
-    return Response({"info": "account deleted_successfully"})
+    return Response({"info": "account deleted successfully"})

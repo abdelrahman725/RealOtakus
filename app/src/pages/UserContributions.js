@@ -44,7 +44,7 @@ const UserContributions = () => {
 
     async function get_contributions() {
 
-      const fetched_contributions = await async_http_request({ path: "get_make_contribution" })
+      const fetched_contributions = await async_http_request({ path: "contributions" })
       if (contributions === null)
         return
 

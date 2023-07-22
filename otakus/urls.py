@@ -24,8 +24,8 @@ urlpatterns = [
     path("interaction/<int:question_id>", otakus.views.record_question_encounter),
     path("submitgame", otakus.views.submit_game),
     path("mark_notifications", otakus.views.mark_notifications_as_read),
-    path("get_make_contribution", otakus.views.get_or_make_contribution),
-    path("get_review_contribution", otakus.views.get_or_review_contribution),
+    path("contributions", otakus.views.get_or_make_contribution),
+    path("review_contributions", otakus.views.get_or_review_contribution),
 ]
 
 # catch all for react app and its routes

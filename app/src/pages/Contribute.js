@@ -57,7 +57,7 @@ const Contribute = ({ all_animes_options }) => {
       setsubmitted(true)
 
       const submit_contribution_response = await async_http_request({
-        path: "get_make_contribution",
+        path: "contributions",
         method: "POST",
         data: {
           "question": cleaned_contribution,
@@ -80,8 +80,8 @@ const Contribute = ({ all_animes_options }) => {
         return
       }
 
-      if (submit_contribution_response.status === 423) {
-        set_question_info("You've reached maximum number (10) of contributions in the last 24 hrs")
+      if (submit_contribution_response.status === 429) {
+        set_question_info("You've reached maximum number (10) of contributions for today")
         return
       }
 

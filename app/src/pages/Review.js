@@ -52,14 +52,14 @@ const Review = () => {
 
     async function fetch_contributions() {
 
-      const contributions_result = await async_http_request({ path: "get_review_contribution" })
+      const contributions_result = await async_http_request({ path: "review_contributions" })
 
       if (contributions_result === null) {
         set_result_msg("network error")
         return
       }
 
-      if (contributions_result.status === 401) {
+      if (contributions_result.status === 403) {
         set_result_msg("you must be a reviewer first to review contributions")
         return
       }

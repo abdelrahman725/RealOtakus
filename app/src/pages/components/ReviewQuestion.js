@@ -26,7 +26,7 @@ const ReviewQuestion = ({
         const submit_review = async () => {
 
             const review_submission_response = await async_http_request({
-                path: "get_review_contribution",
+                path: "review_contributions",
                 method: "PUT",
                 data: {
                     "contribution": contribution_object.id,

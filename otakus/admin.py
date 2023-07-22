@@ -2,7 +2,9 @@ import math
 
 from django.contrib import admin
 from django.utils.html import format_html
+from django.db import models
 from django.db.models import Count
+from django.forms import Textarea
 
 from allauth.socialaccount.models import SocialAccount
 
@@ -252,6 +254,10 @@ class UserAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
     # date_hierarchy = 'date_created'
 
+    formfield_overrides = {
+        models.CharField: {"widget": Textarea(attrs={"rows": 7, "cols": 50})},
+    }
+
     list_per_page = 300
 
     fields = (
@@ -269,6 +275,7 @@ class QuestionAdmin(admin.ModelAdmin):
         "reviewer",
         "date_created",
         "date_reviewed",
+        "id",
     )
 
     list_editable = ("active",)
@@ -300,6 +307,7 @@ class QuestionAdmin(admin.ModelAdmin):
         "is_contribution",
         "date_created",
         "date_reviewed",
+        "id",
     )
 
     list_filter = (

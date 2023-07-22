@@ -1,16 +1,16 @@
 import random
-from datetime import timedelta
 
-from django.utils import timezone
 from django.db import IntegrityError
 from django.db.models import Count, Avg, Q
 from django.shortcuts import render, redirect
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from otakus.throttles import ContributionRateThrottle
 
 from otakus.models import User
 from otakus.models import Anime
@@ -129,7 +129,6 @@ def save_user_country(request):
 def mark_notifications_as_read(request):
     user = request.user
     user.notifications.filter(pk__in=request.data["notifications"]).update(seen=True)
-
     return Response({"info": f"notifications updated successfully"})
 
 
@@ -145,6 +144,7 @@ def get_user_interactions(request):
 
 
 @api_view(["GET", "POST"])
+@throttle_classes([ContributionRateThrottle])
 def get_or_make_contribution(request):
     user = request.user
 
@@ -156,15 +156,6 @@ def get_or_make_contribution(request):
             many=True,
         )
         return Response(user_contributions.data)
-
-    # limit contributions to 10 within the last 24 hours
-    if (
-        user.contributions.filter(
-            date_created__gte=timezone.now() - timedelta(days=1)
-        ).count()
-        >= 10
-    ):
-        return Response({}, status=status.HTTP_423_LOCKED)
 
     try:
         question_data = request.data["question"]
@@ -179,7 +170,12 @@ def get_or_make_contribution(request):
             choice2=question_data["choice2"],
             choice3=question_data["choice3"],
         )
-        new_contribution.save()
+        try:
+            new_contribution.clean_fields()
+            new_contribution.save()
+
+        except ValidationError:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({}, status=status.HTTP_201_CREATED)
 
@@ -194,7 +190,7 @@ def get_or_review_contribution(request):
 
     if request.method == "GET":
         if not user.animes_to_review.exists():
-            return Response({}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         animes_for_user_to_review = user.animes_to_review.annotate(
             reviewed_contributions=Count(
@@ -233,9 +229,7 @@ def get_or_review_contribution(request):
             user.animes_to_review.get(id=new_contribution.anime.id)
 
         except Anime.DoesNotExist:
-            return Response(
-                {"info": "not authorized"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({}, status=status.HTTP_403_FORBIDDEN)
 
         if new_contribution.approved != None:
             return Response(
@@ -259,6 +253,11 @@ def get_or_review_contribution(request):
             new_contribution.save()
             return Response({"info": "question is rejected"})
 
+        return Response(
+            {"info": "review decision is not correct"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     except Question.DoesNotExist:
         return Response(
             {"info": "this question doesn't exist anymore"},
@@ -266,7 +265,8 @@ def get_or_review_contribution(request):
         )
 
 
-# The following 4 API endpoints are Quiz related, and they are called (by single user) in order from top to bottom (typical workflow)
+# The following 4 API endpoints are Quiz related, and they are called (by single user) in order from top to bottom (intended workflow)
+
 
 @api_view(["GET"])
 def get_game_animes(request):

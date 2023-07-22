@@ -101,6 +101,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
         # "rest_framework.permissions.AllowAny"
     ],
+    "DEFAULT_THROTTLE_RATES": {
+        "max_contributions": "10/day",
+    },
 }
 
 ASGI_APPLICATION = "realotakus.asgi.application"
