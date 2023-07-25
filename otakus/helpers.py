@@ -1,7 +1,8 @@
+from datetime import timedelta
 from django.utils import timezone
+
 import otakus.models
 from otakus.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
-import otakus.models
 
 
 def get_superuser():
@@ -13,6 +14,19 @@ def create_notification(notification, receiver=None, broad=False, kind=None):
         return
     otakus.models.Notification.objects.create(
         notification=notification, receiver=receiver, broad=broad, kind=kind
+    )
+
+
+# delete notifications older than one month
+def delete_expired_notifications(life_period_days=30):
+    expired_notifications = otakus.models.Notification.objects.exclude(
+        time__gt=timezone.now() - timedelta(days=life_period_days)
+    )
+    n_expired_notifications = expired_notifications.count()
+    expired_notifications.delete()
+
+    print(
+        f"\n--- {n_expired_notifications} expired notifications deleted from the database ---\n"
     )
 
 

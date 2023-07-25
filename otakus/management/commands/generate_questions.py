@@ -47,7 +47,7 @@ class Command(BaseCommand):
             return start + (end - start) * random.random()
         
         def generate_question(anime, contributor, question):
-            return Question.objects.create( 
+            Question.objects.create( 
                 anime = anime,
                 contributor = contributor,
                 is_contribution = questions_are_contributions,

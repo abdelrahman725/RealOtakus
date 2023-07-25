@@ -15,10 +15,17 @@ from otakus.models import QuestionInteraction
 from otakus.models import Notification
 
 from otakus.constants import COUNTRIES, QUESTIONSCOUNT
+from otakus.helpers import delete_expired_notifications
 
 admin.site.site_header = "RealOtakus Administration"
 admin.site.site_title = admin.site.site_header
 admin.site.index_title = ""
+
+
+# action for deleting notifications older than one month
+@admin.action(description="delete old notifications")
+def delete_expired_notifications_action(modeladmin, request, queryset):
+    delete_expired_notifications()
 
 
 # 5 custome filter classes
@@ -450,6 +457,8 @@ class QuestionInteractionAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
+    actions = [delete_expired_notifications_action]
+
     list_display = (
         "kind",
         "receiver",
