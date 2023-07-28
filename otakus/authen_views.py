@@ -93,5 +93,10 @@ def user_logout(request):
 @api_view(["DELETE"])
 def delete_account(request):
     user = request.user
+    # to prevent admin from accidentally calling this endpoint
+    if user.is_superuser:
+        return Response(
+            {"info": "unsupported action"}, status=status.HTTP_403_FORBIDDEN
+        )
     user.delete()
     return Response({"info": "account deleted successfully"})
