@@ -20,7 +20,6 @@ from otakus.helpers import notify_reviewers_of_a_new_contribution
 from otakus.helpers import contribution_got_reviewed
 
 
-
 # excluding super users (e.g. admin) from all users queryset
 class OtakusQuerySetManager(models.Manager):
     def get_queryset(self):
@@ -53,7 +52,7 @@ def new_user_signed_up(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=User)
 def update_user_points_and_level(sender, instance, **kwargs):
     new_level = get_user_new_level(instance)
-    if new_level and new_level != instance.level:
+    if new_level != instance.level:
         instance.level = new_level
         create_notification(
             receiver=instance, notification=f"Congratulations! level up to {new_level}"

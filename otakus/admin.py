@@ -1,6 +1,7 @@
 import math
 
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from django.utils.html import format_html
 from django.db import models
 from django.db.models import Count
@@ -17,13 +18,14 @@ from otakus.models import Notification
 from otakus.constants import COUNTRIES, QUESTIONSCOUNT
 from otakus.helpers import delete_expired_notifications
 
+admin.site.unregister(Group)
 admin.site.site_header = "RealOtakus Administration"
 admin.site.site_title = admin.site.site_header
 admin.site.index_title = ""
 
 
 # action for deleting notifications older than one month
-@admin.action(description="delete old notifications")
+@admin.action(description="delete expired notifications")
 def delete_expired_notifications_action(modeladmin, request, queryset):
     delete_expired_notifications()
 

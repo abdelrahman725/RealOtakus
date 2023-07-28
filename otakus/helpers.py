@@ -1,8 +1,10 @@
 from datetime import timedelta
+
+from django.conf import settings
 from django.utils import timezone
 
 import otakus.models
-from otakus.constants import LEVELS, REALOTAKU, ADVANCED, INTERMEDIATE
+from otakus.constants import LEVELS, BEGINNER, INTERMEDIATE, ADVANCED, REALOTAKU
 
 
 def get_superuser():
@@ -17,10 +19,13 @@ def create_notification(notification, receiver=None, broad=False, kind=None):
     )
 
 
-# delete notifications older than one month
-def delete_expired_notifications(life_period_days=30):
+# delete notifications older than NOTIFICATIONS_LIFE_PERIOD (default = 30 days)
+def delete_expired_notifications():
+    # default to 30 days if value is not configured in settings
+    notifications_life_period = getattr(settings, "NOTIFICATIONS_LIFE_PERIOD", 30)
+
     expired_notifications = otakus.models.Notification.objects.exclude(
-        time__gt=timezone.now() - timedelta(days=life_period_days)
+        time__gt=timezone.now() - timedelta(days=notifications_life_period)
     )
     n_expired_notifications = expired_notifications.count()
     expired_notifications.delete()
@@ -74,7 +79,8 @@ def get_user_new_level(user):
 
     if user.points >= LEVELS[INTERMEDIATE]:
         return INTERMEDIATE
-    return None
+    
+    return BEGINNER
 
 
 def get_client_ip(request):

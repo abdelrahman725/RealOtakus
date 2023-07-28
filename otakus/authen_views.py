@@ -59,7 +59,7 @@ def user_login(request):
     password = request.data["password"]
     user = authenticate(request, username=username, password=password)
 
-    if user is not None:
+    if user and not user.is_superuser:
         otaku_data = UserDataSerializer(user).data
 
         otaku_data["is_reviewer"] = user.animes_to_review.exists()
