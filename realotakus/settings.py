@@ -73,7 +73,7 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "app/build")],
+        "DIRS": [os.path.join(BASE_DIR, "react/build")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -164,7 +164,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(os.path.join(BASE_DIR, "app"), "build", "static"),
+    os.path.join(os.path.join(BASE_DIR, "react"), "build", "static"),
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
