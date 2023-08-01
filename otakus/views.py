@@ -44,7 +44,7 @@ def react_app(request):
 def get_home_data(request):
     cached_or_quered_animes = cache.get("animes")
 
-    if not cached_or_quered_animes:
+    if cached_or_quered_animes == None:
         cached_or_quered_animes = Anime.objects.all()
         cache.set(
             key="animes",
