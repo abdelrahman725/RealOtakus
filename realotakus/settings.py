@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -112,18 +113,16 @@ WSGI_APPLICATION = "realotakus.wsgi.application"
 
 ROOT_URLCONF = "realotakus.urls"
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
+    if DEBUG == True
+    # use postgres config from env variabl (DATABASE_URL) if we are in production
+    else dj_database_url.config(conn_max_age=500)
 }
-
-
-REDIS_URL = os.getenv("REDIS_URL")
 
 
 CACHES = {
@@ -131,7 +130,7 @@ CACHES = {
     if DEBUG == True
     else {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": REDIS_URL,
+        "LOCATION": os.getenv("REDIS_URL"),
     }
 }
 
@@ -142,7 +141,7 @@ CACHES = {
 #     else {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
 #         "CONFIG": {
-#             "hosts": [(REDIS_URL)],
+#             "hosts": [(os.getenv("REDIS_URL"))],
 #         },
 #     }
 # }
