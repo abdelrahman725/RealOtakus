@@ -15,7 +15,7 @@ from otakus.models import Question
 from otakus.models import QuestionInteraction
 from otakus.models import Notification
 
-from otakus.constants import COUNTRIES, QUESTIONSCOUNT
+from otakus.constants import COUNTRIES, N_QUIZ_QUESTIONS
 from otakus.helpers import delete_expired_notifications
 
 admin.site.unregister(Group)
@@ -213,7 +213,7 @@ class UserAdmin(admin.ModelAdmin):
 
     def quizes_score(self, obj):
         if obj.tests_completed > 0:
-            all_answers = QUESTIONSCOUNT * obj.tests_completed
+            all_answers = N_QUIZ_QUESTIONS * obj.tests_completed
             right_answers = obj.questions_interacted_with.filter(
                 correct_answer=True
             ).count()

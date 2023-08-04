@@ -5,6 +5,7 @@ from django.db.models import Count, Avg, Q
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -29,8 +30,7 @@ from otakus.serializers import QuestionInteractionsSerializer
 from otakus.serializers import AnimeReviewedContributionsSerializer
 
 from otakus.helpers import create_notification
-from otakus.constants import QUESTIONSCOUNT
-from django.conf import settings
+from otakus.constants import N_QUIZ_QUESTIONS, MAX_QUIZ_TIME
 
 
 def react_app(request):
@@ -303,22 +303,16 @@ def get_game(request, game_anime):
     user = request.user
     selected_anime = cache.get("animes")[game_anime]
 
-    # To catch malicious or non-serious users, for example we can do the following check (not good enough though) :
-    if user.tests_started - user.tests_completed > 5:
-        # catch here and act upon that
-        pass
-        # return Response({"info": "you are not consistent enough when taking quiz"}, status=status.HTTP_423_LOCKED)
-
-    # current game questions for current user
+    # current quiz questions for current user
     questions = selected_anime.anime_questions.filter(
         (~Q(contributor=user) & ~Q(reviewer=user)), active=True
     ).exclude(
         pk__in=user.questions_interacted_with.values_list("question__pk", flat=True)
     )[
-        :QUESTIONSCOUNT
+        :N_QUIZ_QUESTIONS
     ]
 
-    if questions.count() != QUESTIONSCOUNT:
+    if questions.count() != N_QUIZ_QUESTIONS:
         cache.delete(f"game_{user.id}")
         cache.delete(f"interactions_{user.id}")
         return Response({}, status=status.HTTP_404_NOT_FOUND)
@@ -349,10 +343,10 @@ def get_game(request, game_anime):
     cache.set(
         key=f"game_{user.id}",
         value={question.id: question for question in questions},
-        timeout=530,
+        timeout=MAX_QUIZ_TIME + 10,
     )
 
-    cache.set(key=f"interactions_{user.id}", value={}, timeout=530)
+    cache.set(key=f"interactions_{user.id}", value={}, timeout=MAX_QUIZ_TIME + 10)
 
     user.tests_started += 1
     user.save()
@@ -375,7 +369,9 @@ def record_question_encounter(request, question_id):
         previous_interactions[question_id] = interaction
 
         cache.set(
-            key=f"interactions_{user.id}", value=previous_interactions, timeout=530
+            key=f"interactions_{user.id}",
+            value=previous_interactions,
+            timeout=MAX_QUIZ_TIME + 10,
         )
 
     except IntegrityError:
