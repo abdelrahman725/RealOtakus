@@ -6,6 +6,10 @@ export const DJANGO_URL = `http://${get_domain()}`
 
 export const N_Game_Questions = 5
 
+// question Time in minutes and seconds, for now it's 1:30 min
+export const QUESTION_TIME_MIN = 1
+export const QUESTION_TIME_SEC = 30
+
 export const SelectStyles = {
     option: (provided) => ({
         ...provided,

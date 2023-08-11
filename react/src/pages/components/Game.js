@@ -56,7 +56,7 @@ const Game = ({
     setuseranswers(new_answers)
   }
 
-  const nextquestion = () => index < N_Game_Questions - 1 && setindex(prev => prev + 1)
+  const nextquestion = () => setindex(prev => prev + 1)
 
 
   useEffect(() => {
@@ -94,7 +94,6 @@ const Game = ({
             question={questions[index]}
             question_index={index}
             onselect={onChoiceSelect}
-            questions_length={N_Game_Questions}
             timeout={timeout}
             settimout={settimout}
             nextquestion={nextquestion} />

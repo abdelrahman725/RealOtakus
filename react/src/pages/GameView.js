@@ -4,7 +4,7 @@ import Game from './components/Game'
 import Select from 'react-select'
 import { GlobalStates } from 'App'
 import { Link } from "react-router-dom"
-import { SelectStyles, N_Game_Questions } from 'Constants'
+import { SelectStyles, N_Game_Questions, QUESTION_TIME_MIN, QUESTION_TIME_SEC } from 'Constants'
 import { useState, useContext, useEffect, useRef } from 'react'
 
 const GameView = () => {
@@ -107,7 +107,7 @@ const GameView = () => {
             <div className="instructions">
               <h2>instructions</h2>
               <p>- The Quiz contains <strong>5</strong> questions.</p>
-              <p>- You have <strong>1:40</strong>  min for each question.</p>
+              <p>- You have <strong>{QUESTION_TIME_MIN}:{QUESTION_TIME_SEC}</strong>  min for each question.</p>
             </div>
 
             <div className="extraspace_class"></div>

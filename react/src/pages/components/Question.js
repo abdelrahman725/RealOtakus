@@ -2,8 +2,9 @@ import async_http_request from "./AsyncRequest"
 import { useTimer } from "react-use-precision-timer"
 import { MdTimer } from "react-icons/md"
 import { useEffect, useState } from "react"
+import { N_Game_Questions, QUESTION_TIME_MIN, QUESTION_TIME_SEC } from "Constants"
 
-const Question = ({ question, onselect, question_index, questions_length, timeout, settimout, nextquestion }) => {
+const Question = ({ question, onselect, question_index, timeout, settimout, nextquestion }) => {
 
   const [selected, setselected] = useState()
   const [minutes, setminutes] = useState(1)
@@ -18,11 +19,14 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
 
       if (minutes === 0) {
 
-        if (question_index === questions_length - 1) {
+        if (question_index === N_Game_Questions - 1) {
           settimout(true)
         }
 
-        nextquestion()
+        else {
+          nextquestion()
+        }
+
       }
 
       else {
@@ -33,8 +37,8 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
   }
 
   const reset_timer = () => {
-    setminutes(1)
-    setseconds(40)
+    setminutes(QUESTION_TIME_MIN)
+    setseconds(QUESTION_TIME_SEC)
     timer.start()
   }
 
@@ -54,7 +58,7 @@ const Question = ({ question, onselect, question_index, questions_length, timeou
     })
   }
 
-  const timer = useTimer({ delay: 1000, callback: () => handletimeleft() })
+  const timer = useTimer({ delay: 100, callback: () => handletimeleft() })
 
   useEffect(() => {
 
