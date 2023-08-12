@@ -58,7 +58,7 @@ const Question = ({ question, onselect, question_index, timeout, settimout, next
     })
   }
 
-  const timer = useTimer({ delay: 100, callback: () => handletimeleft() })
+  const timer = useTimer({ delay: 1000, callback: () => handletimeleft() })
 
   useEffect(() => {
 
