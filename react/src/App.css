@@ -713,6 +713,11 @@ a {
   font-family: "Courier New", Courier, monospace;
   color: #262f36;
 }
+.about .love .heart {
+  position: relative;
+  top: 3px;
+  color: #d2122e;
+}
 .about .icon, .about .navbar .nav_icon, .navbar .about .nav_icon {
   font-size: 26px;
 }

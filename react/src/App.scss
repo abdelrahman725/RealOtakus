@@ -584,10 +584,10 @@ a {
       color: #dc334f;
       font-size: larger;
     }
-      .faq {
-        position: relative;
-        bottom: 10px;
-      }
+    .faq {
+      position: relative;
+      bottom: 10px;
+    }
 
     .container {
       display: flex;
@@ -845,6 +845,12 @@ a {
   }
 
   .love {
+    .heart {
+      position: relative;
+      top: 3px;
+      color: #d2122e;
+    }
+
     text-align: center;
     font-size: larger;
     font-family: "Courier New", Courier, monospace;

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { SlSocialTwitter } from 'react-icons/sl'
 import { BsGithub, BsFillQuestionCircleFill } from 'react-icons/bs'
-import { SiGmail } from 'react-icons/si'
+import { IoLogoDiscord } from 'react-icons/io5'
+import { FaHeart } from 'react-icons/fa'
 import { useLocation, Link } from 'react-router-dom'
 
 const About = () => {
@@ -26,7 +27,7 @@ const About = () => {
   return (
     <div className="about">
 
-      <p className="love">created with love and enthusiasm by Bedo</p>
+      <p className="love">created with love and enthusiasm <FaHeart className="heart" /></p>
 
       <div>
         <h2>About</h2>
@@ -172,8 +173,8 @@ const About = () => {
             <SlSocialTwitter className="icon" /> <span>Twitter</span>
           </a>
 
-          <a href="mailto:realotakus1@gmail.com" target="_blank" rel="noreferrer">
-            <SiGmail className="icon" /> <span>Gmail</span>
+          <a href="/about" target="_blank" rel="noreferrer">
+            <IoLogoDiscord className="icon" /> <span>Discord</span>
           </a>
 
         </div>
