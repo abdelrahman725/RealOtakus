@@ -1,9 +1,11 @@
 from django.contrib import admin
-from django.urls import include, path
 from django.conf import settings
+from django.urls import path, include
 
 urlpatterns = [
-    path(settings.ADMIN_PANEL_PATH, admin.site.urls),
-    path('accounts/', include('allauth.urls')),
-    path('',include('otakus.urls')),
+    path(settings.ADMIN_PATH, admin.site.urls),
+    path("api/", include("djoser.urls")),
+    path("api/", include("accounts.urls")),
+    path("notifications/", include("notifications.urls")),
+    # path("app or other name/", include("core.urls")),
 ]
