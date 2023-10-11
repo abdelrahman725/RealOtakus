@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-
 from accounts.models import UserAccount
-from social_django.models import UserSocialAuth
 
 admin.site.unregister(Group)
 admin.site.site_header = "RealOtakus Administration"
@@ -17,31 +15,33 @@ class UserAdmin(admin.ModelAdmin):
         "username",
         "password",
         "email",
-        "last_login",
-        "date_joined",
         "is_active",
+        "date_joined",
+        "last_login",
     )
-
-    list_display_links = ("username",)
 
     readonly_fields = (
         "id",
-        "email",
+        # "email",
         "password",
         "date_joined",
         "last_login",
     )
 
+    list_display_links = ("username",)
     list_display = ("id", "username", "email", "social_connected")
+    list_per_page = 500
+    list_max_show_all = 2000
+    list_filter = ("is_active",)
 
-    search_fields = ("username__startswith",)
+    search_fields = ("username__startswith", "email__startswith")
 
     def social_connected(self, obj):
-        try:
-            UserSocialAuth.objects.get(user=obj)
-            return True
-
-        except UserSocialAuth.DoesNotExist:
-            return False
+        return obj.social_auth.exists()
 
     social_connected.boolean = True
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_superuser:
+            return False
+        return True

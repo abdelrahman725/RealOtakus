@@ -5,8 +5,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.utils import timezone
-
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
 
 
 class UserAccountManager(BaseUserManager):
@@ -50,22 +50,14 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
-    # tests_started = models.PositiveSmallIntegerField(default=0)
-    # tests_completed = models.PositiveSmallIntegerField(default=0)
-    # animes_to_review = models.ManyToManyField(
-    #     Anime, related_name="reviewers", blank=True
-    # )
-
-    # country = models.CharField(
-    #     choices=COUNTRY_CHOICES, max_length=10, blank=True, null=True
-    # )
-
-    # level = models.CharField(choices=LEVEL_CHOICES, max_length=15, default=BEGINNER)
-
     objects = UserAccountManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
+
+    def clean(self):
+        if self.is_superuser and self.is_active == False:
+            raise ValidationError("admin user cannot be inactive")
 
     def __str__(self):
         return self.email

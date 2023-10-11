@@ -12,4 +12,5 @@ urlpatterns = [
     path("jwt/refresh/", accounts.views.CustomTokenRefreshView.as_view()),
     path("jwt/verify/", accounts.views.CustomTokenVerifyView.as_view()),
     path("logout/", accounts.views.LogoutView.as_view()),
+    path("delete/", accounts.views.DeleteUserView.as_view()),
 ]

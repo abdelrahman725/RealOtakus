@@ -7,10 +7,10 @@ from django.conf import settings
 from notifications.models import Notification
 
 
-# action for deleting notifications older than the  period specefied by NOTIFICATIONS_LIFE_PERIOD, default to 15 days
+# action for deleting notifications older than the  period specefied by NOTIFICATIONS_LIFE_PERIOD, default to 7 days
 @admin.action(description="delete expired notifications")
 def delete_expired_notifications_action(modeladmin, request, queryset):
-    notifications_life_period = getattr(settings, "NOTIFICATIONS_LIFE_PERIOD", 15)
+    notifications_life_period = getattr(settings, "NOTIFICATIONS_LIFE_PERIOD", 7)
 
     expired_notifications = Notification.objects.exclude(
         time__gt=timezone.now() - timedelta(days=notifications_life_period)

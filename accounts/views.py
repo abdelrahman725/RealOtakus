@@ -1,4 +1,6 @@
+from django.contrib.auth import authenticate
 from django.conf import settings
+from django.db.utils import IntegrityError
 
 from djoser.social.views import ProviderAuthView
 
@@ -14,32 +16,44 @@ from rest_framework_simplejwt.views import (
 
 class CustomSocialProviderAuthView(ProviderAuthView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        try:
+            response = super().post(request, *args, **kwargs)
 
-        if response.status_code == 201:
-            access_token = response.data.get("access")
-            refresh_token = response.data.get("refresh")
+            if response.status_code == 201:
+                access_token = response.data.get("access")
+                refresh_token = response.data.get("refresh")
 
-            response.set_cookie(
-                "access",
-                access_token,
-                max_age=settings.AUTH_COOKIE_MAX_AGE,
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
-                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
-            response.set_cookie(
-                "refresh",
-                refresh_token,
-                max_age=settings.AUTH_COOKIE_MAX_AGE,
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
-                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
+                response.set_cookie(
+                    "access",
+                    access_token,
+                    max_age=settings.AUTH_COOKIE_MAX_AGE,
+                    path=settings.AUTH_COOKIE_PATH,
+                    secure=settings.AUTH_COOKIE_SECURE,
+                    httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                    samesite=settings.AUTH_COOKIE_SAMESITE,
+                )
+                response.set_cookie(
+                    "refresh",
+                    refresh_token,
+                    max_age=settings.AUTH_COOKIE_MAX_AGE,
+                    path=settings.AUTH_COOKIE_PATH,
+                    secure=settings.AUTH_COOKIE_SECURE,
+                    httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                    samesite=settings.AUTH_COOKIE_SAMESITE,
+                )
+                response.set_cookie(
+                    "alive",
+                    "xyx",
+                    max_age=settings.AUTH_COOKIE_MAX_AGE,
+                    path=settings.AUTH_COOKIE_PATH,
+                    secure=settings.AUTH_COOKIE_SECURE,
+                    samesite=settings.AUTH_COOKIE_SAMESITE,
+                )
 
-        return response
+            return response
+
+        except IntegrityError:
+            return Response(status=status.HTTP_409_CONFLICT)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -47,13 +61,22 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
+            user = authenticate(
+                email=request.data["email"], password=request.data["password"]
+            )
+
+            if not hasattr(user, "otaku"):
+                return Response(
+                    {"detail": "No active account found with the given credentials"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+
             access_token = response.data.get("access")
             refresh_token = response.data.get("refresh")
 
             response.set_cookie(
                 "access",
                 access_token,
-                domain=settings.DOMAIN,
                 max_age=settings.AUTH_COOKIE_MAX_AGE,
                 path=settings.AUTH_COOKIE_PATH,
                 secure=settings.AUTH_COOKIE_SECURE,
@@ -63,11 +86,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 "refresh",
                 refresh_token,
-                domain=settings.DOMAIN,
                 max_age=settings.AUTH_COOKIE_MAX_AGE,
                 path=settings.AUTH_COOKIE_PATH,
                 secure=settings.AUTH_COOKIE_SECURE,
                 httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                samesite=settings.AUTH_COOKIE_SAMESITE,
+            )
+            response.set_cookie(
+                "alive",
+                "xyx",
+                max_age=settings.AUTH_COOKIE_MAX_AGE,
+                path=settings.AUTH_COOKIE_PATH,
+                secure=settings.AUTH_COOKIE_SECURE,
                 samesite=settings.AUTH_COOKIE_SAMESITE,
             )
 
@@ -112,7 +142,49 @@ class CustomTokenVerifyView(TokenVerifyView):
 class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         response = Response(status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie("access")
-        response.delete_cookie("refresh")
+
+        response.delete_cookie(
+            "access",
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+            path=settings.AUTH_COOKIE_PATH,
+        )
+        response.delete_cookie(
+            "refresh",
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+            path=settings.AUTH_COOKIE_PATH,
+        )
+        response.delete_cookie(
+            "alive",
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+            path=settings.AUTH_COOKIE_PATH,
+        )
+
+        return response
+
+
+class DeleteUserView(APIView):
+    def delete(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        request.user.delete()
+
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+
+        response.delete_cookie(
+            "access",
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+            path=settings.AUTH_COOKIE_PATH,
+        )
+        response.delete_cookie(
+            "refresh",
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+            path=settings.AUTH_COOKIE_PATH,
+        )
+        response.delete_cookie(
+            "alive",
+            samesite=settings.AUTH_COOKIE_SAMESITE,
+            path=settings.AUTH_COOKIE_PATH,
+        )
 
         return response

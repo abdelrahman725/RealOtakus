@@ -1,13 +1,13 @@
 import sys
-from pathlib import Path
-from os import getenv, path
-
 import dotenv
 import dj_database_url
+from os import getenv, path
+from datetime import timedelta
+from pathlib import Path
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 local_env_file = BASE_DIR / ".env.local"
 
 if path.isfile(local_env_file):
@@ -22,33 +22,31 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY")
 
 ADMIN_PATH = getenv("ADMIN_PATH")
 
-ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-
-# to allow requests from react which can have a different origin
-CORS_ALLOWED_ORIGINS = getenv("CORS_ALLOWED_ORIGINS").split(",")
-CORS_ALLOW_CREDENTIALS = True
+ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS").split(",")
 
 # frontend domain
 DOMAIN = getenv("DOMAIN")
 
 SITE_NAME = "RealOtakus"
 
+# to allow requests from react which may have a different origin
+CORS_ALLOWED_ORIGINS = getenv("CORS_ALLOWED_ORIGINS").split(",")
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [*default_headers, "cache-control"]
+
 AUTH_TOKEN = "access"
-AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
-# HTTPS or HTTP
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 14
+
+# ensure auth cookie is sent over HTTPS (except on localhost)
 AUTH_COOKIE_SECURE = getenv("AUTH_COOKIE_SECURE", "True") == "True"
 AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_PATH = "/"
 AUTH_COOKIE_SAMESITE = "None"
 
-
-# time in days after which notifications should be deleted
-NOTIFICATION_LIFE_TIME = 15
-
 # email settings
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = getenv("EMAIL_HOST")
-DEFAULT_FROM_EMAIL = getenv("EMAIL_HOST")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = getenv("EMAIL_PASSWORD")
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
@@ -56,13 +54,11 @@ EMAIL_USE_SSL = True
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv("GOOGLE_AUTH_CLIENT_ID")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv("GOOGLE_AUTH_SECRET_KEY")
-
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     "openid",
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/userinfo.profile",
 ]
-# SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
 
 # Application definition
@@ -77,9 +73,8 @@ INSTALLED_APPS = [
     "djoser",
     "corsheaders",
     "social_django",
-    # "storages",
     "accounts",
-    # "core",
+    "core",
     "notifications",
 ]
 
@@ -89,10 +84,10 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "realotakus.custom_middleware.LocalTimezoneMiddleware",
 ]
 
 ROOT_URLCONF = "realotakus.urls"
@@ -117,7 +112,6 @@ WSGI_APPLICATION = "realotakus.wsgi.application"
 
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
-    # "social_core.backends.facebook.FacebookOAuth2",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -131,18 +125,23 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "max_contributions": "10/day",
+        "max_contributions_per_user": "10/day",
     },
 }
 
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
-    "ACTIVATION_URL": "activation/{uid}/{token}",
+    "ACTIVATION_URL": "auth/activation/{uid}/{token}",
     "SEND_ACTIVATION_EMAIL": True,
-    "USER_CREATE_PASSWORD_RETYPE": True,
-    "PASSWORD_RESET_CONFIRM_RETYPE": True,
-    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": getenv("SOCIAL_AUTH_REDIRECT_URIS").split(","),
+    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": getenv(
+        "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS"
+    ).split(","),
     "TOKEN_MODEL": None,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
 }
 
 if DEVELOPMENT_MODE is True:
@@ -160,9 +159,7 @@ elif len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
     }
 
 
-REDIS_URL = getenv("REDIS_URL")
-
-if DEBUG == False and REDIS_URL != None:
+if DEBUG == False and getenv("REDIS_URL"):
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
@@ -209,7 +206,6 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
