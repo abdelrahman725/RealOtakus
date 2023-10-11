@@ -5,4 +5,4 @@
 
 RealOtakus welcomes and appreciates all contributions from passionate developers, so if you want to be part of our journey! 
 
-## see [Frontend](link_here)
+## see [Frontend](https://github.com/abdelrahman725/RealOtakus-Frontend)

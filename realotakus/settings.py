@@ -18,11 +18,11 @@ DEVELOPMENT_MODE = getenv("DEBUG", "False") == "True"
 
 DEBUG = getenv("DEBUG", "False") == "True"
 
-SECRET_KEY = getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = getenv("SECRET_KEY")
 
 ADMIN_PATH = getenv("ADMIN_PATH")
 
-ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = getenv("ALLOWED_HOSTS").split(",")
 
 # frontend domain
 DOMAIN = getenv("DOMAIN")
@@ -80,6 +80,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -205,8 +206,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
-
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
