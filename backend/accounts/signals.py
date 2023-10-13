@@ -7,5 +7,5 @@ from accounts.models import UserAccount
 
 @receiver(post_save, sender=UserAccount)
 def create_otaku_user(sender, instance, created, **kwargs):
-    if created and not instance.is_staff:
+    if not instance.is_superuser and created:
         Otaku.objects.create(user=instance)
