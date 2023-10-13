@@ -36,27 +36,6 @@ from core.constants import (
 from notifications.helpers import create_notification
 
 
-@cache_page(ANIMES_CACHE_TIME)
-@api_view(["GET"])
-def get_all_animes(request):
-    cached_or_quered_animes = cache.get("animes")
-    
-    if cached_or_quered_animes == None:
-        cached_or_quered_animes = Anime.objects.all()
-        cache.set(
-            key="animes",
-            value={anime.id: anime for anime in cached_or_quered_animes},
-            timeout=None,
-        )
-
-    else:
-        cached_or_quered_animes = cached_or_quered_animes.values()
-
-    all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
-
-    return Response(all_animes)
-
-
 @cache_page(LEADERBOARD_CACHE_TIME)
 @api_view(["GET"])
 @permission_classes([AllowAny])
@@ -86,6 +65,27 @@ def get_leaderboard(request):
     leaderboard = LeaderBoradSerializer(top_users, many=True).data
 
     return Response(leaderboard)
+
+
+@cache_page(ANIMES_CACHE_TIME)
+@api_view(["GET"])
+def get_all_animes(request):
+    cached_or_quered_animes = cache.get("animes")
+
+    if cached_or_quered_animes == None:
+        cached_or_quered_animes = Anime.objects.all()
+        cache.set(
+            key="animes",
+            value={anime.id: anime for anime in cached_or_quered_animes},
+            timeout=None,
+        )
+
+    else:
+        cached_or_quered_animes = cached_or_quered_animes.values()
+
+    all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
+
+    return Response(all_animes)
 
 
 @api_view(["GET"])

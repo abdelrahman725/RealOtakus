@@ -1,7 +1,13 @@
 import threading
 
 from django.utils import timezone
-from django.db.models.signals import pre_save, post_save, pre_delete, m2m_changed
+from django.db.models.signals import (
+    pre_save,
+    post_save,
+    pre_delete,
+    post_delete,
+    m2m_changed,
+)
 from django.dispatch import receiver
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
@@ -88,18 +94,10 @@ def on_animes_to_review_change(sender, instance, **kwargs):
             )
 
 
-@receiver(post_save, sender=Anime)
-def chache_new_created_anime(sender, instance, created, **kwargs):
-    if created:
-        previous_animes = cache.get("animes")
-        if previous_animes:
-            previous_animes[instance.id] = instance
-            cache.set(key="animes", value=previous_animes, timeout=None)
-
-
-@receiver(pre_delete, sender=Anime)
-def delete_chached_anime(sender, instance, **kwargs):
-    previous_animes = cache.get("animes")
-    if previous_animes and instance.id in previous_animes:
-        del previous_animes[instance.id]
-        cache.set(key="animes", value=previous_animes, timeout=None)
+@receiver([post_save, post_delete], sender=Anime)
+def update_cached_animes(sender, **kwargs):
+    cache.set(
+        key="animes",
+        value={anime.id: anime for anime in Anime.objects.all()},
+        timeout=None,
+    )

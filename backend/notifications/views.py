@@ -7,14 +7,13 @@ from rest_framework.decorators import api_view
 from notifications.models import Notification
 from notifications.serializers import NotificationsSerializer
 
+
 @api_view(["GET"])
 def get_notifications(request):
     user = request.user
 
     user_notifications = NotificationsSerializer(
-        Notification.non_expired.filter(
-            (Q(receiver=user) | Q(broad=True)) & Q(time__gt=user.date_joined)
-        ),
+        Notification.non_expired.filter(Q(receiver=user) | Q(broad=True)),
         many=True,
     )
     return Response(user_notifications.data)

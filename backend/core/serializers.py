@@ -53,8 +53,8 @@ class ContributionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = (
-            "id",
             "anime",
+            "id",
             "question",
             "choice1",
             "choice2",
