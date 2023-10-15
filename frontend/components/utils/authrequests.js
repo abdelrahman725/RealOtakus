@@ -116,7 +116,8 @@ export async function VerifyToken() {
         return { status_code }
     }
 
-    catch {
+    catch (err){
+        ConsoleLog(err)
         return null
     }
 }
@@ -136,7 +137,8 @@ export async function RefreshToken() {
 
     }
 
-    catch {
+    catch (err){
+        ConsoleLog(err)
         return null
     }
 }
