@@ -3,7 +3,6 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { VerifyToken, RefreshToken } from '@/components/utils/authrequests';
 import ConsoleLog from '@/components/utils/custom_console';
-import Cookies from 'js-cookie';
 import LoadingSpinner from '@/components/spinner';
 export const AuthContext = createContext()
 
@@ -15,22 +14,23 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         (async () => {
 
-            if (Cookies.get("alive") === undefined) {
-                ConsoleLog("no cookie exists")
-                SetIsAuthenticated(false)
-                return
-            }
-
             const verify_access_res = await VerifyToken();
             if (verify_access_res === null) {
                 set_error(true)
                 return
             }
 
-            // access token is valid (not expired)
+            // access token has been sent and it's valid (not expired)
             if (verify_access_res.status_code === 200) {
                 SetIsAuthenticated(true)
                 ConsoleLog("access token is valid")
+                return
+            }
+
+             // no access token is sent (always the case on first visit, or when the cookie expires)
+             if (verify_access_res.status_code === 400) {
+                SetIsAuthenticated(false)
+                ConsoleLog("no access token is sent")
                 return
             }
 
