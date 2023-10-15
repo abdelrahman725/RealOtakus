@@ -1,6 +1,6 @@
 # compiled css code
-*.css
-*.css.map
+App.css
+App.css.map
 
 # dependencies
 /node_modules
