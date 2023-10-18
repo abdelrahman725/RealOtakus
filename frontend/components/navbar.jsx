@@ -4,9 +4,8 @@ import { IoMdNotifications } from 'react-icons/io'
 import { BsPersonFill } from 'react-icons/bs'
 import { AiFillSetting } from 'react-icons/ai'
 import { FaInfo } from 'react-icons/fa'
+import { useAuthContext, useGlobalContext } from '@/contexts/GlobalContext';
 import Link from "next/link"
-import { useAuthContext } from "@/contexts/AuthContext";
-import { useGlobalContext } from '@/contexts/GlobalContext';
 
 export default function Navbar() {
 

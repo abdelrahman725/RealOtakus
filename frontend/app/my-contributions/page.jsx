@@ -3,7 +3,7 @@
 import ContributedQuestion from "@/components/contribution";
 import RequireAuthentication from "@/components/utils/requireauthentication";
 import ReAuthorizedApiRequest from "@/components/utils/generic_request";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/GlobalContext";
 import { useState, useEffect } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 

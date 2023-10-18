@@ -1,7 +1,7 @@
 'use client';
 
 import { redirect } from 'next/navigation';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthContext } from '@/contexts/GlobalContext';
 
 export default function RequireAonymous({ children }) {
     const { IsAuthenticated } = useAuthContext()

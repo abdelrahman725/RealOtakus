@@ -1,11 +1,12 @@
 "use client"
 
 import RequireAuthentication from "@/components/utils/requireauthentication";
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/contexts/GlobalContext'
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { FiLogOut } from "react-icons/fi";
-import ReAuthorizedApiRequest from "@/components/utils/generic_request";
+import { AUTH_API } from "@/components/utils/constants";
+import ConsoleLog from "@/components/utils/custom_console";
 import Link from "next/link";
 
 export default function Page() {
@@ -16,20 +17,32 @@ export default function Page() {
     const log_user_out = async () => {
 
         set_loading(true)
-        const result = await ReAuthorizedApiRequest({ path: "auth/logout/", method: "POST" })
+
+        try {
+            const result = await fetch(`${AUTH_API}/logout/`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    'Content-type': 'application/json',
+                },
+            })
+
+            if (result.status === 204 || result.status === 401) {
+                SetIsAuthenticated(false)
+                toast.info("Signed Out")
+                set_loading(false)
+                return
+            }
+            else {
+                toast.info("Error! logging out")
+            }
+
+        }
+        catch (error) {
+            ConsoleLog(error)
+        }
+
         set_loading(false)
-
-        if (result === null) {
-            return
-        }
-
-        if (result.status_code === 204 || result.status_code === 401) {
-            toast.info("Signed Out")
-            SetIsAuthenticated(false)
-            return
-        }
-
-        toast.info("Error! Try again")
     }
 
 
@@ -37,7 +50,7 @@ export default function Page() {
         <RequireAuthentication>
             <div className="settings centered">
 
-                <button onClick={log_user_out} className="logout_btn">
+                <button onClick={log_user_out} className="logout_btn" disabled={loading}>
                     <span>Logout</span><FiLogOut className="icon" />
                 </button>
 

@@ -2,7 +2,7 @@
 
 import LeaderBoard from "@/components/leaderboard"
 import Link from "next/link";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/GlobalContext";
 import { FcIdea, FcDatabase } from 'react-icons/fc'
 import { MdQuiz, MdOutlineRateReview } from 'react-icons/md'
 import { useGlobalContext } from "@/contexts/GlobalContext";

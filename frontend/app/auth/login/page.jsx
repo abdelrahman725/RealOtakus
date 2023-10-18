@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { toast } from "react-toastify"
 import { Login } from "@/components/utils/authrequests"
-import { useAuthContext } from "@/contexts/AuthContext"
+import { useAuthContext } from "@/contexts/GlobalContext"
 import { useState } from "react"
 import GoogleButton from "@/components/socialbutton";
 import ConsoleLog from '@/components/utils/custom_console';
@@ -35,8 +35,8 @@ export default function Page() {
         ConsoleLog(login_res)
 
         if (login_res.status_code === 200) {
-            toast.success("Logged In")
             SetIsAuthenticated(true)
+            toast.success("Logged In")
             return
         }
 

@@ -5,7 +5,7 @@ import Notification from "@/components/notification"
 import ReAuthorizedApiRequest from "@/components/utils/generic_request";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react"
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/GlobalContext";
 import RequireAuthentication from "@/components/utils/requireauthentication";
 
 export default function Page() {

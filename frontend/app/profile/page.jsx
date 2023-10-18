@@ -6,7 +6,7 @@ import Interactions from "@/components/interactions";
 import ProfileData from "@/components/profile_data";
 import FetchCountry from "@/components/utils/fetch_country";
 import { useEffect, useState } from "react";
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthContext } from '@/contexts/GlobalContext';
 
 export default function Page() {
   const { IsAuthenticated, SetIsAuthenticated } = useAuthContext()

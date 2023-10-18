@@ -1,7 +1,7 @@
 "use client"
 
 import RequireAuthentication from "@/components/utils/requireauthentication";
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/contexts/GlobalContext'
 import { toast } from "react-toastify";
 import { useState } from "react";
 import ReAuthorizedApiRequest from "@/components/utils/generic_request";

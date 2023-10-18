@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from 'react-toastify';
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/GlobalContext";
 import { GoogleAuthenticate } from "@/components/utils/authrequests";
 
 export default function Page() {
@@ -15,7 +15,6 @@ export default function Page() {
         (async () => {
             const state = searchParams.get("state")
             const code = searchParams.get("code")
-
             if (state && code) {
                 const google_authenticate_res = await GoogleAuthenticate(state, code)
 
@@ -44,7 +43,7 @@ export default function Page() {
 
     return (
         <div className="centered">
-            loading...
+            redirecting...
         </div>
     );
 }

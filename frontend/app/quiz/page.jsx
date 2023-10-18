@@ -10,7 +10,7 @@ import { toast } from "react-toastify"
 import { ReactSelectStyles, N_Quiz_Questions, QUESTION_TIME_MIN, QUESTION_TIME_SEC } from "@/components/utils/constants";
 import { useState, useEffect, useRef } from 'react'
 import { useGlobalContext } from "@/contexts/GlobalContext";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/GlobalContext";
 import { FaArrowRight } from "react-icons/fa"
 
 export default function Page() {

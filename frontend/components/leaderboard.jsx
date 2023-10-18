@@ -13,13 +13,9 @@ export default function LeaderBoard() {
 
     const fetch_leaderboard = async () => {
         try {
-            const result = await fetch(`${BACKEND_API}/leaderboard/`, {
-                headers: {
-                    'Content-type': 'application/json',
-                },
-            })
-
+            const result = await fetch(`${BACKEND_API}/leaderboard/`, { headers: { 'Content-type': 'application/json' } })
             const leaderboard_data = await result.json()
+            
             set_leaderboard(leaderboard_data)
         }
         catch (error) {

@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react"
 import { toast } from 'react-toastify';
 import ReAuthorizedApiRequest from "@/components/utils/generic_request";
 import RequireAuthentication from "@/components/utils/requireauthentication";
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthContext } from '@/contexts/GlobalContext';
 
 export default function Page() {
   const { IsAuthenticated, SetIsAuthenticated } = useAuthContext()

@@ -11,5 +11,5 @@ export default function MyToastContainer() {
         document.addEventListener("keydown", e => e.key === "Escape" && toast.dismiss())
     }, [])
 
-    return <ToastContainer className="toast" hideProgressBar newestOnTop draggablePercent={30} />;
+    return <ToastContainer className="toast" hideProgressBar newestOnTop draggablePercent={30} autoClose={4000} />;
 }

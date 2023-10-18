@@ -3,8 +3,8 @@
 import MyToastContainer from '@/components/toast'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
-import ParentProvider from '@/app/ParentWrapper';
 import { usePathname } from 'next/navigation';
+import { GlobalProvider } from '@/contexts/GlobalContext';
 
 export default function App({ children }) {
     const pathname = usePathname();
@@ -14,11 +14,11 @@ export default function App({ children }) {
     }
 
     return (
-        <ParentProvider>
+        <GlobalProvider>
             <Navbar />
             <MyToastContainer />
             <main>{children}</main>
             <Footer />
-        </ParentProvider>
+        </GlobalProvider>
     )
 }

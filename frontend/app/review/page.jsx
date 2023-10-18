@@ -4,7 +4,7 @@ import Link from 'next/link';
 import ReviewedConributions from '@/components/reviewed_contributions';
 import PendingConributions from '@/components/pending_contributions';
 import { useState, useEffect } from "react"
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuthContext } from "@/contexts/GlobalContext";
 import RequireAuthentication from '@/components/utils/requireauthentication';
 import ReAuthorizedApiRequest from "@/components/utils/generic_request";
 
