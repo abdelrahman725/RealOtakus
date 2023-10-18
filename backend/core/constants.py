@@ -7,15 +7,6 @@ QUESTION_TIME = 90
 # maximum time taken by any quiz
 MAX_QUIZ_TIME = N_QUIZ_QUESTIONS * QUESTION_TIME
 
-# time in days after which notifications should be deleted
-NOTIFICATION_LIFE_TIME = 15
-
-# time in seconds for broswer cached animes (2 hour)
-ANIMES_CACHE_TIME = 60 * 60 * 2
-
-# time in seconds for broswer cached leaderboard (5 mins)
-LEADERBOARD_CACHE_TIME = 60 * 5
-
 # available levels users can reach
 BEGINNER = "beginner"
 INTERMEDIATE = "intermediate"

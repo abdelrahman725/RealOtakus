@@ -5,6 +5,7 @@ from django.db.models import Count, Avg, Q
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -29,14 +30,12 @@ from core.helpers import query_or_get_cached_anime
 from core.constants import (
     N_QUIZ_QUESTIONS,
     MAX_QUIZ_TIME,
-    ANIMES_CACHE_TIME,
-    LEADERBOARD_CACHE_TIME,
 )
 
 from notifications.helpers import create_notification
 
 
-@cache_page(LEADERBOARD_CACHE_TIME)
+@cache_page(settings.LEADERBOARD_CACHE_TIME)
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_leaderboard(request):
@@ -54,8 +53,7 @@ def get_leaderboard(request):
                     "contributions", filter=(Q(contributions__approved=True))
                 )
             )
-            # points__gte=avg_score
-            .filter()
+            .filter(points__gt=avg_score)
             .order_by("-points")[:30]
         )
         if avg_score
@@ -67,7 +65,6 @@ def get_leaderboard(request):
     return Response(leaderboard)
 
 
-@cache_page(ANIMES_CACHE_TIME)
 @api_view(["GET"])
 def get_all_animes(request):
     cached_or_quered_animes = cache.get("animes")
@@ -85,7 +82,10 @@ def get_all_animes(request):
 
     all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
 
-    return Response(all_animes)
+    response = Response(all_animes)
+    response["Cache-Control"] = "max-age=%d" % settings.ANIMES_BROWSER_CACHE_TIME
+
+    return response
 
 
 @api_view(["GET"])
@@ -207,7 +207,7 @@ def get_contributions_for_review(request):
     pending_or_reviewd_contributions = ContributionSerializer(
         Question.objects.filter(
             ~Q(contributor=user),
-            (~Q(reviewer=user) | ~Q(approved=None)),
+            Q(reviewer=user) | Q(approved=None),
             is_contribution=True,
             anime__in=animes_to_review,
         )

@@ -60,6 +60,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     "https://www.googleapis.com/auth/userinfo.profile",
 ]
 
+# time (in days) after which notifications should be deleted
+NOTIFICATION_LIFE_TIME = 15
+
+# Browser cache time (in seconds) for all animes (3 hr)
+ANIMES_BROWSER_CACHE_TIME = 60 * 60 * 3
+
+# Server and Browser cache time (in seconds) for leaderboard (10 mins)
+LEADERBOARD_CACHE_TIME = 60 * 10
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -207,7 +216,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
