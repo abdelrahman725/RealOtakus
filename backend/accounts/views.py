@@ -41,14 +41,6 @@ class CustomSocialProviderAuthView(ProviderAuthView):
                     httponly=settings.AUTH_COOKIE_HTTP_ONLY,
                     samesite=settings.AUTH_COOKIE_SAMESITE,
                 )
-                response.set_cookie(
-                    "alive",
-                    "xyx",
-                    max_age=settings.AUTH_COOKIE_MAX_AGE,
-                    path=settings.AUTH_COOKIE_PATH,
-                    secure=settings.AUTH_COOKIE_SECURE,
-                    samesite=settings.AUTH_COOKIE_SAMESITE,
-                )
 
             return response
 
@@ -58,6 +50,7 @@ class CustomSocialProviderAuthView(ProviderAuthView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
+        
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
@@ -90,14 +83,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 path=settings.AUTH_COOKIE_PATH,
                 secure=settings.AUTH_COOKIE_SECURE,
                 httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
-            response.set_cookie(
-                "alive",
-                "xyx",
-                max_age=settings.AUTH_COOKIE_MAX_AGE,
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
                 samesite=settings.AUTH_COOKIE_SAMESITE,
             )
 
@@ -153,11 +138,6 @@ class LogoutView(APIView):
             samesite=settings.AUTH_COOKIE_SAMESITE,
             path=settings.AUTH_COOKIE_PATH,
         )
-        response.delete_cookie(
-            "alive",
-            samesite=settings.AUTH_COOKIE_SAMESITE,
-            path=settings.AUTH_COOKIE_PATH,
-        )
 
         return response
 
@@ -178,11 +158,6 @@ class DeleteUserView(APIView):
         )
         response.delete_cookie(
             "refresh",
-            samesite=settings.AUTH_COOKIE_SAMESITE,
-            path=settings.AUTH_COOKIE_PATH,
-        )
-        response.delete_cookie(
-            "alive",
             samesite=settings.AUTH_COOKIE_SAMESITE,
             path=settings.AUTH_COOKIE_PATH,
         )
