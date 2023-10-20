@@ -1,9 +1,10 @@
 import random
 
 from django.db import IntegrityError
-from django.db.models import Count, Avg, Q
+from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
+from django.utils.cache import patch_response_headers
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 
@@ -39,25 +40,16 @@ from notifications.helpers import create_notification
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_leaderboard(request):
-    # Calculate the average score for all existing users.
-    avg_score = Otaku.objects.filter(points__gt=0).aggregate(Avg("points"))[
-        "points__avg"
-    ]
-
-    # Get the top users (limited to 30 users) who have a score greater than the average score.
+    # Get top users (limited to 30) ordered by their score excluding a score of 0.
     top_users = (
-        (
-            Otaku.objects.select_related("user")
-            .annotate(
-                n_contributions=Count(
-                    "contributions", filter=(Q(contributions__approved=True))
-                )
+        Otaku.objects.select_related("user")
+        .annotate(
+            n_contributions=Count(
+                "contributions", filter=(Q(contributions__approved=True))
             )
-            .filter(points__gt=avg_score)
-            .order_by("-points")[:30]
         )
-        if avg_score
-        else []
+        .filter(points__gt=0)
+        .order_by("-points")[:30]
     )
 
     leaderboard = LeaderBoradSerializer(top_users, many=True).data
@@ -81,10 +73,8 @@ def get_all_animes(request):
         cached_or_quered_animes = cached_or_quered_animes.values()
 
     all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
-
     response = Response(all_animes)
-    response["Cache-Control"] = "max-age=%d" % settings.ANIMES_BROWSER_CACHE_TIME
-
+    patch_response_headers(response, cache_timeout=settings.ANIMES_BROWSER_CACHE_TIME)
     return response
 
 
@@ -108,9 +98,7 @@ def get_contributions(request):
     user = request.user.otaku
 
     contributions = ContributionSerializer(
-        user.contributions.filter(is_contribution=True)
-        .select_related("anime")
-        .order_by("-id"),
+        user.contributions.filter(is_contribution=True).select_related("anime"),
         many=True,
     ).data
 
@@ -199,7 +187,7 @@ def get_contributions_for_review(request):
     if request.GET.get("inquiry", False):
         return Response(animes_to_review.exists())
 
-    if not animes_to_review.exists():
+    if not animes_to_review:
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     animes = AnimeSerializer(animes_to_review, many=True)
@@ -210,9 +198,7 @@ def get_contributions_for_review(request):
             Q(reviewer=user) | Q(approved=None),
             is_contribution=True,
             anime__in=animes_to_review,
-        )
-        .select_related("anime")
-        .order_by("-id"),
+        ).select_related("anime"),
         many=True,
     )
 
@@ -268,16 +254,18 @@ def get_quiz(request, anime):
     if quiz_anime == None:
         return Response(status=status.HTTP_410_GONE)
 
-    # current quiz questions for current user
+    # quiz questions are filtered as follows :
+    # user is not the reviewer or the creator of the question
+    # user hasn't seen the question before (question_interactions__user != user)
+    # the question is active (e.g. approved contribution)
     questions = quiz_anime.anime_questions.filter(
-        (~Q(contributor=user) & ~Q(reviewer=user)), active=True
-    ).exclude(
-        pk__in=user.questions_interacted_with.values_list("question__pk", flat=True)
-    )[
-        :N_QUIZ_QUESTIONS
-    ]
+        ~Q(contributor=user),
+        ~Q(reviewer=user),
+        ~Q(question_interactions__user=user),
+        active=True,
+    )[:N_QUIZ_QUESTIONS]
 
-    if questions.count() != N_QUIZ_QUESTIONS:
+    if len(questions) != N_QUIZ_QUESTIONS:
         # just in case cache wasn't deleted from the previous quiz
         cache.delete(f"quiz_{user.id}")
         cache.delete(f"interactions_{user.id}")

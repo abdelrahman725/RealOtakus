@@ -1,5 +1,6 @@
 import pytz
 from django.utils import timezone
+from django.conf import settings
 
 
 class LocalTimezoneMiddleware:
@@ -7,6 +8,6 @@ class LocalTimezoneMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.user.is_superuser:
+        if settings.ADMIN_PATH in request.path:
             timezone.activate(pytz.timezone("Africa/Cairo"))
         return self.get_response(request)
