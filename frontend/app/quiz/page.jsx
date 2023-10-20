@@ -219,7 +219,7 @@ export default function Page() {
 
         {QuizStarted && questions &&
           <div className="quiz">
-            <p className="warning">Do not leave current page</p>
+            <h3>⚠️ Do not leave current page</h3>
 
             <Question
               question={questions[index]}

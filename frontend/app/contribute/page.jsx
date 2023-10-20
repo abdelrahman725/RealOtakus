@@ -51,14 +51,6 @@ export default function Page() {
 
   }
 
-  const handle_short_question = (e) => {
-    if (e.target.value.length < 7) {
-      e.target.setCustomValidity("question must be at least 7 characters");
-      return
-    }
-    e.target.setCustomValidity("");
-  }
-
   const on_anime_select = (selected_anime) => {
     localStorage.setItem("anime", JSON.stringify(selected_anime))
     setanime(selected_anime)
@@ -156,6 +148,12 @@ export default function Page() {
       return false
     }
 
+    if (Question.question.length < 7) {
+      toast.warning("Question must be at least 7 characters long", { position: "top-center", toastId: "short_q" })
+      question_ref.current.focus()
+      return
+    }
+
     const cleaned_contribution = {
       question: "",
       rightanswer: "",
@@ -205,7 +203,6 @@ export default function Page() {
         <h1>Contribute a quesion</h1>
         <p>
           Frist make sure to read &nbsp;
-
           <Link className="simple_link" href="/about#contribution-guidelines" target="_blank" shallow>
             Contribution Guidelines
           </Link>
@@ -233,7 +230,7 @@ export default function Page() {
             maxLength={350}
             required
             value={Question.question}
-            onChange={(e) => { on_form_change(e); handle_short_question(e) }}
+            onChange={on_form_change}
             ref={question_ref}
           >
           </textarea>
