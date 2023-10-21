@@ -74,7 +74,9 @@ def get_all_animes(request):
 
     all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
     response = Response(all_animes)
+    
     patch_response_headers(response, cache_timeout=settings.ANIMES_BROWSER_CACHE_TIME)
+    
     return response
 
 

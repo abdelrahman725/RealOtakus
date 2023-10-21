@@ -239,7 +239,7 @@ export default function Page() {
             typeof="text"
             placeholder="right answer"
             cols={40} rows={3}
-            maxLength={150}
+            maxLength={200}
             required
             value={Question.rightanswer}
             onChange={on_form_change}
@@ -252,7 +252,7 @@ export default function Page() {
             typeof="text"
             placeholder="choice 1"
             cols={40} rows={3}
-            maxLength={150}
+            maxLength={200}
             required
             value={Question.choice1}
             onChange={on_form_change}
@@ -263,7 +263,7 @@ export default function Page() {
             typeof="text"
             placeholder="choice 2"
             cols={40} rows={3}
-            maxLength={150}
+            maxLength={200}
             required
             value={Question.choice2}
             onChange={on_form_change}
@@ -274,7 +274,7 @@ export default function Page() {
             typeof="text"
             placeholder="choice 3"
             cols={40} rows={3}
-            maxLength={150}
+            maxLength={200}
             required
             value={Question.choice3}
             onChange={on_form_change}

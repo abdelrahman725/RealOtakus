@@ -46,10 +46,10 @@ class Question(models.Model):
     )
 
     question = models.CharField(max_length=350)
-    choice1 = models.CharField(max_length=150)
-    choice2 = models.CharField(max_length=150)
-    choice3 = models.CharField(max_length=150)
-    right_answer = models.CharField(max_length=150)
+    choice1 = models.CharField(max_length=200)
+    choice2 = models.CharField(max_length=200)
+    choice3 = models.CharField(max_length=200)
+    right_answer = models.CharField(max_length=200)
 
     active = models.BooleanField(default=False)
     approved = models.BooleanField(null=True, blank=True, default=None)
