@@ -31,7 +31,7 @@ export default function About() {
                     Real Otaku is the platform for anime enthusiasts and fans, founded in 2023,
                     it's about contributing anime questions and taking quizes
                     where users try to answer mindblowing questions contributed by others !
-                    one can also be a reviewr of the incoming contributions
+                    one can also be a reviewer of the incoming contributions
                     if he/she is eligible.
                 </p>
             </div>
