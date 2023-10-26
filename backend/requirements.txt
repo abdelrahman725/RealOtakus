@@ -4,10 +4,9 @@ djangorestframework==3.14.0
 djoser==2.2.0
 python-dotenv==1.0.0
 pytz==2023.3
-
-# production only required : 
-whitenoise==6.5.0
 dj-database-url==2.0.0 
+whitenoise==6.5.0
+# used only in production : 
 redis==5.0.1
 psycopg2==2.9.7
 gunicorn==21.2.0

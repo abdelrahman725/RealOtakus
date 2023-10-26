@@ -200,7 +200,7 @@ export default function Page() {
   return (
     <RequireAuthentication>
       <div className="contribute centered">
-        <h1>Contribute a quesion</h1>
+        <h1>Create your own question</h1>
         <p>
           Frist make sure to read &nbsp;
           <Link className="simple_link" href="/about#contribution-guidelines" target="_blank" shallow>

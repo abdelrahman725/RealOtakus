@@ -74,9 +74,9 @@ def get_all_animes(request):
 
     all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
     response = Response(all_animes)
-    
+
     patch_response_headers(response, cache_timeout=settings.ANIMES_BROWSER_CACHE_TIME)
-    
+
     return response
 
 
@@ -299,10 +299,10 @@ def get_quiz(request, anime):
     cache.set(
         key=f"quiz_{user.id}",
         value={question.id: question for question in questions},
-        timeout=MAX_QUIZ_TIME + 10,
+        timeout=MAX_QUIZ_TIME + 5,
     )
 
-    cache.set(key=f"interactions_{user.id}", value={}, timeout=MAX_QUIZ_TIME + 10)
+    cache.set(key=f"interactions_{user.id}", value={}, timeout=MAX_QUIZ_TIME + 5)
 
     user.tests_started += 1
     user.save()
@@ -328,7 +328,7 @@ def record_question_interaction(request):
         cache.set(
             key=f"interactions_{user.id}",
             value=previous_interactions,
-            timeout=MAX_QUIZ_TIME + 10,
+            timeout=MAX_QUIZ_TIME + 5,
         )
 
     except IntegrityError:

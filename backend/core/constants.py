@@ -1,8 +1,8 @@
 # number of questions in each quiz
 N_QUIZ_QUESTIONS = 5
 
-# time limit for each question in seconds
-QUESTION_TIME = 90
+# max time for each question in seconds
+QUESTION_TIME = 60
 
 # maximum time taken by any quiz
 MAX_QUIZ_TIME = N_QUIZ_QUESTIONS * QUESTION_TIME

@@ -6,7 +6,7 @@ export const N_Quiz_Questions = 5
 
 // Each question time in minutes and seconds, for now it's 1:30 min
 export const QUESTION_TIME_MIN = 1
-export const QUESTION_TIME_SEC = 30
+export const QUESTION_TIME_SEC = 0
 
 export const ReactSelectStyles = {
     option: (provided) => ({

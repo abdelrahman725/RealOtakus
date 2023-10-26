@@ -7,7 +7,7 @@ import Select from 'react-select'
 import Link from "next/link";
 import ReAuthorizedApiRequest from "@/components/utils/generic_request";
 import { toast } from "react-toastify"
-import { ReactSelectStyles, N_Quiz_Questions, QUESTION_TIME_MIN, QUESTION_TIME_SEC } from "@/components/utils/constants";
+import { ReactSelectStyles, N_Quiz_Questions } from "@/components/utils/constants";
 import { useState, useEffect, useRef } from 'react'
 import { useGlobalContext } from "@/contexts/GlobalContext";
 import { useAuthContext } from "@/contexts/GlobalContext";
@@ -182,9 +182,9 @@ export default function Page() {
             <h1>Otakus Quiz</h1>
             <div className="container">
               <div className="about_quiz">
-                <h2>about Quiz</h2>
+                <h2>About Quiz</h2>
                 <p>- The Quiz contains <strong>{N_Quiz_Questions}</strong> multiple choice questions.</p>
-                <p>- You have <strong>{QUESTION_TIME_MIN}:{QUESTION_TIME_SEC}</strong>  min for each question.</p>
+                <p>- You have <strong>1</strong>  min for each question.</p>
                 <p>- Make sure you have a stable internet connection, Good luck!</p>
                 <p>- <Link className="simple_link" href="/about#choosing-animes" target={"_blank"} shallow>How available quiz animes get selected ?</Link>
                 </p>
