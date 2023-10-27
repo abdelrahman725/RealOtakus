@@ -35,6 +35,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [*default_headers, "cache-control"]
 
 AUTH_TOKEN = "access"
+# 2 weeks
 AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 14
 
 # ensure auth cookie is sent over HTTPS (except on localhost)

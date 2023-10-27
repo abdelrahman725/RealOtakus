@@ -147,23 +147,20 @@ export default function About() {
 
             </div>
 
-            {/* <div>
-                <h2>Credits</h2>
-            </div> */}
-
             <div>
                 <h2>Stay in touch</h2>
 
                 <div className="community_links">
-                    <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank" rel="noreferrer">
+                    <a href="https://github.com/abdelrahman725/RealOtakus" target="_blank" rel="noreferrer" title="view source code">
                         <BsGithub className="icon" /> <span>Github</span>
                     </a>
 
-                    <a href="https://twitter.com/RealOtakus" target="_blank" rel="noreferrer">
+                    {/* 
+                    <a href="https://twitter.com/RealOtakus" target="_blank" rel="noreferrer" title="Follwo us on Twitter">
                         <SlSocialTwitter className="icon" /> <span>Twitter</span>
-                    </a>
+                    </a> */}
 
-                    <a href="/about" target="_blank" rel="noreferrer">
+                    <a href="https://discord.gg/7EXaugpw" target="_blank" rel="noreferrer" title="Join our discord server">
                         <IoLogoDiscord className="icon" /> <span>Discord</span>
                     </a>
                 </div>

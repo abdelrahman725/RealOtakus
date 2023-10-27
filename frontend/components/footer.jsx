@@ -17,17 +17,13 @@ export default function Footer() {
         Github
       </a>
 
-      <a className="simple_link" href="https://twitter.com/RealOtakus" target="_blank" rel="noreferrer">
+      {/* <a className="simple_link" href="https://twitter.com/RealOtakus" target="_blank" rel="noreferrer">
         Twitter
-      </a>
+      </a> */}
 
-      {/* <a className="simple_link" href="/#" target="_blank" rel="noreferrer">
+      <a className="simple_link" href="https://discord.gg/7EXaugpw" target="_blank" rel="noreferrer">
         Discord
-      </a> */}
-
-      {/* <a className="simple_link" href="/" target="_blank" rel="noreferrer">
-        Support
-      </a> */}
+      </a>
 
       <Link href="/terms" className="simple_link icon" target="_blank" shallow><HiOutlineDocumentText />Terms</Link>
 

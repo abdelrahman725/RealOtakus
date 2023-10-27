@@ -4,7 +4,7 @@ export const AUTH_API = `${BACKEND_API}/auth`
 
 export const N_Quiz_Questions = 5
 
-// Each question time in minutes and seconds, for now it's 1:30 min
+// Each question time in minutes and seconds, for now it's 1 min
 export const QUESTION_TIME_MIN = 1
 export const QUESTION_TIME_SEC = 0
 
