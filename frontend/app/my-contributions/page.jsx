@@ -11,7 +11,6 @@ export default function Page() {
 
     const { IsAuthenticated, SetIsAuthenticated } = useAuthContext()
     const [contributions, setcontributions] = useState()
-    const [filtered_contributions, set_filtered_contributions] = useState()
     const router = useRouter()
     const pathname = usePathname()
     const search_params = useSearchParams()
@@ -38,17 +37,6 @@ export default function Page() {
         return `${btn} ` + (filter === btn ? "darker_background" : "")
     }
 
-    useEffect(() => {
-        if (contributions) {
-            set_filtered_contributions(
-                contributions.filter(
-                    c => filter === null ? true : contribution_states[c.approved] === filter
-                )
-            )
-        }
-
-    }, [filter, contributions])
-
 
     const fetch_contributions = async () => {
         const result = await ReAuthorizedApiRequest({ path: "contributions/" })
@@ -69,7 +57,7 @@ export default function Page() {
     return (
         <RequireAuthentication>
             <div className="my-contributions centered">
-                {filtered_contributions ?
+                {contributions ?
                     contributions.length > 0 ?
                         <div>
                             <div className="contributions_filter_buttons">
@@ -95,12 +83,18 @@ export default function Page() {
                             </div>
 
 
-                            <h2>{filtered_contributions.length} {filter || "total"} Contributions</h2>
+                            <h2>
+                                {contributions.filter(c => filter === null ? true : contribution_states[c.approved] === filter).length}
+                                &nbsp;
+                                {filter || "total"} Contributions
+                            </h2>
 
                             <div className="questions_container">
-                                {filtered_contributions.map((contribution, index) => (
-                                    <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
-                                ))}
+                                {contributions.map((contribution, index) => {
+                                    if (filter === null || contribution_states[contribution.approved] === filter) {
+                                        return <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
+                                    }
+                                })}
                             </div>
 
                         </div>
