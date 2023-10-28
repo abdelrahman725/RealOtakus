@@ -17,10 +17,6 @@ export default function Page() {
     const search_params = useSearchParams()
     const filter = search_params.get("filter")
 
-    const set_url_filter = (filter) => {
-        router.replace(filter === null ? pathname : pathname + `?filter=${filter}`)
-    }
-
     const contribution_states = {
         true: "approved",
         false: "rejected",
@@ -32,6 +28,14 @@ export default function Page() {
         "eas": "too easy",
         "bad": "bad choices",
         "inv": "invalid/wrong information"
+    }
+
+    const set_url_filter = (filter) => {
+        router.replace(filter === null ? pathname : pathname + `?filter=${filter}`)
+    }
+
+    const get_button_class = (btn) => {
+        return `${btn} ` + (filter === btn ? "darker_background" : "")
     }
 
     useEffect(() => {
@@ -65,37 +69,36 @@ export default function Page() {
     return (
         <RequireAuthentication>
             <div className="my-contributions centered">
-                {contributions ?
+                {filtered_contributions ?
                     contributions.length > 0 ?
                         <div>
                             <div className="contributions_filter_buttons">
-                                <button className={`all ${filter === null && "darker_background"}`}
+                                <button className={get_button_class("all")}
                                     onClick={() => set_url_filter(null)}>
                                     All
                                 </button>
 
-                                <button className={`pending ${filter === "pending" && "darker_background"}`}
+                                <button className={get_button_class("pending")}
                                     onClick={() => set_url_filter("pending")}>
                                     pending
                                 </button>
 
-                                <button className={`approved ${filter === "approved" && "darker_background"}`}
+                                <button className={get_button_class("approved")}
                                     onClick={() => set_url_filter("approved")}>
                                     approved
                                 </button>
 
-                                <button className={`rejected ${filter === "rejected" && "darker_background"}`}
+                                <button className={get_button_class("rejected")}
                                     onClick={() => set_url_filter("rejected")}>
                                     rejected
                                 </button>
                             </div>
 
-                            {filtered_contributions &&
-                                <h2>{filtered_contributions.length} {filter || "total"} Contributions</h2>
-                            }
+
+                            <h2>{filtered_contributions.length} {filter || "total"} Contributions</h2>
 
                             <div className="questions_container">
-                                {filtered_contributions && filtered_contributions.map((contribution, index) => (
+                                {filtered_contributions.map((contribution, index) => (
                                     <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
                                 ))}
                             </div>
