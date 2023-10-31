@@ -12,7 +12,7 @@ A one place to gather all otakus to engage in the process of creating, reviewing
   
 ![DJANGO](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)  ![](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 
-  
+
 # Features
 
   
@@ -35,7 +35,6 @@ See your contributed questions state, previous quizes and see if you can make it
 
 
 # Want to Contribute? 
-RealOtakus welcomes and appreciates all contributions from passionate developers, so if you want to be part of our journey pleaes refer to [CONTRIBUTING.md](./CONTRIBUTING.md) and don't forget to join [developers channel](https://discord.gg/S7yZVcR8) on discord.
-
+RealOtakus welcomes and appreciates all contributions from passionate developers, so if you want to be part of our journey pleaes refer to [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 # [Join our Discord server](https://discord.gg/7EXaugpw)
