@@ -22,8 +22,9 @@ class UserAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "id",
-        # "email",
+        "username",
         "password",
+        "email",
         "date_joined",
         "last_login",
     )

@@ -2,6 +2,7 @@ import math
 
 from django.db import models
 from django.contrib import admin
+from django.http.request import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
@@ -90,14 +91,23 @@ class ContributionTypeFilter(admin.SimpleListFilter):
 
 @admin.register(Otaku)
 class OtakuAdmin(admin.ModelAdmin):
+    fields = (
+        "user",
+        "points",
+        "tests_started",
+        "tests_completed",
+        "animes_to_review",
+        "country",
+        "level",
+    )
+
     list_display = (
         "username",
-        "account",
         "points",
         "level",
+        "tests_started",
+        "tests_completed",
         "contributions",
-        # "tests_started",
-        # "tests_completed",
         "reviewer_of",
         "country",
     )
@@ -109,6 +119,8 @@ class OtakuAdmin(admin.ModelAdmin):
         "animes_to_review",
     ]
 
+    readonly_fields = ("user", "points", "tests_started", "tests_completed", "level")
+
     list_filter = (
         "level",
         IsReviewerFilter,
@@ -118,10 +130,6 @@ class OtakuAdmin(admin.ModelAdmin):
         ),
         CountryFilter,
     )
-
-    def account(self, obj):
-        link = reverse("admin:accounts_useraccount_change", args=[obj.user.id])
-        return format_html('<a href="{}">{}</a>', link, obj.user.username)
 
     def username(self, obj):
         return obj.user.username
@@ -146,10 +154,10 @@ class AnimeAdmin(admin.ModelAdmin):
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     fields = (
+        "contributor",
+        "anime",
         "question",
         "right_answer",
-        "anime",
-        "contributor",
         "active",
         "choice1",
         "choice2",
@@ -239,10 +247,12 @@ class QuestionAdmin(admin.ModelAdmin):
 class QuestionInteractionAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "question",
+        "_question",
         "anime",
         "answer",
     )
+
+    list_display_links = None
 
     list_filter = (
         ("anime", admin.RelatedOnlyFieldListFilter),
@@ -252,5 +262,12 @@ class QuestionInteractionAdmin(admin.ModelAdmin):
 
     def answer(self, obj):
         return obj.correct_answer
+
+    def _question(self, obj):
+        link = reverse("admin:core_question_change", args=[obj.question.id])
+        return format_html('<a href="{}">{}</a>', link, obj.question)
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
     answer.boolean = True
