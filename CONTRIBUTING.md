@@ -114,4 +114,4 @@ Once you are happy with your changes, you can submit them for review by creating
 
 
 # Community
-Join our [Developers channel](https://discord.gg/S7yZVcR8) on discord to stay up to date on the latest developments, ask questions, and engage with other contributors, we encourage respectful and inclusive communication within our community.
+Join our [Developers channel](https://discord.gg/7rj3hZwqXE) on discord to stay up to date on the latest developments, ask questions, and engage with other contributors, we encourage respectful and inclusive communication within our community.

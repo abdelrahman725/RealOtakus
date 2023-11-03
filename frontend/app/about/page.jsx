@@ -160,7 +160,7 @@ export default function About() {
                         <SlSocialTwitter className="icon" /> <span>Twitter</span>
                     </a> */}
 
-                    <a href="https://discord.gg/7EXaugpw" target="_blank" rel="noreferrer" title="Join our discord server">
+                    <a href="https://discord.gg/Y7B2pmPgw2" target="_blank" rel="noreferrer" title="Join our discord server">
                         <IoLogoDiscord className="icon" /> <span>Discord</span>
                     </a>
                 </div>

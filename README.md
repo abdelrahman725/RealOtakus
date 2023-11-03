@@ -37,4 +37,4 @@ See your contributed questions state, previous quizes and see if you can make it
 # Want to Contribute? 
 RealOtakus welcomes and appreciates all contributions from passionate developers, so if you want to be part of our journey pleaes refer to [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-# [Join our Discord server](https://discord.gg/7EXaugpw)
+# [Join our Discord server](https://discord.gg/Y7B2pmPgw2)

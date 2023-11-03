@@ -21,7 +21,7 @@ export default function Footer() {
         Twitter
       </a> */}
 
-      <a className="simple_link" href="https://discord.gg/7EXaugpw" target="_blank" rel="noreferrer">
+      <a className="simple_link" href="https://discord.gg/Y7B2pmPgw2" target="_blank" rel="noreferrer">
         Discord
       </a>
 
