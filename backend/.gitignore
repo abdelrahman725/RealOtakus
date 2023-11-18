@@ -1,5 +1,6 @@
 # python virtual environment
 venv/
+env/
 
 # Database
 *.sqlite3
