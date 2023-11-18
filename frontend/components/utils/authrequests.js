@@ -12,18 +12,23 @@ export async function ContinueWithGoogle() {
                 Accept: 'application/json',
             },
             credentials: 'include',
-        });
+        })
+
         const data = await res.json();
 
-        if (res.status === 200 && typeof window !== 'undefined') {
-            window.location.replace(data.authorization_url);
-        } else {
-            toast.error('Something went wrong');
+        if (res.status === 200) {
+            return { data }
+        }
+
+        else {
+            toast.error("Error authenticating with social provider");
+            return null
         }
     }
     catch (err) {
         ConsoleLog(err)
         toast.error('network error');
+        return null
     }
 }
 
@@ -116,7 +121,7 @@ export async function VerifyToken() {
         return { status_code }
     }
 
-    catch (err){
+    catch (err) {
         ConsoleLog(err)
         return null
     }
@@ -137,7 +142,7 @@ export async function RefreshToken() {
 
     }
 
-    catch (err){
+    catch (err) {
         ConsoleLog(err)
         return null
     }
