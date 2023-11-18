@@ -265,7 +265,7 @@ def get_quiz(request, anime):
         ~Q(reviewer=user),
         ~Q(question_interactions__user=user),
         active=True,
-    )[:N_QUIZ_QUESTIONS]
+    ).order_by("id")[:N_QUIZ_QUESTIONS]
 
     if len(questions) != N_QUIZ_QUESTIONS:
         # just in case cache wasn't deleted from the previous quiz
