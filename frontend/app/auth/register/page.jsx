@@ -128,7 +128,7 @@ export default function Page() {
 
             <h1>become a real otaku</h1>
 
-            <GoogleButton />
+            {/* <GoogleButton /> */}
 
             <form onSubmit={register_user} className="base_form">
                 <input

@@ -49,7 +49,7 @@ export default function Page() {
         <div className="auth_page">
             <h1>welcome again otaku</h1>
 
-            <GoogleButton />
+            {/* <GoogleButton /> */}
 
             <form onSubmit={login_user} className="base_form">
                 <input
