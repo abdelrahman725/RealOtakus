@@ -23,18 +23,15 @@ export default function Page() {
                     toast.success("Logged In")
                 }
 
-                if (google_authenticate_res.status_code === 400) {
-                    toast.error("Error")
-                    router.replace("/auth/login")
-                }
-
-                if (google_authenticate_res.status_code === 409) {
-                    toast.error("Email already in use")
+                else {
+                    google_authenticate_res.status_code === 400 && toast.error("Social Authentication Error")
+                    google_authenticate_res.status_code === 409 && toast.error("Email already in use")
                     router.replace("/auth/login")
                 }
             }
 
             else {
+                SetIsAuthenticated(false)
                 toast.error("Invalid url")
                 router.replace("/auth/login")
             }
