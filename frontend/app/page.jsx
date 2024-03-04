@@ -1,10 +1,10 @@
 "use client";
 
-import LeaderBoard from "@/components/leaderboard"
 import Link from "next/link";
 import { useAuthContext } from "@/contexts/GlobalContext";
 import { FcIdea, FcDatabase } from 'react-icons/fc'
-import { MdQuiz, MdOutlineRateReview } from 'react-icons/md'
+
+import { MdQuiz, MdOutlineRateReview, MdLeaderboard } from 'react-icons/md'
 import { useGlobalContext } from "@/contexts/GlobalContext";
 
 export default function Page() {
@@ -51,9 +51,12 @@ export default function Page() {
               <MdOutlineRateReview className="icon" /> Review
             </Link>
           }
+
+          <Link href="/leaderboard" className="nav_link" shallow>
+            <MdLeaderboard className="icon" />Leaderboard
+          </Link>
         </div>
       }
-      <LeaderBoard />
     </div>
   )
 }

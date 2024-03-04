@@ -66,9 +66,6 @@ NOTIFICATION_LIFE_TIME = 15
 # Browser cache time (in seconds) for all animes (24 hr)
 ANIMES_BROWSER_CACHE_TIME = 60 * 60 * 24
 
-# Server and Browser cache time (in seconds) for leaderboard (10 mins)
-LEADERBOARD_CACHE_TIME = 60 * 10
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -154,7 +151,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
 }
 
-if DEBUG is True:
+if DEBUG == True:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

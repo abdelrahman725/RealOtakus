@@ -5,13 +5,11 @@ from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
 from django.utils.cache import patch_response_headers
-from django.views.decorators.cache import cache_page
 from django.conf import settings
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.decorators import api_view, throttle_classes
 
 from core.models import Otaku
 from core.models import Anime
@@ -36,11 +34,9 @@ from core.constants import (
 from notifications.helpers import create_notification
 
 
-@cache_page(settings.LEADERBOARD_CACHE_TIME)
 @api_view(["GET"])
-@permission_classes([AllowAny])
 def get_leaderboard(request):
-    # Get top users (limited to 30) ordered by their score excluding a score of 0.
+    # Get top users (limited to 30) with score > 0 and ordered by their score.
     top_users = (
         Otaku.objects.select_related("user")
         .annotate(
