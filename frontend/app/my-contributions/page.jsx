@@ -10,17 +10,11 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 export default function Page() {
 
     const { IsAuthenticated, SetIsAuthenticated } = useAuthContext()
-    const [contributions, setcontributions] = useState()
+    const [contributions, set_contributions] = useState()
     const router = useRouter()
     const pathname = usePathname()
     const search_params = useSearchParams()
     const filter = search_params.get("filter")
-
-    const contribution_states = {
-        true: "approved",
-        false: "rejected",
-        null: "pending",
-    }
 
     const feedback_value_to_label = {
         "irr": "not relevant",
@@ -37,7 +31,6 @@ export default function Page() {
         return `${btn} ` + (filter === btn ? "darker_background" : "")
     }
 
-
     const fetch_contributions = async () => {
         const result = await ReAuthorizedApiRequest({ path: "contributions/" })
 
@@ -49,7 +42,7 @@ export default function Page() {
             SetIsAuthenticated(false)
             return
         }
-        setcontributions(result.payload)
+        set_contributions(result.payload)
     }
 
     useEffect(() => { IsAuthenticated && fetch_contributions() }, [IsAuthenticated])
@@ -82,17 +75,21 @@ export default function Page() {
                                 </button>
                             </div>
 
-
                             <h2>
-                                {contributions.filter(c => filter === null ? true : contribution_states[c.approved] === filter).length}
+                                {contributions.filter(c => filter === null ? true : c.state === filter).length}
                                 &nbsp;
                                 {filter || "total"} Contributions
                             </h2>
 
                             <div className="questions_container">
                                 {contributions.map((contribution, index) => {
-                                    if (filter === null || contribution_states[contribution.approved] === filter) {
-                                        return <ContributedQuestion key={index} contribution={contribution} feedback_value_to_label={feedback_value_to_label} />
+                                    if (filter === null || contribution.state === filter) {
+                                        return <ContributedQuestion
+                                            key={index}
+                                            contribution={contribution}
+                                            feedback_value_to_label={feedback_value_to_label}
+                                            set_contributions={set_contributions}
+                                        />
                                     }
                                 })}
                             </div>
@@ -101,7 +98,7 @@ export default function Page() {
                         :
                         <div>no contributions yet</div>
                     :
-                    "loading"
+                    <div>loading</div>
                 }
 
             </div>

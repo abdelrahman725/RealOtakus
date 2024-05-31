@@ -65,8 +65,9 @@ export default function Page() {
   return (
     <RequireAuthentication>
       <div className="profile">
-        <ProfileData user_data={profile} />
-        <Interactions interactions={interactions} quiz_score_percentage={quiz_score_percentage} />
+        <ProfileData profile_data={profile} />
+        <Interactions profile_data={profile} interactions={interactions} quiz_score_percentage={quiz_score_percentage}
+        />
       </div>
     </RequireAuthentication >
   )

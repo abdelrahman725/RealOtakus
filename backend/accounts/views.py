@@ -50,20 +50,11 @@ class CustomSocialProviderAuthView(ProviderAuthView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        
+
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
-            user = authenticate(
-                email=request.data["email"], password=request.data["password"]
-            )
-
-            if not hasattr(user, "otaku"):
-                return Response(
-                    {"detail": "No active account found with the given credentials"},
-                    status=status.HTTP_401_UNAUTHORIZED,
-                )
-
+            # to do here
             access_token = response.data.get("access")
             refresh_token = response.data.get("refresh")
 

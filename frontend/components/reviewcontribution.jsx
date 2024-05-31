@@ -23,11 +23,11 @@ export default function ReviewContribution({
             return "InactiveBorder"
         }
 
-        if (contribution_object.approved === true) {
+        if (contribution_object.state === "approved") {
             return "#46bb5d"
         }
 
-        if (contribution_object.approved === false) {
+        if (contribution_object.state === "rejected") {
             return "#e76450"
         }
 
@@ -38,13 +38,12 @@ export default function ReviewContribution({
         const result = await ReAuthorizedApiRequest({
             path: "review/",
             method: "PUT",
-            req_data: {
+            request_data: {
                 "contribution": contribution_object.id,
                 "state": question_state,
                 "feedback": feedback ? feedback.value : null
             }
         })
-
         if (result === null) {
             return
         }
@@ -64,13 +63,13 @@ export default function ReviewContribution({
             return
         }
 
-        if (result.status_code === 204) {
+        if (result.status_code === 200) {
 
             set_contributions(contributions =>
                 contributions.map(contribution => {
                     if (contribution.id === contribution_object.id) {
                         return {
-                            ...contribution, approved: question_state === 1 ? true : false
+                            ...contribution, state: question_state === 1 ? "approved" : "rejected"
                         }
                     }
 
@@ -132,7 +131,7 @@ export default function ReviewContribution({
                 </div>
             </div>
 
-            {contribution_object.approved === null && !invalid_contribution &&
+            {contribution_object.state === "pending" && !invalid_contribution &&
                 <form onSubmit={(e) => validate_and_submit(e)}>
                     <div className="radios">
                         <label>

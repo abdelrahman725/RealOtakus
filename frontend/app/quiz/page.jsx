@@ -100,7 +100,7 @@ export default function Page() {
     const result = await ReAuthorizedApiRequest({
       path: `quiz/submit/`,
       method: "POST",
-      req_data: { "answers": useranswers }
+      request_data: { "answers": useranswers }
     })
 
     set_loading(false)
@@ -156,23 +156,23 @@ export default function Page() {
   }, [IsAuthenticated])
 
 
-  useEffect(() => {
-    if (QuizStarted && questions) {
-      window.onbeforeunload = () => { return true }
-      document.onvisibilitychange = () => {
-        if (document.visibilityState === "hidden") {
-          toast.warning("Sorry your quiz is canceled because you left the page", { position: "top-center" })
-          SetQuizStarted(null)
-        }
-      }
-    }
+  // useEffect(() => {
+  //   if (QuizStarted && questions) {
+  //     window.onbeforeunload = () => { return true }
+  //     document.onvisibilitychange = () => {
+  //       if (document.visibilityState === "hidden") {
+  //         toast.warning("Sorry your quiz is canceled because you left the page", { position: "top-center" })
+  //         SetQuizStarted(null)
+  //       }
+  //     }
+  //   }
 
-    return () => {
-      document.onvisibilitychange = null
-      window.onbeforeunload = null
-    }
+  //   return () => {
+  //     document.onvisibilitychange = null
+  //     window.onbeforeunload = null
+  //   }
 
-  }, [QuizStarted, questions])
+  // }, [QuizStarted, questions])
 
   return (
     <RequireAuthentication>
@@ -219,8 +219,6 @@ export default function Page() {
 
         {QuizStarted && questions &&
           <div className="quiz">
-            <h3>⚠️ Do not leave current page</h3>
-
             <Question
               question={questions[index]}
               question_index={index}

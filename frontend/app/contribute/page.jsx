@@ -80,7 +80,7 @@ export default function Page() {
     const result = await ReAuthorizedApiRequest({
       path: "contribute/",
       method: "POST",
-      req_data: {
+      request_data: {
         "question": cleaned_contribution,
         "anime": anime.value
       }

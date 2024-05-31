@@ -7,13 +7,22 @@ QUESTION_TIME = 60
 # maximum time taken by any quiz
 MAX_QUIZ_TIME = N_QUIZ_QUESTIONS * QUESTION_TIME
 
+
+QUESTIONS_STATES = [
+    ("pending", "pending"),
+    ("approved", "approved"),
+    ("rejected", "rejected"),
+]
+
+
 # available levels users can reach
 BEGINNER = "beginner"
 INTERMEDIATE = "intermediate"
 ADVANCED = "advanced"
 REALOTAKU = "realOtaku"
 
-# levels_to_points mapper, shows points users should get to reach each level
+
+# levels_to_score mapper, shows score required to reach each level
 LEVELS = {BEGINNER: 0, INTERMEDIATE: 150, ADVANCED: 600, REALOTAKU: 2000}
 
 LEVEL_CHOICES = [(level, level) for level in LEVELS]

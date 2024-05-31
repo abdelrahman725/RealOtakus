@@ -1,30 +1,20 @@
 from rest_framework import serializers
 
-from accounts.models import UserAccount
 from core.models import Otaku
 from core.models import Anime
 from core.models import Question
 from core.models import QuestionInteraction
 
 
-class UserAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAccount
-        fields = (
-            "username",
-            "email",
-            "date_joined",
-        )
-
-
-class OtakuSerializer(serializers.ModelSerializer):
-    user = UserAccountSerializer()
+class OtakuProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Otaku
         fields = (
-            "user",
-            "points",
+            "username",
+            "email",
+            "date_joined",
+            "score",
             "level",
             "tests_started",
             "tests_completed",
@@ -34,11 +24,10 @@ class OtakuSerializer(serializers.ModelSerializer):
 
 class LeaderBoradSerializer(serializers.ModelSerializer):
     n_contributions = serializers.IntegerField()
-    user = UserAccountSerializer()
 
     class Meta:
         model = Otaku
-        fields = ("id", "user", "points", "level", "n_contributions", "country")
+        fields = ("id", "username", "score", "level", "n_contributions", "country")
 
 
 class AnimeSerializer(serializers.ModelSerializer):
@@ -60,7 +49,7 @@ class ContributionSerializer(serializers.ModelSerializer):
             "choice2",
             "choice3",
             "right_answer",
-            "approved",
+            "state",
             "date_created",
             "feedback",
         )

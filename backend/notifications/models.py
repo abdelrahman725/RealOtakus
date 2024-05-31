@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
-from accounts.models import UserAccount
+from core.models import Otaku
 
 # return notifications that are within the valid time period
 class NoneExpiredNotifcationsManager(models.Manager):
@@ -22,7 +22,7 @@ class NoneExpiredNotifcationsManager(models.Manager):
 
 class Notification(models.Model):
     receiver = models.ForeignKey(
-        UserAccount,
+        Otaku,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -31,14 +31,12 @@ class Notification(models.Model):
     notification = models.CharField(max_length=250)
     time = models.DateTimeField(default=timezone.now)
     seen = models.BooleanField(default=False)
-    broad = models.BooleanField(default=False)
     kind = models.CharField(
         choices=(
             ("NA", "new available anime in quizes"),
             ("N", "new anime to review"),
             ("R", "review needed"),
             ("A", "question approved"),
-            ("A1", "first question approved"),
             ("F", "question rejected"),
         ),
         max_length=2,

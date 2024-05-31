@@ -80,7 +80,7 @@ export default function Question({
         ReAuthorizedApiRequest({
             path: `quiz/interact/`,
             method: "POST",
-            req_data: { "question": question.id }
+            request_data: { "question_id": question.id }
         })
 
         start_or_reset_timer()

@@ -35,7 +35,7 @@ export default function get_notification_content(notification_or_anime_name, kin
         return (
             <p>
                 Congratulations you are now a contributor ! <br />
-                your contribution for <strong>{notification_or_anime_name}</strong> is approved, +10 points
+                your contribution for <strong>{notification_or_anime_name}</strong> is approved, +10 score
             </p>
         )
     }
@@ -43,7 +43,7 @@ export default function get_notification_content(notification_or_anime_name, kin
     if (kind === "A") {
         return (
             <p>
-                Congratulations ! your contribution for <strong>{notification_or_anime_name}</strong> is approved, +10 points
+                Congratulations ! your contribution for <strong>{notification_or_anime_name}</strong> is approved, +10 score
             </p>
         )
     }

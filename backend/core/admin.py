@@ -1,12 +1,14 @@
 import math
 
 from django.db import models
+from django.db.models import Q
 from django.contrib import admin
-from django.http.request import HttpRequest
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.forms import Textarea
+
 
 from core.models import Otaku
 from core.models import Anime
@@ -61,7 +63,7 @@ class ContributionTypeFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("t", ("Staff")),
+            ("t", ("Admin")),
             ("c", ("Contribution")),
             ("p", ("Pending")),
             ("r", ("Reviewed")),
@@ -77,33 +79,43 @@ class ContributionTypeFilter(admin.SimpleListFilter):
             return queryset.filter(is_contribution=True)
 
         if self.value() == "p":
-            return queryset.filter(approved__isnull=True, is_contribution=True)
+            return queryset.filter(state="pending", is_contribution=True)
 
         if self.value() == "r":
-            return queryset.filter(approved__isnull=False, is_contribution=True)
+            return queryset.filter(~Q(state="pending"), is_contribution=True)
 
         if self.value() == "a":
-            return queryset.filter(approved=True, is_contribution=True)
+            return queryset.filter(state="approved", is_contribution=True)
 
         if self.value() == "f":
-            return queryset.filter(approved=False, is_contribution=True)
+            return queryset.filter(state="rejected", is_contribution=True)
+
+
+admin.site.unregister(Group)
 
 
 @admin.register(Otaku)
 class OtakuAdmin(admin.ModelAdmin):
     fields = (
-        "user",
-        "points",
+        "username",
+        "email",
+        "score",
         "tests_started",
         "tests_completed",
         "animes_to_review",
         "country",
         "level",
+        "password",
+        "is_active",
+        "date_joined",
+        "last_login",
     )
 
     list_display = (
         "username",
-        "points",
+        "email",
+        "is_active",
+        "score",
         "level",
         "tests_started",
         "tests_completed",
@@ -115,13 +127,20 @@ class OtakuAdmin(admin.ModelAdmin):
     list_per_page = 500
     list_max_show_all = 2000
 
+    list_editable = ("is_active",)
+    list_per_page = 500
+    list_max_show_all = 2000
+
     autocomplete_fields = [
         "animes_to_review",
     ]
 
-    readonly_fields = ("user", "points", "tests_started", "tests_completed", "level")
+    search_fields = ("username__startswith", "email__startswith")
+
+    readonly_fields = ("score", "tests_started", "tests_completed", "level", "password")
 
     list_filter = (
+        "is_active",
         "level",
         IsReviewerFilter,
         (
@@ -131,14 +150,21 @@ class OtakuAdmin(admin.ModelAdmin):
         CountryFilter,
     )
 
-    def username(self, obj):
-        return obj.user.username
-
     def contributions(self, obj):
-        return obj.contributions.filter(approved=True, is_contribution=True).count()
+        return obj.contributions.filter(state="approved", is_contribution=True).count()
 
     def reviewer_of(self, obj):
         return "{} animes".format(obj.animes_to_review.all().count())
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_superuser:
+            return False
+        return True
+
+    # def social_connected(self, obj):
+    #     return obj.social_auth.exists()
+
+    # social_connected.boolean = True
 
 
 @admin.register(Anime)
@@ -158,11 +184,10 @@ class QuestionAdmin(admin.ModelAdmin):
         "anime",
         "question",
         "right_answer",
-        "active",
         "choice1",
         "choice2",
         "choice3",
-        "approved",
+        "state",
         "feedback",
         "is_contribution",
         "reviewer",
@@ -180,20 +205,18 @@ class QuestionAdmin(admin.ModelAdmin):
         "pk",
         "anime",
         "question",
+        "state",
         "_contributor",
         "reviewed_by",
         "feedback",
         "created",
-        "active",
     )
 
     list_display_links = ("question",)
-    list_editable = ("active",)
     list_max_show_all = 2000
 
     list_filter = (
         ContributionTypeFilter,
-        "active",
         ("anime", admin.RelatedOnlyFieldListFilter),
         ("contributor", admin.RelatedOnlyFieldListFilter),
         ("reviewer", admin.RelatedOnlyFieldListFilter),
@@ -228,19 +251,19 @@ class QuestionAdmin(admin.ModelAdmin):
 
         return "few seconds ago"
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            if not obj.is_contribution or obj.approved != None:
-                return self.readonly_fields + ("approved", "feedback", "anime")
+    # def get_readonly_fields(self, request, obj=None):
+    #     if obj:
+    #         if not obj.is_contribution or obj.approved != None:
+    #             return self.readonly_fields + ("approved", "feedback", "anime")
 
-            return self.readonly_fields + ("anime",)
+    #         return self.readonly_fields + ("anime",)
 
-        return self.readonly_fields + ("approved", "feedback")
+    #     return self.readonly_fields + ("approved", "feedback")
 
-    def has_delete_permission(self, request, obj=None):
-        if obj:
-            return not obj.active
-        return True
+    # def has_delete_permission(self, request, obj=None):
+    #     if obj:
+    #         return not obj.state === "approved"
+    #     return True
 
 
 @admin.register(QuestionInteraction)

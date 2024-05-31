@@ -64,11 +64,13 @@ export default function Page() {
                   {animes.map((anime, index) => (
                     <tr key={index}>
                       <td>{anime.name}</td>
+                      {/* pending contributions */}
                       <td>
-                        {contributions.filter(c => c.anime.id === anime.id && c.approved === null).length}
+                        {contributions.filter(c => c.anime.id === anime.id && c.state === "pending").length}
                       </td>
+                      {/* reviewed contributions */}
                       <td>
-                        {contributions.filter(c => c.anime.id === anime.id && c.approved !== null).length}
+                        {contributions.filter(c => c.anime.id === anime.id && c.state !== "pending").length}
                       </td>
                     </tr>
                   ))}
@@ -78,14 +80,14 @@ export default function Page() {
 
             {filter === "pending" ?
               <PendingConributions
-                contributions={contributions.filter(c => c.approved === null)}
+                contributions={contributions.filter(c => c.state === "pending")}
                 set_contributions={set_contributions}
                 set_animes={set_animes}
                 set_filter={set_filter}
               />
               :
               <ReviewedConributions
-                contributions={contributions.filter(c => c.approved !== null)}
+                contributions={contributions.filter(c => c.state !== "pending")}
                 set_filter={set_filter}
               />
             }

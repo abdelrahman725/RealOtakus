@@ -445,6 +445,16 @@ button {
   .user_contribution {
     @extend .contribution_basic;
     margin-bottom: 100px;
+    .delete-icon {
+      transform: scale(1.3);
+      cursor: pointer;
+      float: right;
+      margin-right: 3px;
+      margin-top: 3px;
+      &:hover {
+        transform: scale(1.5);
+      }
+    }
     .date_created {
       font-size: smaller;
       position: relative;

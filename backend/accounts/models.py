@@ -58,6 +58,9 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
+    class Meta:
+        abstract = True
+        
     def clean(self):
         if self.is_superuser and self.is_active == False:
             raise ValidationError("admin user cannot be inactive")

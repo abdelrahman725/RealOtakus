@@ -13,7 +13,7 @@ def get_notifications(request):
     user = request.user
 
     user_notifications = NotificationsSerializer(
-        Notification.non_expired.filter(Q(receiver=user) | Q(broad=True)),
+        Notification.non_expired.filter(receiver=user),
         many=True,
     )
     return Response(user_notifications.data)

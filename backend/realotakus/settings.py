@@ -1,6 +1,7 @@
-import sys
+# import sys
 import dotenv
-import dj_database_url
+
+# import dj_database_url
 from os import getenv, path
 from datetime import timedelta
 from pathlib import Path
@@ -9,10 +10,10 @@ from corsheaders.defaults import default_headers
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-local_env_file = BASE_DIR / ".env.local"
+env_file = BASE_DIR / ".env"
 
-if path.isfile(local_env_file):
-    dotenv.load_dotenv(local_env_file)
+if path.isfile(env_file):
+    dotenv.load_dotenv(env_file)
 
 
 DEBUG = getenv("DEBUG", "False") == "True"
@@ -63,7 +64,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 # time (in days) after which notifications should be deleted
 NOTIFICATION_LIFE_TIME = 15
 
-# Browser cache time (in seconds) for all animes (24 hr)
+# Browser cache time (in seconds) for all animes (24 hr), not used yet
 ANIMES_BROWSER_CACHE_TIME = 60 * 60 * 24
 
 
@@ -78,7 +79,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "djoser",
     "corsheaders",
-    "social_django",
+    #"social_django",
     "accounts",
     "core",
     "notifications",
@@ -122,7 +123,7 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
-AUTH_USER_MODEL = "accounts.UserAccount"
+AUTH_USER_MODEL = "core.Otaku"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -147,34 +148,31 @@ DJOSER = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
 }
 
-if DEBUG == True:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
+# Default sqlite db is used in production for now
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
-elif len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
-    if getenv("DATABASE_URL", None) is None:
-        raise Exception("DATABASE_URL environment variable not defined")
-    DATABASES = {
-        "default": dj_database_url.parse(getenv("DATABASE_URL")),
-    }
+}
 
-
-if DEBUG == False and getenv("REDIS_URL"):
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": getenv("REDIS_URL"),
-        }
-    }
-else:
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+# if DEBUG == True:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+# elif len(sys.argv) > 0 and sys.argv[1] != "collectstatic":
+#     if getenv("DATABASE_URL", None) is None:
+#         raise Exception("DATABASE_URL environment variable not defined")
+#     DATABASES = {
+#         "default": dj_database_url.parse(getenv("DATABASE_URL")),
+#     }
 
 
 # Password validation

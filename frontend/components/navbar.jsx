@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <div className="navbar">
       <div>
-        <div className="logo_container" title="RealOtakus Home">
+        <div className="logo_container" title="Home">
           <Link href="/" className="logo" shallow>
             <strong>Real Otakus</strong>
           </Link>

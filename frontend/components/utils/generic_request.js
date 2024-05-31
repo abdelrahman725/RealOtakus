@@ -3,78 +3,55 @@ import { RefreshToken } from "./authrequests"
 import { toast } from "react-toastify";
 import ConsoleLog from '@/components/utils/custom_console';
 
-async function make_request({ path = null, method = "GET", req_data = {} } = {}) {
+export default async function ReAuthorizedApiRequest({ path = "", method = "GET", request_data = null } = {}) {
 
-    let response = null
-
-    if (method !== "GET") {
-
-        response = await fetch(`${BACKEND_API}/${path}`, {
+    try {
+        const request_options = {
             method: method,
             credentials: "include",
             headers: {
-                'Content-type': 'application/json',
+                'Content-type': 'application/json'
             },
-            body: JSON.stringify(req_data)
-        })
-    }
-
-    else {
-        response = await fetch(`${BACKEND_API}/${path}`, {
-            credentials: "include",
-            headers: {
-                'Content-type': 'application/json',
-            },
-        })
-    }
-
-    const status_code = response.status
-
-    // if (status_code === 500) {
-    //     toast.error("server error")
-    // }
-
-    if (status_code === 200) {
-        const result_data = await response.json()
-        return {
-            payload: result_data,
-            status_code: status_code
         }
-    }
 
-    return {
-        status_code: status_code
-    }
+        if (request_data !== null) {
+            request_options.body = JSON.stringify(request_data)
+        }
 
-}
+        let response = null
 
-export default async function ReAuthorizedApiRequest({ path = null, method = "GET", req_data = {} } = {}) {
-    try {
-        const original_request = await make_request({ path: path, method: method, req_data: req_data })
+        response = await fetch(`${BACKEND_API}/${path}`, request_options)
 
-        if (original_request.status_code === 401) {
-            ConsoleLog("refreshing original request")
+        if (response.status === 500) {
+            toast.error("server error")
+            return null
+        }
 
-            const refresh_res = await RefreshToken()
+        if (response.status === 401) {
+            ConsoleLog("refresh token request")
 
-            if (refresh_res.status_code !== 200) {
+            const refresh_token_response = await RefreshToken()
+
+            if (refresh_token_response.status_code !== 200) {
                 toast.info("Session expired")
-                return refresh_res
+                return refresh_token_response
             }
 
             // re-request the original request after access token has been refreshed
-            const refreshed_reuest = await make_request({ path: path, method: method, req_data: req_data })
-            ConsoleLog(`reauthorized request : /${path}`)
-
-            return refreshed_reuest
+            response = await fetch(`${BACKEND_API}/${path}`, request_options)
         }
 
-        ConsoleLog(`original request : /${path}`)
-        return original_request
+        const response_json = await response.json()
+        ConsoleLog(`result for /${path} : `)
+        ConsoleLog(response_json)
+        return {
+            payload: response_json,
+            status_code: response.status
+        }
     }
 
     catch (error) {
-        toast.error("network error")
+        toast.error("unexpected error occurred")
         ConsoleLog(error)
         return null
     }

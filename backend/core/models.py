@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 from accounts.models import UserAccount
-from core.constants import COUNTRY_CHOICES, LEVEL_CHOICES, BEGINNER
+from core.constants import COUNTRY_CHOICES, LEVEL_CHOICES, BEGINNER, QUESTIONS_STATES
 
 
 class Anime(models.Model):
@@ -13,11 +13,8 @@ class Anime(models.Model):
         return self.name
 
 
-class Otaku(models.Model):
-    user = models.OneToOneField(
-        UserAccount, on_delete=models.CASCADE, related_name="otaku"
-    )
-    points = models.PositiveIntegerField(default=0)
+class Otaku(UserAccount):
+    score = models.PositiveIntegerField(default=0)
     tests_started = models.PositiveSmallIntegerField(default=0)
     tests_completed = models.PositiveSmallIntegerField(default=0)
     animes_to_review = models.ManyToManyField(
@@ -31,7 +28,7 @@ class Otaku(models.Model):
     level = models.CharField(choices=LEVEL_CHOICES, max_length=15, default=BEGINNER)
 
     def __str__(self) -> str:
-        return self.user.username
+        return self.username
 
 
 class Question(models.Model):
@@ -51,8 +48,7 @@ class Question(models.Model):
     choice3 = models.CharField(max_length=200)
     right_answer = models.CharField(max_length=200)
 
-    active = models.BooleanField(default=False)
-    approved = models.BooleanField(null=True, blank=True, default=None)
+    state = models.CharField(choices=QUESTIONS_STATES, max_length=20, default="pending")
     reviewer = models.ForeignKey(
         Otaku,
         on_delete=models.SET_NULL,
@@ -93,10 +89,10 @@ class Question(models.Model):
         if not self.is_contribution:
             return
 
-        if self.approved == False and self.feedback == None:
+        if self.state == "rejected" and self.feedback == None:
             raise ValidationError("feedback needed for rejection")
 
-        if self.approved == True and self.feedback != None:
+        if self.state == "approved" and self.feedback != None:
             raise ValidationError("no feedback for approved question")
 
 

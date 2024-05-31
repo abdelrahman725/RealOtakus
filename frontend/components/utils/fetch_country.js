@@ -12,7 +12,7 @@ export default async function FetchCountry() {
       ReAuthorizedApiRequest({
         path: "country/",
         method: "POST",
-        req_data: { "country": result.country.toLowerCase() }
+        request_data: { "country": result.country.toLowerCase() }
       })
     }
   }

@@ -1,4 +1,4 @@
-export default function Interactions({ interactions, quiz_score_percentage }) {
+export default function Interactions({ profile_data, interactions, quiz_score_percentage }) {
     return (
         <div className="interactions dashboard_container">
             <h2>Quizes history</h2>
@@ -23,6 +23,16 @@ export default function Interactions({ interactions, quiz_score_percentage }) {
                             ))}
                         </tbody>
                         <tfoot>
+                            <tr>
+                                <td>Quizes Started</td>
+                                <td></td>
+                                <td>{profile_data && profile_data.tests_started}</td>
+                            </tr>
+                            <tr>
+                                <td>Quizes Completed</td>
+                                <td></td>
+                                <td>{profile_data && profile_data.tests_completed}</td>
+                            </tr>
                             <tr>
                                 <td>Score Percentage</td>
                                 <td></td>
