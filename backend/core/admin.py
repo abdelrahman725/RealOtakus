@@ -161,6 +161,9 @@ class OtakuAdmin(admin.ModelAdmin):
             return False
         return True
 
+    def get_queryset(self, request):
+        return Otaku.objects.filter(is_superuser=False)
+
     # def social_connected(self, obj):
     #     return obj.social_auth.exists()
 
