@@ -22,7 +22,7 @@ export default function Page({ params }) {
 
                 // new user is successfully activated
                 if (response.status_code === 204) {
-                    toast.success('Account is activated, you can now Login');
+                    toast.success('Account is activated, you can now login');
                     router.replace('/auth/login');
                 }
 

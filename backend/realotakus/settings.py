@@ -64,8 +64,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 # time (in days) after which notifications should be deleted
 NOTIFICATION_LIFE_TIME = 15
 
-# Browser cache time (in seconds) for all animes (24 hr), not used yet
-ANIMES_BROWSER_CACHE_TIME = 60 * 60 * 24
+# server and browser cache time (in seconds) for all animes (1 hr)
+ANIMES_CACHE_TIMEOUT = 60
 
 
 # Application definition

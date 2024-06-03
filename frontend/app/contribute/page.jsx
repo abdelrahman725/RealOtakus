@@ -125,7 +125,7 @@ export default function Page() {
     }
 
     if (result.status_code === 410) {
-      toast.warning("Anime is removed, please select another anime", { position: "top-center", toastId: "no_anime" })
+      toast.warning("Anime no longer exists, please select another anime", { position: "top-center", toastId: "no_anime" })
       return
     }
 

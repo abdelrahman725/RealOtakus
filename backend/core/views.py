@@ -4,6 +4,9 @@ from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
 from django.core.cache import cache
+from django.utils.cache import get_cache_key
+from django.views.decorators.cache import cache_page
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -23,12 +26,10 @@ from core.serializers import QuizAnimeSerializer
 from core.serializers import QuestionInteractionsSerializer
 
 from core.throttles import ContributionRateThrottle
-from core.helpers import query_or_get_cached_anime
 from core.constants import (
     N_QUIZ_QUESTIONS,
     MAX_QUIZ_TIME,
 )
-
 from notifications.helpers import create_notification
 
 
@@ -49,22 +50,10 @@ def get_leaderboard(request):
     return Response(leaderboard)
 
 
+@cache_page(settings.ANIMES_CACHE_TIMEOUT)
 @api_view(["GET"])
 def get_all_animes(request):
-    cached_or_quered_animes = cache.get("animes")
-
-    if cached_or_quered_animes == None:
-        cached_or_quered_animes = Anime.objects.all()
-        cache.set(
-            key="animes",
-            value={anime.id: anime for anime in cached_or_quered_animes},
-            timeout=None,
-        )
-
-    else:
-        cached_or_quered_animes = cached_or_quered_animes.values()
-
-    all_animes = AnimeSerializer(cached_or_quered_animes, many=True).data
+    all_animes = AnimeSerializer(Anime.objects.all(), many=True).data
     return Response(all_animes)
 
 
@@ -98,14 +87,10 @@ def get_contributions(request):
 def contribute_question(request):
     user = request.user
     contribution_data = request.data["question"]
-    contribution_anime = query_or_get_cached_anime(anime_id=request.data["anime"])
-
-    if contribution_anime == None:
-        return Response({"info": "anime doesn't exist"}, status=status.HTTP_410_GONE)
-
+    contribution_anime = request.data["anime"]
     try:
         new_contribution = Question(
-            anime=contribution_anime,
+            anime_id=contribution_anime,
             contributor=user,
             is_contribution=True,
             question=contribution_data["question"],
@@ -117,7 +102,11 @@ def contribute_question(request):
         new_contribution.save()
         new_contribution.clean_fields()
 
-    except IntegrityError:
+    except IntegrityError as error:
+        if "FOREIGN KEY" or "NOT NULL" in str(error.__cause__):
+            return Response(
+                {"info": "anime doesn't exist"}, status=status.HTTP_410_GONE
+            )
         return Response(
             {"info": "question alreay exists"}, status=status.HTTP_409_CONFLICT
         )
@@ -165,7 +154,7 @@ def review_contribution(request):
         existing_contribution = Question.objects.get(pk=request.data["contribution"])
 
         try:
-            user.animes_to_review.get(id=existing_contribution.anime.id)
+            user.animes_to_review.get(id=existing_contribution.anime_id)
 
         except Anime.DoesNotExist:
             return Response(
@@ -187,7 +176,7 @@ def review_contribution(request):
             existing_contribution.save()
             return Response({"info": "question approved"})
 
-        # rejected
+        # reject
         if review_decision == 0:
             existing_contribution.state = "rejected"
             existing_contribution.save()
@@ -270,19 +259,16 @@ def get_quiz_animes(request):
 @api_view(["GET"])
 def get_quiz(request, anime):
     user = request.user
-    quiz_anime = query_or_get_cached_anime(anime_id=anime)
-
-    if quiz_anime == None:
-        return Response(status=status.HTTP_410_GONE)
 
     # quiz questions are filtered as follows :
     # user is not the reviewer or the creator of the question
     # user hasn't seen the question before (question_interactions__user != user)
     # the question is approved
-    questions = quiz_anime.anime_questions.filter(
+    questions = Question.objects.filter(
         ~Q(contributor=user),
         ~Q(reviewer=user),
         ~Q(question_interactions__user=user),
+        anime_id=anime,
         state="approved",
     ).order_by("id")[:N_QUIZ_QUESTIONS]
 

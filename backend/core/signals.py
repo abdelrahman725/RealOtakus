@@ -15,7 +15,6 @@ from django.core.exceptions import ValidationError
 from core.models import Anime
 from core.models import Question
 from core.models import Otaku
-from core.helpers import query_or_get_cached_anime
 
 from notifications.helpers import create_notification
 
@@ -78,15 +77,11 @@ def on_animes_to_review_change(sender, instance, **kwargs):
         for anime_id in kwargs.pop("pk_set", None):
             create_notification(
                 receiver=instance,
-                notification=query_or_get_cached_anime(anime_id=anime_id).name,
+                notification=Anime.objects.get(id=anime_id),
                 kind="N",
             )
 
 
-@receiver([post_save, post_delete], sender=Anime)
-def update_cached_animes(sender, **kwargs):
-    cache.set(
-        key="animes",
-        value={anime.id: anime for anime in Anime.objects.all()},
-        timeout=None,
-    )
+# @receiver([post_save, post_delete], sender=Anime)
+# def update_cached_animes(sender, **kwargs):
+#     pass
